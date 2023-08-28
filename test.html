@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>FASTQ Quality Extractor</title>
+</head>
+<body>
+    <h1>FASTQ Quality Extractor</h1>
+    <input type="file" id="fileInput" accept=".fastq">
+    <button onclick="processFile()">Process File</button>
+    <div id="result"></div>
+
+    <script>
+        function processFile() {
+            const fileInput = document.getElementById('fileInput');
+            const resultDiv = document.getElementById('result');
+
+            if (fileInput.files.length === 0) {
+                resultDiv.textContent = 'Please select a FASTQ file.';
+                return;
+            }
+
+            const file = fileInput.files[0];
+            const reader = new FileReader();
+
+            reader.onload = function(event) {
+                const content = event.target.result;
+                const qualityScores = extractQualityScores(content);
+                resultDiv.textContent = 'Quality Scores: ' + qualityScores.join(', ');
+            };
+
+            reader.readAsText(file);
+        }
+
+        function extractQualityScores(fileContent) {
+            const lines = fileContent.trim().split('\n');
+            const qualityScores = [];
+
+            for (let i = 3; i < lines.length; i += 4) {
+                const qualityLine = lines[i];
+                for (let j = 0; j < qualityLine.length; j++) {
+                    const qualityScore = qualityLine.charCodeAt(j) - 33;
+                    qualityScores.push(qualityScore);
+                }
+            }
+
+            return qualityScores;
+        }
+    </script>
+</body>
+</html>
