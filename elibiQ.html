@@ -7,7 +7,7 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
 <body>
-    <h1>FASTQ Quality Trimmer</h1>
+    <h1>ElibiQ Quality Trimmer</h1>
     <input type="file" id="fileInput" accept=".fastq">
     <button onclick="processFile()">Trim and Download</button>
     <a id="downloadLink" style="display: none;">Download Trimmed FASTQ</a>
@@ -47,7 +47,7 @@
                 const read_id = lines[i]
                 const sequence = lines[i + 1];
                 const quality = lines[i + 3];
-                const trimmedSequence = trimLowQualitySequence(read_id, sequence, quality);
+                const trimmedSequence = trimLowQualitySequence(read_id, sequence, quality)[0];
                 if (trimmedSequence.length > 0) {
                     trimmedLines.push(lines[i], trimmedSequence, lines[i + 2], quality);
                 }
@@ -59,14 +59,16 @@
         function trimLowQualitySequence(read_id, sequence, quality) {
             const threshold = 10; // Adjust this threshold as needed
             let trimmedSequence = '';
+            let trim_qual = '';
             
             for (let i = 0; i < quality.length; i++) {
                 if (quality.charCodeAt(i) - 33 >= threshold) {
                     trimmedSequence += sequence[i];
+                    trim_qual += quality[i];
                 }
             }
             
-            return trimmedSequence;
+            return trimmedSequence, trim_qual;
         }
     </script>
 </body>

@@ -1,0 +1,36 @@
+/* Color de los radio button  */
+
+input[name="RNAtypeS"] {
+	accent-color: #041C34;
+    margin-right: 5px;
+    margin-left: 10px;
+}
+
+
+/* Color de los card  */
+
+.card-title{
+    color:#041C34;
+    font-weight: bold;
+  }
+  
+.btn-link{
+    color:#041C34;
+}
+
+/* mouse over link */
+.btn-link:hover {
+    color: #041C34;
+  }
+
+
+linkTab{
+    color: #041C34;
+  }
+  
+  /* mouse over link */
+a:hover {
+    color: #53a1f0;
+}
+
+  

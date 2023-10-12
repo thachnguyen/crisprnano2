@@ -93,8 +93,7 @@
         <title>CRISPRnano</title>
         </head>
         <body background="https://www.crisprnano.de/" style="background-attachment: fixed; font-family: sans-serif; font-weight: 100; overflow-x: hidden; display: block;" ondrop="FileDrop(event);" data-new-gr-c-s-check-loaded="14.1119.0" data-gr-ext-installed=""><h1 style="margin:10px 10;">Identification of genome edited cells </h1>
-        <!-- <body background="./main_files/theme.jpg" style="background-attachment: fixed; font-family: Helvetica; font-weight: 100; overflow-x: hidden; display: block;" ondrop="FileDrop(event);" data-new-gr-c-s-check-loaded="14.1035.0" data-gr-ext-installed=""></body> -->
-        
+        <br>    
         <br>
          <div id="save" style="display:none">test</div>
             <div id="setup" style="position: absolute; left: 20px; top: 80px; display: none;">
@@ -107,24 +106,8 @@
                 </div>
                     <br><input type="file" id="files" class="input_form" name="files[]" multiple=""><br>
                 </div>
-                <div class="column">
-                    Barcode Files (Beta version): 
-                    <div class="popup" onclick="myFunction2()">(? Click here!)
-                        <span class="popuptext" id="help2">Still testing, Not in this release yet. Click again to close.</span>
-                        <!-- Your input barcode files your CRISPR experiment data, make sure that the correct ordering of barcode. The file must be in fasta format by the numbers given below the output pie charts -->
-                    </div>
-                    <br><input type="file" id="barcode_files" class="input_form" name="files[]" multiple=""> <br>
-                </div>
+                <br>
                 <a href="https://iufduesseldorf-my.sharepoint.com/:u:/g/personal/thach_nguyen_iuf-duesseldorf_de/ER4kM3RQaRJLiltUCpcT2iMBiEvGvs3u2NiDTdtSPBLE1Q?e=8FEAJc">(Our test sample)</a><br>
-                
-                <br>Reference Sequence (*):                 
-                <div class="popup" onclick="myFunction3()">(? Click here!)
-                    <span class="popuptext" id="help3">Reference amplicon length should be in the range of 200-300 bases with the nuclease target site located roughly in the middle. You can get the reference from Ensembl link below. Click again to close</span>
-                </div>              
-                <br><input type="text" class="input_form" size="65" name="Locus" value="GAGCCCACCCCCAGGCCCTGCCACTCACCTCTCCACACTGTTGTGGTGGATGCAGCCGTGGGAGCCGCCGACGGCATAGATGTGGCCATCGATGACCCCCACCCCGATGCGGTTACGGGGCACGCTCATGGGGGCGCAGGGCGACCACTGATTGGTCATGGGGTTGT"> 
-                <br>              
-                <a href="http://ftp.ensembl.org/pub/release-105/fasta/homo_sapiens/dna/">(Ensembl reference)</a><br>
-                
                 <br>Nuclease Target Site (*): 
                 <div class="popup" onclick="myFunction4()">(? Click here!)
                     <span class="popuptext" id="help4">In this field the nuclease target site is entered. The sequence has to be in the same orientation as the reference sequence above. Click again to close</span>
@@ -159,7 +142,7 @@
                 <br><input type="text" class="input_form" size="40" name="TargetingOligo" value=""><br>
                                 <br>Gene Name (optional):
                 <div class="popup" onclick="myFunction8()">(? Click here!)
-                    <span class="popuptext" id="help8">Name of the study gene. Automatic query from genename is not implemented yet. Click to close.</span>
+                    <span class="popuptext" id="help8">Name of the study gene (Human only). Click to close.</span>
                 </div> 
                 <br><input type="text" class="input_form" size="40" name="GeneName" value="KEAP1"><br>
                 <br>Indel Threshold [%]: 
@@ -167,6 +150,15 @@
                     <span class="popuptext" id="help9">The Indel Threshold determines at what relative occurrence an individual indel mutation is considered as a unique allele of the respective clone analyzed, and is thus displayed in the alignment list. Low threshold values can result in false positive allele calling due to sequencing errors, whereas high threshold values result in false negative allele calling. Values in between 0 - 100 % can be entered. We recommend to use 5% for ONT reads and 2% for Illumina reads (default is set to 5%). Click again to close.</span>
                 </div> 
                 <br><input type="text" size="20" class="input_form" name="MutationThreshold" value="5"><br> <br>
+
+                <br>Reference Sequence (*):                 
+                <div class="popup" onclick="myFunction3()">(? Click here!)
+                    <span class="popuptext" id="help3">Reference amplicon length should be in the range of 200-300 bases with the nuclease target site located roughly in the middle. You can get the reference from Ensembl link below. Click again to close</span>
+                </div>              
+                <br><input type="text" class="input_form" size="65" name="Locus" value="GAGCCCACCCCCAGGCCCTGCCACTCACCTCTCCACACTGTTGTGGTGGATGCAGCCGTGGGAGCCGCCGACGGCATAGATGTGGCCATCGATGACCCCCACCCCGATGCGGTTACGGGGCACGCTCATGGGGGCGCAGGGCGACCACTGATTGGTCATGGGGTTGT"> 
+                <br>              
+                <a href="http://ftp.ensembl.org/pub/release-105/fasta/homo_sapiens/dna/">(Ensembl reference)</a><br>
+ 
 
                 <a style="font-style: italic;">
                     CRISPRnano website is free and open to all users and there is no login required.<br>
@@ -664,8 +656,8 @@
 
         //Top Menu:
         var SVGtab = new Array(10), SVGtabtext = new Array(10);
-        var tabtextcontent = ["GENOME EDITING ANALYZER", "RESULTS", "MANUAL & DOCUMENT", "ABOUT CRISPRnano"];
-        var BLAU=["rgb(0, 0, 0)","rgb(221,0,0)","rgb(255,206,0)"];
+        var tabtextcontent = ["ANALYZER SETTING", "RESULTS", "MANUAL", "ABOUT CRISPRnano"];
+        var BLAU=["rgb(10, 100, 0)","rgb(221,100,0)","rgb(255,206,0)"];
         function GenerateTopMenu()
         {
             var svg = document.getElementById("SVG_topmenu");

@@ -1,0 +1,152 @@
+/* Formato de todos los títulos */
+.titlePag {
+  margin-top: 10px;
+  color: #041C34 ;
+}
+
+/* Btn info */
+
+.btn-info {
+  color: #fff;
+  background-color: #041C34;
+  border-color: #041C34;
+}
+
+.btn-info:hover {
+  color: #fff;
+  background-color: #53a1f0;
+  border-color: #041C34;
+}
+
+.btn-info:focus, .btn-info.focus {
+  color: #fff;
+  background-color: #53a1f0;
+  border-color: #53a1f0;
+  box-shadow: 0 0 0 0.2rem #53a1f0;
+}
+
+.btn-info.disabled, .btn-info:disabled {
+  color: #fff;
+  background-color:  #041C34;
+  border-color:  #041C34;
+}
+
+.btn-info:not(:disabled):not(.disabled):active, .btn-info:not(:disabled):not(.disabled).active,
+.show > .btn-info.dropdown-toggle {
+  color: #fff;
+  background-color: #53a1f0;
+  border-color: #53a1f0;
+}
+
+.btn-info:not(:disabled):not(.disabled):active:focus, .btn-info:not(:disabled):not(.disabled).active:focus,
+.show > .btn-success.dropdown-toggle:focus {
+  box-shadow: 0 0 0 0.1rem#041C34;
+}
+
+
+/* Btn success */
+
+.btn-success {
+  color: #fff;
+  background-color: #184b7e;
+  border-color: #184b7e;
+}
+
+.btn-success:hover {
+  color: #fff;
+  background-color: #223e5a;
+  border-color: #041C34;
+}
+
+.btn-success:focus, .btn-success.focus {
+  color: #fff;
+  background-color: #184b7e;
+  border-color: #184b7e;
+  box-shadow: 0 0 0 0.2rem #184b7e;
+}
+
+.btn-success.disabled, .btn-success:disabled {
+  color: #fff;
+  background-color:  #041C34;
+  border-color:  #041C34;
+}
+
+.btn-success:not(:disabled):not(.disabled):active, .btn-success:not(:disabled):not(.disabled).active,
+.show > .btn-success.dropdown-toggle {
+  color: #fff;
+  background-color: #184b7e;
+  border-color: #184b7e;
+}
+
+.btn-success:not(:disabled):not(.disabled):active:focus, .btn-success:not(:disabled):not(.disabled).active:focus,
+.show > .btn-success.dropdown-toggle:focus {
+  box-shadow: 0 0 0 0.1rem#041C34;
+}
+
+/* Btn light */
+
+.btn-light {
+  border-color: #f0ad4e;
+}
+.preloader {
+    align-items: center;
+    background: rgb(23, 22, 22);
+    display: flex;
+    height: 100vh;
+    justify-content: center;
+    left: 0;
+    position: fixed;
+    top: 0;
+    transition: opacity 0.3s linear;
+    width: 100%;
+    z-index: 9999;
+  }
+
+  /* Color de las pestañas cuando están activas (el link) */
+.nav-link {
+  color: #041C34;
+}
+.nav-tabs .nav-link.active,
+.nav-tabs .nav-item.show .nav-link {
+  color: #53a1f0;
+  background-color: #fff;
+  border-color: #dee2e6 #dee2e6 #fff;
+}
+
+
+/* Color de las nav-pills */
+
+.nav-pills .nav-link {
+  border-radius: 0.25rem;
+  color:#041C34;
+}
+
+.nav-pills .nav-link.active,
+.nav-pills .show > .nav-link {
+  color: #fff;
+  background-color: #53a1f0;
+}
+
+/* Color de los link */
+
+.btn-link {
+  color: #53a1f0;
+}
+
+a{
+  color: #53a1f0;
+}
+
+/* mouse over link */
+a:hover {
+  color: #041C34;
+}
+
+
+
+/* Color de datatables */
+
+.page-item.active .page-link {
+  background-color: #041C34 !important;
+  border: 1px solid #53a1f0;
+}
