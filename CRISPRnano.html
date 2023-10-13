@@ -1,11 +1,14 @@
 
 <!-- saved from url=(0026)https://www.crisprnano.de/ -->
 <html><head><meta http-equiv="Content-Type" content="text/html; charset=windows-1252"><meta http-equiv="Content-Script-Type" content="text/javascript">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script language="JavaScript" src="https://www.crisprnano.de/"></script>
     <style>
+        h1{
+        color:rgba(22, 4, 41, 0.932);
+        padding:0;
+        font-family:Baskerville, "Palatino Linotype", Palatino, "Century Schoolbook L", "Arial", sans-serif;
+        font-size:30px;
+        }
         .column {
         float: left;
         width: 50%;
@@ -32,6 +35,7 @@
         cursor: pointer;
         }
 
+        /* Popup container - can be anything you want */
 .popup {
   position: relative;
   display: inline-block;
@@ -92,11 +96,12 @@
     <meta http-equiv="CACHE-CONTROL" content="NO-CACHE">
         <title>CRISPRnano</title>
         </head>
-        <body background="https://www.crisprnano.de/" style="background-attachment: fixed; font-family: sans-serif; font-weight: 100; overflow-x: hidden; display: block;" ondrop="FileDrop(event);" data-new-gr-c-s-check-loaded="14.1119.0" data-gr-ext-installed=""><h1 style="margin:10px 10;">Identification of genome edited cells </h1>
-        <br>    
+        <body background="https://www.crisprnano.de/" style="background-attachment: fixed; font-family: sans-serif; font-weight: 100; overflow-x: hidden; display: block;" ondrop="FileDrop(event);" data-new-gr-c-s-check-loaded="14.1130.0" data-gr-ext-installed=""><h1 style="margin:10px 10;">Identification of genome edited cells </h1>
+        <!-- <body background="./main_files/theme.jpg" style="background-attachment: fixed; font-family: Helvetica; font-weight: 100; overflow-x: hidden; display: block;" ondrop="FileDrop(event);" data-new-gr-c-s-check-loaded="14.1035.0" data-gr-ext-installed=""></body> -->
+        
         <br>
          <div id="save" style="display:none">test</div>
-            <div id="setup" style="position: absolute; left: 20px; top: 80px; display: none;">
+            <div id="setup" style="position:absolute; left:20px; top:80px">
                 <br>
                 <br>
                 <div class="column">
@@ -106,8 +111,24 @@
                 </div>
                     <br><input type="file" id="files" class="input_form" name="files[]" multiple=""><br>
                 </div>
-                <br>
+                <div class="column">
+                    Barcode Files (Beta version): 
+                    <div class="popup" onclick="myFunction2()">(? Click here!)
+                        <span class="popuptext" id="help2">Still testing, Not in this release yet. Click again to close.</span>
+                        <!-- Your input barcode files your CRISPR experiment data, make sure that the correct ordering of barcode. The file must be in fasta format by the numbers given below the output pie charts -->
+                    </div>
+                    <br><input type="file" id="barcode_files" class="input_form" name="files[]" multiple=""> <br>
+                </div>
                 <a href="https://iufduesseldorf-my.sharepoint.com/:u:/g/personal/thach_nguyen_iuf-duesseldorf_de/ER4kM3RQaRJLiltUCpcT2iMBiEvGvs3u2NiDTdtSPBLE1Q?e=8FEAJc">(Our test sample)</a><br>
+                
+                <br>Reference Sequence (Optional, if gene name given, leave it blank):                 
+                <div class="popup" onclick="myFunction3()">(? Click here!)
+                    <span class="popuptext" id="help3">Reference amplicon length should be in the range of 200-300 bases with the nuclease target site located roughly in the middle. You can get the reference from Ensembl link below. Click again to close</span>
+                </div>              
+                <br><input type="text" class="input_form" size="65" name="Locus" value=""> 
+                <br>              
+                <a href="http://ftp.ensembl.org/pub/release-105/fasta/homo_sapiens/dna/">(Ensembl reference)</a><br>
+                
                 <br>Nuclease Target Site (*): 
                 <div class="popup" onclick="myFunction4()">(? Click here!)
                     <span class="popuptext" id="help4">In this field the nuclease target site is entered. The sequence has to be in the same orientation as the reference sequence above. Click again to close</span>
@@ -142,7 +163,7 @@
                 <br><input type="text" class="input_form" size="40" name="TargetingOligo" value=""><br>
                                 <br>Gene Name (optional):
                 <div class="popup" onclick="myFunction8()">(? Click here!)
-                    <span class="popuptext" id="help8">Name of the study gene (Human only). Click to close.</span>
+                    <span class="popuptext" id="help8">Name of the study gene. Automatic query from genename is not implemented yet. Click to close.</span>
                 </div> 
                 <br><input type="text" class="input_form" size="40" name="GeneName" value="KEAP1"><br>
                 <br>Indel Threshold [%]: 
@@ -150,15 +171,6 @@
                     <span class="popuptext" id="help9">The Indel Threshold determines at what relative occurrence an individual indel mutation is considered as a unique allele of the respective clone analyzed, and is thus displayed in the alignment list. Low threshold values can result in false positive allele calling due to sequencing errors, whereas high threshold values result in false negative allele calling. Values in between 0 - 100 % can be entered. We recommend to use 5% for ONT reads and 2% for Illumina reads (default is set to 5%). Click again to close.</span>
                 </div> 
                 <br><input type="text" size="20" class="input_form" name="MutationThreshold" value="5"><br> <br>
-
-                <br>Reference Sequence (*):                 
-                <div class="popup" onclick="myFunction3()">(? Click here!)
-                    <span class="popuptext" id="help3">Reference amplicon length should be in the range of 200-300 bases with the nuclease target site located roughly in the middle. You can get the reference from Ensembl link below. Click again to close</span>
-                </div>              
-                <br><input type="text" class="input_form" size="65" name="Locus" value="GAGCCCACCCCCAGGCCCTGCCACTCACCTCTCCACACTGTTGTGGTGGATGCAGCCGTGGGAGCCGCCGACGGCATAGATGTGGCCATCGATGACCCCCACCCCGATGCGGTTACGGGGCACGCTCATGGGGGCGCAGGGCGACCACTGATTGGTCATGGGGTTGT"> 
-                <br>              
-                <a href="http://ftp.ensembl.org/pub/release-105/fasta/homo_sapiens/dna/">(Ensembl reference)</a><br>
- 
 
                 <a style="font-style: italic;">
                     CRISPRnano website is free and open to all users and there is no login required.<br>
@@ -201,7 +213,7 @@
               <br><br>
             </div>
 
-            <div id="manual" style="position: absolute; left: 20px; top: 120px; width: 70%;">
+            <div id="manual" style="position: absolute; left: 20px; top: 120px; width: 70%; display: none;">
                 <br>
                 <br>
                 <h3>CRISPRnano manual</h3>
@@ -656,8 +668,8 @@
 
         //Top Menu:
         var SVGtab = new Array(10), SVGtabtext = new Array(10);
-        var tabtextcontent = ["ANALYZER SETTING", "RESULTS", "MANUAL", "ABOUT CRISPRnano"];
-        var BLAU=["rgb(10, 100, 0)","rgb(221,100,0)","rgb(255,206,0)"];
+        var tabtextcontent = ["GENOME EDITING ANALYZER", "RESULTS", "MANUAL & DOCUMENT", "ABOUT CRISPRnano"];
+        var BLAU=["rgb(0, 0, 0)","rgb(221,0,0)","rgb(255,206,0)"];
         function GenerateTopMenu()
         {
             var svg = document.getElementById("SVG_topmenu");
@@ -775,10 +787,38 @@
             return dummy;
         }
 
+        function fetchFasta(url) {
+        fetch(url)
+            .then(response => response.text())
+            .then(data => {
+                const lines = data.split('\n');
+                let sequence = '';
+
+                for (const line of lines) {
+                    if (line.startsWith('>')) {
+                        continue; // Skip the header line
+                    }
+                    sequence += line.trim();
+                }
+        })
+        .catch(error => console.error('Gene not found, please check genename again:', error));
+        alert(sequence)
+        }
+
         function Start()
         {
             document.getElementById("progress").style.display = '';
             locus = document.getElementsByName("Locus")[0].value.toUpperCase(); //reference sequence
+
+            const fastaURL = "https://crisprnano.de/gene_fasta/"+document.getElementsByName("GeneName")[0].value+".fa";
+            alert(fastaURL)
+
+            fetchFasta(fastaUrl)
+            alert(seq1)
+
+
+
+
             locuslen = locus.length; 
             rightbs = document.getElementsByName("RightBS")[0].value.toUpperCase(); // sgRNA seq  
             RightBsLen = rightbs.length;
@@ -822,6 +862,8 @@
         var chunksize = 20240*10240;
         var chunksize1 = 1024*1024;
 
+
+
         function FileReceived()
         {
             var original = RestFromLastChunk+reader.result;
@@ -863,7 +905,7 @@
                 mean_phred = mean_phred/readlen; 
             
                 if (mean_phred > PhredThreshold){ 
-                    if ((targetingOligo !="") &&read.includes(targetingOligo)){
+                    if ((targetingOligo !="") &&(read.includes(targetingOligo)||read.includes(ReverseComplement(targetingOligo))||read.includes(ReverseString(targetingOligo))||read.includes(ReverseComplement(ReverseString(targetingOligo))))){
                         aln_type = 7;
                         hits[id][readnum] = aln_type
                         var rst = bsa_align(is_local, target, read, [ms, mms], [gapo, gape]);
@@ -1600,6 +1642,10 @@
             printWindow.close();
         }
 
+        function ReverseString(str) {
+                return str.split('').reverse().join('')
+            }
+
         function PrintSVGAlignment()
         {
             var printWindow = document.open('', 'Print', 'width=1250, height=400');
@@ -1656,23 +1702,23 @@
         }
     </script>
 </body><grammarly-desktop-integration data-grammarly-shadow-root="true"><template shadowrootmode="open"><style>
-  div.grammarly-desktop-integration {
-    position: absolute;
-    width: 1px;
-    height: 1px;
-    padding: 0;
-    margin: -1px;
-    overflow: hidden;
-    clip: rect(0, 0, 0, 0);
-    white-space: nowrap;
-    border: 0;
-    -moz-user-select: none;
-    -webkit-user-select: none;
-    -ms-user-select:none;
-    user-select:none;
-  }
+      div.grammarly-desktop-integration {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        padding: 0;
+        margin: -1px;
+        overflow: hidden;
+        clip: rect(0, 0, 0, 0);
+        white-space: nowrap;
+        border: 0;
+        -moz-user-select: none;
+        -webkit-user-select: none;
+        -ms-user-select:none;
+        user-select:none;
+      }
 
-  div.grammarly-desktop-integration:before {
-    content: attr(data-content);
-  }
-</style><div aria-label="grammarly-integration" role="group" tabindex="-1" class="grammarly-desktop-integration" data-content="{&quot;mode&quot;:&quot;full&quot;,&quot;isActive&quot;:true,&quot;isUserDisabled&quot;:false}"></div></template></grammarly-desktop-integration></html>
+      div.grammarly-desktop-integration:before {
+        content: attr(data-content);
+      }
+    </style><div aria-label="grammarly-integration" role="group" tabindex="-1" class="grammarly-desktop-integration" data-content="{&quot;mode&quot;:&quot;full&quot;,&quot;isActive&quot;:true,&quot;isUserDisabled&quot;:false}"></div></template></grammarly-desktop-integration></html>

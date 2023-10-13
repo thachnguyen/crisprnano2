@@ -1,0 +1,135 @@
+textarea{
+    width: auto;
+}
+.form-error{
+    color: red;
+}
+.form-error li{
+    list-style: none;
+}
+
+.inputfile {
+	width: 0.1px;
+	height: 0.1px;
+	opacity: 0;
+	overflow: hidden;
+	position: absolute;
+	z-index: -1;
+}
+.inputfile + label {
+    font-size: 1rem;
+    color: white;
+    background-color: #6c757d;
+    border-color: #6c757d;
+    display: inline-block;
+	cursor: pointer; /* "hand" cursor */
+    padding: .375rem .75rem;
+    border-radius: 3px;
+}
+
+.inputfile:focus + label,
+.inputfile + label:hover {
+    background-color: #5a6268;
+}
+
+.inputfile:focus + label {
+	outline: 1px dotted #000;
+	outline: -webkit-focus-ring-color auto 5px;
+}
+.hidden{
+    display: none;
+}
+.tab-content{
+    min-height: 350px;
+}
+.tile_count{
+    width: 100%;
+}
+
+.light-color{
+    color: rgb(115, 135, 156);
+}
+.big-text{
+    font-size: 1.7em;
+}
+
+.right-side{
+    float: right;
+}
+.a-style{
+    color: #5A738E;
+    text-decoration: none;
+}
+.monospace{
+    font-family: monospace;
+}
+#id_localization{
+    list-style-type: none;
+}
+.margin-right{
+    margin-right: 5px;
+}
+.btn-outline-success{
+    border-color: rgb(22, 159, 133);
+    color: rgb(22, 159, 133);
+}
+.btn-outline-success:hover{
+    background-color: #26B99A;
+}
+.btn.disabled, .btn:disabled {
+    pointer-events: none;
+}
+.sequence_box{
+    overflow-wrap: break-word;
+}
+@media (min-width: 992px){
+    .top-menu{
+        display: none;
+    }
+}
+.mini-logo{
+    padding: 5px;
+    margin-left: 20px;
+}
+.max-height{
+    min-height: 100%;
+    padding-bottom: 10px;
+}
+.jusitfied{
+  text-align: justify;
+  text-justify: inter-word;
+}
+.ihg-logo{
+    width: 190px;
+}
+.ihg-logo-li{
+    background-color: white;
+}
+.manual-image{
+    margin: 1px;
+    border: solid black 1px;
+    max-width: 1000px;
+    width: 100%;
+}
+.manual-image-sm{
+    margin: 1px;
+    border: solid black 1px;
+    max-width: 500px;
+    width: 100%;
+}
+
+
+.accept-cookies{
+    font-size: 20px;
+    background: white;
+    position: fixed;
+    width: 100%;
+    right: 0px;
+    bottom: 0px;
+    height: 70px;
+    padding: 15px;
+    padding-bottom: 45px;
+    border-top: 1px solid #dae3e9;
+    border-left: 1px solid #dae3e9;
+    z-index: 10000;
+}
