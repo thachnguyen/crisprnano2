@@ -140,7 +140,7 @@
                 <div class="popup" onclick="myFunction5()">(? Click here!)
                     <span class="popuptext" id="help5"> For ONT reads, it is recommended to use -/+15 bases around the predicted DNA lesion. Larger regions are prone to false positive indels. Larger regions (total of 200-250 bp) can be safely used with Illumina reads. You can drag and drop the central point of the predicted double strand break in the genomic sequence to the left or to the right. Default 0 is double strand breaking point. Click again to close</span>
                 </div>
-                <br><input type="text" size="20" name="region_analyse" value="20" class="input_form"><br>
+                <br><input type="text" size="20" name="region_analyse" value="30" class="input_form"><br>
                    <br> 
                 </div> 
                 <div class="column">
@@ -810,14 +810,11 @@
             document.getElementById("progress").style.display = '';
             locus = document.getElementsByName("Locus")[0].value.toUpperCase(); //reference sequence
 
-            const fastaURL = "https://crisprnano.de/gene_fasta/"+document.getElementsByName("GeneName")[0].value+".fa";
-            alert(fastaURL)
+            // const fastaURL = "https://crisprnano.de/gene_fasta/"+document.getElementsByName("GeneName")[0].value+".fa";
+            // alert(fastaURL)
 
-            fetchFasta(fastaUrl)
-            alert(seq1)
-
-
-
+            // fetchFasta(fastaUrl)
+            // alert(seq1)
 
             locuslen = locus.length; 
             rightbs = document.getElementsByName("RightBS")[0].value.toUpperCase(); // sgRNA seq  

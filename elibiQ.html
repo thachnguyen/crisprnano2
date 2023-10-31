@@ -41,34 +41,40 @@
 
         function trimLowQuality(fileContent) {
             const lines = fileContent.trim().split('\n');
-            const trimmedLines = [];
-
+            var trimmedLines = [];
             for (let i = 0; i < lines.length; i += 4) {
-                const read_id = lines[i]
-                const sequence = lines[i + 1];
-                const quality = lines[i + 3];
-                const trimmedSequence = trimLowQualitySequence(read_id, sequence, quality)[0];
-                if (trimmedSequence.length > 0) {
-                    trimmedLines.push(lines[i], trimmedSequence, lines[i + 2], quality);
+                const trim_data = trimLowQualitySequence(lines[i], lines[i + 1], lines[i + 3])
+                const trimmedSequence_list = trim_data[0];
+                const trim_qual_list = trim_data[1]
+                if (trimmedSequence_list.length > 0) {
+                    for (let j = 0; j < trimmedSequence_list.length; j++) {
+                    trimmedLines.push(lines[i], trimmedSequence_list[j], '+', trim_qual_list[j]);
                 }
             }
-
-            return trimmedLines.join('\n');
-        }
+            }
+            return trimmedLines.join('\n');         
+        }   
 
         function trimLowQualitySequence(read_id, sequence, quality) {
             const threshold = 10; // Adjust this threshold as needed
-            let trimmedSequence = '';
-            let trim_qual = '';
-            
+            const min_length = 50;
+            var trimmedSequence_list = [];
+            var trim_qual_list = []; 
+            var trim_seq = ''
+            var trim_qual = '' 
             for (let i = 0; i < quality.length; i++) {
-                if (quality.charCodeAt(i) - 33 >= threshold) {
-                    trimmedSequence += sequence[i];
+                   if (quality.charCodeAt(i) - 33 >= threshold) {
+                    trim_seq += sequence[i];
                     trim_qual += quality[i];
-                }
+                    }
+                    else if (trim_seq.length > min_length){
+                        trimmedSequence_list.push(trim_seq)
+                        trim_qual_list.push(trim_qual)
+                        trim_seq = ''
+                        trim_qual = '' 
+                    }
             }
-            
-            return trimmedSequence, trim_qual;
+            return [trimmedSequence_list, trim_qual_list]
         }
     </script>
 </body>

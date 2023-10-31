@@ -1,49 +1,29 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>FASTQ Quality Extractor</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gene Sequence Fetcher</title>
 </head>
 <body>
-    <h1>FASTQ Quality Extractor</h1>
-    <input type="file" id="fileInput" accept=".fastq">
-    <button onclick="processFile()">Process File</button>
-    <div id="result"></div>
+    <label for="geneName">Enter Gene Name:</label>
+    <input type="text" id="geneName">
+    <button onclick="fetchGeneSequence()">Fetch Sequence</button>
+    <pre id="output"></pre>
 
     <script>
-        function processFile() {
-            const fileInput = document.getElementById('fileInput');
-            const resultDiv = document.getElementById('result');
+        async function fetchGeneSequence() {
+            const geneName = document.getElementById('geneName').value;
+            const outputElement = document.getElementById('output');
 
-            if (fileInput.files.length === 0) {
-                resultDiv.textContent = 'Please select a FASTQ file.';
-                return;
+            try {
+                const response = await fetch(`https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=nucleotide&id=${geneName}&rettype=gb&retmode=text`);
+                const sequence = await response.text();
+                outputElement.textContent = sequence;
+            } catch (error) {
+                console.error('Error fetching gene sequence:', error);
+                outputElement.textContent = 'Error fetching gene sequence. See console for details.';
             }
-
-            const file = fileInput.files[0];
-            const reader = new FileReader();
-
-            reader.onload = function(event) {
-                const content = event.target.result;
-                const qualityScores = extractQualityScores(content);
-                resultDiv.textContent = 'Quality Scores: ' + qualityScores.join(', ');
-            };
-
-            reader.readAsText(file);
-        }
-
-        function extractQualityScores(fileContent) {
-            const lines = fileContent.trim().split('\n');
-            const qualityScores = [];
-
-            for (let i = 3; i < lines.length; i += 4) {
-                const qualityLine = lines[i];
-                for (let j = 0; j < qualityLine.length; j++) {
-                    const qualityScore = qualityLine.charCodeAt(j) - 33;
-                    qualityScores.push(qualityScore);
-                }
-            }
-
-            return qualityScores;
         }
     </script>
 </body>
