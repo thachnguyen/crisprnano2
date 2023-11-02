@@ -57,7 +57,7 @@
 
         function trimLowQualitySequence(read_id, sequence, quality) {
             const threshold = 10; // Adjust this threshold as needed
-            const min_length = 50;
+            const min_length = 50n;
             var trimmedSequence_list = [];
             var trim_qual_list = []; 
             var trim_seq = ''
