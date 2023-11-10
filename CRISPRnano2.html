@@ -90,41 +90,40 @@
 }
 
     </style>
-    <script src=".script.js"></script>
     <meta http-equiv="CACHE-CONTROL" content="NO-CACHE">
         <title>CRISPRnano2</title>
 
         <!-- Bootstrap core CSS -->
-        <link href="./interface_files/bootstrap.min.css" rel="stylesheet">
+        <link href="./crisprnano2/bootstrap.min.css" rel="stylesheet">
 
         <!-- Custom fonts for this template-->
-        <link href="./interface_files/all.min.css" rel="stylesheet" type="text/css">
+        <link href="./crisprnano2/all.min.css" rel="stylesheet" type="text/css">
 
         <!-- Page level plugin CSS-->
-        <link href="./interface_files/dataTables.bootstrap4.css" rel="stylesheet">
+        <link href="./crisprnano2/dataTables.bootstrap4.css" rel="stylesheet">
 
         <!-- Custom styles for this template -->
-        <link href="./interface_files/stylesBase.css" rel="stylesheet">
-        <link href="./interface_files/myStyles.css" rel="stylesheet">
+        <link href="./crisprnano2/stylesBase.css" rel="stylesheet">
+        <link href="./crisprnano2/myStyles.css" rel="stylesheet">
 
          <!-- To multiselect -->
-        <link rel="stylesheet" href="./interface_files/bootstrap-multiselect.css" type="text/css">
+        <link rel="stylesheet" href="./crisprnano2/bootstrap-multiselect.css" type="text/css">
 
         <!-- Select with search -->
-        <link rel="stylesheet" href="./interface_files/bootstrap-select.min.css" type="text/css">
+        <link rel="stylesheet" href="./crisprnano2/bootstrap-select.min.css" type="text/css">
 
         <!-- Intro js -->
-        <link rel="stylesheet" href="./interface_files/introjs.css" type="text/css">
+        <link rel="stylesheet" href="./crisprnano2/introjs.css" type="text/css">
 
     
-        <link href="./interface_files/stylesQuery.css" rel="stylesheet">
+        <link href="./crisprnano2/stylesQuery.css" rel="stylesheet">
 
 
 
         </head>
-        <body onload="showHidenMenu();" data-new-gr-c-s-check-loaded="14.1130.0" data-gr-ext-installed="">
+        <body data-new-gr-c-s-check-loaded="14.1130.0" data-gr-ext-installed="">
             <nav class="navbar sticky-top navbar-expand-sm navbar-light">
-                <a class="navbar-brand" href="https://crisprnano.de/CRISPRnano2.html"><img src="./interface_files/title_white.png" width="180"></a>
+                <a class="navbar-brand" href="https://crisprnano.de/CRISPRnano2.html"><img src="./crisprnano2/title_white.png" width="180"></a>
                 <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarToggler11" aria-controls="navbarToggler11" aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
@@ -136,22 +135,11 @@
                                 Home
                             </a>
                         </li>
-                        <li class="nav-item mt-1">
-                            <a href="https://crisprnano.de/" class="nav-link">
+                        <li class="nav-item mt-1", onclick="TabClicked(2);">
+                            <a  class="nav-link">
                                 <i class="fas fa-solid fa-cogs iconsMenu"></i>
-                                Use Crisprnano v2
+                                Use Crisprnano v2           
                             </a>
-                        </li>
-                        <li class="nav-item dropdown ml-2 mr-2 mt-1">
-                            <a class="nav-link dropdown-toggle" href="https://crisprnano.de/" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                <i class="fas fa-solid fa-book iconsMenu"></i>
-                                Help
-                              </a>
-                              <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                                <a class="dropdown-item" target="_blank" href="https://arn.ugr.es/normseq_doc">Manual</a>
-                                <a class="dropdown-item" target="_blank" href="https://arn.ugr.es/normseq_doc/quick/">Quick start</a>
-                                <a class="dropdown-item" target="_blank" href="https://arn.ugr.es/normSeq/query/tutorial1">Tour</a>
-                              </div>
                         </li>
                         <li class="nav-item ml-2 mr-2 mt-1 ">
                             <a class="nav-link" href="https://arn.ugr.es/normSeq/query/" data-toggle="modal" data-target="#modalCite">
@@ -159,8 +147,8 @@
                                 How to cite
                             </a>
                         </li>
-                        <li class="nav-item ml-2 mr-2 mt-1 ">
-                            <a class="nav-link" href="https://arn.ugr.es/normSeq/query/" data-toggle="modal" data-target="#modalAboutServer">
+                        <li class="nav-item ml-2 mr-2 mt-1 " onclick="TabClicked(3)">
+                            <a class="nav-link">
                                 <i class="fas fa-solid fa-question iconsMenu"></i>
                                 About
                             </a>
@@ -173,7 +161,7 @@
                 </div>
             </nav>
             <div class="d-flex justify-content-center mt-3">
-                <img id="titleIndex" width="40%" src="./interface_files/titleBig.png">
+                <img id="titleIndex" width="40%" src="./crisprnano2/titleBig.png">
             </div>
         <br>
         <hr>
@@ -181,9 +169,15 @@
             <div class="col-md-11" style="float:none;margin:auto;">
                 <div class="card">
         <div id="DIV_topmenu">
-            <svg id="SVG_topmenu" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="100%" height="100%" onmousedown="return false;">
-            <rect fill="rgb(50,42,126)" x="20" y="20" width="240" height="20" opacity="0.9" onmouseover="evt.target.setAttribute(&#39;opacity&#39;,&#39;0.8&#39;);" onmouseout="evt.target.setAttribute(&#39;opacity&#39;,&#39;0.9&#39;);" onclick="TabClicked(0);"></rect><text font-family="sans-serif" font-weight="100" font-size="13" x="30" y="35" onclick="TabClicked(0);" pointer-events="none" style="fill: rgb(255, 255, 255);">Setup</text>
-            <rect fill="rgb(16,115,179)" x="270" y="20" width="240" height="20" opacity="0.9" onmouseover="evt.target.setAttribute(&#39;opacity&#39;,&#39;0.8&#39;);" onmouseout="evt.target.setAttribute(&#39;opacity&#39;,&#39;0.9&#39;);" onclick="TabClicked(1);"></rect><text font-family="sans-serif" font-weight="100" font-size="13" x="280" y="35" onclick="TabClicked(1);" pointer-events="none" style="fill: rgb(255, 255, 255);">Results</text><rect fill="rgb(38,170,220)" x="520" y="20" width="240" height="20" opacity="0.9" onmouseover="evt.target.setAttribute(&#39;opacity&#39;,&#39;0.8&#39;);" onmouseout="evt.target.setAttribute(&#39;opacity&#39;,&#39;0.9&#39;);" onclick="TabClicked(2);"></rect><rect fill="rgb(0, 0, 0)" x="20" y="20" width="240" height="20" opacity="0.9" onmouseover="evt.target.setAttribute(&#39;opacity&#39;,&#39;0.8&#39;);" onmouseout="evt.target.setAttribute(&#39;opacity&#39;,&#39;0.9&#39;);" onclick="TabClicked(0);"></rect><text font-family="sans-serif" font-weight="100" font-size="13" x="30" y="35" onclick="TabClicked(0);" pointer-events="none" style="fill: rgb(255, 255, 255);">GENOME EDITING ANALYZER</text><rect fill="rgb(221,0,0)" x="270" y="20" width="240" height="20" opacity="0.9" onmouseover="evt.target.setAttribute(&#39;opacity&#39;,&#39;0.8&#39;);" onmouseout="evt.target.setAttribute(&#39;opacity&#39;,&#39;0.9&#39;);" onclick="TabClicked(1);"></rect><text font-family="sans-serif" font-weight="100" font-size="13" x="280" y="35" onclick="TabClicked(1);" pointer-events="none" style="fill: rgb(255, 255, 255);">RESULTS</text><rect fill="rgb(255,206,0)" x="520" y="20" width="240" height="20" opacity="0.9" onmouseover="evt.target.setAttribute(&#39;opacity&#39;,&#39;0.8&#39;);" onmouseout="evt.target.setAttribute(&#39;opacity&#39;,&#39;0.9&#39;);" onclick="TabClicked(2);"></rect><text font-family="sans-serif" font-weight="100" font-size="13" x="530" y="35" onclick="TabClicked(2);" pointer-events="none" style="fill: rgb(255, 255, 255);">MANUAL &amp; DOCUMENT</text><rect fill="rgb(0, 0, 0)" x="770" y="20" width="240" height="20" opacity="0.9" onmouseover="evt.target.setAttribute(&#39;opacity&#39;,&#39;0.8&#39;);" onmouseout="evt.target.setAttribute(&#39;opacity&#39;,&#39;0.9&#39;);" onclick="TabClicked(3);"></rect><text font-family="sans-serif" font-weight="100" font-size="13" x="780" y="35" onclick="TabClicked(3);" pointer-events="none" style="fill: rgb(255, 255, 255);">ABOUT CRISPRnano</text></svg>
+            <div class="text-center">
+                <div class="btn-group btn-group-lg mr-3" role="group" id="aBtnGroup" aria-label="Basic example">
+                    <button type="button"  name="setup" class="btn btn-info" onclick="TabClicked(0);">ANALYZER SETTING</button>
+                    <button type="button"  name="result" class="btn btn-info" onclick="TabClicked(1);">RESULTS</button>
+
+                </div>
+                
+            </div>
+
         </div>
         <br>
         <div id="setup" style="position:absolute; left:20px; top:80px">
@@ -256,7 +250,10 @@
                     <span class="popuptext" id="help9">The Indel Threshold determines at what relative occurrence an individual indel mutation is considered as a unique allele of the respective clone analyzed, and is thus displayed in the alignment list. Low threshold values can result in false positive allele calling due to sequencing errors, whereas high threshold values result in false negative allele calling. Values in between 0 - 100 % can be entered. We recommend to use 5% for ONT reads and 2% for Illumina reads (default is set to 5%). Click again to close.</span>
                 </div> 
                 <br><input type="text" size="20" class="input_form" name="MutationThreshold" value="5"><br> <br>
-
+                <input type="submit" name="submit" value="SUBMIT" class="btn btn-primary btn btn-info btn-lg float-centre" id="submit" onclick="Start();">
+                
+                <br>
+                <br>
                 <a style="font-style: italic;">
                     CRISPRnano website is free and open to all users and there is no login required.<br>
                     To use CRISPRnano, you must enable JavaScript on your web browser.<br>
@@ -269,9 +266,8 @@
                 Reference: <br>
                 Nguyen, T., Ramachandran, H., Martins, S., Krutmann, J. and Rossi, A., 2022. Identification of genome edited cells using CRISPRnano. Nucleic Acids Research.<br></a>
                
-                <button class="button" onclick="Start();">SUBMIT</button>
+        
                 <br><br>
-                <output id="list"></output>
                 <br>
             </div>
         
@@ -755,39 +751,6 @@
     var tabtextcontent = ["GENOME EDITING ANALYZER", "RESULTS", "MANUAL & DOCUMENT", "ABOUT CRISPRnano"];
     var BLAU=["rgb(0, 0, 0)","rgb(221,0,0)","rgb(255,206,0)"];
 
-    function GenerateTopMenu()
-    {
-        var svg = document.getElementById("SVG_topmenu");
-        svg.setAttributeNS(null, "onmousedown", "return false;");
-        var NS="http://www.w3.org/2000/svg";
-
-        for (var i=0; i<4; i++) {
-            SVGtab[i] = document.createElementNS(NS,"rect");
-            svg.appendChild(SVGtab[i]);
-            SVGtab[i].setAttribute("fill", BLAU[i%3]);
-            SVGtab[i].setAttribute("x", 20+i*250);
-            SVGtab[i].setAttribute("y",20);
-            SVGtab[i].setAttribute("width", 240);
-            SVGtab[i].setAttribute("height", 20);
-            // SVGtab[i].style.setAttribute("border-radius", 20);
-
-            SVGtab[i].setAttribute('opacity','0.9');
-            SVGtab[i].setAttributeNS(null, "onmouseover", "evt.target.setAttribute('opacity','0.8');");
-            SVGtab[i].setAttributeNS(null, "onmouseout",  "evt.target.setAttribute('opacity','0.9');");
-            SVGtab[i].setAttributeNS(null, "onclick","TabClicked("+i+");");
-            SVGtabtext[i] = document.createElementNS(NS,"text");
-            SVGtabtext[i].setAttribute("font-family", "sans-serif");
-            SVGtabtext[i].setAttribute("font-weight", "100");
-            SVGtabtext[i].setAttribute("font-size", "13");
-            SVGtabtext[i].setAttribute("x", 30+i*250);
-            SVGtabtext[i].setAttribute("y", 35);
-            SVGtabtext[i].style.fill="rgb(255,255,255)";
-            SVGtabtext[i].textContent = tabtextcontent[i];
-            SVGtabtext[i].setAttributeNS(null, "onclick","TabClicked("+i+");");
-            SVGtabtext[i].setAttribute("pointer-events","none");
-            svg.appendChild(SVGtabtext[i]);
-        }
-    }
     var currenttab = 0;
     function TabClicked(i)
     {
@@ -807,7 +770,6 @@
 
         currenttab = i;
     }
-    GenerateTopMenu();
     TabClicked(0);
     
     var RightBsPos=0, RightBsLen=0;
@@ -1784,9 +1746,9 @@
     }
 
 
-    function showHidenMenu(){
-                document.getElementById("menu-hide").style.display= "block" ;
-            }
+    // function showHidenMenu(){
+    //             document.getElementById("menu-hide").style.display= "block" ;
+    //         }
 </script>
 
 
