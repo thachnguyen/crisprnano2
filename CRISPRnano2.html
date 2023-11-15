@@ -205,13 +205,8 @@
                     <br><input type="text" class="input_form" size="40" name="TargetingOligo" value=""><br>
                     <br>
                     <input type="submit" name="submit" value="SUBMIT" class="btn btn-primary btn btn-info btn-lg float-centre" id="submit" onclick="Start();">
-                    
                     <br>
-
                 </div>
-
-
-
 
                 <div class="column">
                     <h3>Optional parameter</h3>
@@ -423,25 +418,6 @@
      * @return an integer array
      */
     // get fasta from our database
-    
-     function getFastaSequence() {
-            const fastaURL = document.getElementById('fastaURL').value;
-
-            fetch(fastaURL)
-                .then(response => response.text())
-                .then(data => {
-                    var lines = data.split('\n');
-                    var header = lines[0];
-                    var sequence = lines.slice(1).join('');
-                    document.getElementById('sequenceResult').innerHTML = '<p>Header: ' + header + '</p><p>Sequence:</p><pre>' + sequence + '</pre>';
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                    document.getElementById('sequenceResult').innerHTML = '<p>Error: Unable to fetch the sequence.</p>';
-                });
-        }
-
-
 
     function bsg_enc_seq(seq, table)
     {
@@ -809,9 +785,21 @@
             hits[i][ii] = -1;
         }
     }
-
+    var fastaURL = "https://www.crisprnano.de/gene_fasta/"+document.getElementsByName("GeneName")[0].value+".fa"; 
     var AlignmentPrecalc = new Array(96);
     var locus, locuslen;
+
+    fetch(fastaURL)
+        .then(response => response.text())
+        .then(data => {
+            var lines = data.split('\n')
+            var header = lines[0]
+            locus = lines.slice(1).join('')
+        })
+        .catch(error => {
+            console.error('Error:', error)
+        });
+
     var files;
     var reader;
     var CurrentFileId, CurrentFileChunk;
@@ -854,35 +842,35 @@
         return dummy;
     }
 
-    function fetchFasta(url) {
-    fetch(url)
+    function getFastaSequence() 
+    {
+        locus = 0
+        alert(locus)
+        fetch(fastaURL)
         .then(response => response.text())
         .then(data => {
-            const lines = data.split('\n');
-            let sequence = '';
-
-            for (const line of lines) {
-                if (line.startsWith('>')) {
-                    continue; // Skip the header line
-                }
-                sequence += line.trim();
-            }
-    })
-    .catch(error => console.error('Gene not found, please check genename again:', error));
-    alert(sequence)
+            var lines = data.split('\n')
+            var header = lines[0]
+            locus = lines.slice(1).join('')
+        })
+        .catch(error => {
+            console.error('Error:', error)
+        });
     }
 
     function Start()
     {
         document.getElementById("progress").style.display = '';
-        locus = document.getElementsByName("Locus")[0].value.toUpperCase(); //reference sequence
-
-        // const fastaURL = "https://crisprnano.de/gene_fasta/"+document.getElementsByName("GeneName")[0].value+".fa";
-        // alert(fastaURL)
-
-        // fetchFasta(fastaUrl)
-        // alert(seq1)
-
+         
+        // fetch(fastaURL)
+        // .then(response => response.text())
+        // .then(data => {
+        //     var lines = data.split('\n')
+        //     var header = lines[0]
+        //     locus = lines.slice(1).join('')
+        // })
+        alert(locus)
+        //locus = document.getElementsByName("Locus")[0].value.toUpperCase(); //reference sequence
         locuslen = locus.length; 
         rightbs = document.getElementsByName("RightBS")[0].value.toUpperCase(); // sgRNA seq  
         RightBsLen = rightbs.length;
