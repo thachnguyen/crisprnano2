@@ -118,8 +118,6 @@
     
         <link href="./crisprnano2/stylesQuery.css" rel="stylesheet">
 
-
-
         </head>
         <body data-new-gr-c-s-check-loaded="14.1130.0" data-gr-ext-installed="">
             <nav class="navbar sticky-top navbar-expand-sm navbar-light">
@@ -193,6 +191,7 @@
                         <span class="popuptext" id="help8">Name of the study gene (Human only). Click to close.</span>
                     </div>
                     <br><input type="text" class="input_form" size="40" name="GeneName" value="KEAP1"><br>
+
                     <br>Nuclease Target Site (*): 
                     <div class="popup" onclick="myFunction4()">(? Click here!)
                         <span class="popuptext" id="help4">In this field the nuclease target site is entered. The sequence has to be in the same orientation as the reference sequence above. Click again to close</span>
@@ -239,6 +238,15 @@
                         </div> 
                         <br><input type="text" size="30" class="input_form" name="MutationThreshold" value="5"><br>
                     <p></p>
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" value="" id="Elibqcheck" checked>
+                        <label class="form-check-label" for="flexCheckChecked">
+                          Use EliBQ filter                <div class="popup" onclick="myFunction10()">(? Click here!)
+                            <span class="popuptext" id="help10">Filter FASTQ input files from ONT. CRISPRnano is filtering out the low quality regions to improve the alignment quality. Click again to close.</span>
+                        </div>
+                        </label>
+                      </div>
+
                     <br> <br><br>
                   </div>
 
@@ -259,8 +267,6 @@
                 <br>
                 Reference: <br>
                 Nguyen, T., Ramachandran, H., Martins, S., Krutmann, J. and Rossi, A., 2022. Identification of genome edited cells using CRISPRnano. Nucleic Acids Research.<br></a>
-               
-        
                 <br><br>
                 <br>
             </div>
@@ -398,7 +404,7 @@
                 </div>
             </div>
 
-            <div id="progress" style="display:none; padding: 10px; border: 10px solid #CCC; background: #EEE; width:20%; position:absolute; top:50%;left:30%">
+            <div id="progress" style="display:none; padding: 20px; border: 20px solid #CCC; background: #EEE; width:20%; position:absolute; top:50%;left:30%">
                     </div>
                 </div>
             </div>
@@ -407,8 +413,47 @@
 </body>
 
 <script>
+    // Trim low quality functions
+    function trimLowQuality(fileContent) {
+            const lines = fileContent.trim().split('\n');
+            var trimmedLines = [];
+            for (let i = 0; i < lines.length; i += 4) {
+                const trim_data = trimLowQualitySequence(lines[i], lines[i + 1], lines[i + 3])
+                const trimmedSequence_list = trim_data[0];
+                const trim_qual_list = trim_data[1]
+                if (trimmedSequence_list.length > 0) {
+                    for (let j = 0; j < trimmedSequence_list.length; j++) {
+                    trimmedLines.push(lines[i], trimmedSequence_list[j], '+', trim_qual_list[j]);
+                }
+            }
+            }
+            return trimmedLines.join('\n');         
+        }   
+
+    function trimLowQualitySequence(read_id, sequence, quality) {
+        const threshold = 10; // Adjust this threshold as needed
+        const min_length = 50;
+        var trimmedSequence_list = [];
+        var trim_qual_list = []; 
+        var trim_seq = ''
+        var trim_qual = '' 
+        for (let i = 0; i < quality.length; i++) {
+                if (quality.charCodeAt(i) - 33 >= threshold) {
+                trim_seq += sequence[i];
+                trim_qual += quality[i];
+                }
+                else if (trim_seq.length > min_length){
+                    trimmedSequence_list.push(trim_seq)
+                    trim_qual_list.push(trim_qual)
+                    trim_seq = ''
+                    trim_qual = '' 
+                }
+        }
+        return [trimmedSequence_list, trim_qual_list]
+    }
+
     // Alignment algorithms
-    // modified version of Smith Watermann algorithm 
+    // modified version of Smith Watermann algorithm using adaptive aligning
     // This program use some API from implementation by Prof Heng Li at https://github.com/lh3/bioseq-js
     /**
      * Encode a sequence string with table
@@ -716,38 +761,8 @@
         return [[oq.substr(bkp1-start, bkp2-bkp1), oq1.substr(bkp1-start, bkp2-bkp1)], aln_type, gap_len];
     }
 
-    var bst_nt5 = [
-        4, 4, 4, 4,  4, 4, 4, 4,  4, 4, 4, 4,  4, 4, 4, 4,
-        4, 4, 4, 4,  4, 4, 4, 4,  4, 4, 4, 4,  4, 4, 4, 4,
-        4, 4, 4, 4,  4, 4, 4, 4,  4, 4, 4, 4,  4, 4, 4, 4,
-        4, 4, 4, 4,  4, 4, 4, 4,  4, 4, 4, 4,  4, 4, 4, 4,
-        4, 0, 4, 1,  4, 4, 4, 2,  4, 4, 4, 4,  4, 4, 4, 4,
-        4, 4, 4, 4,  3, 4, 4, 4,  4, 4, 4, 4,  4, 4, 4, 4,
-        4, 0, 4, 1,  4, 4, 4, 2,  4, 4, 4, 4,  4, 4, 4, 4,
-        4, 4, 4, 4,  3, 4, 4, 4,  4, 4, 4, 4,  4, 4, 4, 4,
-        4, 4, 4, 4,  4, 4, 4, 4,  4, 4, 4, 4,  4, 4, 4, 4,
-        4, 4, 4, 4,  4, 4, 4, 4,  4, 4, 4, 4,  4, 4, 4, 4,
-        4, 4, 4, 4,  4, 4, 4, 4,  4, 4, 4, 4,  4, 4, 4, 4,
-        4, 4, 4, 4,  4, 4, 4, 4,  4, 4, 4, 4,  4, 4, 4, 4,
-        4, 4, 4, 4,  4, 4, 4, 4,  4, 4, 4, 4,  4, 4, 4, 4,
-        4, 4, 4, 4,  4, 4, 4, 4,  4, 4, 4, 4,  4, 4, 4, 4,
-        4, 4, 4, 4,  4, 4, 4, 4,  4, 4, 4, 4,  4, 4, 4, 4,
-        4, 4, 4, 4,  4, 4, 4, 4,  4, 4, 4, 4,  4, 4, 4, 4
-    ];
-    var slider = document.getElementById("myRange");
-    var output = document.getElementById("offset_var");
-    output.innerHTML = slider.value;
+ 
 
-    slider.oninput = function() {
-    output.innerHTML = this.value;
-    }
-
-    //Top Menu:
-    var SVGtab = new Array(10), SVGtabtext = new Array(10);
-    var tabtextcontent = ["GENOME EDITING ANALYZER", "RESULTS", "MANUAL & DOCUMENT", "ABOUT CRISPRnano"];
-    var BLAU=["rgb(0, 0, 0)","rgb(221,0,0)","rgb(255,206,0)"];
-
-    var currenttab = 0;
     function TabClicked(i)
     {
         if (i==0) document.getElementById("setup").style.display = "";
@@ -766,69 +781,7 @@
 
         currenttab = i;
     }
-    TabClicked(0);
     
-    var RightBsPos=0, RightBsLen=0;
-    var hits = Array(96);
-    //raw aligned dictionary
-    aln_dict = Array(96);
-    //filtered aligned dictionary
-    aln_dict_fil = Array(96)
-    aln_type_dict = Array(96)
-
-    for (var i=0; i<96; i++) {
-        hits[i] = Array(1000000);
-        aln_dict[i] = {}
-        aln_dict_fil[i] = {}
-        aln_type_dict[i] = {}
-        for (var ii=0; ii<1000000; ii++) {
-            hits[i][ii] = -1;
-        }
-    }
-    var fastaURL = "https://www.crisprnano.de/gene_fasta/"+document.getElementsByName("GeneName")[0].value+".fa"; 
-    var AlignmentPrecalc = new Array(96);
-    var locus, locuslen;
-
-    fetch(fastaURL)
-        .then(response => response.text())
-        .then(data => {
-            var lines = data.split('\n')
-            var header = lines[0]
-            locus = lines.slice(1).join('')
-        })
-        .catch(error => {
-            console.error('Error:', error)
-        });
-
-    var files;
-    var reader;
-    var CurrentFileId, CurrentFileChunk;
-    var MutationThreshold = 0
-    var BreakPoint;
-    var offset_DSB = 0;
-    var rightbs;
-    var aln_tracks = Array(96);
-    var aln_loc_seq = Array(96)
-    var PhredThreshold = 40; // 7 +33
-    for (var i=0; i<96; i++) {
-        aln_tracks[i] = ''
-    }
-    // indel location and seq
-    var aln_loc_seq = Array(96)
-    for (var i=0; i<96; i++) {
-        aln_loc_seq[i] = Array(1000000);
-        for (var ii=0; ii<1000000; ii++) {
-            aln_loc_seq[i][ii] = '';
-        }
-    }
-    //summary track
-    var sum_track = Array(96)
-    var summary_track = Array(96)
-    for (var i=0; i<96; i++){
-        sum_track[i] = 0;
-        summary_track[i] = Array(8); 
-    }
-
     //reverse comp function
     function ReverseComplement(A)
     {
@@ -842,79 +795,20 @@
         return dummy;
     }
 
-    function getFastaSequence() 
+    async function getFastaSequence() 
     {
-        locus = 0
-        alert(locus)
-        fetch(fastaURL)
-        .then(response => response.text())
-        .then(data => {
+        fastaURL = "https://www.crisprnano.de/gene_fasta/"+document.getElementsByName("GeneName")[0].value.toUpperCase()+".fa";
+        alert(fastaURL)
+        await fetch(fastaURL).then(response => response.text()).then(data => {
             var lines = data.split('\n')
             var header = lines[0]
             locus = lines.slice(1).join('')
+            document.getElementById("progress").style.display = 'Get fasta requence successfully';
         })
         .catch(error => {
-            console.error('Error:', error)
+            alert('Error:', error, '<br>Please check the gene name or fill the manual reference')
         });
     }
-
-    function Start()
-    {
-        document.getElementById("progress").style.display = '';
-         
-        // fetch(fastaURL)
-        // .then(response => response.text())
-        // .then(data => {
-        //     var lines = data.split('\n')
-        //     var header = lines[0]
-        //     locus = lines.slice(1).join('')
-        // })
-        alert(locus)
-        //locus = document.getElementsByName("Locus")[0].value.toUpperCase(); //reference sequence
-        locuslen = locus.length; 
-        rightbs = document.getElementsByName("RightBS")[0].value.toUpperCase(); // sgRNA seq  
-        RightBsLen = rightbs.length;
-
-        MutationThreshold = document.getElementsByName("MutationThreshold")[0].value;
-        offset_DSB = slider.value;
-        region_analyse = document.getElementsByName("region_analyse")[0].value;
-
-        //Find Target site in the wild type sequence:
-        if (RightBsLen == 0){
-            alert("No target site was entered. Please enter a valid sequence");
-            return;
-        }
-        RightBsPos = locus.search(rightbs);
-        if (RightBsPos == -1) {
-            RightBsPos = locus.search(ReverseComplement(rightbs));
-            if (RightBsPos == -1) {
-                alert("The target site was not found in the reference sequence. Please enter a valid sequence");
-                return;
-            } else {
-                alert("The sgRNA was reverse, please enter a reverse sequence sgRNA");
-            }
-        }
-        //breaking point on locus 
-        BreakPoint = RightBsPos + RightBsLen + offset_DSB*1     
-        // Test keap1: BreakPoint == 283
-    
-        var evt = document.getElementById('files');
-        files = evt.files;
-
-        if (files.length <= 0) {
-            alert("No files were specified. Please upload your fastq files");
-            return;
-        }
-        CurrentFileId = 0;
-        CurrentFileChunk = 0;
-        ReadNextFileChunk();
-    }
-
-    var RestFromLastChunk = "";
-    var chunksize = 20240*10240;
-    var chunksize1 = 1024*1024;
-
-
 
     function FileReceived()
     {
@@ -1087,11 +981,14 @@
     function ReadNextFileChunk()
     {
         reader = new FileReader();
+        document.getElementById('progress').innerHTML = "File "+(CurrentFileId+1)+":"+" processing. Please keep your web browser open"
+
         reader.onload = FileReceived;
         reader.readAsText(files[CurrentFileId].slice(CurrentFileChunk*chunksize, (CurrentFileChunk+1)*chunksize));
         //progress display:
         // document.getElementById('progress').innerHTML = "File "+(CurrentFileId+1)+": "+Math.round(CurrentFileChunk*chunksize/1000000)+" MB processed";
         document.getElementById('progress').innerHTML = "File "+(CurrentFileId+1)+":"+" processing. Please keep your web browser open"
+
     }
 
     function DrawPie()
@@ -1517,7 +1414,7 @@
         SelectClone(xx+12*yy);
     }
 
-    var CurrentAlignment = 0;
+
     function SelectClone(barcode)
     {
         if (AlignmentPrecalc[barcode]){
@@ -1747,17 +1644,147 @@
         var popup = document.getElementById("help9");
         popup.classList.toggle("show");
     }
-    function myFunction5() 
+    function myFunction10() 
     {
-        var popup = document.getElementById("help5");
+        var popup = document.getElementById("help10");
         popup.classList.toggle("show");
     }
 
+    function Start()
+    {
+        document.getElementById("progress").style.display = '';
+        
+        locus = document.getElementsByName("Locus")[0].value.toUpperCase(); //reference sequence
+        if (locus == ''){
+            getFastaSequence();
+        }
 
-    // function showHidenMenu(){
-    //             document.getElementById("menu-hide").style.display= "block" ;
-    //         }
+        locuslen = locus.length; 
+        rightbs = document.getElementsByName("RightBS")[0].value.toUpperCase(); // sgRNA seq  
+        RightBsLen = rightbs.length;
+
+        MutationThreshold = document.getElementsByName("MutationThreshold")[0].value;
+        offset_DSB = slider.value;
+        region_analyse = document.getElementsByName("region_analyse")[0].value;
+
+        //Find Target site in the wild type sequence:
+        if (RightBsLen == 0){
+            alert("No target site was entered. Please enter a valid sequence");
+            return;
+        }
+        RightBsPos = locus.search(rightbs);
+        if (RightBsPos == -1) {
+            RightBsPos = locus.search(ReverseComplement(rightbs));
+            if (RightBsPos == -1) {
+                alert("The target site was not found in the reference sequence. Please enter a valid sequence");
+                return;
+            } else {
+                alert("The sgRNA was reverse, please enter a reverse sequence sgRNA");
+            }
+        }
+        //breaking point on locus 
+        BreakPoint = RightBsPos + RightBsLen + offset_DSB*1     
+        // Test keap1: BreakPoint == 283
+    
+        var evt = document.getElementById('files');
+        files = evt.files;
+
+        if (files.length <= 0) {
+            alert("No files were specified. Please upload your fastq files");
+            return;
+        }
+        CurrentFileId = 0;
+        CurrentFileChunk = 0;
+        ReadNextFileChunk();
+    }
+
+    var bst_nt5 = [
+        4, 4, 4, 4,  4, 4, 4, 4,  4, 4, 4, 4,  4, 4, 4, 4,
+        4, 4, 4, 4,  4, 4, 4, 4,  4, 4, 4, 4,  4, 4, 4, 4,
+        4, 4, 4, 4,  4, 4, 4, 4,  4, 4, 4, 4,  4, 4, 4, 4,
+        4, 4, 4, 4,  4, 4, 4, 4,  4, 4, 4, 4,  4, 4, 4, 4,
+        4, 0, 4, 1,  4, 4, 4, 2,  4, 4, 4, 4,  4, 4, 4, 4,
+        4, 4, 4, 4,  3, 4, 4, 4,  4, 4, 4, 4,  4, 4, 4, 4,
+        4, 0, 4, 1,  4, 4, 4, 2,  4, 4, 4, 4,  4, 4, 4, 4,
+        4, 4, 4, 4,  3, 4, 4, 4,  4, 4, 4, 4,  4, 4, 4, 4,
+        4, 4, 4, 4,  4, 4, 4, 4,  4, 4, 4, 4,  4, 4, 4, 4,
+        4, 4, 4, 4,  4, 4, 4, 4,  4, 4, 4, 4,  4, 4, 4, 4,
+        4, 4, 4, 4,  4, 4, 4, 4,  4, 4, 4, 4,  4, 4, 4, 4,
+        4, 4, 4, 4,  4, 4, 4, 4,  4, 4, 4, 4,  4, 4, 4, 4,
+        4, 4, 4, 4,  4, 4, 4, 4,  4, 4, 4, 4,  4, 4, 4, 4,
+        4, 4, 4, 4,  4, 4, 4, 4,  4, 4, 4, 4,  4, 4, 4, 4,
+        4, 4, 4, 4,  4, 4, 4, 4,  4, 4, 4, 4,  4, 4, 4, 4,
+        4, 4, 4, 4,  4, 4, 4, 4,  4, 4, 4, 4,  4, 4, 4, 4
+    ];
+    
+    var slider = document.getElementById("myRange");
+    var output = document.getElementById("offset_var");
+    output.innerHTML = slider.value;
+
+    slider.oninput = function() {
+    output.innerHTML = this.value;
+    }
+
+    var currenttab = 0;
+    TabClicked(0);
+    
+    var RightBsPos=0, RightBsLen=0;
+    var hits = Array(96);
+    //raw aligned dictionary
+    aln_dict = Array(96);
+    //filtered aligned dictionary
+    aln_dict_fil = Array(96)
+    aln_type_dict = Array(96)
+
+    for (var i=0; i<96; i++) {
+        hits[i] = Array(1000000);
+        aln_dict[i] = {}
+        aln_dict_fil[i] = {}
+        aln_type_dict[i] = {}
+        for (var ii=0; ii<1000000; ii++) {
+            hits[i][ii] = -1;
+        }
+    }
+    
+    var fastaURL;
+    var AlignmentPrecalc = new Array(96);
+    var locus, locuslen;
+
+    var files;
+    var reader;
+    var CurrentFileId, CurrentFileChunk;
+    var MutationThreshold = 0
+    var BreakPoint;
+    var offset_DSB = 0;
+    var rightbs;
+    var aln_tracks = Array(96);
+    var aln_loc_seq = Array(96)
+    var PhredThreshold = 40; // 7 +33
+    for (var i=0; i<96; i++) {
+        aln_tracks[i] = ''
+    }
+    // indel location and seq
+    var aln_loc_seq = Array(96)
+    for (var i=0; i<96; i++) {
+        aln_loc_seq[i] = Array(1000000);
+        for (var ii=0; ii<1000000; ii++) {
+            aln_loc_seq[i][ii] = '';
+        }
+    }
+
+
+    var sum_track = Array(96)
+    var summary_track = Array(96)
+    for (var i=0; i<96; i++){
+        sum_track[i] = 0;
+        summary_track[i] = Array(8); 
+    }
+    
+    var CurrentAlignment = 0;
+
+    var RestFromLastChunk = "";
+    var chunksize = 20240*10240;
+    var chunksize1 = 1024*1024;
+
 </script>
-
-
 </html>
