@@ -822,6 +822,7 @@
         var gape = -1  // gap extent score
 
         var id = CurrentFileId;
+        CurrentFileChunk = 0;
 
         var readnum = 0;
         var str = ''
@@ -1803,7 +1804,7 @@
     var CurrentAlignment = 0;
 
     var RestFromLastChunk = "";
-    var chunksize = 20000*1024;
+    var chunksize = 20000*10240;
     // var chunksize = 1024*1024;
 
 </script>
