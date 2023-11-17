@@ -912,7 +912,7 @@
                 sum_track[id] += aln_dict[id][key];
             }
             for (let key in aln_dict[id]){
-                if (aln_dict[id][key]> MutationThreshold*sum_track[id]/100){
+                if ((aln_dict[id][key]> MutationThreshold*sum_track[id]/100)&&(key.length>region_analyse*2)){
                     aln_dict_fil[id][key] = aln_dict[id][key];
                 }
             }
@@ -923,7 +923,7 @@
             var sum = 0;
             var read_ambigous =0;
             var targetingOligo = 0;
-            for (var i=0; i<1000000; i++){
+            for (var i=0; i<100000; i++){
                 if (hits[id][i]>=0){
                     switch (hits[id][i]){
                         case 0:
@@ -981,14 +981,31 @@
     function ReadNextFileChunk()
     {
         reader = new FileReader();
-        document.getElementById('progress').innerHTML = "File "+(CurrentFileId+1)+":"+" processing. Please keep your web browser open"
+        // document.getElementById('progress').innerHTML = "File "+(CurrentFileId+1)+":"+" processing. Please keep your web browser open"
 
         reader.onload = FileReceived;
         reader.readAsText(files[CurrentFileId].slice(CurrentFileChunk*chunksize, (CurrentFileChunk+1)*chunksize));
         //progress display:
         // document.getElementById('progress').innerHTML = "File "+(CurrentFileId+1)+": "+Math.round(CurrentFileChunk*chunksize/1000000)+" MB processed";
-        document.getElementById('progress').innerHTML = "File "+(CurrentFileId+1)+":"+" processing. Please keep your web browser open"
+        //document.getElementById('progress').innerHTML = "File "+(CurrentFileId+1)+":"+" processing. Please keep your web browser open"
+        document.getElementById('progress').innerHTML = "File "+(CurrentFileId+1)+": "+Math.round(CurrentFileChunk*chunksize/1000000)+" MB processing. Please keep your web browser open";
+
+        
     }
+    function help(text)
+        {
+            var div = document.getElementById("help");
+            if (!text || text=="")
+            {
+                div.style.display = "none";
+                //document.body.onclick="";
+                return;
+            }
+            div.innerHTML = text+"<br><button onclick='help();'>close</button>";
+            div.style.display = "";
+
+            return false;
+        }
 
     function DrawPie()
     {
@@ -1744,7 +1761,7 @@
         aln_dict[i] = {}
         aln_dict_fil[i] = {}
         aln_type_dict[i] = {}
-        for (var ii=0; ii<1000000; ii++) {
+        for (var ii=0; ii<100000; ii++) {
             hits[i][ii] = -1;
         }
     }
@@ -1769,8 +1786,8 @@
     // indel location and seq
     var aln_loc_seq = Array(96)
     for (var i=0; i<96; i++) {
-        aln_loc_seq[i] = Array(1000000);
-        for (var ii=0; ii<1000000; ii++) {
+        aln_loc_seq[i] = Array(100000);
+        for (var ii=0; ii<100000; ii++) {
             aln_loc_seq[i][ii] = '';
         }
     }
@@ -1786,8 +1803,8 @@
     var CurrentAlignment = 0;
 
     var RestFromLastChunk = "";
-    var chunksize = 20240*10240;
-    var chunksize1 = 1024*1024;
+    var chunksize = 20000*1024;
+    // var chunksize = 1024*1024;
 
 </script>
 </html>
