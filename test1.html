@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>FASTA Sequence Retrieval</title>
-    
 </head>
 <body>
     <h1>FASTA Sequence Retrieval</h1>
@@ -14,8 +13,11 @@
     <div id="sequenceResult"></div>
 
     <script>
+        // Declare a global variable to store the sequence
+        var globalSequence = '';
+
         function getFastaSequence() {
-            const fastaURL = document.getElementById('fastaURL').value;
+            var fastaURL = document.getElementById('fastaURL').value;
 
             fetch(fastaURL)
                 .then(response => response.text())
@@ -23,6 +25,10 @@
                     var lines = data.split('\n');
                     var header = lines[0];
                     var sequence = lines.slice(1).join('');
+                    
+                    // Assign the sequence to the global variable
+                    globalSequence = sequence;
+
                     document.getElementById('sequenceResult').innerHTML = '<p>Header: ' + header + '</p><p>Sequence:</p><pre>' + sequence + '</pre>';
                 })
                 .catch(error => {
