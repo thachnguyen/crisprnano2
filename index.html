@@ -813,7 +813,10 @@
                     alert("The sgRNA was reverse, please enter a reverse sequence sgRNA");
                 }
             }
-            //breaking point on locus 
+            //breaking point on locus
+            locus = locus.substring(RightBsPos -30, RightBsPos + rightbs.length +30) 
+            RightBsPos = locus.search(rightbs);
+
             BreakPoint = RightBsPos + RightBsLen + offset_DSB*1     
             // Test keap1: BreakPoint == 283
         
@@ -865,7 +868,7 @@
                 var phred = original.slice(cursor3+1,cursor4); 
                 var readlen = read.length;
                 var aln_type;
-                var target = document.getElementsByName('Locus')[0].value.replace(/[\s\n]+/g, '')
+                var target = locus
                 var targetingOligo = document.getElementsByName("TargetingOligo")[0].value.toUpperCase(); //TargetingOligo
                 var mean_phred = 0;
                 for (let pos = 0; pos < readlen; pos++) {
