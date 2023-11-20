@@ -190,6 +190,7 @@
                     <div class="popup" onclick="myFunction8()">(? Click here!)
                         <span class="popuptext" id="help8">Name of the study gene (Human only). Click to close.</span>
                     </div>
+        
                     <input type="submit" name="submit" value="Click here to get your fasta" class="btn btn-secondary btn-sm" id="get_fasta" onclick="getFastaSequence();">
                     <br>
                     <br>
@@ -206,29 +207,38 @@
                     </div>
                     <br><input type="text" class="input_form" size="40" name="TargetingOligo" value=""><br>
                     <br>
-                    <input type="submit" name="submit" value="SUBMIT" class="btn btn-primary btn btn-info btn-lg float-centre" id="submit" onclick="Start();">
+                    <input type="submit" name="submit" value="SUBMIT" class="btn btn-primary btn-lg" id="submit" onclick="Start();">
                     <br>
                 </div>
 
                 <div class="column">
                     <h3>Optional parameter</h3>
-                    
-                    Reference Sequence (if genename given, leave it blank):                 
+                    Sequence (if genename given, leave it blank):                 
                     <div class="popup" onclick="myFunction3()">(? Click here!)
                         <span class="popuptext" id="help3">Reference amplicon length should be in the range of 200-300 bases with the nuclease target site located roughly in the middle. You can get the reference from Ensembl link below. Click again to close</span>
-                    </div>              
+                    </div>
                     <br><input type="text" class="input_form" size="30" name="Locus" value=""> 
-                    <br><br>              
+                    <br>
+                    <br>             
                     <!-- <a href="http://ftp.ensembl.org/pub/release-105/fasta/homo_sapiens/dna/">(Ensembl reference)</a><br> -->
-
-
-                    <p>Drag the slider to the left or right to change the interested region</p>
+                    Sequencing method:                 
+                    <div class="popup" onclick="myFunction3()">(? Click here!)
+                        <span class="popuptext" id="help3">Reference amplicon length should be in the range of 200-300 bases with the nuclease target site located roughly in the middle. You can get the reference from Ensembl link below. Click again to close</span>
+                    </div>
+                    <select id="seq_method" name="seq_method">
+                        <option value="ONT">Nanopore</option>
+                        <option value="Il_pac">Illumina or PacBio</option>
+                      </select>
+                    <br>  <br> 
+                    Drag the slider to change the interested region
+                    <div class="popup" onclick="myFunction6()">(? Click here!)
+                        <span class="popuptext" id="help6">You can shift the centre of interest region with respect to the double strand breakpoint (DSB) to the left or right. Default value is double strand breaking point 0. Click to close</span>
+                    </div>
                 <div class="slidecontainer">
                     <input type="range" min="-30" max="30" value="0" class="slider" id="myRange" oninput="this.nextElementSibling.value = this.value">
-                    <p>Offset w.r.t DSP: <span id="offset_var">0</span> 
-                        </p><div class="popup" onclick="myFunction6()">(? Click here!)
-                            <span class="popuptext" id="help6">You can shift the centre of interest region with respect to the double strand breakpoint (DSB) to the left or right. Default value is double strand breaking point 0. Click to close</span>
-                        </div>
+                    Offset w.r.t DSP: <span id="offset_var">0</span> 
+                    <br>
+                        
                         <br>Interested region (optional) +/- bp: 
                         <div class="popup" onclick="myFunction5()">(? Click here!)
                             <span class="popuptext" id="help5"> For ONT reads, it is recommended to use -/+15 bases around the predicted DNA lesion. Larger regions are prone to false positive indels. Larger regions (total of 200-250 bp) can be safely used with Illumina reads. You can drag and drop the central point of the predicted double strand break in the genomic sequence to the left or to the right. Default value 0 is double strand breaking point- Crisprnano will use the first index of sgRNA mapped on reference. Click again to close</span>
@@ -843,7 +853,6 @@
             var phred = original.slice(cursor3+1,cursor4); 
             var readlen = read.length;
             var aln_type;
-            // var target = document.getElementsByName('Locus')[0].value.replace(/[\s\n]+/g, '')
             var target = locus;
             var targetingOligo = document.getElementsByName("TargetingOligo")[0].value.toUpperCase(); //TargetingOligo
             var mean_phred = 0;
@@ -855,6 +864,7 @@
             if (mean_phred > PhredThreshold){ 
                 if ((targetingOligo !="") &&(read.includes(targetingOligo)||read.includes(ReverseComplement(targetingOligo))||read.includes(ReverseString(targetingOligo))||read.includes(ReverseComplement(ReverseString(targetingOligo))))){
                     aln_type = 7;
+                    // remove this part in knockin, speed up the program
                     hits[id][readnum] = aln_type
                     var rst = bsa_align(target, read, [ms, mms], [gapo, gape]);
                     var str1 = ''
@@ -874,8 +884,21 @@
                     aln_tracks[id] +=str1
                     hits[id][readnum] = aln_type
                     readnum++;
-                } else { 
+                } else {
+                    // UPDATE v2.0 checking 4 posiblities of read 
                     var rst = bsa_align(target, read, [ms, mms], [gapo, gape]);
+                    if (rst[0] < 30){
+                        read = ReverseComplement(read)
+                        rst = bsa_align(target, read, [ms, mms], [gapo, gape])
+                        if (rst[0] < 30){
+                        read = ReverseString(read)
+                        rst = bsa_align(target, read, [ms, mms], [gapo, gape])
+                            if (rst[0] < 30){
+                            read = ReverseString(ReverseComplement(read))
+                            rst = bsa_align(target, read, [ms, mms], [gapo, gape])
+                            }
+                            }
+                        }
                     var str1 = ''
                     var fmt1 = bsa_cigar2gaps_breakpoint(target, read, rst[1], rst[2], BreakPoint-region_analyse*1, BreakPoint + region_analyse*1);
                     var fmt = fmt1[0]
@@ -1374,7 +1397,7 @@
         SVGObj.setAttribute("font-family", "sans-serif");
         SVGObj.setAttribute("font-weight", "100");
         SVGObj.setAttribute("x", midx+40);
-        SVGObj.setAttribute("y", midy+60);
+        SVGObj.setAttribute("y", midy+53);
         SVGObj.setAttribute("font-size", "12");
         SVGObj.textContent = "in-frame indels";
         svg.appendChild(SVGObj);
@@ -1382,7 +1405,7 @@
         SVGObj.setAttribute("font-family", "sans-serif");
         SVGObj.setAttribute("font-weight", "100");
         SVGObj.setAttribute("x", midx+40);
-        SVGObj.setAttribute("y", midy+60+80);
+        SVGObj.setAttribute("y", midy+53+80);
         SVGObj.setAttribute("font-size", "12");
         SVGObj.textContent = "out-of-frame indels";
         svg.appendChild(SVGObj);
@@ -1390,7 +1413,7 @@
         SVGObj.setAttribute("font-family", "sans-serif");
         SVGObj.setAttribute("font-weight", "100");
         SVGObj.setAttribute("x", midx+40);
-        SVGObj.setAttribute("y", midy+60+120);
+        SVGObj.setAttribute("y", midy+53+120);
         SVGObj.setAttribute("font-size", "12");
         SVGObj.textContent = "no indel";
         svg.appendChild(SVGObj);
@@ -1398,7 +1421,7 @@
         SVGObj.setAttribute("font-family", "sans-serif");
         SVGObj.setAttribute("font-weight", "100");
         SVGObj.setAttribute("x", midx+40);
-        SVGObj.setAttribute("y", midy+60+140);
+        SVGObj.setAttribute("y", midy+53+140);
         SVGObj.setAttribute("font-size", "12");
         SVGObj.textContent = "targeted mutagenesis";
         svg.appendChild(SVGObj);
