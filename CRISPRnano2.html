@@ -1699,7 +1699,6 @@
         {
             locus = document.getElementsByName("Locus")[0].value.toUpperCase(); //reference sequence
         }
-        alert(locus)
         rightbs = document.getElementsByName("RightBS")[0].value.toUpperCase(); // sgRNA seq  
         
         MutationThreshold = document.getElementsByName("MutationThreshold")[0].value;
@@ -1724,7 +1723,7 @@
 
         //Update new locus, and sgRNA position 
 
-        locus = locus.substring(RightBsPos -20, RightBsPos + rightbs.length +20)
+        // locus = locus.substring(RightBsPos -30, RightBsPos + rightbs.length +30)
         RightBsPos = locus.search(rightbs);
         //breaking point on locus 
         BreakPoint = RightBsPos + rightbs.length + offset_DSB*1     
