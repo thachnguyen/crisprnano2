@@ -889,24 +889,29 @@
                 } else {
                     // UPDATE v2.0 checking 4 posiblities of read 
                     var rst = bsa_align(is_local, target, read, [ms, mms], [gapo, gape]);
-                    if (rst[0] < 30){
-                        read = ReverseComplement(read)
-                        rst = bsa_align(is_local, target, read, [ms, mms], [gapo, gape]);
-                        if (rst[0] < 30){
-                        read = ReverseString(read)
-                        rst = bsa_align(is_local, target, read, [ms, mms], [gapo, gape]);
-                            if (rst[0] < 30){
-                            read = ReverseString(ReverseComplement(read))
-                            rst = bsa_align(is_local, target, read, [ms, mms], [gapo, gape]);
-                            }
-                            }
-                        }
+                    // if (rst[0] < 20){
+                    //     read = ReverseComplement(read)
+                    //     rst = bsa_align(is_local, target, read, [ms, mms], [gapo, gape]);
+                    //     // alert('t1 '+rst[0])
+                    //     if (rst[0] < 20){
+                    //     read = ReverseString(read)
+                    //     rst = bsa_align(is_local, target, read, [ms, mms], [gapo, gape]);
+                    //         // alert('t2 '+rst[0])
+                    //         if (rst[0] < 20){
+                    //         read = ReverseString(ReverseComplement(read))
+                    //         rst = bsa_align(is_local, target, read, [ms, mms], [gapo, gape]);
+                    //         // alert('t3 '+rst[0])
+                    //         }
+                    //         }
+                    //     }
                     var str1 = ''
                     var fmt1 = bsa_cigar2gaps_breakpoint(target, read, rst[1], rst[2], BreakPoint-region_analyse*1, BreakPoint + region_analyse*1);
                     var fmt = fmt1[0]
+                    alert(fmt1)
                     aln_type = fmt1[1]
                     str1 += fmt[0] + '\n';
                     str1 += fmt[1] + '\n';
+                  
                     //aggregate aln track into dictionary
                     if (aln_type !=0){ 
                         if (aln_dict[id].hasOwnProperty(str1)){
@@ -938,8 +943,8 @@
                 sum_track[id] += aln_dict[id][key];
             }
             for (let key in aln_dict[id]){
-                // if ((aln_dict[id][key]> MutationThreshold*sum_track[id]/100)&&(key.length>region_analyse*2)){
-                if (aln_dict[id][key]> MutationThreshold*sum_track[id]/100){
+                if ((aln_dict[id][key]> MutationThreshold*sum_track[id]/100)&&(key.length>region_analyse*2)){
+                // if (aln_dict[id][key]> MutationThreshold*sum_track[id]/100){
 
                     aln_dict_fil[id][key] = aln_dict[id][key];
                 }
@@ -1796,11 +1801,12 @@
     var fastaURL;
     var AlignmentPrecalc = new Array(96);
     var locus = '';
+    var region_analyse;
 
     var files;
     var reader;
     var CurrentFileId, CurrentFileChunk;
-    var MutationThreshold = 0
+    var MutationThreshold = 1
     var BreakPoint;
     var offset_DSB = 0;
     var rightbs;
