@@ -1,3 +1,4 @@
+
 <html><head><meta http-equiv="Content-Type" content="text/html; charset=windows-1252"><meta http-equiv="Content-Script-Type" content="text/javascript">
     <style>
         h1{
@@ -883,7 +884,7 @@
                         aln_dict[id][str1] = 1
                         aln_type_dict[id][str1] = aln_type
                     }
-                    aln_tracks[id] +=str1
+  
                     hits[id][readnum] = aln_type
                     readnum++;
                 } else {
@@ -917,7 +918,6 @@
                             aln_type_dict[id][str1] = aln_type
                         }
                     }
-                aln_tracks[id] +=str1
                 hits[id][readnum] = aln_type
                 readnum++;       
             }
@@ -998,10 +998,6 @@
         if (CurrentFileId < files.length && CurrentFileId<96) {
             setTimeout("ReadNextFileChunk();",10);
         } else {
-            // for DEBUG
-            // document.getElementById('out').value = aln_tracks[0]
-            //document.getElementById('out').value = JSON.stringify(aln_dict_fil[0])
-            //document.getElementById('out').value = aln_tracks[0]
             DrawPie();
         }
     }
@@ -1805,13 +1801,10 @@
     var BreakPoint;
     var offset_DSB = 0;
     var rightbs;
-    var aln_tracks = Array(96);
+ 
     var aln_loc_seq = Array(96)
     var PhredThreshold = 40; // 7 +33
-    for (var i=0; i<96; i++) {
-        aln_tracks[i] = ''
-    }
-    // indel location and seq
+ 
     var aln_loc_seq = Array(96)
     for (var i=0; i<96; i++) {
         aln_loc_seq[i] = Array(100000);
