@@ -552,7 +552,7 @@
      * higher 28 bits keeps the length and lower 4 bits the operation in order of
      * "MIDNSH".
      */
-     function bsa_align(is_local, target, query, matrix, gapsc, w, table)
+    function bsa_align(is_local,target, query, matrix, gapsc, w, table)
         {
             // convert bases to integers
             if (table == null) table = bst_nt5;
@@ -649,128 +649,29 @@
         }
 
     // generate cigar to gap in breakpoint windows, bkp11, bkp22 is offset interest region of ref wrt gap add-in ref 
-    function bsa_cigar2gaps_breakpoint(target, query, start, cigar, bkp1, bkp2)
+    function bsa_cigar2gaps_breakpoint(target, query, start, cigar)
     {
-        var oq = '', ot = '', mid = '', oq1 = '', lq = 0, lt = start;
-        var bkp11 = bkp1;
-        var bkp22 = bkp2;
-        var aln_type = 0;
-        var gap_len = 0;
+        var indel_dict = []
+        lq = 0, lt = start;
+        var aln_type = 0, oq1 = '';
         for (var k = 0; k < cigar.length; ++k) {
             var op = cigar[k]&0xf, len = cigar[k]>>4;
-            //var len1 = Math.floor(len/3)
-            //update breakpoints only, no update aln_type
-            // first check the alignment start point position
-            if (start > bkp11){
-                aln_type=0;
-                continue;
-            } 
-            else if (lt + len <= bkp11){
-                if (op == 0) { // match
-                    oq += query.substr(lq, len);
-                    ot += target.substr(lt, len);
-                    oq1 += Array(len).fill('\xa0').join('');
-                    lq += len, lt += len;
+            if (op == 0) { // match
+                lq += len, lt += len;
                 } else if (op == 1) { // insertion (only update bkp11, 22 for insertion in reference sequence)
                     oq1 += query.substr(lq, len);
                     lq += len;
-                    bkp11 += len
-                    bkp22 += len
+                    indel_dict.push(lt+'I'+oq1);
+                    lt += len
                 } else if (op == 2) { // deletion
-                    oq += Array(len+1).join("-");
-                    ot += target.substr(lt, len);
+                    indel_dict.push(lt+'D'+len);
                     lt += len;
-                    oq1 += Array(len).fill('\xa0').join('');
+                    //lq +=len
                 } else if (op == 4) { // soft clip
                     lq += len;
                 }
             }
-            // update aln_type ONE time, otherwise assign 'ambigous read' 
-            else if (bkp22 >= lt+len){
-                if (op == 0) { // match ! ONLY UPDATE ONCE
-                    oq += query.substr(lq, len);
-                    ot += target.substr(lt, len);
-                    oq1 += Array(len).fill('\xa0').join('');
-                    lq += len, lt += len;
-                    if (aln_type==0){
-                        aln_type = 1;
-                    }
-                } else if ((op == 1)||(op == 2)) { // Combine indels
-                    gap_len = len;
-                    if (op == 1) {
-                        oq1 += query.substr(lq, len);
-                        lq += len;
-                    }
-                    else if (op == 2){
-                        ot += target.substr(lt, len);
-                        oq1 += Array(len).fill('\xa0').join('');
-                        oq += Array(len+1).join("-");
-                        lt += len;
-                    } 
-                    
-                    if (len%3 == 0){
-                        //check previous state
-                        if ((aln_type==0)||(aln_type==1)){
-                            aln_type =2;
-                        }
-                        else {
-                            // if aln_type already indel so it 's ambigious
-                            aln_type = 8  // ambigous
-                        }     
-                    }
-                    else{
-                        if ((aln_type==0)||(aln_type==1)){
-                            aln_type =3;
-                        }
-                        else {
-                            aln_type = 8  // ambigous
-                        }
-                    }
-                } 
-                else if (op == 4) { // soft clip
-                    lq += len;
-                }
-            }
-            else {   // bk point cover single windows
-                if (op == 0) { // match
-                    oq += query.substr(lq, len);
-                    ot += target.substr(lt, len);
-                    oq1 += Array(len).fill('\xa0').join('');
-                    lq += len, lt += len;
-                    if (aln_type==0){
-                        aln_type = 1 //no indel
-                    }
-                } else if ((op == 1)||(op == 2)) { // indel
-                    if (op == 1) {
-                        oq1 += query.substr(lq, len);
-                    }
-                    else if (op == 2){
-                        ot += target.substr(lt, len);
-                        oq1 += Array(len).fill('\xa0').join('');
-                        oq += Array(len+1).join("-");
-                    }  
-                    lq += len;
-                    if (len%3 == 0){
-                        if (aln_type==0){
-                            aln_type =2;
-                            }
-                    } else{
-                        if (aln_type==0){
-                            aln_type =3;
-                        }
-                    }
-                    
-                } 
-                else if (op == 4) { // soft clip
-                    lq += len;
-                }
-            }    
-        }
-        var ut = ot.toUpperCase();
-        var uq = oq.toUpperCase();
-        for (var k = 0; k < ut.length; ++k)
-            mid += ut.charAt(k) == uq.charAt(k)? '|' : ' ';
-        return [[oq.substr(bkp1-start, bkp2-bkp1), oq1.substr(bkp1-start, bkp2-bkp1)], aln_type, gap_len];
+        return indel_dict;
     }
 
  
@@ -836,8 +737,9 @@
         var id = CurrentFileId;
         CurrentFileChunk = 0;
 
-        var readnum = 0;
-        var str = ''
+        var str = '';
+        aln_dict[id]['Oligo'] = 0;
+        aln_dict[id]['sum_aligned_read'] = 0;
         while (true) {
             var cursor1 = cursor;
             while (++cursor1<origlen && original[cursor1] != "\n");
@@ -864,65 +766,54 @@
             mean_phred = mean_phred/readlen; 
         
             if (mean_phred > PhredThreshold){ 
-                if ((targetingOligo !="") &&(read.includes(targetingOligo)||read.includes(ReverseComplement(targetingOligo))||read.includes(ReverseString(targetingOligo))||read.includes(ReverseComplement(ReverseString(targetingOligo))))){
+                if ((targetingOligo !="") &&(read.includes(targetingOligo)||read.includes(ReverseComplement(targetingOligo))||read.includes(ReverseString(targetingOligo))||read.includes(ReverseComplement(ReverseString(targetingOligo)))))
+                {
                     aln_type = 7;
                     // remove this part in knockin, speed up the program
-                    hits[id][readnum] = aln_type
-                    var rst = bsa_align(is_local, target, read, [ms, mms], [gapo, gape]);
-                    var str1 = ''
-                    var fmt1 = bsa_cigar2gaps_breakpoint(target, read, rst[1], rst[2], BreakPoint-region_analyse*1, BreakPoint + region_analyse*1);
-                    var fmt = fmt1[0]
-                                
-                    str1 += fmt[0] + '\n';
-                    str1 += fmt[1] + '\n';
-                    
-                    if (aln_dict[id].hasOwnProperty(str1)){
-                        aln_dict[id][str1]+=1
-                    }
-                    else {
-                        aln_dict[id][str1] = 1
-                        aln_type_dict[id][str1] = aln_type
-                    }
-                    aln_tracks[id] +=str1
-                    hits[id][readnum] = aln_type
-                    readnum++;
-                } else {
+                    aln_dict[id]['Oligo']+=1
+                    aln_dict[id]['sum_aligned_read'] +=1
+                } 
+                else 
+                {
                     // UPDATE v2.0 checking 4 posiblities of read 
                     var rst = bsa_align(is_local, target, read, [ms, mms], [gapo, gape]);
-                    // if (rst[0] < 30){
-                    //     read = ReverseComplement(read)
-                    //     rst = bsa_align(target, read, [ms, mms], [gapo, gape])
-                    //     if (rst[0] < 30){
-                    //     read = ReverseString(read)
-                    //     rst = bsa_align(target, read, [ms, mms], [gapo, gape])
-                    //         if (rst[0] < 30){
-                    //         read = ReverseString(ReverseComplement(read))
-                    //         rst = bsa_align(target, read, [ms, mms], [gapo, gape])
-                    //         }
-                    //         }
-                    //     }
-                    var str1 = ''
-                    var fmt1 = bsa_cigar2gaps_breakpoint(target, read, rst[1], rst[2], BreakPoint-region_analyse*1, BreakPoint + region_analyse*1);
-                    var fmt = fmt1[0]
-                    aln_type = fmt1[1]
-                    str1 += fmt[0] + '\n';
-                    str1 += fmt[1] + '\n';
-                    //aggregate aln track into dictionary
-                    if (aln_type !=0){ 
-                        if (aln_dict[id].hasOwnProperty(str1)){
-                            aln_dict[id][str1]+=1
+                    if (rst[0] < 20){
+                        read = ReverseComplement(read)
+                        rst = bsa_align(is_local, target, read, [ms, mms], [gapo, gape]);
+                        // alert('t1 '+rst[0])
+                        if (rst[0] < 20){
+                        read = ReverseString(read)
+                        rst = bsa_align(is_local, target, read, [ms, mms], [gapo, gape]);
+                            // alert('t2 '+rst[0])
+                            if (rst[0] < 20){
+                            read = ReverseString(ReverseComplement(read))
+                            rst = bsa_align(is_local, target, read, [ms, mms], [gapo, gape]);
+                            // alert('t3 '+rst[0])
+                            }
+                            else {
+                            aln_dict[id]['sum_aligned_read']+=1
+                        }
+                            }
+                            else {
+                            aln_dict[id]['sum_aligned_read']+=1
+                        }
                         }
                         else {
-                            aln_dict[id][str1] = 1
-                            aln_type_dict[id][str1] = aln_type
+                            aln_dict[id]['sum_aligned_read']+=1
                         }
-                    }
-                aln_tracks[id] +=str1
-                hits[id][readnum] = aln_type
-                readnum++;       
+                    var str1 = ''
+                    var fmt1 = bsa_cigar2gaps_breakpoint(target, read, rst[1], rst[2]);                 
+                    //aggregate aln track into dictionary
+                    for (const str1 of fmt1)
+                            if (aln_dict[id].hasOwnProperty(str1)){
+                                aln_dict[id][str1]+=1
+                            }
+                            else {
+                                aln_dict[id][str1] = 1
+                        }
+                    }     
             }
         }
-    }
         RestFromLastChunk = original.substr(cursor);
         
         //lines = "";
@@ -932,15 +823,10 @@
         //load the next chunk of data:
         CurrentFileChunk++;
         if ((CurrentFileChunk)*chunksize >= files[CurrentFileId].size) //end of file -> next file
-        {
-            //compute number of aligned read
+        {            
             for (let key in aln_dict[id]){
-                sum_track[id] += aln_dict[id][key];
-            }
-            for (let key in aln_dict[id]){
-                if ((aln_dict[id][key]> MutationThreshold*sum_track[id]/100)&&(key.length>region_analyse*2 -5)){
+                if ((aln_dict[id][key]> MutationThreshold*sum_track[id]/100)&&(key.length>region_analyse*2)){
                 // if (aln_dict[id][key]> MutationThreshold*sum_track[id]/100){
-
                     aln_dict_fil[id][key] = aln_dict[id][key];
                 }
             }
@@ -1495,7 +1381,7 @@
         SVGObj.setAttribute("x", 40);
         SVGObj.setAttribute("y", ysize+delypos);
         SVGObj.setAttribute("font-size", "14");
-        SVGObj.textContent = "<b>SUMMARY: Gene: </b> "+document.getElementsByName("GeneName")[0].value+"   |   File "+GetWellPos(barcode)+": "+files[barcode].name;
+        SVGObj.textContent = "SUMMARY: Gene: "+document.getElementsByName("GeneName")[0].value+"   |   File "+GetWellPos(barcode)+": "+files[barcode].name;
         svg.appendChild(SVGObj);
         delypos+=30;
 
@@ -1796,12 +1682,12 @@
     var fastaURL;
     var AlignmentPrecalc = new Array(96);
     var locus = '';
+    var region_analyse;
 
     var files;
-    var region_analyse = 30;
     var reader;
     var CurrentFileId, CurrentFileChunk;
-    var MutationThreshold = 0
+    var MutationThreshold = 1
     var BreakPoint;
     var offset_DSB = 0;
     var rightbs;
