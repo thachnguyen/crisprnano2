@@ -945,13 +945,14 @@
             }
             
             // sort aligment tract
-            var items = Object.keys(aln_dict[id]).map(function(key) {
-            return [key, dict[key]];
+            var items = Object.keys(aln_dict_fil[id]).map(function(key) {
+            return [key, aln_dict_fil[id][key]];
             });
             // Sort the array based on the second element
             items.sort(function(first, second) {
             return second[1] - first[1];
             });
+            aln_dict_fil[id] = Object.fromEntries(items.map(([v, k]) => [v, k]));
 
             var not_align = 0;
             var no_indel = 0; 
@@ -1018,14 +1019,10 @@
     function ReadNextFileChunk()
     {
         reader = new FileReader();
-        // document.getElementById('progress').innerHTML = "File "+(CurrentFileId+1)+":"+" processing. Please keep your web browser open"
-
         reader.onload = FileReceived;
-        reader.readAsText(files[CurrentFileId].slice(CurrentFileChunk*chunksize, (CurrentFileChunk+1)*chunksize));
-        //progress display:
-        // document.getElementById('progress').innerHTML = "File "+(CurrentFileId+1)+": "+Math.round(CurrentFileChunk*chunksize/1000000)+" MB processed";
+        reader.readAsText(files[CurrentFileId]);
         //document.getElementById('progress').innerHTML = "File "+(CurrentFileId+1)+":"+" processing. Please keep your web browser open"
-        document.getElementById('progress').innerHTML = "File "+(CurrentFileId+1)+": "+Math.round(CurrentFileChunk*chunksize/1000000)+" MB processing. Please keep your web browser open";
+        document.getElementById('progress').innerHTML = "File "+(CurrentFileId+1)+": "+"processing. Please keep your web browser open";
     }
     function help(text)
         {
@@ -1844,8 +1841,8 @@
     var CurrentAlignment = 0;
 
     var RestFromLastChunk = "";
-    var chunksize = 20240*10240;
-    // var chunksize = 1024*1024;
+    // var chunksize = 20240*10240;
+    var chunksize = 102400*1024;
 
 </script>
 </html>
