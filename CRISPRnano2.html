@@ -1,4 +1,3 @@
-
 <html><head><meta http-equiv="Content-Type" content="text/html; charset=windows-1252"><meta http-equiv="Content-Script-Type" content="text/javascript">
     <style>
         h1{
@@ -426,7 +425,7 @@
               
 </body>
 
-<script>
+<script> 
     // Trim low quality functions
     function trimLowQuality(fileContent) {
             const lines = fileContent.trim().split('\n');
@@ -553,17 +552,15 @@
      * higher 28 bits keeps the length and lower 4 bits the operation in order of
      * "MIDNSH".
      */
-     function bsa_align(is_local, target, query, matrix, gapsc, w, table)
+     function bsa_align(is_local, target, query, matrix, gapsc)
         {
             // convert bases to integers
-            if (table == null) table = bst_nt5;
-            var t = bsg_enc_seq(target, table);
-            var qp = bsa_gen_query_profile(query, matrix, table);
+            var t = bsg_enc_seq(target, bst_nt5);
+            var qp = bsa_gen_query_profile(query, matrix, bst_nt5);
             var qlen = qp[0].length;
-
             // adjust band width
             var max_len = qlen > t.length? qlen : t.length;
-            w = w == null || w < 0? max_len : w;
+            var w = true;
             var len_diff = t.target > qlen? t.target - qlen : qlen - t.target;
             w = w > len_diff? w : len_diff;
             
@@ -884,24 +881,26 @@
                         aln_dict[id][str1] = 1
                         aln_type_dict[id][str1] = aln_type
                     }
-  
+                    aln_tracks[id] +=str1
                     hits[id][readnum] = aln_type
                     readnum++;
                 } else {
                     // UPDATE v2.0 checking 4 posiblities of read 
-                    var rst = bsa_align(is_local, target, read, [ms, mms], [gapo, gape]);
-                    // if (rst[0] < 30){
+                    var rst = bsa_align(is_local, target, ReverseComplement(read), [ms, mms], [gapo, gape]);
+                    // if (rst[0] < 50){
                     //     read = ReverseComplement(read)
-                    //     rst = bsa_align(target, read, [ms, mms], [gapo, gape])
-                    //     if (rst[0] < 30){
-                    //     read = ReverseString(read)
-                    //     rst = bsa_align(target, read, [ms, mms], [gapo, gape])
-                    //         if (rst[0] < 30){
-                    //         read = ReverseString(ReverseComplement(read))
-                    //         rst = bsa_align(target, read, [ms, mms], [gapo, gape])
-                    //         }
-                    //         }
-                    //     }
+                    //     rst1 = bsa_align(target, read, [ms, mms], [gapo, gape])
+                    // }
+                        // if (rst[0] < 40){
+                        // read = ReverseString(read)
+                        // rst = bsa_align(target, read, [ms, mms], [gapo, gape])
+                        //     if (rst[0] < 40){
+                        //     read = ReverseString(ReverseComplement(read))
+                        //     rst = bsa_align(target, read, [ms, mms], [gapo, gape])
+                        //     }
+                        //     }
+                        // }
+                    
                     var str1 = ''
                     var fmt1 = bsa_cigar2gaps_breakpoint(target, read, rst[1], rst[2], BreakPoint-region_analyse*1, BreakPoint + region_analyse*1);
                     var fmt = fmt1[0]
@@ -918,6 +917,7 @@
                             aln_type_dict[id][str1] = aln_type
                         }
                     }
+                aln_tracks[id] +=str1
                 hits[id][readnum] = aln_type
                 readnum++;       
             }
@@ -938,12 +938,21 @@
                 sum_track[id] += aln_dict[id][key];
             }
             for (let key in aln_dict[id]){
-                if ((aln_dict[id][key]> MutationThreshold*sum_track[id]/100)&&(key.length>region_analyse*2 -5)){
+                if ((aln_dict[id][key]> MutationThreshold*sum_track[id]/100)&&(key.length>region_analyse*2)){
                 // if (aln_dict[id][key]> MutationThreshold*sum_track[id]/100){
-
                     aln_dict_fil[id][key] = aln_dict[id][key];
                 }
             }
+            
+            // sort aligment tract
+            var items = Object.keys(aln_dict[id]).map(function(key) {
+            return [key, dict[key]];
+            });
+            // Sort the array based on the second element
+            items.sort(function(first, second) {
+            return second[1] - first[1];
+            });
+
             var not_align = 0;
             var no_indel = 0; 
             var inf_indel =  0;
@@ -998,6 +1007,10 @@
         if (CurrentFileId < files.length && CurrentFileId<96) {
             setTimeout("ReadNextFileChunk();",10);
         } else {
+            // for DEBUG
+            // document.getElementById('out').value = aln_tracks[0]
+            //document.getElementById('out').value = JSON.stringify(aln_dict_fil[0])
+            //document.getElementById('out').value = aln_tracks[0]
             DrawPie();
         }
     }
@@ -1013,8 +1026,6 @@
         // document.getElementById('progress').innerHTML = "File "+(CurrentFileId+1)+": "+Math.round(CurrentFileChunk*chunksize/1000000)+" MB processed";
         //document.getElementById('progress').innerHTML = "File "+(CurrentFileId+1)+":"+" processing. Please keep your web browser open"
         document.getElementById('progress').innerHTML = "File "+(CurrentFileId+1)+": "+Math.round(CurrentFileChunk*chunksize/1000000)+" MB processing. Please keep your web browser open";
-
-        
     }
     function help(text)
         {
@@ -1491,7 +1502,7 @@
         SVGObj.setAttribute("x", 40);
         SVGObj.setAttribute("y", ysize+delypos);
         SVGObj.setAttribute("font-size", "14");
-        SVGObj.textContent = "<b>SUMMARY: Gene: </b> "+document.getElementsByName("GeneName")[0].value+"   |   File "+GetWellPos(barcode)+": "+files[barcode].name;
+        SVGObj.textContent = "SUMMARY: Gene: "+document.getElementsByName("GeneName")[0].value+"   |   File "+GetWellPos(barcode)+": "+files[barcode].name;
         svg.appendChild(SVGObj);
         delypos+=30;
 
@@ -1700,6 +1711,7 @@
             locus = document.getElementsByName("Locus")[0].value.toUpperCase(); //reference sequence
         }
         rightbs = document.getElementsByName("RightBS")[0].value.toUpperCase(); // sgRNA seq  
+        // locus = ReverseComplement(locus)
         
         MutationThreshold = document.getElementsByName("MutationThreshold")[0].value;
         offset_DSB = slider.value;
@@ -1710,24 +1722,30 @@
             alert("No target site was entered. Please enter a valid sequence");
             return;
         }
-        RightBsPos = locus.search(rightbs);
-        if (RightBsPos == -1) {
-            RightBsPos = locus.search(ReverseComplement(rightbs));
-            if (RightBsPos == -1) {
-                alert("The target site was not found in the reference sequence. Please enter a valid sequence");
-                return;
-            } else {
-                alert("The sgRNA was reverse, please enter a reverse sequence sgRNA");
-            }
+        if (locus.includes(rightbs)){
+            RightBsPos = locus.search(rightbs);
         }
-
+        else if (locus.includes(ReverseComplement(rightbs))){
+            rightbs = ReverseComplement(rightbs);
+            RightBsPos = locus.search(rightbs);
+        }
+        else if (locus.includes(ReverseString(rightbs))){
+            rightbs = ReverseString(rightbs);
+            RightBsPos = locus.search(rightbs);
+        }
+        else if (locus.includes(ReverseString(ReverseComplement(rightbs)))){
+            rightbs = ReverseString(ReverseComplement(rightbs));
+            RightBsPos = locus.search(rightbs);
+        }
+        else {
+            alert("The target site was not found in the reference sequence. Please enter a valid sequence");
+        }
+        
         //Update new locus, and sgRNA position 
-
         locus = locus.substring(RightBsPos -30, RightBsPos + rightbs.length +30)
         RightBsPos = locus.search(rightbs);
         //breaking point on locus 
         BreakPoint = RightBsPos + rightbs.length + offset_DSB*1     
-        // Test keap1: BreakPoint == 283
         
         var evt = document.getElementById('files');
         files = evt.files;
@@ -1794,17 +1812,19 @@
     var locus = '';
 
     var files;
-    var region_analyse = 30;
     var reader;
     var CurrentFileId, CurrentFileChunk;
     var MutationThreshold = 0
     var BreakPoint;
     var offset_DSB = 0;
     var rightbs;
- 
+    var aln_tracks = Array(96);
     var aln_loc_seq = Array(96)
     var PhredThreshold = 40; // 7 +33
- 
+    for (var i=0; i<96; i++) {
+        aln_tracks[i] = ''
+    }
+    // indel location and seq
     var aln_loc_seq = Array(96)
     for (var i=0; i<96; i++) {
         aln_loc_seq[i] = Array(100000);
