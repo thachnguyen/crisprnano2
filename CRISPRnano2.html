@@ -407,8 +407,8 @@
                 <div class="column" style="position: absolute; left: 900px; top: 60px">
                     <h3>SECONDARY ANALYSIS</h3> 
                     <div class="form-check form-switch">
-                        <input class="form-check-input" type="checkbox" id="flexSwitchCheckDefault">
-                        <label class="form-check-label" for="flexSwitchCheckDefault">SWITCH TO BULK VIEW </label>
+                        <input class="form-check-input" type="checkbox" id="bulkview">
+                        <label class="form-check-label" for="bulkview">SWITCH TO BULK VIEW </label>
                       </div>
 
                     <h4>OFF TARGET Analysis (optional)</h4>    
@@ -1502,7 +1502,7 @@
         SVGObj.setAttribute("font-family", "sans-serif");
         SVGObj.setAttribute("font-weight", "100");
         SVGObj.setAttribute("x", midx+40);
-        SVGObj.setAttribute("y", midy+60+180);
+        SVGObj.setAttribute("y", midy+60+175);
         SVGObj.setAttribute("font-size", "12");
         SVGObj.textContent = "below threshold";
         svg.appendChild(SVGObj);
@@ -1522,9 +1522,17 @@
 
     function SelectClone(barcode)
     {
+        bulkview = document.getElementById("bulkview").checked;
         if (AlignmentPrecalc[barcode]){
-            document.getElementById("DIV_alignment").innerHTML = AlignmentPrecalc[barcode];
-            CurrentAlignment = barcode;
+            if (bulkview){
+                document.getElementById("DIV_alignment").innerHTML = AlignmentPrecalc[barcode];
+                CurrentAlignment = barcode;
+            }
+            else{
+                document.getElementById("DIV_alignment").innerHTML = AlignmentPrecalc[barcode];
+                CurrentAlignment = barcode;
+            }
+
         } else alert("No data available for the selected barcode.");
     }
 
@@ -1545,6 +1553,7 @@
         
         var svg = document.getElementById("SVGmut");
         var NS="http://www.w3.org/2000/svg";
+        var svgns = "http://www.w3.org/2000/svg";
         var strokew = "0.5";
   
         while (svg.lastChild){
@@ -1598,7 +1607,7 @@
         var SVGObj= document.createElementNS(NS,"text");
         SVGObj.setAttribute("x", 10);
         SVGObj.setAttribute("y", ysize+delypos+20);
-        SVGObj.setAttribute("font-size", "14");
+        SVGObj.setAttribute("font-size", "13");
         SVGObj.textContent += "REFERENCE";
         svg.appendChild(SVGObj);
         //line:
@@ -1612,12 +1621,35 @@
         for (let key in aln_dict_fil[barcode]){
             for (var x=0; x<region_analyse*2; x++){
                 //draw main track:
-                var SVGObj= document.createElementNS(NS,"text");
+                SVGObj= document.createElementNS(svgns, "rect");
+                SVGObj.setAttribute("x", 120+12*(x)-5);
+                SVGObj.setAttribute("y", ysize+delypos-10);
+                SVGObj.setAttribute("width", "11");
+                SVGObj.setAttribute("height", "11");
+                SVGObj.setAttribute("fill", "rgb(216,216,216");
+                SVGObj.setAttribute("text-anchor", "middle");
+                svg.appendChild(SVGObj);
+
+                SVGObj= document.createElementNS(NS, "text");
                 SVGObj.setAttribute("x", 120+12*(x)+2);
                 SVGObj.setAttribute("y", ysize+delypos);
-                SVGObj.setAttribute("font-size", "14");
-                SVGObj.setAttribute("fill", "rgb(0,0,0)");
-                SVGObj.textContent = key[x];
+                SVGObj.setAttribute("font-size", "13");
+                if (key[x]=="T"){SVGObj.textContent = key[x];
+                    SVGObj.setAttribute("fill", "rgb(255,0,0");
+                }
+                else if (key[x]=="A"){SVGObj.textContent = key[x];
+                    SVGObj.setAttribute("fill", "rgb(0,255,0");
+                }
+                else if (key[x]=="C"){SVGObj.textContent = key[x];
+                    SVGObj.setAttribute("fill", "rgb(0,0,255");
+                }
+                else if (key[x]=="G"){SVGObj.textContent = key[x];
+                    SVGObj.setAttribute("fill", "rgb(200, 100, 0");
+                }
+                else if (key[x]=="-"){SVGObj.textContent = key[x];
+                    SVGObj.setAttribute("fill", "rgb(0,0,0");
+                }
+  
                 SVGObj.setAttribute("x", 120+12*(x));
                 SVGObj.setAttribute("text-anchor", "middle");
                 svg.appendChild(SVGObj);
@@ -1625,15 +1657,38 @@
 
             for (var x=0; x<region_analyse*2; x++){
                 //draw insert:
+                SVGObj= document.createElementNS(svgns, "rect");
+                if ((key[x+region_analyse*2]!="\xa0")&&(key[x+region_analyse*2]!="\n")){
+                    SVGObj.style.stroke="rgb(255,0,0)";
+                    SVGObj.setAttribute("x", 120+12*(x)-12);
+                    SVGObj.setAttribute("y", ysize+delypos+4);
+                    SVGObj.setAttribute("width", "12");
+                    SVGObj.setAttribute("height", "12");
+                    SVGObj.setAttribute("fill", "rgb(255,255,255");
+                    SVGObj.setAttribute("text-anchor", "middle");
+                    svg.appendChild(SVGObj);
+                }
+
                 var SVGObj= document.createElementNS(NS,"text");
-                SVGObj.setAttribute("x", 120+12*(x)+2);
-                SVGObj.setAttribute("y", ysize+delypos+20);
-                SVGObj.setAttribute("font-size", "14");
+                SVGObj.setAttribute("x", 120+12*(x)-6);
+                SVGObj.setAttribute("y", ysize+delypos+15);
+                SVGObj.setAttribute("font-size", "13");
                 SVGObj.setAttribute("fill", "rgb(0,0,0)");
                 SVGObj.textContent = key[x+region_analyse*2];
-                SVGObj.setAttribute("x", 120+12*(x));
                 SVGObj.setAttribute("text-anchor", "middle");
                 svg.appendChild(SVGObj);
+                // if (key[x+region_analyse*2]!=""){
+                //     SVGObj= document.createElementNS(svgns, "rect");
+                //     SVGObj.setAttribute("x", 120+12*(x)-5);
+                //     SVGObj.setAttribute("y", ysize+delypos-10);
+                //     SVGObj.setAttribute("width", "11");
+                //     SVGObj.setAttribute("height", "11");
+                //     SVGObj.setAttribute("fill", "rgb(216,216,216");
+                //     // SVGObj.textContent = key[x];
+                //     // SVGObj.setAttribute("x", 120+12*(x));
+                //     SVGObj.setAttribute("text-anchor", "middle");
+                //     svg.appendChild(SVGObj);
+                // }
             }
             
             var SVGObj= document.createElementNS(NS,"text");
@@ -1902,6 +1957,7 @@
     var RestFromLastChunk = "";
     // var chunksize = 20240*10240;
     var chunksize = 102400*1024;
+    var bulkview = false;
 
 </script>
 </html>
