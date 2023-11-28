@@ -416,7 +416,7 @@
                         <div class="popup" onclick="myFunction8()">(? Click here!)
                             <span class="popuptext" id="help8">Name of the study genes, seperate by , . Click to close.</span>
                         </div>
-                        <input type="submit" name="submit" value="Click here get gene list fasta" class="btn btn-secondary btn-sm" id="get_fasta" onclick="getFastaSequence();">
+                        <input type="submit" name="submit" value="Click here get gene list fasta" class="btn btn-secondary btn-sm" id="get_fasta" onclick="getFastaSequence_list();">
                         <br>
                         <input type="text" class="input_form" size="40" name="GeneName_list" value=""><br>
                         <br>
@@ -844,9 +844,10 @@
     }
 
     function getFastaSequence_list() {
-        var gene_list = document.getElementsByName("GeneName_list")[0].split(',')
-        for (const gene_name1 of gene_list){
-            var my_fastaURL = "https://www.crisprnano.de/gene_fasta/"+gene_name1.value.toUpperCase()+".fa";
+        var gene_list = document.getElementsByName("GeneName_list")[0].value.split(',')
+        for (var gene_name1 of gene_list){
+            gene_name1 = gene_name1.trim()
+            var my_fastaURL = "https://www.crisprnano.de/gene_fasta/"+gene_name1.toUpperCase()+".fa";
             fetch(my_fastaURL)
                 .then(response => response.text())
                 .then(data => {
