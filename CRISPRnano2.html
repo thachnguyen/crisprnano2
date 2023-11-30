@@ -253,14 +253,6 @@
                         </div> 
                         <br><input type="text" size="30" class="input_form" name="MutationThreshold" value="2"><br>
                     <p></p>
-                    <!-- <div class="form-check">
-                        <input class="form-check-input" type="checkbox" value="" id="Elibqcheck" checked>
-                        <label class="form-check-label" for="flexCheckChecked">
-                          Use EliBQ filter                <div class="popup" onclick="myFunction10()">(? Click here!)
-                            <span class="popuptext" id="help10">Filter FASTQ input files from ONT. CRISPRnano is filtering out the low quality regions to improve the alignment quality. Click again to close.</span>
-                        </div>
-                        </label>
-                      </div> -->
 
                     <br> <br><br>
                   </div>
@@ -419,7 +411,7 @@
                         </div>
                         <input type="submit" name="submit" value="Click here get gene list fasta" class="btn btn-secondary btn-sm" id="get_fasta" onclick="getFastaSequence_list();">
                         <br>
-                        <input type="text" class="input_form" size="40" name="GeneName_list" value=""><br>
+                        <input type="text" class="input_form" size="40" name="GeneName_list" id="GeneName_list" value="" oninput="checkOccurrence()"><br>
                         <br>
                         <input type="submit" name="submit" value="RE-SUBMIT " class="btn btn-primary btn-sm" id="submit" onclick="Start2();">
                         <br>
@@ -444,7 +436,14 @@
                 <!-- </div> --> 
             </div>
             <div id="bulkview_result" style="position: absolute; left: 20px; top: 160px; display: none;">
-
+                <div id="DIV_piecharts_bulk">
+                    <svg id="SVGpie_bulk" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="900" height="520">
+                    </svg>
+                </div>
+                <div id="DIV_alignment_bulk">
+                    <svg id="SVGmut" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="1300" height="5000">
+                    </svg>
+                </div>
             </div>
 
 
@@ -454,7 +453,20 @@
               
 </body>
 
-<script> 
+<script>
+    //check input gene offtarget
+    function checkOccurrence() {
+      // Get the input value
+      const inputValue = document.getElementById('GeneName_list').value;
+      // Define the target string to check occurrence
+      const targetString = ','; // Replace with your desired string
+      // Count the occurrences of the target string in the input
+      const occurrenceCount = (inputValue.match(new RegExp(targetString, 'gi')) || []).length;
+      // Check if the occurrence count is greater than 4
+      if (occurrenceCount > 3) {
+        alert(`Error: we only support maximum 4 off-target genes.`);
+      }
+    } 
     // Trim low quality functions
     function trimLowQuality(fileContent) {
             const lines = fileContent.trim().split('\n');
@@ -836,36 +848,56 @@
     }
 
     function getFastaSequence() {
-        var my_fastaURL = "https://www.crisprnano.de/gene_fasta/"+document.getElementsByName("GeneName")[0].value.toUpperCase()+".fa";
+        var geneName = document.getElementsByName("GeneName")[0].value.toUpperCase();
+        var myFastaURL = "https://www.crisprnano.de/gene_fasta/" + geneName + ".fa";
 
-        fetch(my_fastaURL)
-            .then(response => response.text())
-            .then(data => {
-                var lines = data.split('\n');
-                var locus1 = lines.slice(1).join('');
-                locus = locus1;
-            })
-            .catch(error => {
-                alert('Gene name not found! Please check your gene name or put the customized reference sequence into the form on the right', error);
-            });
+        fetch(myFastaURL)
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.text();
+        })
+        .then(data => {
+            var lines = data.split('\n');
+            var locus1 = lines.slice(1).join('');
+            locus = locus1;
+        })
+        .catch(error => {
+            if (error.message === 'Network response was not ok') {
+                alert('The provided URL is not valid or the gene name is not found. Please check your input and try again.');
+            } else {
+                alert('An unexpected error occurred: ' + error.message);
+            }
+        });
     }
-
     function getFastaSequence_list() {
+        locus_list =[]
         var gene_list = document.getElementsByName("GeneName_list")[0].value.split(',')
         for (var gene_name1 of gene_list){
             gene_name1 = gene_name1.trim()
-            var my_fastaURL = "https://www.crisprnano.de/gene_fasta/"+gene_name1.toUpperCase()+".fa";
-            fetch(my_fastaURL)
-                .then(response => response.text())
-                .then(data => {
-                    var lines = data.split('\n');
-                    var locus1 = lines.slice(1).join('');
-                    locus_list.push(locus1);
-                })
-                .catch(error => {
-                    alert('Gene name not found! Please check your gene name or put the customized reference sequence into the form on the right', error);
-                });
-
+            var myFastaURL = "https://www.crisprnano.de/gene_fasta/"+gene_name1.toUpperCase()+".fa";
+            fetch(myFastaURL)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.text();
+            })
+            .then(data => {
+                var lines = data.split('\n');
+                var locus1 = lines.slice(1).join('');
+                locus_list.push(locus1);
+            })
+            .catch(error => {
+            if (error.message === 'Network response was not ok') {
+                alert('The provided URL is not valid or the gene name is not found. Please check your input and try again.');
+                locus_list =[];
+            } else {
+                alert('An unexpected error occurred: ' + error.message);
+                locus_list =[];
+            }
+        });
         }
     }
 
@@ -1519,22 +1551,49 @@
 
     function DrawPie_bulk()
     {
-        var svg = document.getElementById("Bul");
+        var svg = document.getElementById("SVGpie_bulk");
         var NS="http://www.w3.org/2000/svg";
+        var barcode = CurrentAlignment;
         TabClicked(4);
         //reset svg:
         while (svg.lastChild) svg.removeChild(svg.lastChild);
-
         //register mouse listener:
         svg.addEventListener("mousedown", PieClick, false);
 
         var ROT= ["rgb(232,0,30)","rgb(255,102,0)","rgb(252,176,78)"]; 
         var BLAU=["rgb(50,42,126)","rgb(16,115,179)","rgb(38,170,220)"];
 
-        var size = 24*Math.sqrt(summary_track[barcode][7]/maxsum);
-        var midx = (barcode%12)*50 + 25;
-        var midy = Math.floor(barcode/12) * 65 + 25;
-        if (summary_track[barcode][7] > 0) {
+        var size = 200;
+        var midx = 250;
+        var midy = 250;
+
+        var sum = 0;
+        var inf_indel1 =  Array(6)
+        var out_indel1 = Array(6)
+        var oligo
+        for (let i=0; i <6; i++){
+            inf_indel1[i] = 0;
+            out_indel1[i] = 0;
+        }
+        // classify indel into several subset
+        for (let key in aln_dict_fil[barcode]){
+            if (aln_type_dict[barcode][key] == 2){
+                for (let i=0; i <6; i++){
+                    if (inf_indel1[i]==0){
+                        inf_indel1[i]=aln_dict_fil[barcode][key];
+                        break;
+                    }
+                }
+            } else if (aln_type_dict[barcode][key] == 3){
+                for (let i=0; i <6; i++){
+                    if (out_indel1[i]==0){
+                        out_indel1[i]=aln_dict_fil[barcode][key];
+                        break;
+                    }
+                }
+            }
+        }
+        if (summary_track[0][7] > 0) {
             //wt:
             var angle = -3.1415/2;
             var lastangle = angle;
@@ -1792,27 +1851,6 @@
         //legende:
         var midx = 13*50 + 25;
         var midy = 0 * 65 + 25;
-        for (var i=0; i<8; i++) {
-            var vol = Math.floor(maxsum/100)*100/Math.pow(2,i);
-            var size = 24*Math.sqrt(vol/maxsum);
-            //SVG:
-            var SVGObj= document.createElementNS(NS,"circle");
-            SVGObj.setAttributeNS(null, "cx", midx);
-            SVGObj.setAttributeNS(null, "cy", midy);
-            SVGObj.setAttributeNS(null, "r" , size);
-            SVGObj.style.fill="none";
-            SVGObj.style.stroke="rgb(100,100,100)";
-            svg.appendChild(SVGObj);
-            var SVGObj= document.createElementNS(NS,"text");
-            SVGObj.setAttribute("font-family", "sans-serif");
-            SVGObj.setAttribute("font-weight", "100");
-            SVGObj.setAttribute("x", midx+40);
-            SVGObj.setAttribute("y", midy+3);
-            SVGObj.setAttribute("font-size", "12");
-            SVGObj.textContent = Math.round(vol) + " reads";
-            svg.appendChild(SVGObj);
-            midy += size*2+10;
-        }
         for (var i=0; i<11; i++)
         {
             var SVGObj= document.createElementNS(NS,"circle");
@@ -1891,17 +1929,18 @@
     function SelectClone(barcode)
     {
         bulkview = document.getElementById("bulkview").checked;
-        if (AlignmentPrecalc[barcode]){
-            if (bulkview){
+        if (bulkview){
+            if (AlignmentPrecalc[barcode]){
+                CurrentAlignment = barcode;
+                document.getElementById("DIV_alignment_bulk").innerHTML = AlignmentPrecalc[barcode];
+                DrawPie_bulk();
+            }
+        } 
+        else if (AlignmentPrecalc[barcode]){
                 document.getElementById("DIV_alignment").innerHTML = AlignmentPrecalc[barcode];
                 CurrentAlignment = barcode;
-            }
-            else{
-                document.getElementById("DIV_alignment").innerHTML = AlignmentPrecalc[barcode];
-                CurrentAlignment = barcode;
-            }
-
-        } else alert("No data available for the selected barcode.");
+               }
+            else alert("No data available for the selected barcode.");
     }
 
     function GetWellPos(i)
