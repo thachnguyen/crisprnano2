@@ -641,7 +641,7 @@
                     d = !is_local || h > 0? d : 1<<6;
                     h1 = h;              // save H(i,j) to h1 for the next column
                     mj = m > h? mj : j;
-                    m = m > h? m : h;    // update the max score in this row
+                    m = Math.max(m, h);    // update the max score in this row
                     h -= gapoe;
                     h = !is_local || h > 0? h : 0;
                     e -= gape;
@@ -1625,7 +1625,7 @@
             if (angle-lastangle > 3.1415) largearc = 1;
             var SVGObj= document.createElementNS(NS,"path");
             SVGObj.setAttributeNS(null, "d", "M "+midx+","+midy+" l "+startx+","+starty+" a "+size+" "+size+" 0 "+largearc+" 1 "+plusx+" "+plusy+" z");
-            SVGObj.style.fill="rgb(50,42,126)";
+            SVGObj.style.fill=BLAU[0];
             SVGObj.setAttribute("pointer-events","none");
             svg.appendChild(SVGObj);
             // inframe indel2
@@ -1640,7 +1640,7 @@
             if (angle-lastangle > 3.1415) largearc = 1;
             var SVGObj= document.createElementNS(NS,"path");
             SVGObj.setAttributeNS(null, "d", "M "+midx+","+midy+" l "+startx+","+starty+" a "+size+" "+size+" 0 "+largearc+" 1 "+plusx+" "+plusy+" z");
-            SVGObj.style.fill="rgb(16,115,179)";
+            SVGObj.style.fill=BLAU[1];
 
             SVGObj.setAttribute("pointer-events","none");
             svg.appendChild(SVGObj);
@@ -1656,7 +1656,7 @@
             if (angle-lastangle > 3.1415) largearc = 1;
             var SVGObj= document.createElementNS(NS,"path");
             SVGObj.setAttributeNS(null, "d", "M "+midx+","+midy+" l "+startx+","+starty+" a "+size+" "+size+" 0 "+largearc+" 1 "+plusx+" "+plusy+" z");
-            SVGObj.style.fill="rgb(38,170,220)";
+            SVGObj.style.fill=BLAU[2];
             SVGObj.setAttribute("pointer-events","none");
             svg.appendChild(SVGObj);
 
@@ -1672,7 +1672,7 @@
             if (angle-lastangle > 3.1415) largearc = 1;
             var SVGObj= document.createElementNS(NS,"path");
             SVGObj.setAttributeNS(null, "d", "M "+midx+","+midy+" l "+startx+","+starty+" a "+size+" "+size+" 0 "+largearc+" 1 "+plusx+" "+plusy+" z");
-            SVGObj.style.fill="rgb(50,42,126)";
+            SVGObj.style.fill=BLAU[0];
             SVGObj.setAttribute("pointer-events","none");
             svg.appendChild(SVGObj);
 
@@ -1688,7 +1688,7 @@
             if (angle-lastangle > 3.1415) largearc = 1;
             var SVGObj= document.createElementNS(NS,"path");
             SVGObj.setAttributeNS(null, "d", "M "+midx+","+midy+" l "+startx+","+starty+" a "+size+" "+size+" 0 "+largearc+" 1 "+plusx+" "+plusy+" z");
-            SVGObj.style.fill="rgb(16,115,179)";
+            SVGObj.style.fill=BLAU[1];
 
             SVGObj.setAttribute("pointer-events","none");
             svg.appendChild(SVGObj);
@@ -1705,7 +1705,7 @@
             if (angle-lastangle > 3.1415) largearc = 1;
             var SVGObj= document.createElementNS(NS,"path");
             SVGObj.setAttributeNS(null, "d", "M "+midx+","+midy+" l "+startx+","+starty+" a "+size+" "+size+" 0 "+largearc+" 1 "+plusx+" "+plusy+" z");
-            SVGObj.style.fill="rgb(38,170,220)";
+            SVGObj.style.fill=BLAU[2];
             SVGObj.setAttribute("pointer-events","none");
             svg.appendChild(SVGObj);
 
@@ -1720,7 +1720,7 @@
             if (angle-lastangle > 3.1415) largearc = 1;
             var SVGObj= document.createElementNS(NS,"path");
             SVGObj.setAttributeNS(null, "d", "M "+midx+","+midy+" l "+startx+","+starty+" a "+size+" "+size+" 0 "+largearc+" 1 "+plusx+" "+plusy+" z");
-            SVGObj.style.fill="rgb(232,0,30)";
+            SVGObj.style.fill=ROT[0];
             SVGObj.setAttribute("pointer-events","none");
             svg.appendChild(SVGObj);
 
@@ -1736,7 +1736,7 @@
             if (angle-lastangle > 3.1415) largearc = 1;
             var SVGObj= document.createElementNS(NS,"path");
             SVGObj.setAttributeNS(null, "d", "M "+midx+","+midy+" l "+startx+","+starty+" a "+size+" "+size+" 0 "+largearc+" 1 "+plusx+" "+plusy+" z");
-            SVGObj.style.fill="rgb(252,176,78)";
+            SVGObj.style.fill=ROT[1];
             SVGObj.setAttribute("pointer-events","none");
             svg.appendChild(SVGObj);
 
@@ -1752,7 +1752,7 @@
             if (angle-lastangle > 3.1415) largearc = 1;
             var SVGObj= document.createElementNS(NS,"path");
             SVGObj.setAttributeNS(null, "d", "M "+midx+","+midy+" l "+startx+","+starty+" a "+size+" "+size+" 0 "+largearc+" 1 "+plusx+" "+plusy+" z");
-            SVGObj.style.fill="rgb(252,176,78)";
+            SVGObj.style.fill=ROT[2];
             SVGObj.setAttribute("pointer-events","none");
             svg.appendChild(SVGObj);
 
@@ -1768,7 +1768,7 @@
             if (angle-lastangle > 3.1415) largearc = 1;
             var SVGObj= document.createElementNS(NS,"path");
             SVGObj.setAttributeNS(null, "d", "M "+midx+","+midy+" l "+startx+","+starty+" a "+size+" "+size+" 0 "+largearc+" 1 "+plusx+" "+plusy+" z");
-            SVGObj.style.fill="rgb(232,0,30)";
+            SVGObj.style.fill=ROT[0];
             SVGObj.setAttribute("pointer-events","none");
             svg.appendChild(SVGObj);
 
@@ -1784,7 +1784,7 @@
             if (angle-lastangle > 3.1415) largearc = 1;
             var SVGObj= document.createElementNS(NS,"path");
             SVGObj.setAttributeNS(null, "d", "M "+midx+","+midy+" l "+startx+","+starty+" a "+size+" "+size+" 0 "+largearc+" 1 "+plusx+" "+plusy+" z");
-            SVGObj.style.fill="rgb(252,176,78)";
+            SVGObj.style.fill=ROT[1];
             SVGObj.setAttribute("pointer-events","none");
             svg.appendChild(SVGObj);
 
@@ -1800,7 +1800,7 @@
             if (angle-lastangle > 3.1415) largearc = 1;
             var SVGObj= document.createElementNS(NS,"path");
             SVGObj.setAttributeNS(null, "d", "M "+midx+","+midy+" l "+startx+","+starty+" a "+size+" "+size+" 0 "+largearc+" 1 "+plusx+" "+plusy+" z");
-            SVGObj.style.fill="rgb(252,176,78)";
+            SVGObj.style.fill=ROT[2];
             SVGObj.setAttribute("pointer-events","none");
             svg.appendChild(SVGObj);
             // targetingOligo
