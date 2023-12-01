@@ -857,17 +857,25 @@
             if (!response.ok) {
                 throw new Error('Network response was not ok');
             }
+            else{
+                throw new Error('Network response was ok');
+            }
             return response.text();
         })
         .then(data => {
             var lines = data.split('\n');
             var locus1 = lines.slice(1).join('');
             locus = locus1;
+
         })
         .catch(error => {
             if (error.message === 'Network response was not ok') {
                 alert('The provided URL is not valid or the gene name is not found. Please check your input and try again.');
-            } else {
+            } 
+            else if (error.message === 'Network response was ok') {
+                alert('Loading gene successfully');
+            }
+            else {
                 alert('An unexpected error occurred: ' + error.message);
             }
         });
@@ -883,6 +891,9 @@
                 if (!response.ok) {
                     throw new Error('Network response was not ok');
                 }
+            //     else{
+            //     throw new Error('Network response was ok');
+            // }
                 return response.text();
             })
             .then(data => {
@@ -894,13 +905,21 @@
             if (error.message === 'Network response was not ok') {
                 alert('The provided URL is not valid or the gene name is not found. Please check your input and try again.');
                 locus_list =[];
-            } else {
+            } 
+            // else if (error.message === 'Network response was ok') {
+            //     alert('Loading genes successfully');
+            // }
+            else {
                 alert('An unexpected error occurred: ' + error.message);
                 locus_list =[];
             }
         });
         }
+        if (locus_list!=[]){
+            alert('Loading given genes list successfully');
+        }
     }
+    
 
     function FileReceived()
     {
