@@ -169,13 +169,14 @@
                     <button type="button"  name="setup" class="btn btn-info" onclick="TabClicked(0);">ANALYZER SETTING</button>
                     <button type="button"  name="result" class="btn btn-info" onclick="TabClicked(1);">RESULTS</button>
                     <button type="button"  name="bulkview_result" class="btn btn-info" onclick="TabClicked(4);">BULK VIEWER</button>
-                    <button type="button"  name="bulkview_result" class="btn btn-info" onclick="TabClicked(5);">OFF-TARGET ANALYSIS</button>
+                    <button type="button"  name="offtarget_result" class="btn btn-info" onclick="TabClicked(5);">OFF-TARGET ANALYSIS</button>
                     <button type="button"  name="result" class="btn btn-info" onclick="TabClicked(6);">TEST DATA</button>
                 </div>
                 
             </div>
 
         </div>
+
         <br>
         <div id="setup" style="position:absolute; left:20px; top:80px">
                 <br>
@@ -389,6 +390,7 @@
                   </tbody></table>
                 
             </div>
+
             <div id="testdata" style="position: absolute; left: 20px; top: 120px; width: 70%; display: none;">
                 <br>
                 <br>
@@ -465,7 +467,7 @@
                         <br>
                         <input type="text" class="input_form" size="40" name="GeneName_list" id="GeneName_list" value="" oninput="checkOccurrence()"><br>
                         <br>
-                        <input type="submit" name="submit" value="RE-SUBMIT " class="btn btn-primary btn-sm" id="submit" onclick="Start2();">
+                        <input type="submit" name="submit" value="START OFFTARGET ANALYZER " class="btn btn-primary btn-sm" id="submit" onclick="Start2();">
                         <br>
                     </div>
 
@@ -473,38 +475,7 @@
                     <svg id="SVGmut" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="1300" height="5000">
                     </svg>
                 </div>
-                <div id="offtarget_view" style="position: absolute; left: 20px; top: 160px; display: none;">
-                    <div class="column">
-                        <div id="DIV_piecharts">
-                            <svg id="SVGpie" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="900" height="520">
-                            </svg>
-                        </div>
-    
-                    </div>
-                    <div class="column" style="position: absolute; left: 900px; top: 60px">
-                        <h3>SECONDARY ANALYSIS</h3> 
-                        <div class="form-check form-switch">
-                            <input class="form-check-input" type="checkbox" id="bulkview">
-                            <label class="form-check-label" for="bulkview">SWITCH TO BULK VIEW </label>
-                          </div>
-    
-                        <h4>OFF TARGET Analysis (optional)</h4>    
-                            <br>List of offset Gene names (separate by ,):
-                            <div class="popup" onclick="myFunction8()">(? Click here!)
-                                <span class="popuptext" id="help8">Name of the study genes, seperate by , . Click to close.</span>
-                            </div>
-                            <input type="submit" name="submit" value="Click here get gene list fasta" class="btn btn-secondary btn-sm" id="get_fasta" onclick="getFastaSequence_list();">
-                            <br>
-                            <input type="text" class="input_form" size="40" name="GeneName_list" id="GeneName_list" value="" oninput="checkOccurrence()"><br>
-                            <br>
-                            <input type="submit" name="submit" value="RE-SUBMIT " class="btn btn-primary btn-sm" id="submit" onclick="Start2();">
-                            <br>
-                        </div>
-    
-                    <div id="DIV_alignment">
-                        <svg id="SVGmut" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="1300" height="5000">
-                        </svg>
-                    </div>
+
 
 
                 <!-- <div style="position:absolute; right:10%; top:0%" id="restart" align="right">
@@ -519,6 +490,7 @@
                     //<br><button onclick="SaveTable();">Save mutation statistics (.txt)</button> -->
                 <!-- </div> --> 
             </div>
+
             <div id="bulkview_result" style="position: absolute; left: 20px; top: 160px; display: none;">
                 <div id="DIV_piecharts_bulk">
                     <svg id="SVGpie_bulk" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="900" height="520">
@@ -530,11 +502,19 @@
                 </div>
             </div>
 
-
+            <div id="offtarget_view" style="position: absolute; left: 20px; top: 160px; display: none;">
+                <div class="column">
+                    <div id="DIV_piecharts_offtarget">
+                        <svg id="SVGpie_offtarget" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="900" height="520">
+                        </svg>
+                    </div>
+                </div>
+                <div id="DIV_alignment_offtarget">
+                    <svg id="SVGmut_offtarget" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="1300" height="5000">
+                    </svg>
                 </div>
             </div>
-        </div>
-              
+
 </body>
 
 <script>
@@ -912,6 +892,7 @@
 
         if (i==4) document.getElementById("bulkview_result").style.display = "";
         else document.getElementById("bulkview_result").style.display = "none";
+
         if (i==5) document.getElementById("offtarget_view").style.display = "";
         else document.getElementById("offtarget_view").style.display = "none";
         if (i==6) document.getElementById("testdata").style.display = "";
@@ -998,9 +979,8 @@
     }
     
 
-    function FileReceived()
-    {
-        var original = RestFromLastChunk+reader.result;
+    function FileReceived() {
+        var original = reader.result;
         var cursor = 0, origlen = original.length;
         // alignment parameter for affine score DP algorithms 
         var ms = 1 // match score
@@ -1008,8 +988,6 @@
         var gapo = -2  // gap open score
         var gape = -1  // gap extent score
         var id = CurrentFileId;
-        CurrentFileChunk = 0;
-
         var readnum = 0;
         var str = ''
         while (true) {
@@ -1112,98 +1090,91 @@
                     hits[id].push(aln_type);
                 }    
                 readnum++;       
+                }
             }
         }
-    }
-        RestFromLastChunk = original.substr(cursor);
-
+        
         //lines = "";
         reader.result = "";
         reader = "";
 
-        //load the next chunk of data:
-        CurrentFileChunk++;
-        if ((CurrentFileChunk)*chunksize >= files[CurrentFileId].size) //end of file -> next file
-        {
             //compute number of aligned read
-            for (let key in aln_dict[id]){
-                sum_track[id] += aln_dict[id][key];
+        for (let key in aln_dict[id]){
+            sum_track[id] += aln_dict[id][key];
+        }
+        for (let key in aln_dict[id]){
+            if ((aln_dict[id][key]> MutationThreshold*sum_track[id]/100)&&(key.length>region_analyse*2)){
+                aln_dict_fil[id][key] = aln_dict[id][key];
             }
-            for (let key in aln_dict[id]){
-                if ((aln_dict[id][key]> MutationThreshold*sum_track[id]/100)&&(key.length>region_analyse*2)){
-                    aln_dict_fil[id][key] = aln_dict[id][key];
-                }
-            }
-            
-            // sort aligment tract
-            var items = Object.keys(aln_dict_fil[id]).map(function(key) {
-            return [key, aln_dict_fil[id][key]];
-            });
-            // Sort the array based on the second element
-            items.sort(function(first, second) {
-            return second[1] - first[1];
-            });
-            aln_dict_fil[id] = Object.fromEntries(items.map(([v, k]) => [v, k]));
+        }
+        
+        // sort aligment tract
+        var items = Object.keys(aln_dict_fil[id]).map(function(key) {
+        return [key, aln_dict_fil[id][key]];
+        });
+        // Sort the array based on the second element
+        items.sort(function(first, second) {
+        return second[1] - first[1];
+        });
+        aln_dict_fil[id] = Object.fromEntries(items.map(([v, k]) => [v, k]));
 
-            var not_align = 0;
-            var no_indel = 0; 
-            var inf_indel =  0;
-            var out_indel = 0;
-            var sum = 0;
-            var read_ambigous =0;
-            var targetingOligo = 0;
-            for (var i=0; i<hits[id].length; i++){
-                if (hits[id][i]>=0){
-                    switch (hits[id][i]){
-                        case 0:
-                            not_align++;
-                            break;
-                        case 1:
-                            no_indel++;
-                            sum++
-                            break;
-                        case 2:
-                            inf_indel++;
-                            sum++
-                            break;
-                        case 3: 
-                            out_indel++;
-                            sum++
-                            break;
-                        case 7: 
-                            targetingOligo++;
-                            sum++
-                            break;
-                        case 8: 
-                             read_ambigous++;
-                        //     sum++
-                        //     break;
-                    }
+        var not_align = 0;
+        var no_indel = 0; 
+        var inf_indel =  0;
+        var out_indel = 0;
+        var sum = 0;
+        var read_ambigous =0;
+        var targetingOligo = 0;
+        for (var i=0; i<hits[id].length; i++){
+            if (hits[id][i]>=0){
+                switch (hits[id][i]){
+                    case 0:
+                        not_align++;
+                        break;
+                    case 1:
+                        no_indel++;
+                        sum++
+                        break;
+                    case 2:
+                        inf_indel++;
+                        sum++
+                        break;
+                    case 3: 
+                        out_indel++;
+                        sum++
+                        break;
+                    case 7: 
+                        targetingOligo++;
+                        sum++
+                        break;
+                    case 8: 
+                            read_ambigous++;
+                    //     sum++
+                    //     break;
                 }
             }
-            var total_read = not_align + sum + read_ambigous;
-            summary_track[id][0] = total_read;
-            summary_track[id][1] = targetingOligo;
-            summary_track[id][2] = no_indel;
-            summary_track[id][3] = inf_indel;
-            summary_track[id][4] = out_indel;
-            summary_track[id][5] = read_ambigous;
-            summary_track[id][6] = not_align;
-            summary_track[id][7] = sum;
+        }
+        var total_read = not_align + sum + read_ambigous;
+        summary_track[id][0] = total_read;
+        summary_track[id][1] = targetingOligo;
+        summary_track[id][2] = no_indel;
+        summary_track[id][3] = inf_indel;
+        summary_track[id][4] = out_indel;
+        summary_track[id][5] = read_ambigous;
+        summary_track[id][6] = not_align;
+        summary_track[id][7] = sum;
+
+        PlotAlignment(id, locus)
+        CurrentFileId++;
     
-            PlotAlignment(id, locus)
-            CurrentFileChunk = 0;
-            RestFromLastChunk = "";
-            CurrentFileId++;
-        }
-        if (CurrentFileId < files.length && CurrentFileId<96) {
-            setTimeout("ReadNextFileChunk();",10);
-        } else {
-            // for DEBUG
-            // document.getElementById('out').value = aln_tracks[0]
-            //document.getElementById('out').value = JSON.stringify(aln_dict_fil[0])
-            DrawPie();
-        }
+    if (CurrentFileId < files.length && CurrentFileId<96) {
+        setTimeout("ReadNextFileChunk();",10);
+    } else {
+        // for DEBUG
+        // document.getElementById('out').value = aln_tracks[0]
+        //document.getElementById('out').value = JSON.stringify(aln_dict_fil[0])
+        DrawPie();
+    }
     }
 
     function ReadNextFileChunk()
@@ -2022,7 +1993,7 @@
                 document.getElementById("DIV_alignment").innerHTML = AlignmentPrecalc[barcode];
                 CurrentAlignment = barcode;
                }
-            else alert("No data available for the selected barcode.");
+        else alert("No data available for the selected barcode.");
     }
 
     function GetWellPos(i)
@@ -2342,7 +2313,6 @@
             return;
         }
         CurrentFileId = 0;
-        CurrentFileChunk = 0;
         ReadNextFileChunk();
     }
 
@@ -2397,11 +2367,9 @@
     
     var AlignmentPrecalc = new Array(96);
     var locus = '';
-    var locus_list = [];
-
     var files;
     var reader;
-    var CurrentFileId, CurrentFileChunk;
+    var CurrentFileId;
     var MutationThreshold = 0
     var BreakPoint;
     var offset_DSB = 0;
@@ -2416,12 +2384,24 @@
         summary_track[i] = Array(8); 
     }
     
-    var CurrentAlignment = 0;
+    // Offtarget analyzer
+    var CurrentAlignment_off = 0;
+ 
+    var AlignmentPrecalc_off = new Array(4);
+    var locus_list = [];
 
-    var RestFromLastChunk = "";
-    // var chunksize = 20240*10240;
-    var chunksize = 102400*1024;
-    var bulkview = false;
+    var CurrentFileId_off;
+
+    var BreakPoint_off;
+    var rightbs;
+    var sum_track_off = Array(4)
+    var summary_track_off = Array(4)
+    for (var i=0; i<4; i++){
+        sum_track_off[i] = 0;
+        summary_track_off[i] = Array(8); 
+    }
+    var CurrentAlignment_off = 0;
+
 
 </script>
 </html>
