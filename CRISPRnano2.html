@@ -849,35 +849,31 @@
     }
 
     function getFastaSequence() {
-        var geneName = document.getElementsByName("GeneName")[0].value.toUpperCase();
-        var myFastaURL = "https://www.crisprnano.de/gene_fasta/" + geneName + ".fa";
-
+        var myFastaURL = "https://www.crisprnano.de/gene_fasta/"+document.getElementsByName("GeneName")[0].value.toUpperCase()+".fa";
         fetch(myFastaURL)
         .then(response => {
             if (!response.ok) {
                 throw new Error('Network response was not ok');
-            }
-            else{
-                throw new Error('Network response was ok');
             }
             return response.text();
         })
         .then(data => {
             var lines = data.split('\n');
             var locus1 = lines.slice(1).join('');
-            locus = locus1;
-
+            locus=locus1;
+            if (locus!=""){
+            alert('Loading given genes list successfully');
+        }
         })
         .catch(error => {
-            if (error.message === 'Network response was not ok') {
-                alert('The provided URL is not valid or the gene name is not found. Please check your input and try again.');
-            } 
-            else if (error.message === 'Network response was ok') {
-                alert('Loading gene successfully');
-            }
-            else {
-                alert('An unexpected error occurred: ' + error.message);
-            }
+        if (error.message === 'Network response was not ok') {
+            alert('The provided URL is not valid or the gene name is not found. Please check your input and try again.');
+            locus="";
+        } 
+        else {
+            alert('An unexpected error occurred: ' + error.message);
+            locus="";
+        }
         });
     }
     function getFastaSequence_list() {
@@ -891,9 +887,6 @@
                 if (!response.ok) {
                     throw new Error('Network response was not ok');
                 }
-            //     else{
-            //     throw new Error('Network response was ok');
-            // }
                 return response.text();
             })
             .then(data => {
@@ -906,9 +899,6 @@
                 alert('The provided URL is not valid or the gene name is not found. Please check your input and try again.');
                 locus_list =[];
             } 
-            // else if (error.message === 'Network response was ok') {
-            //     alert('Loading genes successfully');
-            // }
             else {
                 alert('An unexpected error occurred: ' + error.message);
                 locus_list =[];
@@ -964,7 +954,7 @@
                 if ((targetingOligo !="") &&(read.includes(targetingOligo)||read.includes(ReverseComplement(targetingOligo))||read.includes(ReverseString(targetingOligo))||read.includes(ReverseComplement(ReverseString(targetingOligo))))){
                     aln_type = 7;
                     // remove this part in knockin, speed up the program
-                    hits[id][readnum] = aln_type
+                    hits[id].push(aln_type)
                     var rst = bsa_align(target, read, [ms, mms], [gapo, gape]);
                     var str1 = ''
                     var fmt1 = bsa_cigar2gaps_breakpoint(target, read, rst[1], rst[2], BreakPoint-region_analyse*1, BreakPoint + region_analyse*1);
@@ -980,14 +970,12 @@
                         aln_dict[id][str1] = 1
                         aln_type_dict[id][str1] = aln_type
                     }
-                    aln_tracks[id] +=str1
-                    hits[id][readnum] = aln_type
+                    hits[id].push(aln_type)
                     readnum++;
                 } 
                 else 
                 {
                     // UPDATE v2.0 checking 4 posiblities of read, threshold score =region_analyse+10 
-
                     var rst = bsa_align(target, read, [ms, mms], [gapo, gape]);
                     if (rst[0] < (region_analyse*1+10)){
                         try{
@@ -1033,8 +1021,9 @@
                             aln_type_dict[id][str1] = aln_type
                         }
                     }
-                aln_tracks[id] +=str1
-                hits[id][readnum] = aln_type
+                if (str1.length>(region_analyse*2-2)){
+                    hits[id].push(aln_type);
+                }    
                 readnum++;       
             }
         }
@@ -1077,7 +1066,7 @@
             var sum = 0;
             var read_ambigous =0;
             var targetingOligo = 0;
-            for (var i=0; i<100000; i++){
+            for (var i=0; i<hits[id].length; i++){
                 if (hits[id][i]>=0){
                     switch (hits[id][i]){
                         case 0:
@@ -1127,7 +1116,6 @@
             // for DEBUG
             // document.getElementById('out').value = aln_tracks[0]
             //document.getElementById('out').value = JSON.stringify(aln_dict_fil[0])
-            //document.getElementById('out').value = aln_tracks[0]
             DrawPie();
         }
     }
@@ -2323,13 +2311,14 @@
     aln_type_dict = Array(96)
 
     for (var i=0; i<96; i++) {
-        hits[i] = Array(100000);
+        hits[i] = []
+        // hits[i] = Array(100000);
         aln_dict[i] = {}
         aln_dict_fil[i] = {}
         aln_type_dict[i] = {}
-        for (var ii=0; ii<100000; ii++) {
-            hits[i][ii] = -1;
-        }
+        // for (var ii=0; ii<100000; ii++) {
+        //     hits[i][ii] = -1;
+        // }
     }
     
     var fastaURL;
@@ -2344,12 +2333,8 @@
     var BreakPoint;
     var offset_DSB = 0;
     var rightbs;
-    var aln_tracks = Array(96);
     var aln_loc_seq = Array(96)
     var PhredThreshold = 40; // 7 +33
-    for (var i=0; i<96; i++) {
-        aln_tracks[i] = ''
-    }
     // indel location and seq
     var aln_loc_seq = Array(96)
     for (var i=0; i<96; i++) {
