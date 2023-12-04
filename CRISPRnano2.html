@@ -121,14 +121,14 @@
         </head>
         <body data-new-gr-c-s-check-loaded="14.1130.0" data-gr-ext-installed="">
             <nav class="navbar sticky-top navbar-expand-sm navbar-light">
-                <a class="navbar-brand" href="https://crisprnano.de/CRISPRnano2.html"><img src="./crisprnano2/title_white.png" width="180"></a>
+                <a class="navbar-brand" href="https://wwww.crisprnano.de/CRISPRnano2.html"><img src="./crisprnano2/title_white.png" width="180"></a>
                 <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarToggler11" aria-controls="navbarToggler11" aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
                 <div class="collapse navbar-collapse" id="navbarToggler11">
                     <ul class="navbar-nav  ml-auto">
                         <li class="nav-item mt-1">
-                            <a href="https://crisprnano.de/" class="nav-link">
+                            <a href="https://wwww.crisprnano.de/CRISPRnano2.html" class="nav-link">
                                 <i class="fas fa-solid fa-user iconsMenu"></i>
                                 Home
                             </a>
@@ -170,7 +170,7 @@
                     <button type="button"  name="result" class="btn btn-info" onclick="TabClicked(1);">RESULTS</button>
                     <button type="button"  name="bulkview_result" class="btn btn-info" onclick="TabClicked(4);">BULK VIEWER</button>
                     <button type="button"  name="bulkview_result" class="btn btn-info" onclick="TabClicked(5);">OFF-TARGET ANALYSIS</button>
-                    <button type="button"  name="result" class="btn btn-info" onclick="TabClicked(1);">TEST DATA</button>
+                    <button type="button"  name="result" class="btn btn-info" onclick="TabClicked(6);">TEST DATA</button>
                 </div>
                 
             </div>
@@ -389,6 +389,57 @@
                   </tbody></table>
                 
             </div>
+            <div id="testdata" style="position: absolute; left: 20px; top: 120px; width: 70%; display: none;">
+                <br>
+                <br>
+                <h3>TEST DATA</h3>
+                
+                <b>Code Availability </b> 
+                <br>
+                The source code for CRISPRnano is available at <a href="https://github.com/thachnguyen/CRISPRnano">https://github.com/thachnguyen/CRISPRnano</a> <br><br>
+                
+                <b>Test data </b> 
+                <br>
+                The test data for CRISPRnano is available at <a href="https://iufduesseldorf-my.sharepoint.com/:u:/g/personal/thach_nguyen_iuf-duesseldorf_de/ER4kM3RQaRJLiltUCpcT2iMBiEvGvs3u2NiDTdtSPBLE1Q?e=8FEAJc">our test sample.</a><br><br>
+                <b>
+                    Browser compatibility
+                </b>
+                <table style="width:100%">
+                    <tbody><tr>
+                        <td>OS</td>
+                        <td>Version</td>
+                        <td>Chrome</td>
+                        <td>Firefox</td>
+                        <td>Microsoft Edge</td>
+                        <td>Safari</td>
+                    </tr>
+                    <tr>
+                        <td>Linux</td>
+                        <td>Ubuntu 20.04</td>
+                        <td>Version 99.0.4844.51</td>
+                        <td>98.0</td>
+                        <td>n/a</td>
+                        <td>n/a</td>
+                    </tr>
+                    <tr>
+                        <td>MacOS</td>
+                        <td>Monterey</td>
+                        <td>Version 99.0.4844.51</td>
+                        <td>98.0</td>
+                        <td>n/a</td>
+                        <td>15.3 </td>
+                    </tr>
+                    <tr>
+                        <td>Windows</td>
+                        <td>10</td>
+                        <td>Version 99.0.4844.51</td>
+                        <td>98.0</td>
+                        <td>99.0.115039</td>
+                        <td>n/a</td>
+                    </tr>
+                  </tbody></table>
+                
+            </div>
 
             <div id="results" style="position: absolute; left: 20px; top: 160px; display: none;">
                 <div class="column">
@@ -422,6 +473,38 @@
                     <svg id="SVGmut" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="1300" height="5000">
                     </svg>
                 </div>
+                <div id="offtarget_view" style="position: absolute; left: 20px; top: 160px; display: none;">
+                    <div class="column">
+                        <div id="DIV_piecharts">
+                            <svg id="SVGpie" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="900" height="520">
+                            </svg>
+                        </div>
+    
+                    </div>
+                    <div class="column" style="position: absolute; left: 900px; top: 60px">
+                        <h3>SECONDARY ANALYSIS</h3> 
+                        <div class="form-check form-switch">
+                            <input class="form-check-input" type="checkbox" id="bulkview">
+                            <label class="form-check-label" for="bulkview">SWITCH TO BULK VIEW </label>
+                          </div>
+    
+                        <h4>OFF TARGET Analysis (optional)</h4>    
+                            <br>List of offset Gene names (separate by ,):
+                            <div class="popup" onclick="myFunction8()">(? Click here!)
+                                <span class="popuptext" id="help8">Name of the study genes, seperate by , . Click to close.</span>
+                            </div>
+                            <input type="submit" name="submit" value="Click here get gene list fasta" class="btn btn-secondary btn-sm" id="get_fasta" onclick="getFastaSequence_list();">
+                            <br>
+                            <input type="text" class="input_form" size="40" name="GeneName_list" id="GeneName_list" value="" oninput="checkOccurrence()"><br>
+                            <br>
+                            <input type="submit" name="submit" value="RE-SUBMIT " class="btn btn-primary btn-sm" id="submit" onclick="Start2();">
+                            <br>
+                        </div>
+    
+                    <div id="DIV_alignment">
+                        <svg id="SVGmut" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="1300" height="5000">
+                        </svg>
+                    </div>
 
 
                 <!-- <div style="position:absolute; right:10%; top:0%" id="restart" align="right">
@@ -615,6 +698,7 @@
 
             // initial values
             var NEG_INF = -0x40000000;
+            
             var H = [], E = [], z = [], score, max = 0, end_i = -1, end_j = -1;
             if (is_local) {
                 for (var j = 0; j <= qlen; ++j) H[j] = E[j] = 0;
@@ -800,7 +884,6 @@
                             aln_type =3;
                         }
                     }
-                    
                 } 
                 else if (op == 4) { // soft clip
                     lq += len;
@@ -829,6 +912,10 @@
 
         if (i==4) document.getElementById("bulkview_result").style.display = "";
         else document.getElementById("bulkview_result").style.display = "none";
+        if (i==5) document.getElementById("offtarget_view").style.display = "";
+        else document.getElementById("offtarget_view").style.display = "none";
+        if (i==6) document.getElementById("testdata").style.display = "";
+        else document.getElementById("testdata").style.display = "none";
 
         document.getElementById("progress").style.display = "none";
 
@@ -1044,7 +1131,6 @@
             }
             for (let key in aln_dict[id]){
                 if ((aln_dict[id][key]> MutationThreshold*sum_track[id]/100)&&(key.length>region_analyse*2)){
-                // if (aln_dict[id][key]> MutationThreshold*sum_track[id]/100){
                     aln_dict_fil[id][key] = aln_dict[id][key];
                 }
             }
@@ -1487,10 +1573,6 @@
             SVGObj.setAttributeNS(null, "cx", midx-6);
             SVGObj.setAttributeNS(null, "cy", midy+30+20*i);
             SVGObj.setAttributeNS(null, "r" , 6);
-            // SVGObj.setAttribute("x", midx-6);
-            // SVGObj.setAttribute("y", midy+30+20*i);
-            // SVGObj.setAttribute("width", "12");
-            // SVGObj.setAttribute("height", "12");
             SVGObj.style.fill="none";
             if (i<3) SVGObj.style.fill=BLAU[i];
             if (i>=4 && i<7) SVGObj.style.fill=ROT[i-4];
@@ -1537,14 +1619,6 @@
         SVGObj.setAttribute("font-size", "12");
         SVGObj.textContent = "targeted mutagenesis";
         svg.appendChild(SVGObj);
-        // var SVGObj= document.createElementNS(NS,"text");
-        // SVGObj.setAttribute("font-family", "sans-serif");
-        // SVGObj.setAttribute("font-weight", "100");
-        // SVGObj.setAttribute("x", midx+40);
-        // SVGObj.setAttribute("y", midy+80+160);
-        // SVGObj.setAttribute("font-size", "12");
-        // // SVGObj.textContent = "ambigous read";
-        // svg.appendChild(SVGObj);
         var SVGObj= document.createElementNS(NS,"text");
         SVGObj.setAttribute("font-family", "sans-serif");
         SVGObj.setAttribute("font-weight", "100");
@@ -2321,7 +2395,6 @@
         // }
     }
     
-    var fastaURL;
     var AlignmentPrecalc = new Array(96);
     var locus = '';
     var locus_list = [];
@@ -2333,17 +2406,9 @@
     var BreakPoint;
     var offset_DSB = 0;
     var rightbs;
-    var aln_loc_seq = Array(96)
-    var PhredThreshold = 40; // 7 +33
-    // indel location and seq
-    var aln_loc_seq = Array(96)
-    for (var i=0; i<96; i++) {
-        aln_loc_seq[i] = Array(100000);
-        for (var ii=0; ii<100000; ii++) {
-            aln_loc_seq[i][ii] = '';
-        }
-    }
 
+    var PhredThreshold = 40; // 7 +33
+   
     var sum_track = Array(96)
     var summary_track = Array(96)
     for (var i=0; i<96; i++){
