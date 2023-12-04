@@ -121,14 +121,14 @@
         </head>
         <body data-new-gr-c-s-check-loaded="14.1130.0" data-gr-ext-installed="">
             <nav class="navbar sticky-top navbar-expand-sm navbar-light">
-                <a class="navbar-brand" href="https://wwww.crisprnano.de/CRISPRnano2.html"><img src="./crisprnano2/title_white.png" width="180"></a>
+                <a class="navbar-brand" href="https://www.crisprnano.de/CRISPRnano2.html"><img src="./crisprnano2/title_white.png" width="180"></a>
                 <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarToggler11" aria-controls="navbarToggler11" aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
                 <div class="collapse navbar-collapse" id="navbarToggler11">
                     <ul class="navbar-nav  ml-auto">
                         <li class="nav-item mt-1">
-                            <a href="https://wwww.crisprnano.de/CRISPRnano2.html" class="nav-link">
+                            <a href="https://www.crisprnano.de/CRISPRnano2.html" class="nav-link">
                                 <i class="fas fa-solid fa-user iconsMenu"></i>
                                 Home
                             </a>
@@ -2316,6 +2316,55 @@
         ReadNextFileChunk();
     }
 
+    function Start2()
+    {
+        document.getElementById("progress").style.display = '';
+        var ms = 1 // match score
+        var mms = -2 //mismatch score
+        var gapo = -2  // gap open score
+        var gape = -1  // gap extent score
+  
+        //Find Target site in the reference sequence/locus:
+        if (rightbs.length == 0){
+            alert("No target site was entered. Please enter a valid sequence");
+            return;
+        }
+        for (locus1 of locus_list){
+            var rst = bsa_align(locus1, rightbs, [ms, mms], [gapo, gape]);
+            if (rst[0]<(rightbs-3)){
+                rst = bsa_align(ReverseComplement(locus1), rightbs, [ms, mms], [gapo, gape]);
+                if (rst[0]<(rightbs.length-3)){
+                    alert("The target site was not found in the given OFF-TARGET reference sequences. Please enter a valid gene name");
+                }
+            }
+        }
+            if (locus.includes(rightbs)){
+                RightBsPos = locus.search(rightbs);
+            }
+            else if (locus.includes(ReverseComplement(rightbs))){
+                rightbs = ReverseComplement(rightbs);
+                RightBsPos = locus.search(rightbs);
+            }
+            else if (locus.includes(ReverseString(rightbs))){
+                rightbs = ReverseString(rightbs);
+                RightBsPos = locus.search(rightbs);
+            }
+            else if (locus.includes(ReverseString(ReverseComplement(rightbs)))){
+                rightbs = ReverseString(ReverseComplement(rightbs));
+                RightBsPos = locus.search(rightbs);
+            }
+            else {
+                alert("The target site was not found in the reference sequence. Please enter a valid sequence");
+            }
+        
+        //Update new locus, and sgRNA position 
+        locus = locus.substring(RightBsPos -30, RightBsPos + rightbs.length +30)
+        RightBsPos = locus.search(rightbs);
+        //breaking point on locus 
+        BreakPoint = RightBsPos + rightbs.length + offset_DSB*1     
+        CurrentFileId = CurrentAlignment;
+        ReadNextFileChunk();
+    }
     var bst_nt5 = [
         4, 4, 4, 4,  4, 4, 4, 4,  4, 4, 4, 4,  4, 4, 4, 4,
         4, 4, 4, 4,  4, 4, 4, 4,  4, 4, 4, 4,  4, 4, 4, 4,
