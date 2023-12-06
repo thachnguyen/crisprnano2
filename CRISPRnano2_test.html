@@ -2244,7 +2244,7 @@
         delypos+=delyshift;
         var id1 = 1;
         for (let key in aln_dict_fil[barcode]){
-            for (var x=0; x<region_analyse*2; x++){
+            for (let x=0; x<region_analyse*2; x++){
                 //draw main track:
                 SVGObj= document.createElementNS(svgns, "rect");
                 SVGObj.setAttribute("x", 120+12*(x)-5);
@@ -2279,10 +2279,11 @@
                 svg.appendChild(SVGObj);
             }
 
-            for (var x=0; x<region_analyse*2; x++){
+            for (let x=0; x<region_analyse*2; x++){
                 //draw insert:
                 SVGObj= document.createElementNS(svgns, "rect");
-                if ((key[x+region_analyse*2]!="\xa0")&&(key[x+region_analyse*2]!="\n")){
+                // if ((key[x+region_analyse*2]!="\xa0")&&(key[x+region_analyse*2]!="\n")){
+                if ('ACTG'.includes(key[x+region_analyse*2])){
                     SVGObj.style.stroke="rgb(255,0,0)";
                     SVGObj.setAttribute("x", 120+12*(x)-12);
                     SVGObj.setAttribute("y", ysize+delypos+4);

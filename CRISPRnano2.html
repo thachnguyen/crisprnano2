@@ -936,8 +936,9 @@
     function getFastaSequence_list() {
         locus_list =[]
         var gene_list = document.getElementsByName("GeneName_list")[0].value.split(',')
-        for (var gene_name1 of gene_list){
-            gene_name1 = gene_name1.trim()
+        // for (let  gene_name1 of gene_list){
+        for (let i = 0; i<4 && i< gene_list.length; i++){
+            var gene_name1 = gene_list[i].trim()
             var myFastaURL = "https://www.crisprnano.de/gene_fasta/"+gene_name1.toUpperCase()+".fa";
             fetch(myFastaURL)
             .then(response => {
@@ -2243,7 +2244,7 @@
         delypos+=delyshift;
         var id1 = 1;
         for (let key in aln_dict_fil[barcode]){
-            for (var x=0; x<region_analyse*2; x++){
+            for (let x=0; x<region_analyse*2; x++){
                 //draw main track:
                 SVGObj= document.createElementNS(svgns, "rect");
                 SVGObj.setAttribute("x", 120+12*(x)-5);
@@ -2278,10 +2279,11 @@
                 svg.appendChild(SVGObj);
             }
 
-            for (var x=0; x<region_analyse*2; x++){
+            for (let x=0; x<region_analyse*2; x++){
                 //draw insert:
                 SVGObj= document.createElementNS(svgns, "rect");
-                if ((key[x+region_analyse*2]!="\xa0")&&(key[x+region_analyse*2]!="\n")){
+                // if ((key[x+region_analyse*2]!="\xa0")&&(key[x+region_analyse*2]!="\n")){
+                if ('ACTG'.includes(key[x+region_analyse*2])){
                     SVGObj.style.stroke="rgb(255,0,0)";
                     SVGObj.setAttribute("x", 120+12*(x)-12);
                     SVGObj.setAttribute("y", ysize+delypos+4);
@@ -2485,6 +2487,7 @@
         document.getElementById("progress").style.display = '';
         var gene_list = document.getElementsByName("GeneName_list")[0].value.split(',')
         rightbs = document.getElementsByName("RightBS")[0].value.toUpperCase(); // sgRNA seq
+        region_analyse = document.getElementsByName("region_analyse")[0].value;
         var ms = 1 // match score
         var mms = -2 //mismatch score
         var gapo = -2  // gap open score
@@ -2594,6 +2597,7 @@
         sum_track[i] = 0;
         summary_track[i] = Array(8); 
     }
+    var region_analyse =30;
     
     // Offtarget analyzer
     var CurrentAlignment_off = 0;
