@@ -2486,6 +2486,7 @@
         document.getElementById("progress").style.display = '';
         var gene_list = document.getElementsByName("GeneName_list")[0].value.split(',')
         rightbs = document.getElementsByName("RightBS")[0].value.toUpperCase(); // sgRNA seq
+        region_analyse = document.getElementsByName("region_analyse")[0].value;
         var ms = 1 // match score
         var mms = -2 //mismatch score
         var gapo = -2  // gap open score
@@ -2595,6 +2596,7 @@
         sum_track[i] = 0;
         summary_track[i] = Array(8); 
     }
+    var region_analyse =30;
     
     // Offtarget analyzer
     var CurrentAlignment_off = 0;
