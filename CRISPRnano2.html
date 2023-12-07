@@ -1645,19 +1645,17 @@
                 // read_ambigous, remove in v2.0
                 // var lastangle = angle;
                 // angle+=2*3.1415*0.995*summary_track[barcode][5]/summary_track[barcode][7];
-
-                var startx = size*Math.cos(lastangle);
-                var starty = size*Math.sin(lastangle);
-                var plusx = size*(Math.cos(angle)-Math.cos(lastangle));
-                var plusy = size*(Math.sin(angle)-Math.sin(lastangle));
-                var largearc = 0;
-                if (angle-lastangle > 3.1415) largearc = 1;
-                var SVGObj= document.createElementNS(NS,"path");
-                SVGObj.setAttributeNS(null, "d", "M "+midx+","+midy+" l "+startx+","+starty+" a "+size+" "+size+" 0 "+largearc+" 1 "+plusx+" "+plusy+" z");
-                SVGObj.style.fill="rgb(70,70,70)";
-                SVGObj.setAttribute("pointer-events","none");
-                svg.appendChild(SVGObj);
-                
+                // var startx = size*Math.cos(lastangle);
+                // var starty = size*Math.sin(lastangle);
+                // var plusx = size*(Math.cos(angle)-Math.cos(lastangle));
+                // var plusy = size*(Math.sin(angle)-Math.sin(lastangle));
+                // var largearc = 0;
+                // if (angle-lastangle > 3.1415) largearc = 1;
+                // var SVGObj= document.createElementNS(NS,"path");
+                // SVGObj.setAttributeNS(null, "d", "M "+midx+","+midy+" l "+startx+","+starty+" a "+size+" "+size+" 0 "+largearc+" 1 "+plusx+" "+plusy+" z");
+                // SVGObj.style.fill="rgb(70,70,70)";
+                // SVGObj.setAttribute("pointer-events","none");
+                // svg.appendChild(SVGObj);
             }
 
             //SVG:
@@ -2039,17 +2037,17 @@
             // var lastangle = angle;
             // angle+=2*3.1415*0.995*summary_track[barcode][5]/summary_track[barcode][7];
 
-            var startx = size*Math.cos(lastangle);
-            var starty = size*Math.sin(lastangle);
-            var plusx = size*(Math.cos(angle)-Math.cos(lastangle));
-            var plusy = size*(Math.sin(angle)-Math.sin(lastangle));
-            var largearc = 0;
-            if (angle-lastangle > 3.1415) largearc = 1;
-            var SVGObj= document.createElementNS(NS,"path");
-            SVGObj.setAttributeNS(null, "d", "M "+midx+","+midy+" l "+startx+","+starty+" a "+size+" "+size+" 0 "+largearc+" 1 "+plusx+" "+plusy+" z");
-            SVGObj.style.fill="rgb(70,70,70)";
-            SVGObj.setAttribute("pointer-events","none");
-            svg.appendChild(SVGObj);
+            // var startx = size*Math.cos(lastangle);
+            // var starty = size*Math.sin(lastangle);
+            // var plusx = size*(Math.cos(angle)-Math.cos(lastangle));
+            // var plusy = size*(Math.sin(angle)-Math.sin(lastangle));
+            // var largearc = 0;
+            // if (angle-lastangle > 3.1415) largearc = 1;
+            // var SVGObj= document.createElementNS(NS,"path");
+            // SVGObj.setAttributeNS(null, "d", "M "+midx+","+midy+" l "+startx+","+starty+" a "+size+" "+size+" 0 "+largearc+" 1 "+plusx+" "+plusy+" z");
+            // SVGObj.style.fill="rgb(70,70,70)";
+            // SVGObj.setAttribute("pointer-events","none");
+            // svg.appendChild(SVGObj);
             }
 
             //SVG:
@@ -2488,8 +2486,10 @@
         var gene_list = document.getElementsByName("GeneName_list")[0].value.split(',')
         rightbs = document.getElementsByName("RightBS")[0].value.toUpperCase(); // sgRNA seq
         region_analyse = document.getElementsByName("region_analyse")[0].value;
+
+        //Score of OFF target reference
         var ms = 1 // match score
-        var mms = -2 //mismatch score
+        var mms = -1 //mismatch score
         var gapo = -2  // gap open score
         var gape = -1  // gap extent score
   
@@ -2501,19 +2501,21 @@
 
         for (let i = 0; i<locus_list.length; i++){
             var rst = bsa_align(locus_list[i], rightbs, [ms, mms], [gapo, gape]);
-            if (rst[0]<(rightbs.length-3)){
+            if (rst[0]<(rightbs.length/2)){
                 rst = bsa_align(ReverseComplement(locus_list[i]), rightbs, [ms, mms], [gapo, gape]);
-                if (rst[0]<(rightbs.length-3)){
+                if (rst[0]<(rightbs.length/2)){
                     alert("The target site was not found in the given OFF-TARGET reference gene ("+ gene_list[i] +"). Please enter a valid gene name");
                 }
                 else {
                 RightBsPos_off[i] = rst[1];
+                locus_list[i] = ReverseComplement(locus_list[i]).substring(RightBsPos_off[i] -region_analyse*1, RightBsPos_off[i] + rightbs.length +region_analyse*1)
                 }
             }   
             else {
                 RightBsPos_off[i] = rst[1];
+                locus_list[i] = locus_list[i].substring(RightBsPos_off[i] -region_analyse*1, RightBsPos_off[i] + rightbs.length +region_analyse*1)
+
             }
-            locus_list[i] = locus_list[i].substring(RightBsPos_off[i] -region_analyse*1, RightBsPos_off[i] + rightbs.length +region_analyse*1)
             //Update new index
             var rst = bsa_align(locus_list[i], rightbs, [ms, mms], [gapo, gape]);
             if (rst[0]<(rightbs.length-3)){

@@ -1030,7 +1030,7 @@
                 {
                     // UPDATE v2.0 checking 4 posiblities of read, threshold score =region_analyse+10 
                     var rst = bsa_align(target, read, [ms, mms], [gapo, gape]);
-                    if (rst[0] < (region_analyse*1+10)){
+                    if (rst[0] < (region_analyse*1)){
                         try{
                         read = ReverseComplement(read);
                         rst = bsa_align(target, read, [ms, mms], [gapo, gape]);
@@ -1074,9 +1074,9 @@
                             aln_type_dict[id][str1] = aln_type
                         }
                     }
-                if (str1.length>(region_analyse*2-2)){
-                    hits[id].push(aln_type);
-                }    
+                    if (str1.trim().length>(region_analyse*2-2)){
+                        hits[id].push(aln_type);
+                    }    
                 readnum++;       
                 }
             }
@@ -1085,12 +1085,12 @@
         reader.result = "";
         reader = "";
 
-            //compute number of aligned read
+        //compute number of aligned read
         for (let key in aln_dict[id]){
             sum_track[id] += aln_dict[id][key];
         }
         for (let key in aln_dict[id]){
-            if ((aln_dict[id][key]> MutationThreshold*sum_track[id]/100)&&(key.length>region_analyse*2)){
+            if ((aln_dict[id][key]> MutationThreshold*summary_track[id][7]/100)&&(key.trim().length>region_analyse*2-4)){
                 aln_dict_fil[id][key] = aln_dict[id][key];
             }
         }
@@ -1135,7 +1135,7 @@
                         sum++
                         break;
                     case 8: 
-                            read_ambigous++;
+                        read_ambigous++;
                     //     sum++
                     //     break;
                 }
@@ -1268,7 +1268,7 @@
             sum_track_off[i] += aln_dict_off[i][key];
         }
         for (let key in aln_dict_off[i]){
-            if ((aln_dict_off[i][key]> MutationThreshold*sum_track_off[i]/100)&&(key.length>region_analyse*2)){
+            if ((aln_dict[id][key]> MutationThreshold*summary_track[id][7]/100)&&(key.trim().length>region_analyse*2-3)){
                 aln_dict_fil_off[i][key] = aln_dict_off[i][key];
             }
         }
@@ -1379,7 +1379,6 @@
         for (var barcode=0; barcode<96; barcode++) {
             if (summary_track[barcode][7] > maxsum) maxsum = summary_track[barcode][7];
         }
-        //alert(maxsum)
         
         for (var barcode=0; barcode<96; barcode++)
         {
@@ -1645,19 +1644,17 @@
                 // read_ambigous, remove in v2.0
                 // var lastangle = angle;
                 // angle+=2*3.1415*0.995*summary_track[barcode][5]/summary_track[barcode][7];
-
-                var startx = size*Math.cos(lastangle);
-                var starty = size*Math.sin(lastangle);
-                var plusx = size*(Math.cos(angle)-Math.cos(lastangle));
-                var plusy = size*(Math.sin(angle)-Math.sin(lastangle));
-                var largearc = 0;
-                if (angle-lastangle > 3.1415) largearc = 1;
-                var SVGObj= document.createElementNS(NS,"path");
-                SVGObj.setAttributeNS(null, "d", "M "+midx+","+midy+" l "+startx+","+starty+" a "+size+" "+size+" 0 "+largearc+" 1 "+plusx+" "+plusy+" z");
-                SVGObj.style.fill="rgb(70,70,70)";
-                SVGObj.setAttribute("pointer-events","none");
-                svg.appendChild(SVGObj);
-                
+                // var startx = size*Math.cos(lastangle);
+                // var starty = size*Math.sin(lastangle);
+                // var plusx = size*(Math.cos(angle)-Math.cos(lastangle));
+                // var plusy = size*(Math.sin(angle)-Math.sin(lastangle));
+                // var largearc = 0;
+                // if (angle-lastangle > 3.1415) largearc = 1;
+                // var SVGObj= document.createElementNS(NS,"path");
+                // SVGObj.setAttributeNS(null, "d", "M "+midx+","+midy+" l "+startx+","+starty+" a "+size+" "+size+" 0 "+largearc+" 1 "+plusx+" "+plusy+" z");
+                // SVGObj.style.fill="rgb(70,70,70)";
+                // SVGObj.setAttribute("pointer-events","none");
+                // svg.appendChild(SVGObj);
             }
 
             //SVG:
@@ -1760,7 +1757,6 @@
         document.title = "Result for "+document.getElementsByName("GeneName")[0].value+" ("+files.length+" barcodes read)";
     }
 
-
     function DrawPie_bulk()
     {
         var svg = document.getElementById("SVGpie_bulk");
@@ -1789,10 +1785,20 @@
         }
         // classify indel into several subset
         for (let key in aln_dict[barcode]){
-            if ((aln_dict[barcode][key]> 0.1*sum_track[barcode]/100)&&(key.length>region_analyse*2)){
+            if ((aln_dict[barcode][key]> 5)&&(key.trim().length>region_analyse*2-4)){
                 aln_dict_fil[barcode][key] = aln_dict[barcode][key];
             }
         }
+               // sort aligment tract
+        var items = Object.keys(aln_dict_fil[barcode]).map(function(key) {
+        return [key, aln_dict_fil[barcode][key]];
+        });
+        // Sort the array based on the second element
+        items.sort(function(first, second) {
+        return second[1] - first[1];
+        });
+        aln_dict_fil[barcode] = Object.fromEntries(items.map(([v, k]) => [v, k]));
+
         for (let key in aln_dict_fil[barcode]){
             if (aln_type_dict[barcode][key] == 2){
                 for (let i=0; i <6; i++){
@@ -2039,17 +2045,17 @@
             // var lastangle = angle;
             // angle+=2*3.1415*0.995*summary_track[barcode][5]/summary_track[barcode][7];
 
-            var startx = size*Math.cos(lastangle);
-            var starty = size*Math.sin(lastangle);
-            var plusx = size*(Math.cos(angle)-Math.cos(lastangle));
-            var plusy = size*(Math.sin(angle)-Math.sin(lastangle));
-            var largearc = 0;
-            if (angle-lastangle > 3.1415) largearc = 1;
-            var SVGObj= document.createElementNS(NS,"path");
-            SVGObj.setAttributeNS(null, "d", "M "+midx+","+midy+" l "+startx+","+starty+" a "+size+" "+size+" 0 "+largearc+" 1 "+plusx+" "+plusy+" z");
-            SVGObj.style.fill="rgb(70,70,70)";
-            SVGObj.setAttribute("pointer-events","none");
-            svg.appendChild(SVGObj);
+            // var startx = size*Math.cos(lastangle);
+            // var starty = size*Math.sin(lastangle);
+            // var plusx = size*(Math.cos(angle)-Math.cos(lastangle));
+            // var plusy = size*(Math.sin(angle)-Math.sin(lastangle));
+            // var largearc = 0;
+            // if (angle-lastangle > 3.1415) largearc = 1;
+            // var SVGObj= document.createElementNS(NS,"path");
+            // SVGObj.setAttributeNS(null, "d", "M "+midx+","+midy+" l "+startx+","+starty+" a "+size+" "+size+" 0 "+largearc+" 1 "+plusx+" "+plusy+" z");
+            // SVGObj.style.fill="rgb(70,70,70)";
+            // SVGObj.setAttribute("pointer-events","none");
+            // svg.appendChild(SVGObj);
             }
 
             //SVG:
@@ -2149,6 +2155,7 @@
         if (bulkview){
             if (AlignmentPrecalc[barcode]){
                 CurrentAlignment = barcode;
+                DrawPie();
                 DrawPie_bulk();
                 PlotAlignment(barcode, locus)
                 document.getElementById("DIV_alignment_bulk").innerHTML = AlignmentPrecalc[barcode];
@@ -2200,14 +2207,14 @@
         SVGObj.setAttribute("x", 40);
         SVGObj.setAttribute("y", ysize+delypos);
         SVGObj.setAttribute("font-size", "14");
-        SVGObj.textContent = "Total aligned reads: " + summary_track[barcode][7] +"   |  Total raw reads: " +summary_track[barcode][0];
+        SVGObj.textContent = "Total aligned reads: " + summary_track[barcode][7] +"   |  Outframe indel: " +summary_track[barcode][4]+ " READS, (" +(summary_track[barcode][4]*100/summary_track[barcode][7]).toFixed(2)+"%)" +"   |  Inframe indel: " +summary_track[barcode][3]+ " READS, (" +(summary_track[barcode][3]*100/summary_track[barcode][7]).toFixed(2)+"%)";
         svg.appendChild(SVGObj);
         delypos+=30;
         var SVGObj= document.createElementNS(NS,"text");
         SVGObj.setAttribute("x", 40);
         SVGObj.setAttribute("y", ysize+delypos);
         SVGObj.setAttribute("font-size", "14");
-        SVGObj.textContent = "targetingOligo reads: " + summary_track[barcode][1] +"   |  No indel: " +summary_track[barcode][2] +"   | Read ambigous: " +summary_track[barcode][5]+"   | Not aligned to interested region: " +summary_track[barcode][6];
+        SVGObj.textContent = "targetingOligo reads: " + summary_track[barcode][1] +"   |  No indel: " +summary_track[barcode][2] +" READS, (" +(summary_track[barcode][2]*100/summary_track[barcode][7]).toFixed(2)+"%)" +"   | Read ambigous: " +summary_track[barcode][5] //+"   | Not aligned to interested region: " +summary_track[barcode][6];
         svg.appendChild(SVGObj);
 
         delypos+=delyshift;
@@ -2488,8 +2495,10 @@
         var gene_list = document.getElementsByName("GeneName_list")[0].value.split(',')
         rightbs = document.getElementsByName("RightBS")[0].value.toUpperCase(); // sgRNA seq
         region_analyse = document.getElementsByName("region_analyse")[0].value;
+
+        //Score of OFF target reference
         var ms = 1 // match score
-        var mms = -2 //mismatch score
+        var mms = -1 //mismatch score
         var gapo = -2  // gap open score
         var gape = -1  // gap extent score
   
@@ -2501,19 +2510,21 @@
 
         for (let i = 0; i<locus_list.length; i++){
             var rst = bsa_align(locus_list[i], rightbs, [ms, mms], [gapo, gape]);
-            if (rst[0]<(rightbs.length-3)){
+            if (rst[0]<(rightbs.length/2)){
                 rst = bsa_align(ReverseComplement(locus_list[i]), rightbs, [ms, mms], [gapo, gape]);
-                if (rst[0]<(rightbs.length-3)){
+                if (rst[0]<(rightbs.length/2)){
                     alert("The target site was not found in the given OFF-TARGET reference gene ("+ gene_list[i] +"). Please enter a valid gene name");
                 }
                 else {
                 RightBsPos_off[i] = rst[1];
+                locus_list[i] = ReverseComplement(locus_list[i]).substring(RightBsPos_off[i] -region_analyse*1, RightBsPos_off[i] + rightbs.length +region_analyse*1)
                 }
             }   
             else {
                 RightBsPos_off[i] = rst[1];
+                locus_list[i] = locus_list[i].substring(RightBsPos_off[i] -region_analyse*1, RightBsPos_off[i] + rightbs.length +region_analyse*1)
+
             }
-            locus_list[i] = locus_list[i].substring(RightBsPos_off[i] -region_analyse*1, RightBsPos_off[i] + rightbs.length +region_analyse*1)
             //Update new index
             var rst = bsa_align(locus_list[i], rightbs, [ms, mms], [gapo, gape]);
             if (rst[0]<(rightbs.length-3)){
