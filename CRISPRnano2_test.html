@@ -1089,22 +1089,6 @@
         for (let key in aln_dict[id]){
             sum_track[id] += aln_dict[id][key];
         }
-        for (let key in aln_dict[id]){
-            if ((aln_dict[id][key]> MutationThreshold*summary_track[id][7]/100)&&(key.trim().length>region_analyse*2-4)){
-                aln_dict_fil[id][key] = aln_dict[id][key];
-            }
-        }
-        
-        // sort aligment tract
-        var items = Object.keys(aln_dict_fil[id]).map(function(key) {
-        return [key, aln_dict_fil[id][key]];
-        });
-        // Sort the array based on the second element
-        items.sort(function(first, second) {
-        return second[1] - first[1];
-        });
-        aln_dict_fil[id] = Object.fromEntries(items.map(([v, k]) => [v, k]));
-
         var not_align = 0;
         var no_indel = 0; 
         var inf_indel =  0;
@@ -1150,6 +1134,24 @@
         summary_track[id][5] = read_ambigous;
         summary_track[id][6] = not_align;
         summary_track[id][7] = sum;
+
+        for (let key in aln_dict[id]){
+            if ((aln_dict[id][key]>(1*MutationThreshold*summary_track[id][7]/100))&&(key.trim().length>region_analyse*2-4)){
+                aln_dict_fil[id][key] = aln_dict[id][key];
+            }
+        }
+        
+        // sort aligment tract
+        var items = Object.keys(aln_dict_fil[id]).map(function(key) {
+        return [key, aln_dict_fil[id][key]];
+        });
+        // Sort the array based on the second element
+        items.sort(function(first, second) {
+        return second[1] - first[1];
+        });
+        aln_dict_fil[id] = Object.fromEntries(items.map(([v, k]) => [v, k]));
+
+
         PlotAlignment(id, locus)
         CurrentFileId++;
     
