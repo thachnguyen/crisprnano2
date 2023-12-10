@@ -1353,7 +1353,7 @@
         reader = new FileReader();
         reader.onload = FileReceived;
         reader.readAsText(files[CurrentFileId].slice(CurrentFileChunk*chunksize, (CurrentFileChunk+1)*chunksize));
-        document.getElementById('progress').innerHTML = "File "+(CurrentFileId+1)+": "+Math.round(CurrentFileChunk*chunksize/1000000)+" MB processed.";
+        document.getElementById('progress').innerHTML = "File "+(CurrentFileId+1)+": "+Math.round(CurrentFileChunk*chunksize/1000000)+" MB processed. Please keep this windows open!";
     }
     // function ReadNextFileChunk()
     //     {
