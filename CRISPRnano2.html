@@ -1043,8 +1043,8 @@ function FileReceived() {
                 hits[id].push(aln_type)
             } 
             else {
-                var check_roi = roi.some(roi1 => roi.includes(roi1));
-                if (check_roi){// UPDATE v2.0 checking 4 posiblities of read, threshold score =region_analyse+10 
+                // var check_roi = roi.some(roi1 => roi.includes(roi1));
+                if (read.includes(locus_check)||ReverseComplement(read).includes(locus_check)){// UPDATE v2.0 checking 4 posiblities of read, threshold score =region_analyse+10 
                     var rst = bsa_align(target, read, [ms, mms], [gapo, gape]);
                     if (rst[0] < (region_analyse*1)){
                         try{
@@ -1382,6 +1382,7 @@ function FileReceived_off() {
     } 
     else {
     DrawPie_off();
+    gene_id = 0;
     }
 }
 
@@ -1397,7 +1398,7 @@ function ReadNextFileChunk_off(){
     reader = new FileReader();
     reader.onload = FileReceived_off;
     reader.readAsText(files[CurrentFileId_off].slice(CurrentFileChunk*chunksize, (CurrentFileChunk+1)*chunksize));
-    document.getElementById('progress1').innerHTML = "OFFTARGET Gene"+gene_list[gene_id] +"analysis File "+(CurrentFileId_off+1)+": "+Math.round(CurrentFileChunk*chunksize/1000000)+ "MB / "+Math.round(files[CurrentFileId_off].size/1000000)+" MB processed. Please keep this windows open!";
+    document.getElementById('progress1').innerHTML = "OFFTARGET Gene: "+gene_list[gene_id] +"analysing.\n Current file "+(CurrentFileId_off+1)+": "+Math.round(CurrentFileChunk*chunksize/1000000)+ "MB / "+Math.round(files[CurrentFileId_off].size/1000000)+" MB processed. Please keep this windows open!";
 }
 
 function DrawPie()
@@ -2661,16 +2662,50 @@ function PlotAlignment(barcode, locus)
         SVGObj.setAttribute("text-anchor", "middle");
         svg.appendChild(SVGObj);
     }
+    //sgRNA
+    if (rightbs!=document.getElementsByName("RightBS")[0].value.toUpperCase()){
+        var locus2 = ReverseString(ReverseComplement(locus))
+    }
+    else{
+        var locus2 = locus
+    }
+
+    for (let x=RightBsPos; x<RightBsPos+rightbs.length; x++){
+        //draw base:
+        SVGObj= document.createElementNS(NS,"text");
+        SVGObj.setAttribute("x", 120+12*(x-xfrom)+2);
+        SVGObj.setAttribute("y", ysize+delypos);
+        SVGObj.setAttribute("font-size", "14");
+        SVGObj.setAttribute("fill", "rgb(0,0,0)");
+        SVGObj.textContent = locus2[x];
+        SVGObj.setAttribute("x", 120+12*(x-xfrom));
+        SVGObj.setAttribute("text-anchor", "middle");
+        svg.appendChild(SVGObj);
+    }
+    
+    var imageElement = document.createElementNS(NS, "image");
+    if (rightbs!=document.getElementsByName("RightBS")[0].value.toUpperCase()){
+        imageElement.setAttribute("x", 95+12*(RightBsPos-xfrom )); // Set the x-coordinate of the image
+    }    
+    else{
+        imageElement.setAttribute("x", 120+12*(RightBsPos+rightbs.length-xfrom)+2); // Set the x-coordinate of the image
+    }
+    imageElement.setAttribute("y", ysize + delypos -20); // Set the y-coordinate of the image
+    imageElement.setAttribute("width", 20); // Set the width of the image
+    imageElement.setAttribute("height", 20); // Set the height of the image
+    imageElement.setAttribute("href", "crisprnano2/scissors.svg"); // Set the path to your image file
+    svg.appendChild(imageElement);
+
     //reference:
     SVGObj= document.createElementNS(NS,"text");
-    SVGObj.setAttribute("x", 10);
+    SVGObj.setAttribute("x", 5);
     SVGObj.setAttribute("y", ysize+delypos+20);
     SVGObj.setAttribute("font-size", "13");
-    SVGObj.textContent += "REFERENCE";
+    SVGObj.textContent += "REFERENCE 5'->3'";
     svg.appendChild(SVGObj);
     //line:
     SVGObj= document.createElementNS(NS,"path");
-    SVGObj.setAttributeNS(null, "d", "M 10,"+(ysize+delypos+5.5)+" L 1073,"+(ysize+delypos+5.5));
+    SVGObj.setAttributeNS(null, "d", "M 5,"+(ysize+delypos+5.5)+" L 1200,"+(ysize+delypos+5.5));
     SVGObj.style.stroke="rgb(0,0,0)";
     SVGObj.setAttributeNS(null, "stroke-width", 1);
     svg.appendChild(SVGObj);
@@ -2697,7 +2732,7 @@ function PlotAlignment(barcode, locus)
                     SVGObj.setAttribute("fill", "rgb(255,0,0");
                 }
                 else if (key[x]=="A"){SVGObj.textContent = key[x];
-                    SVGObj.setAttribute("fill", "rgb(0,255,0");
+                    SVGObj.setAttribute("fill", "rgb(0,150,0");
                 }
                 else if (key[x]=="C"){SVGObj.textContent = key[x];
                     SVGObj.setAttribute("fill", "rgb(0,0,255");
@@ -2745,7 +2780,6 @@ function PlotAlignment(barcode, locus)
                 SVGObj.setAttribute("x", 120+12*(x));
                 SVGObj.setAttribute("text-anchor", "middle");
                 svg.appendChild(SVGObj);
-
             }
         }
 
@@ -2775,7 +2809,7 @@ function PlotAlignment(barcode, locus)
         }
         
         SVGObj= document.createElementNS(NS,"text");
-        SVGObj.setAttribute("x", 10);
+        SVGObj.setAttribute("x", 5);
         SVGObj.setAttribute("y", ysize+delypos);
         SVGObj.setAttribute("font-size", "14");
         SVGObj.textContent += "GROUP " +id1;
@@ -2857,12 +2891,32 @@ function PlotAlignment_off(gene_i)
         SVGObj.setAttribute("text-anchor", "middle");
         svg.appendChild(SVGObj);
     }
+    //sgRNA
+    if (rightbs!=document.getElementsByName("RightBS")[0].value.toUpperCase()){
+        locus2 = ReverseComplement(locus)
+    }
+    else{
+        locus2 = locus
+    }
+    for (let x=RightBsPos; x<RightBsPos+rightbs.length; x++){
+        //draw base:
+        SVGObj= document.createElementNS(NS,"text");
+        SVGObj.setAttribute("x", 120+12*(x-xfrom)+2);
+        SVGObj.setAttribute("y", ysize+delypos);
+        SVGObj.setAttribute("font-size", "14");
+        SVGObj.setAttribute("fill", "rgb(0,0,0)");
+        SVGObj.textContent = locus2[x];
+        SVGObj.setAttribute("x", 120+12*(x-xfrom));
+        SVGObj.setAttribute("text-anchor", "middle");
+        svg.appendChild(SVGObj);
+    }
+
     //reference:
     SVGObj= document.createElementNS(NS,"text");
-    SVGObj.setAttribute("x", 10);
+    SVGObj.setAttribute("x", 5);
     SVGObj.setAttribute("y", ysize+delypos+20);
     SVGObj.setAttribute("font-size", "13");
-    SVGObj.textContent += "REFERENCE";
+    SVGObj.textContent += "REFERENCE 5'->3'";
     svg.appendChild(SVGObj);
     //line:
     SVGObj= document.createElementNS(NS,"path");
@@ -2971,7 +3025,7 @@ function PlotAlignment_off(gene_i)
         }
         
         SVGObj= document.createElementNS(NS,"text");
-        SVGObj.setAttribute("x", 10);
+        SVGObj.setAttribute("x", 5);
         SVGObj.setAttribute("y", ysize+delypos);
         SVGObj.setAttribute("font-size", "14");
         SVGObj.textContent += "GROUP " +id1;
@@ -3134,6 +3188,7 @@ function Start(){
     }
     
     //Update new locus, and sgRNA position 
+    locus_check = locus.substring(RightBsPos -region_analyse*1-10, RightBsPos -region_analyse*1)
     locus = locus.substring(RightBsPos -region_analyse*1, RightBsPos + rightbs.length +region_analyse*1)
     //add new roi for adaptive aligning
     for (let i=0; i<1; i++){
@@ -3144,7 +3199,12 @@ function Start(){
     }
     RightBsPos = locus.search(rightbs);
     //breaking point on locus 
-    BreakPoint = RightBsPos + rightbs.length + offset_DSB*1     
+    if (rightbs!=rightbs != document.getElementsByName("RightBS")[0].value.toUpperCase()){
+        BreakPoint = RightBsPos + rightbs.length + offset_DSB*1-10;
+    }
+    else{
+        BreakPoint = RightBsPos + rightbs.length + offset_DSB*1
+    }
     
     var evt = document.getElementById('files');
     files = evt.files;
@@ -3173,7 +3233,6 @@ function Start2(){
     AlignmentPrecalc_off = new Array(4);
     for (var i=0; i<4; i++) {
         hits_off[i] = []
-        // hits[i] = Array(100000);
         aln_dict_off[i] = {}
         aln_dict_fil_off[i] = {}
         aln_type_dict_off[i] = {}
@@ -3271,6 +3330,7 @@ var aln_type_dict = Array(96)
 
 var AlignmentPrecalc
 var locus = '';
+var locus_check = ''; //adaptive ref
 var files;
 var reader;
 var CurrentFileId;
