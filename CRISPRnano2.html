@@ -1058,7 +1058,7 @@ function FileReceived() {
                     aln_dict[id][str1] = 1
                     aln_type_dict[id][str1] = aln_type
                 }
-                hits[id].push(aln_type)
+                // hits[id].push(aln_type)
             } 
             else {
                 // var check_roi = roi.some(roi1 => roi.includes(roi1));
@@ -1173,7 +1173,7 @@ function FileReceived() {
     summary_track[id][7] = sum;
 
     for (let key in aln_dict[id]){
-        if ((aln_dict[id][key]>10)&&(aln_dict[id][key]>(1*MutationThreshold*summary_track[id][0]/100))&&(key.trim().length>region_analyse*2-4)){
+        if ((aln_dict[id][key]>10)&&(aln_dict[id][key]>(1*MutationThreshold*summary_track[id][0]/100))&&(key.split('\n')[0].trim().length>region_analyse*2-4)){
             aln_dict_fil[id][key] = aln_dict[id][key];
         }
     }
@@ -1302,29 +1302,6 @@ function FileReceived_off() {
     for (let key in aln_dict_off[gene_id]){
         sum_track_off[gene_id] += aln_dict_off[gene_id][key];
     }
-    // for (let key in aln_dict_off[i]){
-    //     if ((aln_dict_off[i][key]> MutationThreshold*summary_track_off[i][7]/100)&&(key.trim().length>region_analyse*2-3)){
-    //         aln_dict_fil_off[i][key] = aln_dict_off[i][key];
-    //     }
-    // }
-    
-    // sort aligment tract
-    // var items = Object.keys(aln_dict_fil_off[i]).map(function(key) {
-    // return [key, aln_dict_fil_off[i][key]];
-    // });
-    // // Sort the array based on the second element
-    // items.sort(function(first, second) {
-    // return second[1] - first[1];
-    // });
-    // aln_dict_fil_off[i] = Object.fromEntries(items.map(([v, k]) => [v, k]));
-
-    // if ((CurrentFileChunk)*chunksize >= files[CurrentFileId].size) //end of file -> next gene
-    // {
-    //     PlotAlignment_off(id)
-    //     gene_id++;
-    //     CurrentFileChunk = 0;
-    //     RestFromLastChunk = "";
-    // }
 
     var not_align = 0;
     var no_indel = 0; 
@@ -1373,7 +1350,7 @@ function FileReceived_off() {
     summary_track_off[gene_id][7] = sum;
 
     for (let key in aln_dict_off[gene_id]){
-        if ((aln_dict_off[gene_id][key]>10)&&(aln_dict_off[gene_id][key]>(1*MutationThreshold*summary_track_off[gene_id][0]/100))&&(key.trim().length>region_analyse*2-4)){
+        if ((aln_dict_off[gene_id][key]>10)&&(aln_dict_off[gene_id][key]>(1*MutationThreshold*summary_track_off[gene_id][0]/100))&&(key.split('\n')[0].trim().length>region_analyse*2-4)){
             aln_dict_fil_off[gene_id][key] = aln_dict_off[gene_id][key];
         }
     }
@@ -1423,11 +1400,9 @@ function DrawPie()
 {
     var svg = document.getElementById("SVGpie");
     var NS="http://www.w3.org/2000/svg";
-
     TabClicked(1);
     //reset svg:
     while (svg.lastChild) svg.removeChild(svg.lastChild);
-
     //register mouse listener:
     svg.addEventListener("mousedown", PieClick, false);
 
@@ -1439,8 +1414,7 @@ function DrawPie()
         if (summary_track[barcode][7] > maxsum) maxsum = summary_track[barcode][7];
     }
     
-    for (var barcode=0; barcode<96; barcode++)
-    {
+    for (var barcode=0; barcode<96; barcode++){
         var sum = 0;
         var inf_indel1 =  Array(6)
         var out_indel1 = Array(6)
@@ -1455,6 +1429,7 @@ function DrawPie()
                 for (let i=0; i <6; i++){
                     if (inf_indel1[i]==0){
                         inf_indel1[i]=aln_dict_fil[barcode][key];
+                        sum +=inf_indel1[i];
                         break;
                     }
                 }
@@ -1462,12 +1437,22 @@ function DrawPie()
                 for (let i=0; i <6; i++){
                     if (out_indel1[i]==0){
                         out_indel1[i]=aln_dict_fil[barcode][key];
+                        sum += out_indel1[i];
                         break;
                     }
                 }
             }
+            else if (aln_type_dict[barcode][key] == 7){
+                if (oligo[i]==0){
+                    oligo=aln_dict_fil[barcode][key];
+                    sum += oligo;
+                    break;
+                }
+            }
         }
-        
+
+        sum += summary_track[barcode][2]+ summary_track[barcode][1]
+
         var size = 24*Math.sqrt(summary_track[barcode][7]/maxsum);
         var midx = (barcode%12)*50 + 25;
         var midy = Math.floor(barcode/12) * 65 + 25;
@@ -1475,7 +1460,7 @@ function DrawPie()
             //wt:
             var angle = -3.1415/2;
             var lastangle = angle;
-            angle+=2*3.1415*0.995*summary_track[barcode][2]/summary_track[barcode][7];
+            angle+=2*3.1415*0.995*summary_track[barcode][2]/sum;
 
             //SVG:
             var startx = size*Math.cos(lastangle);
@@ -1493,7 +1478,7 @@ function DrawPie()
 
             // inframe indel1
             var lastangle = angle;
-            angle+=2*3.1415*0.995*inf_indel1[0]/summary_track[barcode][7];
+            angle+=2*3.1415*0.995*inf_indel1[0]/sum;
 
             var startx = size*Math.cos(lastangle);
             var starty = size*Math.sin(lastangle);
@@ -1509,7 +1494,7 @@ function DrawPie()
 
             // inframe indel2
             var lastangle = angle;
-            angle+=2*3.1415*0.995*inf_indel1[1]/summary_track[barcode][7];
+            angle+=2*3.1415*0.995*inf_indel1[1]/sum;
 
             var startx = size*Math.cos(lastangle);
             var starty = size*Math.sin(lastangle);
@@ -1526,7 +1511,7 @@ function DrawPie()
 
             // inframe indel3
             var lastangle = angle;
-            angle+=2*3.1415*0.995*inf_indel1[2]/summary_track[barcode][7];
+            angle+=2*3.1415*0.995*inf_indel1[2]/sum;
 
             var startx = size*Math.cos(lastangle);
             var starty = size*Math.sin(lastangle);
@@ -1542,7 +1527,7 @@ function DrawPie()
 
             // inframe indel4
             var lastangle = angle;
-            angle+=2*3.1415*0.995*inf_indel1[3]/summary_track[barcode][7];
+            angle+=2*3.1415*0.995*inf_indel1[3]/sum;
 
             var startx = size*Math.cos(lastangle);
             var starty = size*Math.sin(lastangle);
@@ -1558,7 +1543,7 @@ function DrawPie()
 
             // inframe indel5
             var lastangle = angle;
-            angle+=2*3.1415*0.995*inf_indel1[4]/summary_track[barcode][7];
+            angle+=2*3.1415*0.995*inf_indel1[4]/sum;
 
             var startx = size*Math.cos(lastangle);
             var starty = size*Math.sin(lastangle);
@@ -1575,7 +1560,7 @@ function DrawPie()
 
             // inframe indel6
             var lastangle = angle;
-            angle+=2*3.1415*0.995*inf_indel1[5]/summary_track[barcode][7];
+            angle+=2*3.1415*0.995*inf_indel1[5]/sum;
 
             var startx = size*Math.cos(lastangle);
             var starty = size*Math.sin(lastangle);
@@ -1591,7 +1576,7 @@ function DrawPie()
             
             // outframe indel1
             var lastangle = angle;
-            angle+=2*3.1415*0.995*out_indel1[0]/summary_track[barcode][7];
+            angle+=2*3.1415*0.995*out_indel1[0]/sum;
             var startx = size*Math.cos(lastangle);
             var starty = size*Math.sin(lastangle);
             var plusx = size*(Math.cos(angle)-Math.cos(lastangle));
@@ -1606,7 +1591,7 @@ function DrawPie()
 
             // outframe indel2
             var lastangle = angle;
-            angle+=2*3.1415*0.995*out_indel1[1]/summary_track[barcode][7];
+            angle+=2*3.1415*0.995*out_indel1[1]/sum;
 
             var startx = size*Math.cos(lastangle);
             var starty = size*Math.sin(lastangle);
@@ -1622,7 +1607,7 @@ function DrawPie()
 
             // outframe indel3
             var lastangle = angle;
-            angle+=2*3.1415*0.995*out_indel1[2]/summary_track[barcode][7];
+            angle+=2*3.1415*0.995*out_indel1[2]/sum;
 
             var startx = size*Math.cos(lastangle);
             var starty = size*Math.sin(lastangle);
@@ -1638,7 +1623,7 @@ function DrawPie()
 
             // outframe indel4
             var lastangle = angle;
-            angle+=2*3.1415*0.995*out_indel1[3]/summary_track[barcode][7];
+            angle+=2*3.1415*0.995*out_indel1[3]/sum;
 
             var startx = size*Math.cos(lastangle);
             var starty = size*Math.sin(lastangle);
@@ -1654,7 +1639,7 @@ function DrawPie()
 
             // outframe indel5
             var lastangle = angle;
-            angle+=2*3.1415*0.995*out_indel1[4]/summary_track[barcode][7];
+            angle+=2*3.1415*0.995*out_indel1[4]/sum;
 
             var startx = size*Math.cos(lastangle);
             var starty = size*Math.sin(lastangle);
@@ -1670,7 +1655,7 @@ function DrawPie()
 
             // outframe indel6
             var lastangle = angle;
-            angle+=2*3.1415*0.995*out_indel1[5]/summary_track[barcode][7];
+            angle+=2*3.1415*0.995*out_indel1[5]/sum;
 
             var startx = size*Math.cos(lastangle);
             var starty = size*Math.sin(lastangle);
@@ -1686,7 +1671,7 @@ function DrawPie()
 
             // targetingOligo
             var lastangle = angle;
-            angle+=2*3.1415*0.995*summary_track[barcode][1]/summary_track[barcode][7];
+            angle+=2*3.1415*0.995*summary_track[barcode][1]/sum;
 
             var startx = size*Math.cos(lastangle);
             var starty = size*Math.sin(lastangle);
@@ -1699,21 +1684,8 @@ function DrawPie()
             SVGObj.style.fill="rgb(0,232,30)";
             SVGObj.setAttribute("pointer-events","none");
             svg.appendChild(SVGObj);
-
             // read_ambigous, remove in v2.0
-            // var lastangle = angle;
-            // angle+=2*3.1415*0.995*summary_track[barcode][5]/summary_track[barcode][7];
-            // var startx = size*Math.cos(lastangle);
-            // var starty = size*Math.sin(lastangle);
-            // var plusx = size*(Math.cos(angle)-Math.cos(lastangle));
-            // var plusy = size*(Math.sin(angle)-Math.sin(lastangle));
-            // var largearc = 0;
-            // if (angle-lastangle > 3.1415) largearc = 1;
-            // var SVGObj= document.createElementNS(NS,"path");
-            // SVGObj.setAttributeNS(null, "d", "M "+midx+","+midy+" l "+startx+","+starty+" a "+size+" "+size+" 0 "+largearc+" 1 "+plusx+" "+plusy+" z");
-            // SVGObj.style.fill="rgb(70,70,70)";
-            // SVGObj.setAttribute("pointer-events","none");
-            // svg.appendChild(SVGObj);
+
         }
 
         //SVG:
@@ -1844,7 +1816,7 @@ function DrawPie_bulk()
     }
     // classify indel into several subset
     for (let key in aln_dict[barcode]){
-        if ((aln_dict[barcode][key]> 5)&&(key.trim().length>region_analyse*2-4)){
+        if ((aln_dict[barcode][key]> 10)&&(key.split('\n')[0].trim().length>region_analyse*2-4)){
             aln_dict_fil[barcode][key] = aln_dict[barcode][key];
         }
     }
@@ -1863,6 +1835,7 @@ function DrawPie_bulk()
             for (let i=0; i <6; i++){
                 if (inf_indel1[i]==0){
                     inf_indel1[i]=aln_dict_fil[barcode][key];
+                    sum += inf_indel1[i]
                     break;
                 }
             }
@@ -1870,16 +1843,20 @@ function DrawPie_bulk()
             for (let i=0; i <6; i++){
                 if (out_indel1[i]==0){
                     out_indel1[i]=aln_dict_fil[barcode][key];
+                    sum += out_indel1[i]
                     break;
                 }
             }
         }
     }
+
+    sum += summary_track[barcode][2]+ summary_track[barcode][1]
+
     if (summary_track[barcode][7] > 0) {
         //wt:
         var angle = -3.1415/2;
         var lastangle = angle;
-        angle+=2*3.1415*0.995*summary_track[barcode][2]/summary_track[barcode][7];
+        angle+=2*3.1415*0.995*summary_track[barcode][2]/sum;
 
         //SVG:
         var startx = size*Math.cos(lastangle);
@@ -1896,7 +1873,7 @@ function DrawPie_bulk()
 
         // inframe indel1
         lastangle = angle;
-        angle+=2*3.1415*0.995*inf_indel1[0]/summary_track[barcode][7];
+        angle+=2*3.1415*0.995*inf_indel1[0]/sum;
         startx = size*Math.cos(lastangle);
         starty = size*Math.sin(lastangle);
         plusx = size*(Math.cos(angle)-Math.cos(lastangle));
@@ -1911,7 +1888,7 @@ function DrawPie_bulk()
 
         // inframe indel2
         lastangle = angle;
-        angle+=2*3.1415*0.995*inf_indel1[1]/summary_track[barcode][7];
+        angle+=2*3.1415*0.995*inf_indel1[1]/sum;
         startx = size*Math.cos(lastangle);
         starty = size*Math.sin(lastangle);
         plusx = size*(Math.cos(angle)-Math.cos(lastangle));
@@ -1926,7 +1903,7 @@ function DrawPie_bulk()
 
         // inframe indel3
         lastangle = angle;
-        angle+=2*3.1415*0.995*inf_indel1[2]/summary_track[barcode][7];
+        angle+=2*3.1415*0.995*inf_indel1[2]/sum;
         startx = size*Math.cos(lastangle);
         starty = size*Math.sin(lastangle);
         plusx = size*(Math.cos(angle)-Math.cos(lastangle));
@@ -1941,7 +1918,7 @@ function DrawPie_bulk()
 
         // inframe indel4
         lastangle = angle;
-        angle+=2*3.1415*0.995*inf_indel1[3]/summary_track[barcode][7];
+        angle+=2*3.1415*0.995*inf_indel1[3]/sum;
         startx = size*Math.cos(lastangle);
         starty = size*Math.sin(lastangle);
         plusx = size*(Math.cos(angle)-Math.cos(lastangle));
@@ -1956,7 +1933,7 @@ function DrawPie_bulk()
 
         // inframe indel5
         lastangle = angle;
-        angle+=2*3.1415*0.995*inf_indel1[4]/summary_track[barcode][7];
+        angle+=2*3.1415*0.995*inf_indel1[4]/sum;
         startx = size*Math.cos(lastangle);
         starty = size*Math.sin(lastangle);
         plusx = size*(Math.cos(angle)-Math.cos(lastangle));
@@ -1971,7 +1948,7 @@ function DrawPie_bulk()
 
         // inframe indel6
         lastangle = angle;
-        angle+=2*3.1415*0.995*inf_indel1[5]/summary_track[barcode][7];
+        angle+=2*3.1415*0.995*inf_indel1[5]/sum;
         startx = size*Math.cos(lastangle);
         starty = size*Math.sin(lastangle);
         plusx = size*(Math.cos(angle)-Math.cos(lastangle));
@@ -1986,7 +1963,7 @@ function DrawPie_bulk()
 
         // outframe indel1
         lastangle = angle;
-        angle+=2*3.1415*0.995*out_indel1[0]/summary_track[barcode][7];
+        angle+=2*3.1415*0.995*out_indel1[0]/sum;
         startx = size*Math.cos(lastangle);
         starty = size*Math.sin(lastangle);
         plusx = size*(Math.cos(angle)-Math.cos(lastangle));
@@ -2001,7 +1978,7 @@ function DrawPie_bulk()
 
         // outframe indel2
         lastangle = angle;
-        angle+=2*3.1415*0.995*out_indel1[1]/summary_track[barcode][7];
+        angle+=2*3.1415*0.995*out_indel1[1]/sum;
         startx = size*Math.cos(lastangle);
         starty = size*Math.sin(lastangle);
         plusx = size*(Math.cos(angle)-Math.cos(lastangle));
@@ -2016,7 +1993,7 @@ function DrawPie_bulk()
 
         // outframe indel3
         lastangle = angle;
-        angle+=2*3.1415*0.995*out_indel1[2]/summary_track[barcode][7];
+        angle+=2*3.1415*0.995*out_indel1[2]/sum;
         startx = size*Math.cos(lastangle);
         starty = size*Math.sin(lastangle);
         plusx = size*(Math.cos(angle)-Math.cos(lastangle));
@@ -2031,7 +2008,7 @@ function DrawPie_bulk()
 
         // outframe indel4
         lastangle = angle;
-        angle+=2*3.1415*0.995*out_indel1[3]/summary_track[barcode][7];
+        angle+=2*3.1415*0.995*out_indel1[3]/sum;
         startx = size*Math.cos(lastangle);
         starty = size*Math.sin(lastangle);
         plusx = size*(Math.cos(angle)-Math.cos(lastangle));
@@ -2046,7 +2023,7 @@ function DrawPie_bulk()
 
         // outframe indel5
         lastangle = angle;
-        angle+=2*3.1415*0.995*out_indel1[4]/summary_track[barcode][7];
+        angle+=2*3.1415*0.995*out_indel1[4]/sum;
         startx = size*Math.cos(lastangle);
         starty = size*Math.sin(lastangle);
         plusx = size*(Math.cos(angle)-Math.cos(lastangle));
@@ -2061,7 +2038,7 @@ function DrawPie_bulk()
 
         // outframe indel6
         lastangle = angle;
-        angle+=2*3.1415*0.995*out_indel1[5]/summary_track[barcode][7];
+        angle+=2*3.1415*0.995*out_indel1[5]/sum;
         startx = size*Math.cos(lastangle);
         starty = size*Math.sin(lastangle);
         plusx = size*(Math.cos(angle)-Math.cos(lastangle));
@@ -2075,7 +2052,7 @@ function DrawPie_bulk()
         svg.appendChild(SVGObj);
         // targetingOligo
         lastangle = angle;
-        angle+=2*3.1415*0.995*summary_track[barcode][1]/summary_track[barcode][7];
+        angle+=2*3.1415*0.995*summary_track[barcode][1]/sum;
         startx = size*Math.cos(lastangle);
         starty = size*Math.sin(lastangle);
         plusx = size*(Math.cos(angle)-Math.cos(lastangle));
@@ -2448,21 +2425,7 @@ function DrawPie_off()
             SVGObj.style.fill="rgb(0,232,30)";
             SVGObj.setAttribute("pointer-events","none");
             svg.appendChild(SVGObj);
-
             // read_ambigous, remove in v2.0
-            // var lastangle = angle;
-            // angle+=2*3.1415*0.995*summary_track[barcode][5]/summary_track[barcode][7];
-            // var startx = size*Math.cos(lastangle);
-            // var starty = size*Math.sin(lastangle);
-            // var plusx = size*(Math.cos(angle)-Math.cos(lastangle));
-            // var plusy = size*(Math.sin(angle)-Math.sin(lastangle));
-            // var largearc = 0;
-            // if (angle-lastangle > 3.1415) largearc = 1;
-            // var SVGObj= document.createElementNS(NS,"path");
-            // SVGObj.setAttributeNS(null, "d", "M "+midx+","+midy+" l "+startx+","+starty+" a "+size+" "+size+" 0 "+largearc+" 1 "+plusx+" "+plusy+" z");
-            // SVGObj.style.fill="rgb(70,70,70)";
-            // SVGObj.setAttribute("pointer-events","none");
-            // svg.appendChild(SVGObj);
         }
 
         //SVG:
