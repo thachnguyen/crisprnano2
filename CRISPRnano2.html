@@ -1,3 +1,4 @@
+
 <html><head><meta http-equiv="Content-Type" content="text/html; charset=windows-1252"><meta http-equiv="Content-Script-Type" content="text/javascript">
     <style>
         h1{
@@ -526,15 +527,17 @@ function checkOccurrence() {
 
 function checkValue() {
     // Get the input value
-    const region_analyse1 = document.getElementById('region_analyse').value;
+    const region_analyse1 = document.getElementsByName('region_analyse')[0].value;
     // Define the target string to check occurrence
     const MutationThreshold1 = document.getElementsByName("MutationThreshold")[0].value;
 
     if (MutationThreshold1*1 > 100||MutationThreshold1*1<0) {
     alert('Please check the Mutation threshold again');
+    document.getElementsByName("MutationThreshold")[0].value = '2';
     }
     if (region_analyse1*1 > 40||region_analyse1*1<20) {
     alert('System only support region area from 20-40 bp');
+    document.getElementsByName('region_analyse')[0].value = "30";
     }
 }
 // Trim low quality functions
