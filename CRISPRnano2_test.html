@@ -1,3 +1,5 @@
+
+
 <html><head><meta http-equiv="Content-Type" content="text/html; charset=windows-1252"><meta http-equiv="Content-Script-Type" content="text/javascript">
     <style>
         h1{
@@ -201,6 +203,12 @@
                         <span class="popuptext" id="help7">Donor oligonucleotide sequence used to introduce a site specific genomic modification. The sequence entered should be in the same orientation as the amplicon sequence. Click again to close.</span>
                     </div>
                     <br><input type="text" class="input_form" size="40" name="TargetingOligo" value=""><br>
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" value="" id="prime_editing">
+                        <label class="form-check-label" for="flexCheckDefault">
+                          Prime Editing/Knockin-only mode (exclude INDEL)
+                        </label>
+                      </div>
                     <br>
                     <input type="submit" name="submit" value="SUBMIT  " class="btn btn-primary btn-lg" id="submit" onclick="Start();">
                     <div id="progress" style="display:none; padding: 10px; border: 10px solid #CCC; background: #EEE; width:60%; position:absolute; top:50%;left:40%">
@@ -218,15 +226,15 @@
                     <br>
                     <br>             
                     <!-- <a href="http://ftp.ensembl.org/pub/release-105/fasta/homo_sapiens/dna/">(Ensembl reference)</a><br> -->
-                    Sequencing method:                 
+                    <!-- Sequencing method:                 
                     <div class="popup" onclick="myFunction3()">(? Click here!)
                         <span class="popuptext" id="help3">Reference amplicon length should be in the range of 200-300 bases with the nuclease target site located roughly in the middle. You can get the reference from Ensembl link below. Click again to close</span>
                     </div>
                     <select id="seq_method" name="seq_method">
                         <option value="ONT">Nanopore</option>
                         <option value="Il_pac">Illumina or PacBio</option>
-                      </select>
-                    <br>  <br> 
+                      </select> -->
+                    <!-- <br>  <br>  -->
                     Drag the slider to change the interested region
                     <div class="popup" onclick="myFunction6()">(? Click here!)
                         <span class="popuptext" id="help6">You can shift the centre of interest region with respect to the double strand breakpoint (DSB) to the left or right. Default value is double strand breaking point 0. Click to close</span>
@@ -240,13 +248,14 @@
                         <div class="popup" onclick="myFunction5()">(? Click here!)
                             <span class="popuptext" id="help5"> For ONT reads, it is recommended to use -/+15 bases around the predicted DNA lesion. Larger regions are prone to false positive indels. Larger regions (total of 200-250 bp) can be safely used with Illumina reads. You can drag and drop the central point of the predicted double strand break in the genomic sequence to the left or to the right. Default value 0 is double strand breaking point- Crisprnano will use the first index of sgRNA mapped on reference. Click again to close</span>
                         </div>
-                        <br><input type="text" size="30" name="region_analyse" value="30" class="input_form"><br>
+                        <br><input type="text" size="30" name="region_analyse" value="30" class="input_form" onchange="checkValue();"><br>
 
                         <br>Indel Threshold [%]: 
                         <div class="popup" onclick="myFunction9()">(? Click here!)
                             <span class="popuptext" id="help9">The Indel Threshold determines at what relative occurrence an individual indel mutation is considered as a unique allele of the respective clone analyzed, and is thus displayed in the alignment list. Low threshold values can result in false positive allele calling due to sequencing errors, whereas high threshold values result in false negative allele calling. Values in between 0 - 100 % can be entered. We recommend to use 5% for ONT reads and 2% for Illumina reads (default is set to 5%). Click again to close.</span>
                         </div> 
-                        <br><input type="text" size="30" class="input_form" name="MutationThreshold" value="2"><br>
+                        <br><input type="text" size="30" class="input_form" name="MutationThreshold" value="2" onchange="checkValue();"><br>
+                    
                     <p></p>
 
                     <br> <br><br>
@@ -522,6 +531,22 @@ function checkOccurrence() {
     alert(`Error: we only support maximum 4 off-target genes.`);
     }
 } 
+
+function checkValue() {
+    // Get the input value
+    const region_analyse1 = document.getElementsByName('region_analyse')[0].value;
+    // Define the target string to check occurrence
+    const MutationThreshold1 = document.getElementsByName("MutationThreshold")[0].value;
+
+    if (MutationThreshold1*1 > 100||MutationThreshold1*1<0) {
+    alert('Please check the Mutation threshold again');
+    document.getElementsByName("MutationThreshold")[0].value = '2';
+    }
+    if (region_analyse1*1 > 40||region_analyse1*1<20) {
+    alert('System only support region area from 20-40 bp');
+    document.getElementsByName('region_analyse')[0].value = "30";
+    }
+}
 // Trim low quality functions
 function trimLowQuality(fileContent) {
         const lines = fileContent.trim().split('\n');
@@ -648,101 +673,101 @@ function bsa_gen_query_profile(_s, _m, table)
     * higher 28 bits keeps the length and lower 4 bits the operation in order of
     * "MIDNSH".
     */
-    function bsa_align(target, query, matrix, gapsc)
-    {
-        // convert bases to integers
-        var is_local = true
-        var t = bsg_enc_seq(target, bst_nt5);
-        var qp = bsa_gen_query_profile(query, matrix, bst_nt5);
-        var qlen = qp[0].length;
-        // adjust band width
-        var max_len = qlen > t.length? qlen : t.length;
-        var w = true;
-        var len_diff = t.target > qlen? t.target - qlen : qlen - t.target;
-        w = w > len_diff? w : len_diff;
-        
-        // set gap score
-        var gapo, gape; // these are penalties which should be non-negative
-        if (typeof gapsc == 'number') gapo = 0, gape = gapsc > 0? gapsc : -gapsc;
-        else gapo = gapsc[0] > 0? gapsc[0] : -gapsc[0], gape = gapsc[1] > 0? gapsc[1] : -gapsc[1];
-        var gapoe = gapo + gape; // penalty for opening the first gap
+function bsa_align(target, query, matrix, gapsc)
+{
+    // convert bases to integers
+    var is_local = true
+    var t = bsg_enc_seq(target, bst_nt5);
+    var qp = bsa_gen_query_profile(query, matrix, bst_nt5);
+    var qlen = qp[0].length;
+    // adjust band width
+    var max_len = qlen > t.length? qlen : t.length;
+    var w = true;
+    var len_diff = t.target > qlen? t.target - qlen : qlen - t.target;
+    w = w > len_diff? w : len_diff;
+    
+    // set gap score
+    var gapo, gape; // these are penalties which should be non-negative
+    if (typeof gapsc == 'number') gapo = 0, gape = gapsc > 0? gapsc : -gapsc;
+    else gapo = gapsc[0] > 0? gapsc[0] : -gapsc[0], gape = gapsc[1] > 0? gapsc[1] : -gapsc[1];
+    var gapoe = gapo + gape; // penalty for opening the first gap
 
-        // initial values
-        var NEG_INF = -0x40000000;
-        
-        var H = [], E = [], z = [], score, max = 0, end_i = -1, end_j = -1;
-        if (is_local) {
-            for (var j = 0; j <= qlen; ++j) H[j] = E[j] = 0;
-        } 
+    // initial values
+    var NEG_INF = -0x40000000;
+    
+    var H = [], E = [], z = [], score, max = 0, end_i = -1, end_j = -1;
+    if (is_local) {
+        for (var j = 0; j <= qlen; ++j) H[j] = E[j] = 0;
+    } 
 
-        // the DP loop
-        for (var i = 0; i < t.length; ++i) {
-            var h1 = 0, f = 0, m = 0, mj = -1;
-            var zi, qpi = qp[t[i]];
-            zi = z[i] = [];
-            var beg = i > w? i - w : 0;
-            var end = i + w + 1 < qlen? i + w + 1 : qlen; // only loop through [beg,end) of the query sequence
+    // the DP loop
+    for (var i = 0; i < t.length; ++i) {
+        var h1 = 0, f = 0, m = 0, mj = -1;
+        var zi, qpi = qp[t[i]];
+        zi = z[i] = [];
+        var beg = i > w? i - w : 0;
+        var end = i + w + 1 < qlen? i + w + 1 : qlen; // only loop through [beg,end) of the query sequence
 
-            for (var j = beg; j < end; ++j) {
-                // At the beginning of the loop: h=H[j]=H(i-1,j-1), e=E[j]=E(i,j), f=F(i,j) and h1=H(i,j-1)
-                // If we only want to compute the max score, delete all lines involving direction "d".
-                var e = E[j], h = H[j], d;
-                H[j] = h1;           // set H(i,j-1) for the next row
-                h += qpi[j];         // h = H(i-1,j-1) + S(i,j)
-                d = h >= e? 0 : 1;
-                h = h >= e? h : e;
-                d = h >= f? d : 2;
-                h = h >= f? h : f;    // h = H(i,j) = max{H(i-1,j-1)+S(i,j), E(i,j), F(i,j)}
-                d = !is_local || h > 0? d : 1<<6;
-                h1 = h;              // save H(i,j) to h1 for the next column
-                mj = m > h? mj : j;
-                m = Math.max(m, h);    // update the max score in this row
-                h -= gapoe;
-                h = !is_local || h > 0? h : 0;
-                e -= gape;
-                d |= e > h? 1<<2 : 0;
-                e = e > h? e : h;    // e = E(i+1,j)
-                E[j] = e;            // save E(i+1,j) for the next row
-                f -= gape;
-                d |= f > h? 2<<4 : 0;
-                f = f > h? f : h;    // f = F(i,j+1)
-                zi[j] = d;           // z[i,j] keeps h for the current cell and e/f for the next cell
-            }
-            H[end] = h1, E[end] = is_local? 0 : NEG_INF;
-            if (m > max) max = m, end_i = i, end_j = mj;
+        for (var j = beg; j < end; ++j) {
+            // At the beginning of the loop: h=H[j]=H(i-1,j-1), e=E[j]=E(i,j), f=F(i,j) and h1=H(i,j-1)
+            // If we only want to compute the max score, delete all lines involving direction "d".
+            var e = E[j], h = H[j], d;
+            H[j] = h1;           // set H(i,j-1) for the next row
+            h += qpi[j];         // h = H(i-1,j-1) + S(i,j)
+            d = h >= e? 0 : 1;
+            h = h >= e? h : e;
+            d = h >= f? d : 2;
+            h = h >= f? h : f;    // h = H(i,j) = max{H(i-1,j-1)+S(i,j), E(i,j), F(i,j)}
+            d = !is_local || h > 0? d : 1<<6;
+            h1 = h;              // save H(i,j) to h1 for the next column
+            mj = m > h? mj : j;
+            m = Math.max(m, h);    // update the max score in this row
+            h -= gapoe;
+            h = !is_local || h > 0? h : 0;
+            e -= gape;
+            d |= e > h? 1<<2 : 0;
+            e = e > h? e : h;    // e = E(i+1,j)
+            E[j] = e;            // save E(i+1,j) for the next row
+            f -= gape;
+            d |= f > h? 2<<4 : 0;
+            f = f > h? f : h;    // f = F(i,j+1)
+            zi[j] = d;           // z[i,j] keeps h for the current cell and e/f for the next cell
         }
-        if (is_local && max == 0) return null;
-        score = is_local? max : H[qlen];
-
-        // backtrack to recover the alignment/cigar
-        function push_cigar(ci, op, len) {
-            if (ci.length == 0 || op != (ci[ci.length-1]&0xf))
-                ci.push(len<<4|op);
-            else ci[ci.length-1] += len<<4;
-        }
-        var cigar = [], tmp, which = 0, i, k, start_i = 0;
-        if (is_local) {
-            i = end_i, k = end_j;
-            if (end_j != qlen - 1) // then add soft cliping
-                push_cigar(cigar, 4, qlen - 1 - end_j);
-        } else i = t.length - 1, k = (i + w + 1 < qlen? i + w + 1 : qlen) - 1; // (i,k) points to the last cell
-        while (i >= 0 && k >= 0) {
-            tmp = z[i][k - (i > w? i - w : 0)];
-            which = tmp >> (which << 1) & 3;
-            if (which == 0 && tmp>>6) break;
-            if (which == 0) which = tmp & 3;
-            if (which == 0)      { push_cigar(cigar, 0, 1); --i, --k; } // match
-            else if (which == 1) { push_cigar(cigar, 2, 1); --i; } // deletion
-            else                 { push_cigar(cigar, 1, 1), --k; } // insertion
-        }
-        if (is_local) {
-            if (k >= 0) push_cigar(cigar, 4, k + 1); // add soft clipping
-            start_i = i + 1;
-        } 
-        for (var i = 0; i < cigar.length>>1; ++i) // reverse CIGAR
-            tmp = cigar[i], cigar[i] = cigar[cigar.length-1-i], cigar[cigar.length-1-i] = tmp;
-        return [score, start_i, cigar];
+        H[end] = h1, E[end] = is_local? 0 : NEG_INF;
+        if (m > max) max = m, end_i = i, end_j = mj;
     }
+    if (is_local && max == 0) return null;
+    score = is_local? max : H[qlen];
+
+    // backtrack to recover the alignment/cigar
+    function push_cigar(ci, op, len) {
+        if (ci.length == 0 || op != (ci[ci.length-1]&0xf))
+            ci.push(len<<4|op);
+        else ci[ci.length-1] += len<<4;
+    }
+    var cigar = [], tmp, which = 0, i, k, start_i = 0;
+    if (is_local) {
+        i = end_i, k = end_j;
+        if (end_j != qlen - 1) // then add soft cliping
+            push_cigar(cigar, 4, qlen - 1 - end_j);
+    } else i = t.length - 1, k = (i + w + 1 < qlen? i + w + 1 : qlen) - 1; // (i,k) points to the last cell
+    while (i >= 0 && k >= 0) {
+        tmp = z[i][k - (i > w? i - w : 0)];
+        which = tmp >> (which << 1) & 3;
+        if (which == 0 && tmp>>6) break;
+        if (which == 0) which = tmp & 3;
+        if (which == 0)      { push_cigar(cigar, 0, 1); --i, --k; } // match
+        else if (which == 1) { push_cigar(cigar, 2, 1); --i; } // deletion
+        else                 { push_cigar(cigar, 1, 1), --k; } // insertion
+    }
+    if (is_local) {
+        if (k >= 0) push_cigar(cigar, 4, k + 1); // add soft clipping
+        start_i = i + 1;
+    } 
+    for (var i = 0; i < cigar.length>>1; ++i) // reverse CIGAR
+        tmp = cigar[i], cigar[i] = cigar[cigar.length-1-i], cigar[cigar.length-1-i] = tmp;
+    return [score, start_i, cigar];
+}
 
 // generate cigar to gap in breakpoint windows, bkp11, bkp22 is offset interest region of ref wrt gap add-in ref 
 function bsa_cigar2gaps_breakpoint(target, query, start, cigar, bkp1, bkp2)
@@ -990,10 +1015,24 @@ function FileReceived() {
     var cursor = 0, origlen = original.length;
     // alignment parameter for affine score DP algorithms 
     var ms = 1 // match score
-    var mms = -2 //mismatch score
-    var gapo = -2  // gap open score
+    var mms = -1//mismatch score
+    var gapo = -4  // gap open score
     var gape = -1  // gap extent score
     var id = CurrentFileId;
+    var target = locus;
+    var targetingOligo = document.getElementsByName("TargetingOligo")[0].value.toUpperCase(); //TargetingOligo
+
+    var checkbox = document.getElementById('prime_editing');
+    var prime_mode = document.getElementById('prime_editing').checked;
+    // Add a change event listener to the checkbox
+
+    //check target oligo in reference or reverse ref
+    if (targetingOligo !=""){
+            var score_oligo_ref_fw = bsa_align(locus.substring(BreakPoint-region_analyse*1, BreakPoint + region_analyse*1), targetingOligo, [ms, mms], [gapo, gape]); 
+            var score_oligo_ref_rv = bsa_align(locus.substring(BreakPoint-region_analyse*1, BreakPoint + region_analyse*1), ReverseComplement(targetingOligo), [ms, mms], [gapo, gape]);
+            var oligo_index = score_oligo_ref_fw[0]>=score_oligo_ref_rv[0] ? score_oligo_ref_fw[1] : score_oligo_ref_rv[1]
+            targetingOligo = score_oligo_ref_fw[0]>=score_oligo_ref_rv[0] ? targetingOligo: ReverseComplement(targetingOligo)
+        }
 
     while (true) {
         var cursor1 = cursor;
@@ -1012,8 +1051,7 @@ function FileReceived() {
         var phred = original.slice(cursor3+1,cursor4); 
         var readlen = read.length;
         var aln_type;
-        var target = locus;
-        var targetingOligo = document.getElementsByName("TargetingOligo")[0].value.toUpperCase(); //TargetingOligo
+
         var mean_phred = 0;
         for (let pos = 0; pos < readlen; pos++) {
             mean_phred = mean_phred + phred.charCodeAt(pos);
@@ -1021,26 +1059,123 @@ function FileReceived() {
         mean_phred = mean_phred/readlen; 
     
         if (mean_phred > PhredThreshold){ 
-            if ((targetingOligo !="") &&(read.includes(targetingOligo)||read.includes(ReverseComplement(targetingOligo))||read.includes(ReverseString(targetingOligo))||read.includes(ReverseComplement(ReverseString(targetingOligo))))){
-                aln_type = 7;
-                // remove this part in knockin, speed up the program
-                hits[id].push(aln_type)
-                var rst = bsa_align(target, read, [ms, mms], [gapo, gape]);
-                var str1 = ''
-                var fmt1 = bsa_cigar2gaps_breakpoint(target, read, rst[1], rst[2], BreakPoint-region_analyse*1, BreakPoint + region_analyse*1);
-                var fmt = fmt1[0]
-                            
-                str1 += fmt[0] + '\n';
-                str1 += fmt[1] + '\n';
-                
-                if (aln_dict[id].hasOwnProperty(str1)){
-                    aln_dict[id][str1]+=1
-                }
+            if (targetingOligo !=""){
+                var index_oli_read = read.search(targetingOligo);
+                if (index_oli_read!=-1){
+                    aln_type = 7;
+                    // remove this part in knockin, speed up the program
+                    hits[id].push(aln_type)
+                    var str1 = ''
+                    str1 += read.substring(index_oli_read- oligo_index, index_oli_read- oligo_index + region_analyse*2)+ '\n'+ '\n';
+                    if (aln_dict[id].hasOwnProperty(str1)){
+                        aln_dict[id][str1]+=1
+                    }
+                    else {
+                        aln_dict[id][str1] = 1
+                        aln_type_dict[id][str1] = aln_type
+                    }
+                    hits[id].push(aln_type)
+                    }
                 else {
-                    aln_dict[id][str1] = 1
-                    aln_type_dict[id][str1] = aln_type
+                    index_oli_read = ReverseComplement(read).search(targetingOligo);
+                    if (index_oli_read!=-1){
+                        read = ReverseComplement(read)
+                        aln_type = 7;
+                    // remove this part in knockin, speed up the program
+                        hits[id].push(aln_type)
+                        var str1 = ''
+                        str1 += read.substring(index_oli_read- oligo_index, index_oli_read- oligo_index + region_analyse*2)+ '\n'+ '\n';
+                    
+                        if (aln_dict[id].hasOwnProperty(str1)){
+                            aln_dict[id][str1]+=1
+                        }
+                        else {
+                            aln_dict[id][str1] = 1
+                            aln_type_dict[id][str1] = aln_type
+                        }
+                        hits[id].push(aln_type)
+                    }
+                    else if (read.includes(locus.substring(BreakPoint-region_analyse*1, BreakPoint + region_analyse*1))){
+                        aln_type = 1;
+                    // remove this part in knockin, speed up the program
+                        hits[id].push(aln_type)
+                        var str1 = ''
+                        str1 += locus.substring(BreakPoint-region_analyse*1, BreakPoint + region_analyse*1)+ '\n'+ '\n';
+                        if (aln_dict[id].hasOwnProperty(str1)){
+                            aln_dict[id][str1]+=1
+                        }
+                        else {
+                            aln_dict[id][str1] = 1
+                            aln_type_dict[id][str1] = aln_type
+                        }
+                        hits[id].push(aln_type)
+                    }
+                    else if (read.includes(ReverseComplement(locus.substring(BreakPoint-region_analyse*1, BreakPoint + region_analyse*1)))){
+                        aln_type = 1;
+                    // remove this part in knockin, speed up the program
+                        hits[id].push(aln_type)
+                        var str1 = ''
+                        str1 += ReverseComplement(locus.substring(BreakPoint-region_analyse*1, BreakPoint + region_analyse*1))+ '\n'+ '\n';
+                        if (aln_dict[id].hasOwnProperty(str1)){
+                            aln_dict[id][str1]+=1
+                        }
+                        else {
+                            aln_dict[id][str1] = 1
+                            aln_type_dict[id][str1] = aln_type
+                        }
+                        hits[id].push(aln_type)
+                    }
+                    
+                    else if (!prime_mode){
+                        // var check_roi = roi.some(roi1 => roi.includes(roi1));
+                        if (read.includes(locus_check)||ReverseComplement(read).includes(locus_check)){// UPDATE v2.0 checking 4 posiblities of read, threshold score =region_analyse+10 
+                            var rst = bsa_align(target, read, [ms, mms], [gapo, gape]);
+                            if (rst[0] < (region_analyse*1)){
+                                try{
+                                read = ReverseComplement(read);
+                                rst = bsa_align(target, read, [ms, mms], [gapo, gape]);
+                                // if (rst[0] < (region_analyse*1+10)){
+                                // try{
+                                //     read = ReverseString(read)
+                                //     rst = bsa_align(target, read, [ms, mms], [gapo, gape])
+                                //     if (rst[0] < (region_analyse*1+10)){
+                                //         try{
+                                //             read = ReverseComplement(read)
+                                //             rst = bsa_align(target, read, [ms, mms], [gapo, gape])
+                                //         }                                
+                                //         catch (error){}
+                                //     }
+                                // }
+                                // catch (error){}
+                                // }
+                                }
+                                catch (error){}
+                            }
+                            var str1 = ''
+                            var fmt1 = bsa_cigar2gaps_breakpoint(target, read, rst[1], rst[2], BreakPoint-region_analyse*1, BreakPoint + region_analyse*1);
+                            var fmt = fmt1[0]
+                            aln_type = fmt1[1]
+                            // var str2_arr = fmt[0].split('-')
+                            str1 += fmt[0] + '\n';
+                            str1 += fmt[1] + '\n';
+                            //aggregate aln track into dictionary
+                            // if (containsAny(locus, str2_arr)||containsAny(ReverseComplement(locus), str2_arr)){
+                            if (aln_type !=0){
+                                if (aln_dict[id].hasOwnProperty(str1)){
+                                    aln_dict[id][str1]+=1
+                                }
+                                else {
+                                    aln_dict[id][str1] = 1
+                                    aln_type_dict[id][str1] = aln_type
+                                }
+                            }
+                            if (str1.trim().length>(region_analyse*2-2)){
+                                hits[id].push(aln_type);
+                            }
+                        }           
+                    }
                 }
-                hits[id].push(aln_type)
+                    
             } 
             else {
                 // var check_roi = roi.some(roi1 => roi.includes(roi1));
@@ -1077,13 +1212,6 @@ function FileReceived() {
                     //aggregate aln track into dictionary
                     // if (containsAny(locus, str2_arr)||containsAny(ReverseComplement(locus), str2_arr)){
                     if (aln_type !=0){
-                        // if (aln_type ==1){
-                        //     // put the mutation/ alteration
-                        //     if ((locus.includes(str1))&& (str1.length>region_analyse*1+10)){ 
-                        //         str1 = locus.substring(BreakPoint-region_analyse*1, BreakPoint + region_analyse*1) +"\n"
-                        //         str1 += Array(region_analyse*2).fill('\xa0').join('');
-                        //     }
-                        // }
                         if (aln_dict[id].hasOwnProperty(str1)){
                             aln_dict[id][str1]+=1
                         }
@@ -1155,7 +1283,7 @@ function FileReceived() {
     summary_track[id][7] = sum;
 
     for (let key in aln_dict[id]){
-        if ((aln_dict[id][key]>10)&&(aln_dict[id][key]>(1*MutationThreshold*summary_track[id][0]/100))&&(key.trim().length>region_analyse*2-4)){
+        if ((aln_dict[id][key]>10)&&(aln_dict[id][key]>(1*MutationThreshold*summary_track[id][0]/100))&&(key.split('\n')[0].trim().length>region_analyse*2-4)){
             aln_dict_fil[id][key] = aln_dict[id][key];
         }
     }
@@ -1284,29 +1412,6 @@ function FileReceived_off() {
     for (let key in aln_dict_off[gene_id]){
         sum_track_off[gene_id] += aln_dict_off[gene_id][key];
     }
-    // for (let key in aln_dict_off[i]){
-    //     if ((aln_dict_off[i][key]> MutationThreshold*summary_track_off[i][7]/100)&&(key.trim().length>region_analyse*2-3)){
-    //         aln_dict_fil_off[i][key] = aln_dict_off[i][key];
-    //     }
-    // }
-    
-    // sort aligment tract
-    // var items = Object.keys(aln_dict_fil_off[i]).map(function(key) {
-    // return [key, aln_dict_fil_off[i][key]];
-    // });
-    // // Sort the array based on the second element
-    // items.sort(function(first, second) {
-    // return second[1] - first[1];
-    // });
-    // aln_dict_fil_off[i] = Object.fromEntries(items.map(([v, k]) => [v, k]));
-
-    // if ((CurrentFileChunk)*chunksize >= files[CurrentFileId].size) //end of file -> next gene
-    // {
-    //     PlotAlignment_off(id)
-    //     gene_id++;
-    //     CurrentFileChunk = 0;
-    //     RestFromLastChunk = "";
-    // }
 
     var not_align = 0;
     var no_indel = 0; 
@@ -1355,7 +1460,7 @@ function FileReceived_off() {
     summary_track_off[gene_id][7] = sum;
 
     for (let key in aln_dict_off[gene_id]){
-        if ((aln_dict_off[gene_id][key]>10)&&(aln_dict_off[gene_id][key]>(1*MutationThreshold*summary_track_off[gene_id][0]/100))&&(key.trim().length>region_analyse*2-4)){
+        if ((aln_dict_off[gene_id][key]>10)&&(aln_dict_off[gene_id][key]>(1*MutationThreshold*summary_track_off[gene_id][0]/100))&&(key.split('\n')[0].trim().length>region_analyse*2-4)){
             aln_dict_fil_off[gene_id][key] = aln_dict_off[gene_id][key];
         }
     }
@@ -1405,11 +1510,9 @@ function DrawPie()
 {
     var svg = document.getElementById("SVGpie");
     var NS="http://www.w3.org/2000/svg";
-
     TabClicked(1);
     //reset svg:
     while (svg.lastChild) svg.removeChild(svg.lastChild);
-
     //register mouse listener:
     svg.addEventListener("mousedown", PieClick, false);
 
@@ -1421,12 +1524,12 @@ function DrawPie()
         if (summary_track[barcode][7] > maxsum) maxsum = summary_track[barcode][7];
     }
     
-    for (var barcode=0; barcode<96; barcode++)
-    {
+    for (var barcode=0; barcode<96; barcode++){
         var sum = 0;
         var inf_indel1 =  Array(6)
         var out_indel1 = Array(6)
-        var oligo
+        var oligo = 0
+        var wt = 0
         for (let i=0; i <6; i++){
             inf_indel1[i] = 0;
             out_indel1[i] = 0;
@@ -1437,6 +1540,7 @@ function DrawPie()
                 for (let i=0; i <6; i++){
                     if (inf_indel1[i]==0){
                         inf_indel1[i]=aln_dict_fil[barcode][key];
+                        sum +=inf_indel1[i];
                         break;
                     }
                 }
@@ -1444,20 +1548,30 @@ function DrawPie()
                 for (let i=0; i <6; i++){
                     if (out_indel1[i]==0){
                         out_indel1[i]=aln_dict_fil[barcode][key];
+                        sum += out_indel1[i];
                         break;
                     }
                 }
             }
+            else if (aln_type_dict[barcode][key] == 7){
+                oligo +=aln_dict_fil[barcode][key];
+                sum += aln_dict_fil[barcode][key];
+                break;
+            }
+            else if (aln_type_dict[barcode][key] == 1){
+                wt +=aln_dict_fil[barcode][key];
+                sum += aln_dict_fil[barcode][key];
+                break;
+            }
         }
-        
-        var size = 24*Math.sqrt(summary_track[barcode][7]/maxsum);
+        var size = 24*Math.sqrt(sum/maxsum);
         var midx = (barcode%12)*50 + 25;
         var midy = Math.floor(barcode/12) * 65 + 25;
         if (summary_track[barcode][7] > 0) {
             //wt:
             var angle = -3.1415/2;
             var lastangle = angle;
-            angle+=2*3.1415*0.995*summary_track[barcode][2]/summary_track[barcode][7];
+            angle+=2*3.1415*0.995*wt/sum;
 
             //SVG:
             var startx = size*Math.cos(lastangle);
@@ -1475,7 +1589,7 @@ function DrawPie()
 
             // inframe indel1
             var lastangle = angle;
-            angle+=2*3.1415*0.995*inf_indel1[0]/summary_track[barcode][7];
+            angle+=2*3.1415*0.995*inf_indel1[0]/sum;
 
             var startx = size*Math.cos(lastangle);
             var starty = size*Math.sin(lastangle);
@@ -1491,7 +1605,7 @@ function DrawPie()
 
             // inframe indel2
             var lastangle = angle;
-            angle+=2*3.1415*0.995*inf_indel1[1]/summary_track[barcode][7];
+            angle+=2*3.1415*0.995*inf_indel1[1]/sum;
 
             var startx = size*Math.cos(lastangle);
             var starty = size*Math.sin(lastangle);
@@ -1508,7 +1622,7 @@ function DrawPie()
 
             // inframe indel3
             var lastangle = angle;
-            angle+=2*3.1415*0.995*inf_indel1[2]/summary_track[barcode][7];
+            angle+=2*3.1415*0.995*inf_indel1[2]/sum;
 
             var startx = size*Math.cos(lastangle);
             var starty = size*Math.sin(lastangle);
@@ -1524,7 +1638,7 @@ function DrawPie()
 
             // inframe indel4
             var lastangle = angle;
-            angle+=2*3.1415*0.995*inf_indel1[3]/summary_track[barcode][7];
+            angle+=2*3.1415*0.995*inf_indel1[3]/sum;
 
             var startx = size*Math.cos(lastangle);
             var starty = size*Math.sin(lastangle);
@@ -1540,7 +1654,7 @@ function DrawPie()
 
             // inframe indel5
             var lastangle = angle;
-            angle+=2*3.1415*0.995*inf_indel1[4]/summary_track[barcode][7];
+            angle+=2*3.1415*0.995*inf_indel1[4]/sum;
 
             var startx = size*Math.cos(lastangle);
             var starty = size*Math.sin(lastangle);
@@ -1557,7 +1671,7 @@ function DrawPie()
 
             // inframe indel6
             var lastangle = angle;
-            angle+=2*3.1415*0.995*inf_indel1[5]/summary_track[barcode][7];
+            angle+=2*3.1415*0.995*inf_indel1[5]/sum;
 
             var startx = size*Math.cos(lastangle);
             var starty = size*Math.sin(lastangle);
@@ -1573,7 +1687,7 @@ function DrawPie()
             
             // outframe indel1
             var lastangle = angle;
-            angle+=2*3.1415*0.995*out_indel1[0]/summary_track[barcode][7];
+            angle+=2*3.1415*0.995*out_indel1[0]/sum;
             var startx = size*Math.cos(lastangle);
             var starty = size*Math.sin(lastangle);
             var plusx = size*(Math.cos(angle)-Math.cos(lastangle));
@@ -1588,7 +1702,7 @@ function DrawPie()
 
             // outframe indel2
             var lastangle = angle;
-            angle+=2*3.1415*0.995*out_indel1[1]/summary_track[barcode][7];
+            angle+=2*3.1415*0.995*out_indel1[1]/sum;
 
             var startx = size*Math.cos(lastangle);
             var starty = size*Math.sin(lastangle);
@@ -1604,7 +1718,7 @@ function DrawPie()
 
             // outframe indel3
             var lastangle = angle;
-            angle+=2*3.1415*0.995*out_indel1[2]/summary_track[barcode][7];
+            angle+=2*3.1415*0.995*out_indel1[2]/sum;
 
             var startx = size*Math.cos(lastangle);
             var starty = size*Math.sin(lastangle);
@@ -1620,7 +1734,7 @@ function DrawPie()
 
             // outframe indel4
             var lastangle = angle;
-            angle+=2*3.1415*0.995*out_indel1[3]/summary_track[barcode][7];
+            angle+=2*3.1415*0.995*out_indel1[3]/sum;
 
             var startx = size*Math.cos(lastangle);
             var starty = size*Math.sin(lastangle);
@@ -1636,7 +1750,7 @@ function DrawPie()
 
             // outframe indel5
             var lastangle = angle;
-            angle+=2*3.1415*0.995*out_indel1[4]/summary_track[barcode][7];
+            angle+=2*3.1415*0.995*out_indel1[4]/sum;
 
             var startx = size*Math.cos(lastangle);
             var starty = size*Math.sin(lastangle);
@@ -1652,7 +1766,7 @@ function DrawPie()
 
             // outframe indel6
             var lastangle = angle;
-            angle+=2*3.1415*0.995*out_indel1[5]/summary_track[barcode][7];
+            angle+=2*3.1415*0.995*out_indel1[5]/sum;
 
             var startx = size*Math.cos(lastangle);
             var starty = size*Math.sin(lastangle);
@@ -1668,7 +1782,7 @@ function DrawPie()
 
             // targetingOligo
             var lastangle = angle;
-            angle+=2*3.1415*0.995*summary_track[barcode][1]/summary_track[barcode][7];
+            angle+=2*3.1415*0.995*oligo/sum;
 
             var startx = size*Math.cos(lastangle);
             var starty = size*Math.sin(lastangle);
@@ -1681,21 +1795,8 @@ function DrawPie()
             SVGObj.style.fill="rgb(0,232,30)";
             SVGObj.setAttribute("pointer-events","none");
             svg.appendChild(SVGObj);
-
             // read_ambigous, remove in v2.0
-            // var lastangle = angle;
-            // angle+=2*3.1415*0.995*summary_track[barcode][5]/summary_track[barcode][7];
-            // var startx = size*Math.cos(lastangle);
-            // var starty = size*Math.sin(lastangle);
-            // var plusx = size*(Math.cos(angle)-Math.cos(lastangle));
-            // var plusy = size*(Math.sin(angle)-Math.sin(lastangle));
-            // var largearc = 0;
-            // if (angle-lastangle > 3.1415) largearc = 1;
-            // var SVGObj= document.createElementNS(NS,"path");
-            // SVGObj.setAttributeNS(null, "d", "M "+midx+","+midy+" l "+startx+","+starty+" a "+size+" "+size+" 0 "+largearc+" 1 "+plusx+" "+plusy+" z");
-            // SVGObj.style.fill="rgb(70,70,70)";
-            // SVGObj.setAttribute("pointer-events","none");
-            // svg.appendChild(SVGObj);
+
         }
 
         //SVG:
@@ -1787,14 +1888,14 @@ function DrawPie()
     SVGObj.setAttribute("font-size", "12");
     SVGObj.textContent = "targeted mutagenesis";
     svg.appendChild(SVGObj);
-    var SVGObj= document.createElementNS(NS,"text");
-    SVGObj.setAttribute("font-family", "sans-serif");
-    SVGObj.setAttribute("font-weight", "100");
-    SVGObj.setAttribute("x", midx+40);
-    SVGObj.setAttribute("y", midy+60+175);
-    SVGObj.setAttribute("font-size", "12");
-    SVGObj.textContent = "below threshold";
-    svg.appendChild(SVGObj);
+    // var SVGObj= document.createElementNS(NS,"text");
+    // SVGObj.setAttribute("font-family", "sans-serif");
+    // SVGObj.setAttribute("font-weight", "100");
+    // SVGObj.setAttribute("x", midx+40);
+    // SVGObj.setAttribute("y", midy+60+175);
+    // SVGObj.setAttribute("font-size", "12");
+    // SVGObj.textContent = "below threshold";
+    // svg.appendChild(SVGObj);
     document.title = "Result for "+document.getElementsByName("GeneName")[0].value+" ("+files.length+" barcodes read)";
 }
 
@@ -1826,7 +1927,7 @@ function DrawPie_bulk()
     }
     // classify indel into several subset
     for (let key in aln_dict[barcode]){
-        if ((aln_dict[barcode][key]> 5)&&(key.trim().length>region_analyse*2-4)){
+        if ((aln_dict[barcode][key]> 10)&&(key.split('\n')[0].trim().length>region_analyse*2-4)){
             aln_dict_fil[barcode][key] = aln_dict[barcode][key];
         }
     }
@@ -1845,6 +1946,7 @@ function DrawPie_bulk()
             for (let i=0; i <6; i++){
                 if (inf_indel1[i]==0){
                     inf_indel1[i]=aln_dict_fil[barcode][key];
+                    sum += inf_indel1[i]
                     break;
                 }
             }
@@ -1852,16 +1954,20 @@ function DrawPie_bulk()
             for (let i=0; i <6; i++){
                 if (out_indel1[i]==0){
                     out_indel1[i]=aln_dict_fil[barcode][key];
+                    sum += out_indel1[i]
                     break;
                 }
             }
         }
     }
+
+    sum += summary_track[barcode][2]+ summary_track[barcode][1]
+
     if (summary_track[barcode][7] > 0) {
         //wt:
         var angle = -3.1415/2;
         var lastangle = angle;
-        angle+=2*3.1415*0.995*summary_track[barcode][2]/summary_track[barcode][7];
+        angle+=2*3.1415*0.995*summary_track[barcode][2]/sum;
 
         //SVG:
         var startx = size*Math.cos(lastangle);
@@ -1878,7 +1984,7 @@ function DrawPie_bulk()
 
         // inframe indel1
         lastangle = angle;
-        angle+=2*3.1415*0.995*inf_indel1[0]/summary_track[barcode][7];
+        angle+=2*3.1415*0.995*inf_indel1[0]/sum;
         startx = size*Math.cos(lastangle);
         starty = size*Math.sin(lastangle);
         plusx = size*(Math.cos(angle)-Math.cos(lastangle));
@@ -1893,7 +1999,7 @@ function DrawPie_bulk()
 
         // inframe indel2
         lastangle = angle;
-        angle+=2*3.1415*0.995*inf_indel1[1]/summary_track[barcode][7];
+        angle+=2*3.1415*0.995*inf_indel1[1]/sum;
         startx = size*Math.cos(lastangle);
         starty = size*Math.sin(lastangle);
         plusx = size*(Math.cos(angle)-Math.cos(lastangle));
@@ -1908,7 +2014,7 @@ function DrawPie_bulk()
 
         // inframe indel3
         lastangle = angle;
-        angle+=2*3.1415*0.995*inf_indel1[2]/summary_track[barcode][7];
+        angle+=2*3.1415*0.995*inf_indel1[2]/sum;
         startx = size*Math.cos(lastangle);
         starty = size*Math.sin(lastangle);
         plusx = size*(Math.cos(angle)-Math.cos(lastangle));
@@ -1923,7 +2029,7 @@ function DrawPie_bulk()
 
         // inframe indel4
         lastangle = angle;
-        angle+=2*3.1415*0.995*inf_indel1[3]/summary_track[barcode][7];
+        angle+=2*3.1415*0.995*inf_indel1[3]/sum;
         startx = size*Math.cos(lastangle);
         starty = size*Math.sin(lastangle);
         plusx = size*(Math.cos(angle)-Math.cos(lastangle));
@@ -1938,7 +2044,7 @@ function DrawPie_bulk()
 
         // inframe indel5
         lastangle = angle;
-        angle+=2*3.1415*0.995*inf_indel1[4]/summary_track[barcode][7];
+        angle+=2*3.1415*0.995*inf_indel1[4]/sum;
         startx = size*Math.cos(lastangle);
         starty = size*Math.sin(lastangle);
         plusx = size*(Math.cos(angle)-Math.cos(lastangle));
@@ -1953,7 +2059,7 @@ function DrawPie_bulk()
 
         // inframe indel6
         lastangle = angle;
-        angle+=2*3.1415*0.995*inf_indel1[5]/summary_track[barcode][7];
+        angle+=2*3.1415*0.995*inf_indel1[5]/sum;
         startx = size*Math.cos(lastangle);
         starty = size*Math.sin(lastangle);
         plusx = size*(Math.cos(angle)-Math.cos(lastangle));
@@ -1968,7 +2074,7 @@ function DrawPie_bulk()
 
         // outframe indel1
         lastangle = angle;
-        angle+=2*3.1415*0.995*out_indel1[0]/summary_track[barcode][7];
+        angle+=2*3.1415*0.995*out_indel1[0]/sum;
         startx = size*Math.cos(lastangle);
         starty = size*Math.sin(lastangle);
         plusx = size*(Math.cos(angle)-Math.cos(lastangle));
@@ -1983,7 +2089,7 @@ function DrawPie_bulk()
 
         // outframe indel2
         lastangle = angle;
-        angle+=2*3.1415*0.995*out_indel1[1]/summary_track[barcode][7];
+        angle+=2*3.1415*0.995*out_indel1[1]/sum;
         startx = size*Math.cos(lastangle);
         starty = size*Math.sin(lastangle);
         plusx = size*(Math.cos(angle)-Math.cos(lastangle));
@@ -1998,7 +2104,7 @@ function DrawPie_bulk()
 
         // outframe indel3
         lastangle = angle;
-        angle+=2*3.1415*0.995*out_indel1[2]/summary_track[barcode][7];
+        angle+=2*3.1415*0.995*out_indel1[2]/sum;
         startx = size*Math.cos(lastangle);
         starty = size*Math.sin(lastangle);
         plusx = size*(Math.cos(angle)-Math.cos(lastangle));
@@ -2013,7 +2119,7 @@ function DrawPie_bulk()
 
         // outframe indel4
         lastangle = angle;
-        angle+=2*3.1415*0.995*out_indel1[3]/summary_track[barcode][7];
+        angle+=2*3.1415*0.995*out_indel1[3]/sum;
         startx = size*Math.cos(lastangle);
         starty = size*Math.sin(lastangle);
         plusx = size*(Math.cos(angle)-Math.cos(lastangle));
@@ -2028,7 +2134,7 @@ function DrawPie_bulk()
 
         // outframe indel5
         lastangle = angle;
-        angle+=2*3.1415*0.995*out_indel1[4]/summary_track[barcode][7];
+        angle+=2*3.1415*0.995*out_indel1[4]/sum;
         startx = size*Math.cos(lastangle);
         starty = size*Math.sin(lastangle);
         plusx = size*(Math.cos(angle)-Math.cos(lastangle));
@@ -2043,7 +2149,7 @@ function DrawPie_bulk()
 
         // outframe indel6
         lastangle = angle;
-        angle+=2*3.1415*0.995*out_indel1[5]/summary_track[barcode][7];
+        angle+=2*3.1415*0.995*out_indel1[5]/sum;
         startx = size*Math.cos(lastangle);
         starty = size*Math.sin(lastangle);
         plusx = size*(Math.cos(angle)-Math.cos(lastangle));
@@ -2057,7 +2163,7 @@ function DrawPie_bulk()
         svg.appendChild(SVGObj);
         // targetingOligo
         lastangle = angle;
-        angle+=2*3.1415*0.995*summary_track[barcode][1]/summary_track[barcode][7];
+        angle+=2*3.1415*0.995*summary_track[barcode][1]/sum;
         startx = size*Math.cos(lastangle);
         starty = size*Math.sin(lastangle);
         plusx = size*(Math.cos(angle)-Math.cos(lastangle));
@@ -2137,14 +2243,14 @@ function DrawPie_bulk()
     SVGObj.setAttribute("font-size", "12");
     SVGObj.textContent = "targeted mutagenesis";
     svg.appendChild(SVGObj);
-    SVGObj= document.createElementNS(NS,"text");
-    SVGObj.setAttribute("font-family", "sans-serif");
-    SVGObj.setAttribute("font-weight", "100");
-    SVGObj.setAttribute("x", midx+40);
-    SVGObj.setAttribute("y", midy+60+175);
-    SVGObj.setAttribute("font-size", "12");
-    SVGObj.textContent = "below threshold";
-    svg.appendChild(SVGObj);
+    // SVGObj= document.createElementNS(NS,"text");
+    // SVGObj.setAttribute("font-family", "sans-serif");
+    // SVGObj.setAttribute("font-weight", "100");
+    // SVGObj.setAttribute("x", midx+40);
+    // SVGObj.setAttribute("y", midy+60+175);
+    // SVGObj.setAttribute("font-size", "12");
+    // SVGObj.textContent = "below threshold";
+    // svg.appendChild(SVGObj);
     document.title = "Bulk Result for "+document.getElementsByName("GeneName")[0].value+" ("+files.length+" barcodes read)";
 }
 
@@ -2430,21 +2536,7 @@ function DrawPie_off()
             SVGObj.style.fill="rgb(0,232,30)";
             SVGObj.setAttribute("pointer-events","none");
             svg.appendChild(SVGObj);
-
             // read_ambigous, remove in v2.0
-            // var lastangle = angle;
-            // angle+=2*3.1415*0.995*summary_track[barcode][5]/summary_track[barcode][7];
-            // var startx = size*Math.cos(lastangle);
-            // var starty = size*Math.sin(lastangle);
-            // var plusx = size*(Math.cos(angle)-Math.cos(lastangle));
-            // var plusy = size*(Math.sin(angle)-Math.sin(lastangle));
-            // var largearc = 0;
-            // if (angle-lastangle > 3.1415) largearc = 1;
-            // var SVGObj= document.createElementNS(NS,"path");
-            // SVGObj.setAttributeNS(null, "d", "M "+midx+","+midy+" l "+startx+","+starty+" a "+size+" "+size+" 0 "+largearc+" 1 "+plusx+" "+plusy+" z");
-            // SVGObj.style.fill="rgb(70,70,70)";
-            // SVGObj.setAttribute("pointer-events","none");
-            // svg.appendChild(SVGObj);
         }
 
         //SVG:
@@ -2535,14 +2627,14 @@ function DrawPie_off()
     SVGObj.setAttribute("font-size", "12");
     SVGObj.textContent = "targeted mutagenesis";
     svg.appendChild(SVGObj);
-    var SVGObj= document.createElementNS(NS,"text");
-    SVGObj.setAttribute("font-family", "sans-serif");
-    SVGObj.setAttribute("font-weight", "100");
-    SVGObj.setAttribute("x", midx+40);
-    SVGObj.setAttribute("y", midy+60+175);
-    SVGObj.setAttribute("font-size", "12");
-    SVGObj.textContent = "below threshold";
-    svg.appendChild(SVGObj);
+    // var SVGObj= document.createElementNS(NS,"text");
+    // SVGObj.setAttribute("font-family", "sans-serif");
+    // SVGObj.setAttribute("font-weight", "100");
+    // SVGObj.setAttribute("x", midx+40);
+    // SVGObj.setAttribute("y", midy+60+175);
+    // SVGObj.setAttribute("font-size", "12");
+    // SVGObj.textContent = "below threshold";
+    // svg.appendChild(SVGObj);
     document.title = "Off-target Result for "+document.getElementsByName("GeneName")[0].value+" ("+files.length+" barcodes read)";
 }
 
@@ -2664,11 +2756,12 @@ function PlotAlignment(barcode, locus)
     }
     //sgRNA
     if (rightbs!=document.getElementsByName("RightBS")[0].value.toUpperCase()){
-        locus2 = ReverseComplement(locus)
+        var locus2 = ReverseString(ReverseComplement(locus))
     }
     else{
-        locus2 = locus
+        var locus2 = locus
     }
+
     for (let x=RightBsPos; x<RightBsPos+rightbs.length; x++){
         //draw base:
         SVGObj= document.createElementNS(NS,"text");
@@ -2682,6 +2775,19 @@ function PlotAlignment(barcode, locus)
         svg.appendChild(SVGObj);
     }
     
+    var imageElement = document.createElementNS(NS, "image");
+    if (rightbs!=document.getElementsByName("RightBS")[0].value.toUpperCase()){
+        imageElement.setAttribute("x", 95+12*(RightBsPos-xfrom )); // Set the x-coordinate of the image
+    }    
+    else{
+        imageElement.setAttribute("x", 120+12*(RightBsPos+rightbs.length-xfrom)+2); // Set the x-coordinate of the image
+    }
+    imageElement.setAttribute("y", ysize + delypos -20); // Set the y-coordinate of the image
+    imageElement.setAttribute("width", 20); // Set the width of the image
+    imageElement.setAttribute("height", 20); // Set the height of the image
+    imageElement.setAttribute("href", "crisprnano2/scissors.svg"); // Set the path to your image file
+    svg.appendChild(imageElement);
+
     //reference:
     SVGObj= document.createElementNS(NS,"text");
     SVGObj.setAttribute("x", 5);
@@ -2691,7 +2797,7 @@ function PlotAlignment(barcode, locus)
     svg.appendChild(SVGObj);
     //line:
     SVGObj= document.createElementNS(NS,"path");
-    SVGObj.setAttributeNS(null, "d", "M 10,"+(ysize+delypos+5.5)+" L 1073,"+(ysize+delypos+5.5));
+    SVGObj.setAttributeNS(null, "d", "M 5,"+(ysize+delypos+5.5)+" L 1200,"+(ysize+delypos+5.5));
     SVGObj.style.stroke="rgb(0,0,0)";
     SVGObj.setAttributeNS(null, "stroke-width", 1);
     svg.appendChild(SVGObj);
@@ -2718,7 +2824,7 @@ function PlotAlignment(barcode, locus)
                     SVGObj.setAttribute("fill", "rgb(255,0,0");
                 }
                 else if (key[x]=="A"){SVGObj.textContent = key[x];
-                    SVGObj.setAttribute("fill", "rgb(0,255,0");
+                    SVGObj.setAttribute("fill", "rgb(0,150,0");
                 }
                 else if (key[x]=="C"){SVGObj.textContent = key[x];
                     SVGObj.setAttribute("fill", "rgb(0,0,255");
@@ -2766,7 +2872,6 @@ function PlotAlignment(barcode, locus)
                 SVGObj.setAttribute("x", 120+12*(x));
                 SVGObj.setAttribute("text-anchor", "middle");
                 svg.appendChild(SVGObj);
-
             }
         }
 
@@ -3139,12 +3244,10 @@ function Start(){
         summary_track[i] = Array(8); 
     }
 
-
     if (locus == ''){
         locus = document.getElementsByName("Locus")[0].value.toUpperCase(); //reference sequence
     }
     rightbs = document.getElementsByName("RightBS")[0].value.toUpperCase(); // sgRNA seq  
-    // locus = ReverseComplement(locus)
     
     MutationThreshold = document.getElementsByName("MutationThreshold")[0].value;
     offset_DSB = slider.value;
@@ -3172,6 +3275,14 @@ function Start(){
     }
     else {
         alert("The target site was not found in the reference sequence. Please enter a valid sequence");
+        document.getElementById("progress").style.display = 'Please check the input form';
+        return
+    }
+    
+    //check other field 
+    if (region_analyse*1>40){
+        alert('Please reduce the region analyse value');
+        return
     }
     
     //Update new locus, and sgRNA position 
