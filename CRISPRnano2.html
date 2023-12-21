@@ -518,15 +518,16 @@
 </body>
 
 <script>
-    //check input gene offtarget
+
+//check input gene offtarget genes list
 function checkOccurrence() {
     // Get the input value
     const inputValue = document.getElementById('GeneName_list').value;
     // Define the target string to check occurrence
-    const targetString = ','; // Replace with your desired string
+    const targetString = ','; 
     // Count the occurrences of the target string in the input
     const occurrenceCount = (inputValue.match(new RegExp(targetString, 'gi')) || []).length;
-    // Check if the occurrence count is greater than 4
+    // Check if the occurrence count is greater than 4,
     if (occurrenceCount > 3) {
     alert(`Error: we only support maximum 4 off-target genes.`);
     }
@@ -598,8 +599,7 @@ function trimLowQualitySequence(read_id, sequence, quality) {
  */
 // get fasta from our database
 
-function bsg_enc_seq(seq, table)
-{
+function bsg_enc_seq(seq, table){
     if (table == null) return null;
     var s = [];
     s.length = seq.length;
@@ -618,8 +618,7 @@ function bsg_enc_seq(seq, table)
  * @return sqaure scoring matrix. The last row and column are zero, for
  * matching an ambiguous residue.
  */
-function bsa_gen_score_matrix(n, a, b)
-{
+function bsa_gen_score_matrix(n, a, b){
     var m = [];
     if (b > 0) b = -b; // mismatch score b should be non-positive
     for (var i = 0; i < n - 1; ++i) {
@@ -632,6 +631,7 @@ function bsa_gen_score_matrix(n, a, b)
     for (var j = 0; j < n; ++j) m[n-1][j] = 0;
     return m;
 }
+
 /**
  * Generate query profile (a preprocessing step)
  *
@@ -641,8 +641,7 @@ function bsa_gen_score_matrix(n, a, b)
  *
  * @return query profile. It is a two-dimensional integer matrix.
  */
-function bsa_gen_query_profile(_s, _m, table)
-{
+function bsa_gen_query_profile(_s, _m, table){
     var s = typeof _s == 'string'? bsg_enc_seq(_s, table) : _s;
     var qp = [], matrix;
     if (_m.length >= 2 && typeof _m[0] == 'number' && typeof _m[1] == 'number') { // match/mismatch score
@@ -673,8 +672,7 @@ function bsa_gen_query_profile(_s, _m, table)
     * higher 28 bits keeps the length and lower 4 bits the operation in order of
     * "MIDNSH".
     */
-function bsa_align(target, query, matrix, gapsc)
-{
+function bsa_align(target, query, matrix, gapsc){
     // convert bases to integers
     var is_local = true
     var t = bsg_enc_seq(target, bst_nt5);
@@ -770,8 +768,7 @@ function bsa_align(target, query, matrix, gapsc)
 }
 
 // generate cigar to gap in breakpoint windows, bkp11, bkp22 is offset interest region of ref wrt gap add-in ref 
-function bsa_cigar2gaps_breakpoint(target, query, start, cigar, bkp1, bkp2)
-{
+function bsa_cigar2gaps_breakpoint(target, query, start, cigar, bkp1, bkp2){
     var oq = '', ot = '', oq1 = '', lq = 0, lt = start;
     var bkp11 = bkp1;
     var bkp22 = bkp2;
@@ -1095,6 +1092,8 @@ function FileReceived() {
                         }
                         hits[id].push(aln_type)
                     }
+
+                    //Check WT manually, speed up
                     else if (read.includes(locus.substring(BreakPoint-region_analyse*1, BreakPoint + region_analyse*1))){
                         aln_type = 1;
                     // remove this part in knockin, speed up the program
@@ -1112,7 +1111,6 @@ function FileReceived() {
                     }
                     else if (read.includes(ReverseComplement(locus.substring(BreakPoint-region_analyse*1, BreakPoint + region_analyse*1)))){
                         aln_type = 1;
-                    // remove this part in knockin, speed up the program
                         hits[id].push(aln_type)
                         var str1 = ''
                         str1 += ReverseComplement(locus.substring(BreakPoint-region_analyse*1, BreakPoint + region_analyse*1))+ '\n'+ '\n';
@@ -1232,71 +1230,6 @@ function FileReceived() {
     reader = "";
     CurrentFileChunk++;
 
-    //compute number of aligned read
-    for (let key in aln_dict[id]){
-        sum_track[id] += aln_dict[id][key];
-    }
-    var not_align = 0;
-    var no_indel = 0; 
-    var inf_indel =  0;
-    var out_indel = 0;
-    var sum = 0;
-    var read_ambigous =0;
-    var targetingOligo = 0;
-    for (var i=0; i<hits[id].length; i++){
-        if (hits[id][i]>=0){
-            switch (hits[id][i]){
-                case 0:
-                    not_align++;
-                    break;
-                case 1:
-                    no_indel++;
-                    sum++
-                    break;
-                case 2:
-                    inf_indel++;
-                    sum++
-                    break;
-                case 3: 
-                    out_indel++;
-                    sum++
-                    break;
-                case 7: 
-                    targetingOligo++;
-                    sum++
-                    break;
-                case 8: 
-                    read_ambigous++;
-                //     sum++
-                //     break;
-            }
-        }
-    }
-    var total_read = not_align + sum + read_ambigous;
-    summary_track[id][0] = total_read;
-    summary_track[id][1] = targetingOligo;
-    summary_track[id][2] = no_indel;
-    summary_track[id][3] = inf_indel;
-    summary_track[id][4] = out_indel;
-    summary_track[id][5] = read_ambigous;
-    summary_track[id][6] = not_align;
-    summary_track[id][7] = sum;
-
-    for (let key in aln_dict[id]){
-        if ((aln_dict[id][key]>10)&&(aln_dict[id][key]>(1*MutationThreshold*summary_track[id][0]/100))&&(key.split('\n')[0].trim().length>region_analyse*2-4)){
-            aln_dict_fil[id][key] = aln_dict[id][key];
-        }
-    }
-    
-    // sort aligment tract
-    var items = Object.keys(aln_dict_fil[id]).map(function(key) {
-    return [key, aln_dict_fil[id][key]];
-    });
-    // Sort the array based on the second element
-    items.sort(function(first, second) {
-    return second[1] - first[1];
-    });
-    aln_dict_fil[id] = Object.fromEntries(items.map(([v, k]) => [v, k]));
     if ((CurrentFileChunk)*chunksize >= files[CurrentFileId].size) //end of file -> next file
         {
             PlotAlignment(id, locus)
@@ -1449,7 +1382,6 @@ function FileReceived_off() {
             }
         }
     }
-    var total_read = not_align + sum + read_ambigous;
     summary_track_off[gene_id][0] = total_read;
     summary_track_off[gene_id][1] = targetingOligo;
     summary_track_off[gene_id][2] = no_indel;
@@ -2694,8 +2626,100 @@ function GetWellPos(i)
 
 
 //Alignment summary plot:
-function PlotAlignment(barcode, locus)
-{
+function PlotAlignment(barcode, locus){
+    //compute number of aligned read
+    var id = barcode;
+
+    for (let key in aln_dict[id]){
+        sum_track[id] += aln_dict[id][key];
+    }
+    var not_align = 0;
+    var no_indel = 0; 
+    var inf_indel =  0;
+    var out_indel = 0;
+    var sum = 0;
+    var read_ambigous =0;
+    var targetingOligo = 0;
+    for (var i=0; i<hits[id].length; i++){
+        if (hits[id][i]>=0){
+            switch (hits[id][i]){
+                case 0:
+                    not_align++;
+                    break;
+                case 1:
+                    no_indel++;
+                    sum++
+                    break;
+                case 2:
+                    inf_indel++;
+                    sum++
+                    break;
+                case 3: 
+                    out_indel++;
+                    sum++
+                    break;
+                case 7: 
+                    targetingOligo++;
+                    sum++
+                    break;
+                case 8: 
+                    read_ambigous++;
+                //     sum++
+                //     break;
+            }
+        }
+    }
+
+    summary_track[id][0] = sum + read_ambigous;
+    summary_track[id][5] = read_ambigous;
+    summary_track[id][6] = not_align;
+    summary_track[id][7] = sum;
+
+    for (let key in aln_dict[id]){
+        if ((aln_dict[id][key]>10)&&(aln_dict[id][key]>(1*MutationThreshold*summary_track[id][0]/100))&&(key.split('\n')[0].trim().length>region_analyse*2-4)){
+            aln_dict_fil[id][key] = aln_dict[id][key];
+        }
+    }
+    
+    // sort aligment tract
+    var items = Object.keys(aln_dict_fil[id]).map(function(key) {
+    return [key, aln_dict_fil[id][key]];
+    });
+    // Sort the array based on the second element
+    items.sort(function(first, second) {
+    return second[1] - first[1];
+    });
+    aln_dict_fil[id] = Object.fromEntries(items.map(([v, k]) => [v, k]));
+
+    var no_indel = 0; 
+    var inf_indel =  0;
+    var out_indel = 0;
+    var sum = 0;
+    var targetingOligo = 0;
+
+    for (let key in aln_dict_fil[id]){
+        switch (aln_type_dict[id][key]){
+            case 1:
+                no_indel+=aln_dict_fil[id][key];
+                break;
+            case 2:
+                inf_indel+=aln_dict_fil[id][key];
+                break;
+            case 3: 
+                out_indel+=aln_dict_fil[id][key];
+                break;
+            case 7: 
+                targetingOligo+=aln_dict_fil[id][key];
+                break;
+        }
+    }
+
+    summary_track[id][1] = targetingOligo;
+    summary_track[id][2] = no_indel;
+    summary_track[id][3] = inf_indel;
+    summary_track[id][4] = out_indel;
+    summary_track[id][7] = no_indel+inf_indel+out_indel+targetingOligo;
+
     //aggregate aln_track
     //Find top 3:
     var aln_type = ["Not align","No indel", "Inframe Indel", "Outframe indel", "", "","", "targetingOligo", "Ambigious"]
