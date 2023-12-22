@@ -258,12 +258,17 @@
                     
                     <p></p>
 
-                    <br> <br><br>
+                    <br> <br><br>                <br>
+                    <br>
+                    <br>
                   </div>
 
                 </div>
 
                 <!-- <a href="https://iufduesseldorf-my.sharepoint.com/:u:/g/personal/thach_nguyen_iuf-duesseldorf_de/ER4kM3RQaRJLiltUCpcT2iMBiEvGvs3u2NiDTdtSPBLE1Q?e=8FEAJc">(Our test sample)</a><br> -->
+ 
+                <br>
+                <br>
                 <br>
                 <a style="font-style: italic;">
                     CRISPRnano website is free and open to all users and there is no login required.<br>
@@ -1113,7 +1118,7 @@ function FileReceived() {
                         aln_type = 1;
                         hits[id].push(aln_type)
                         var str1 = ''
-                        str1 += ReverseComplement(locus.substring(BreakPoint-region_analyse*1, BreakPoint + region_analyse*1))+ '\n'+ '\n';
+                        str1 += locus.substring(BreakPoint-region_analyse*1, BreakPoint + region_analyse*1)+ '\n'+ '\n';
                         if (aln_dict[id].hasOwnProperty(str1)){
                             aln_dict[id][str1]+=1
                         }
@@ -1777,14 +1782,14 @@ function DrawPie()
         SVGObj.style.fill="none";
         if (i<3) SVGObj.style.fill=BLAU[i];
         if (i>=4 && i<7) SVGObj.style.fill=ROT[i-4];
-        if (i==7) SVGObj.style.fill="rgb(200,200,200)";
-        if (i==8) SVGObj.style.fill="rgb(0,200,0)";
+        if (i==8) SVGObj.style.fill="rgb(200,200,200)";
+        if (i==9) SVGObj.style.fill="rgb(0,200,0)";
         // if (i==9) SVGObj.style.fill="rgb(70,70,70)";
-        if (i==10){
-            SVGObj.style.fill="none";
-            SVGObj.style.stroke="rgb(0,0,0)";
-            SVGObj.setAttributeNS(null, "stroke-width", 0.5);
-        }
+        // if (i==10){
+        //     SVGObj.style.fill="none";
+        //     SVGObj.style.stroke="rgb(0,0,0)";
+        //     SVGObj.setAttributeNS(null, "stroke-width", 0.5);
+        // }
         svg.appendChild(SVGObj);
     }
 
@@ -1808,7 +1813,7 @@ function DrawPie()
     SVGObj.setAttribute("font-family", "sans-serif");
     SVGObj.setAttribute("font-weight", "100");
     SVGObj.setAttribute("x", midx+40);
-    SVGObj.setAttribute("y", midy+53+120);
+    SVGObj.setAttribute("y", midy+53+140);
     SVGObj.setAttribute("font-size", "12");
     SVGObj.textContent = "no indel";
     svg.appendChild(SVGObj);
@@ -1816,7 +1821,7 @@ function DrawPie()
     SVGObj.setAttribute("font-family", "sans-serif");
     SVGObj.setAttribute("font-weight", "100");
     SVGObj.setAttribute("x", midx+40);
-    SVGObj.setAttribute("y", midy+53+140);
+    SVGObj.setAttribute("y", midy+53+160);
     SVGObj.setAttribute("font-size", "12");
     SVGObj.textContent = "targeted mutagenesis";
     svg.appendChild(SVGObj);
@@ -2742,6 +2747,7 @@ function PlotAlignment(barcode, locus){
     SVGObj.setAttribute("x", 40);
     SVGObj.setAttribute("y", ysize+delypos);
     SVGObj.setAttribute("font-size", "14");
+    SVGObj.setAttribute("font-weight", "600");
     SVGObj.textContent = "SUMMARY: Gene: "+document.getElementsByName("GeneName")[0].value+"   |   File "+GetWellPos(barcode)+": "+files[barcode].name;
     svg.appendChild(SVGObj);
     delypos+=30;
