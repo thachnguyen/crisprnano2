@@ -1387,7 +1387,7 @@ function FileReceived_off() {
             }
         }
     }
-    summary_track_off[gene_id][0] = total_read;
+    // summary_track_off[gene_id][0] = total_read;
     summary_track_off[gene_id][1] = targetingOligo;
     summary_track_off[gene_id][2] = no_indel;
     summary_track_off[gene_id][3] = inf_indel;
@@ -1490,17 +1490,9 @@ function DrawPie()
                     }
                 }
             }
-            else if (aln_type_dict[barcode][key] == 7){
-                oligo +=aln_dict_fil[barcode][key];
-                sum += aln_dict_fil[barcode][key];
-                break;
-            }
-            else if (aln_type_dict[barcode][key] == 1){
-                wt +=aln_dict_fil[barcode][key];
-                sum += aln_dict_fil[barcode][key];
-                break;
-            }
         }
+        sum += summary_track[barcode][2]+ summary_track[barcode][1]
+
         var size = 24*Math.sqrt(sum/maxsum);
         var midx = (barcode%12)*50 + 25;
         var midy = Math.floor(barcode/12) * 65 + 25;
@@ -1508,7 +1500,7 @@ function DrawPie()
             //wt:
             var angle = -3.1415/2;
             var lastangle = angle;
-            angle+=2*3.1415*0.995*wt/sum;
+            angle+=2*3.1415*0.995*summary_track[barcode][2]/sum;
 
             //SVG:
             var startx = size*Math.cos(lastangle);
@@ -1716,10 +1708,9 @@ function DrawPie()
             SVGObj.style.fill=ROT[2];
             SVGObj.setAttribute("pointer-events","none");
             svg.appendChild(SVGObj);
-
             // targetingOligo
             var lastangle = angle;
-            angle+=2*3.1415*0.995*oligo/sum;
+            angle+=2*3.1415*0.995*summary_track[barcode][1]/sum;
 
             var startx = size*Math.cos(lastangle);
             var starty = size*Math.sin(lastangle);
@@ -1733,7 +1724,6 @@ function DrawPie()
             SVGObj.setAttribute("pointer-events","none");
             svg.appendChild(SVGObj);
             // read_ambigous, remove in v2.0
-
         }
 
         //SVG:
@@ -1784,12 +1774,6 @@ function DrawPie()
         if (i>=4 && i<7) SVGObj.style.fill=ROT[i-4];
         if (i==8) SVGObj.style.fill="rgb(200,200,200)";
         if (i==9) SVGObj.style.fill="rgb(0,200,0)";
-        // if (i==9) SVGObj.style.fill="rgb(70,70,70)";
-        // if (i==10){
-        //     SVGObj.style.fill="none";
-        //     SVGObj.style.stroke="rgb(0,0,0)";
-        //     SVGObj.setAttributeNS(null, "stroke-width", 0.5);
-        // }
         svg.appendChild(SVGObj);
     }
 
@@ -2564,14 +2548,6 @@ function DrawPie_off()
     SVGObj.setAttribute("font-size", "12");
     SVGObj.textContent = "targeted mutagenesis";
     svg.appendChild(SVGObj);
-    // var SVGObj= document.createElementNS(NS,"text");
-    // SVGObj.setAttribute("font-family", "sans-serif");
-    // SVGObj.setAttribute("font-weight", "100");
-    // SVGObj.setAttribute("x", midx+40);
-    // SVGObj.setAttribute("y", midy+60+175);
-    // SVGObj.setAttribute("font-size", "12");
-    // SVGObj.textContent = "below threshold";
-    // svg.appendChild(SVGObj);
     document.title = "Off-target Result for "+document.getElementsByName("GeneName")[0].value+" ("+files.length+" barcodes read)";
 }
 
@@ -2629,6 +2605,10 @@ function GetWellPos(i)
     return ABC[Math.floor(i/12)] + ((i%12)+1);
 }
 
+// new func
+function Seq_type_detector(){
+    
+}
 
 //Alignment summary plot:
 function PlotAlignment(barcode, locus){
