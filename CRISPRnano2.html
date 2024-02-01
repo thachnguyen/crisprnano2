@@ -923,17 +923,32 @@ function TabClicked(i)
 }
 
 //reverse comp function
-function ReverseComplement(A)
+var ks_comp = {'A':'T','C':'G','G':'C','T':'A','M':'K','K':'M','Y':'R','R':'Y','V':'B','B':'V','H':'D','D':'H',
+			   'a':'t','c':'g','g':'c','t':'a','m':'k','k':'m','y':'r','r':'y','v':'b','b':'v','h':'d','d':'h'};
+
+function ReverseComplement(s)
 {
-    var dummy = "";
-    for (var i=0; i<A.length; i++) {
-        if (A[A.length-1-i] == 'G') dummy += 'C';
-        if (A[A.length-1-i] == 'A') dummy += 'T';
-        if (A[A.length-1-i] == 'T') dummy += 'A';
-        if (A[A.length-1-i] == 'C') dummy += 'G';
-    }
-    return dummy;
+	var i, t = '';
+	for (i = 0; i < s.length; ++i) {
+		var c = s.charAt(s.length - 1 - i);
+		var d = ks_comp[c];
+		t += d? d : c;
+	}
+	return t;
 }
+
+
+// function ReverseComplement(A)
+// {
+//     var dummy = "";
+//     for (var i=0; i<A.length; i++) {
+//         if (A[A.length-1-i] == 'G') dummy += 'C';
+//         if (A[A.length-1-i] == 'A') dummy += 'T';
+//         if (A[A.length-1-i] == 'T') dummy += 'A';
+//         if (A[A.length-1-i] == 'C') dummy += 'G';
+//     }
+//     return dummy;
+// }
 
 function getFastaSequence() {
     var myFastaURL;
@@ -2816,7 +2831,7 @@ function PlotAlignment(barcode, locus){
     for (let key in aln_dict_fil[barcode]){
         for (let x=0; x<region_analyse*2; x++){
             //draw main track:
-            if ((key[x]==locus[BreakPoint-region_analyse+x])||(key[x]=='-')||(typeof(key[x])=='undefined')){
+            if ((key[x]==locus[BreakPoint-region_analyse+x])||(key[x]=='N')||(key[x]=='-')||(typeof(key[x])=='undefined')){
                 SVGObj= document.createElementNS(svgns, "rect");
                 SVGObj.setAttribute("x", 120+12*(x)-5);
                 SVGObj.setAttribute("y", ysize+delypos-10);
@@ -2841,6 +2856,9 @@ function PlotAlignment(barcode, locus){
                 }
                 else if (key[x]=="G"){SVGObj.textContent = key[x];
                     SVGObj.setAttribute("fill", "rgb(200, 100, 0");
+                }
+                else if (key[x]=="N"){SVGObj.textContent = key[x];
+                    SVGObj.setAttribute("fill", "rgb(0, 0, 0");
                 }
                 else if (key[x]=="-"){SVGObj.textContent = key[x];
                     SVGObj.setAttribute("fill", "rgb(0,0,0");
@@ -2875,6 +2893,9 @@ function PlotAlignment(barcode, locus){
                 }
                 else if (key[x]=="G"){SVGObj.textContent = key[x];
                     SVGObj.setAttribute("fill", "rgb(200, 100, 0");
+                }
+                else if (key[x]=="N"){SVGObj.textContent = key[x];
+                    SVGObj.setAttribute("fill", "rgb(0, 0, 0");
                 }
                 else if (key[x]=="-"){SVGObj.textContent = key[x];
                     SVGObj.setAttribute("fill", "rgb(0,0,0");
