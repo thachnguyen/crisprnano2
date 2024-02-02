@@ -1,5 +1,3 @@
-
-
 <html><head><meta http-equiv="Content-Type" content="text/html; charset=windows-1252"><meta http-equiv="Content-Script-Type" content="text/javascript">
     <style>
         h1{
@@ -923,17 +921,32 @@ function TabClicked(i)
 }
 
 //reverse comp function
-function ReverseComplement(A)
+var ks_comp = {'A':'T','C':'G','G':'C','T':'A','M':'K','K':'M','Y':'R','R':'Y','V':'B','B':'V','H':'D','D':'H',
+			   'a':'t','c':'g','g':'c','t':'a','m':'k','k':'m','y':'r','r':'y','v':'b','b':'v','h':'d','d':'h'};
+
+function ReverseComplement(s)
 {
-    var dummy = "";
-    for (var i=0; i<A.length; i++) {
-        if (A[A.length-1-i] == 'G') dummy += 'C';
-        if (A[A.length-1-i] == 'A') dummy += 'T';
-        if (A[A.length-1-i] == 'T') dummy += 'A';
-        if (A[A.length-1-i] == 'C') dummy += 'G';
-    }
-    return dummy;
+	var i, t = '';
+	for (i = 0; i < s.length; ++i) {
+		var c = s.charAt(s.length - 1 - i);
+		var d = ks_comp[c];
+		t += d? d : c;
+	}
+	return t;
 }
+
+
+// function ReverseComplement(A)
+// {
+//     var dummy = "";
+//     for (var i=0; i<A.length; i++) {
+//         if (A[A.length-1-i] == 'G') dummy += 'C';
+//         if (A[A.length-1-i] == 'A') dummy += 'T';
+//         if (A[A.length-1-i] == 'T') dummy += 'A';
+//         if (A[A.length-1-i] == 'C') dummy += 'G';
+//     }
+//     return dummy;
+// }
 
 function getFastaSequence() {
     var myFastaURL;
@@ -1016,10 +1029,10 @@ function FileReceived() {
     var original = RestFromLastChunk+reader.result;
     var cursor = 0, origlen = original.length;
     // alignment parameter for affine score DP algorithms 
-    var ms = 1 // match score
-    var mms = -1//mismatch score
-    var gapo = -4  // gap open score
-    var gape = -1  // gap extent score
+    var ms = 3 // match score
+    var mms = -3//mismatch score
+    var gapo = -7  // gap open score
+    var gape = -2  // gap extent score
     var id = CurrentFileId;
     var target = locus;
     var targetingOligo = document.getElementsByName("TargetingOligo")[0].value.toUpperCase(); //TargetingOligo
@@ -1387,7 +1400,7 @@ function FileReceived_off() {
             }
         }
     }
-    summary_track_off[gene_id][0] = total_read;
+    // summary_track_off[gene_id][0] = total_read;
     summary_track_off[gene_id][1] = targetingOligo;
     summary_track_off[gene_id][2] = no_indel;
     summary_track_off[gene_id][3] = inf_indel;
@@ -1490,17 +1503,9 @@ function DrawPie()
                     }
                 }
             }
-            else if (aln_type_dict[barcode][key] == 7){
-                oligo +=aln_dict_fil[barcode][key];
-                sum += aln_dict_fil[barcode][key];
-                break;
-            }
-            else if (aln_type_dict[barcode][key] == 1){
-                wt +=aln_dict_fil[barcode][key];
-                sum += aln_dict_fil[barcode][key];
-                break;
-            }
         }
+        sum += summary_track[barcode][2]+ summary_track[barcode][1]
+
         var size = 24*Math.sqrt(sum/maxsum);
         var midx = (barcode%12)*50 + 25;
         var midy = Math.floor(barcode/12) * 65 + 25;
@@ -1508,7 +1513,7 @@ function DrawPie()
             //wt:
             var angle = -3.1415/2;
             var lastangle = angle;
-            angle+=2*3.1415*0.995*wt/sum;
+            angle+=2*3.1415*0.995*summary_track[barcode][2]/sum;
 
             //SVG:
             var startx = size*Math.cos(lastangle);
@@ -1716,10 +1721,9 @@ function DrawPie()
             SVGObj.style.fill=ROT[2];
             SVGObj.setAttribute("pointer-events","none");
             svg.appendChild(SVGObj);
-
             // targetingOligo
             var lastangle = angle;
-            angle+=2*3.1415*0.995*oligo/sum;
+            angle+=2*3.1415*0.995*summary_track[barcode][1]/sum;
 
             var startx = size*Math.cos(lastangle);
             var starty = size*Math.sin(lastangle);
@@ -1733,7 +1737,6 @@ function DrawPie()
             SVGObj.setAttribute("pointer-events","none");
             svg.appendChild(SVGObj);
             // read_ambigous, remove in v2.0
-
         }
 
         //SVG:
@@ -1782,14 +1785,8 @@ function DrawPie()
         SVGObj.style.fill="none";
         if (i<3) SVGObj.style.fill=BLAU[i];
         if (i>=4 && i<7) SVGObj.style.fill=ROT[i-4];
-        if (i==7) SVGObj.style.fill="rgb(200,200,200)";
-        if (i==8) SVGObj.style.fill="rgb(0,200,0)";
-        // if (i==9) SVGObj.style.fill="rgb(70,70,70)";
-        if (i==10){
-            SVGObj.style.fill="none";
-            SVGObj.style.stroke="rgb(0,0,0)";
-            SVGObj.setAttributeNS(null, "stroke-width", 0.5);
-        }
+        if (i==8) SVGObj.style.fill="rgb(200,200,200)";
+        if (i==9) SVGObj.style.fill="rgb(0,200,0)";
         svg.appendChild(SVGObj);
     }
 
@@ -1813,7 +1810,7 @@ function DrawPie()
     SVGObj.setAttribute("font-family", "sans-serif");
     SVGObj.setAttribute("font-weight", "100");
     SVGObj.setAttribute("x", midx+40);
-    SVGObj.setAttribute("y", midy+53+120);
+    SVGObj.setAttribute("y", midy+53+140);
     SVGObj.setAttribute("font-size", "12");
     SVGObj.textContent = "no indel";
     svg.appendChild(SVGObj);
@@ -1821,7 +1818,7 @@ function DrawPie()
     SVGObj.setAttribute("font-family", "sans-serif");
     SVGObj.setAttribute("font-weight", "100");
     SVGObj.setAttribute("x", midx+40);
-    SVGObj.setAttribute("y", midy+53+140);
+    SVGObj.setAttribute("y", midy+53+160);
     SVGObj.setAttribute("font-size", "12");
     SVGObj.textContent = "targeted mutagenesis";
     svg.appendChild(SVGObj);
@@ -2564,14 +2561,6 @@ function DrawPie_off()
     SVGObj.setAttribute("font-size", "12");
     SVGObj.textContent = "targeted mutagenesis";
     svg.appendChild(SVGObj);
-    // var SVGObj= document.createElementNS(NS,"text");
-    // SVGObj.setAttribute("font-family", "sans-serif");
-    // SVGObj.setAttribute("font-weight", "100");
-    // SVGObj.setAttribute("x", midx+40);
-    // SVGObj.setAttribute("y", midy+60+175);
-    // SVGObj.setAttribute("font-size", "12");
-    // SVGObj.textContent = "below threshold";
-    // svg.appendChild(SVGObj);
     document.title = "Off-target Result for "+document.getElementsByName("GeneName")[0].value+" ("+files.length+" barcodes read)";
 }
 
@@ -2629,6 +2618,10 @@ function GetWellPos(i)
     return ABC[Math.floor(i/12)] + ((i%12)+1);
 }
 
+// new func
+function Seq_Type_Detector(){
+    
+}
 
 //Alignment summary plot:
 function PlotAlignment(barcode, locus){
@@ -2836,7 +2829,7 @@ function PlotAlignment(barcode, locus){
     for (let key in aln_dict_fil[barcode]){
         for (let x=0; x<region_analyse*2; x++){
             //draw main track:
-            if ((key[x]==locus[BreakPoint-region_analyse+x])||(key[x]=='-')||(typeof(key[x])=='undefined')){
+            if ((key[x]==locus[BreakPoint-region_analyse+x])||(key[x]=='N')||(key[x]=='-')||(typeof(key[x])=='undefined')){
                 SVGObj= document.createElementNS(svgns, "rect");
                 SVGObj.setAttribute("x", 120+12*(x)-5);
                 SVGObj.setAttribute("y", ysize+delypos-10);
@@ -2861,6 +2854,9 @@ function PlotAlignment(barcode, locus){
                 }
                 else if (key[x]=="G"){SVGObj.textContent = key[x];
                     SVGObj.setAttribute("fill", "rgb(200, 100, 0");
+                }
+                else if (key[x]=="N"){SVGObj.textContent = key[x];
+                    SVGObj.setAttribute("fill", "rgb(0, 0, 0");
                 }
                 else if (key[x]=="-"){SVGObj.textContent = key[x];
                     SVGObj.setAttribute("fill", "rgb(0,0,0");
@@ -2895,6 +2891,9 @@ function PlotAlignment(barcode, locus){
                 }
                 else if (key[x]=="G"){SVGObj.textContent = key[x];
                     SVGObj.setAttribute("fill", "rgb(200, 100, 0");
+                }
+                else if (key[x]=="N"){SVGObj.textContent = key[x];
+                    SVGObj.setAttribute("fill", "rgb(0, 0, 0");
                 }
                 else if (key[x]=="-"){SVGObj.textContent = key[x];
                     SVGObj.setAttribute("fill", "rgb(0,0,0");
