@@ -182,6 +182,14 @@
                     <span class="popuptext" id="help1">FASTQ output files from Illumina or ONT. We recommend file's size smaller than 200MB. Make sure that the correct ordering is applied in the file browser. The file allocation to individual pie charts can be verified by the numbers given at alignment track. Click again to close.</span>
                 </div>
                     <br><input type="file" id="files" class="input_form" name="files[]" multiple=""><br>
+                    <br>
+                    <label for="cars">Data type:</label>
+                    <select id="mySelect" onchange="checkValue()">
+                        <option value="ont">Nanopore</option>
+                        <option value="illu">Illumina</option>
+                        <option value="pacbio">PacBio</option>
+                    </select>
+                    <br>
                     <br>Gene Name (**):
                     <div class="popup" onclick="myFunction8()">(? Click here!)
                         <span class="popuptext" id="help8">Name of the study gene (Human only). Click to close.</span>
@@ -215,7 +223,7 @@
                 </div>
 
                 <div class="column">
-                    <h3>Optional parameter</h3>
+                    <h3>Optional parameters</h3>
                     Sequence (if genename given, leave it blank):                 
                     <div class="popup" onclick="myFunction3()">(? Click here!)
                         <span class="popuptext" id="help3">Reference amplicon length should be in the range of 200-300 bases with the nuclease target site located roughly in the middle. You can get the reference from Ensembl link below. Click again to close</span>
@@ -553,6 +561,15 @@ function checkValue() {
     alert('System only support region area from 30-70 bp');
     document.getElementsByName('region_analyse')[0].value = "45";
     }
+    var mySelect = document.getElementById('mySelect');
+    if (mySelect.value == 'ont'){
+        document.getElementsByName('region_analyse')[0].value = "40";
+    }
+    else {
+        document.getElementsByName('region_analyse')[0].value = "45";
+    } 
+
+
 }
 
 //Drag and interactive
@@ -2747,7 +2764,7 @@ function PlotAlignment(barcode, locus){
     var SVGObj= document.createElementNS(NS,"text");
     SVGObj.setAttribute("x", 40);
     SVGObj.setAttribute("y", ysize+delypos);
-    SVGObj.setAttribute("font-size", "14");
+    SVGObj.setAttribute("font-size", "16");
     SVGObj.setAttribute("font-weight", "600");
     SVGObj.textContent = "SUMMARY: Gene: "+document.getElementsByName("GeneName")[0].value+"   |   File "+GetWellPos(barcode)+": "+files[barcode].name;
     svg.appendChild(SVGObj);
@@ -2756,14 +2773,14 @@ function PlotAlignment(barcode, locus){
     SVGObj= document.createElementNS(NS,"text");
     SVGObj.setAttribute("x", 40);
     SVGObj.setAttribute("y", ysize+delypos);
-    SVGObj.setAttribute("font-size", "14");
+    SVGObj.setAttribute("font-size", "16");
     SVGObj.textContent = "Total aligned reads: " + summary_track[barcode][7] +"   |  Outframe indel: " +summary_track[barcode][4]+ " READS, (" +(summary_track[barcode][4]*100/summary_track[barcode][7]).toFixed(2)+"%)" +"   |  Inframe indel: " +summary_track[barcode][3]+ " READS, (" +(summary_track[barcode][3]*100/summary_track[barcode][7]).toFixed(2)+"%)";
     svg.appendChild(SVGObj);
     delypos+=30;
     SVGObj= document.createElementNS(NS,"text");
     SVGObj.setAttribute("x", 40);
     SVGObj.setAttribute("y", ysize+delypos);
-    SVGObj.setAttribute("font-size", "14");
+    SVGObj.setAttribute("font-size", "16");
     SVGObj.textContent = "targetingOligo reads: " + summary_track[barcode][1] +"   |  No indel: " +summary_track[barcode][2] +" READS, (" +(summary_track[barcode][2]*100/summary_track[barcode][7]).toFixed(2)+"%)" +"   | Read ambigous: " +summary_track[barcode][5] //+"   | Not aligned to interested region: " +summary_track[barcode][6];
     svg.appendChild(SVGObj);
 
@@ -2939,7 +2956,7 @@ function PlotAlignment(barcode, locus){
             }
 
             SVGObj= document.createElementNS(NS,"text");
-            SVGObj.setAttribute("x", 120+12*(x)-6);
+            SVGObj.setAttribute("x", 120+12*(x-xfrom)+7);
             SVGObj.setAttribute("y", ysize+delypos+15);
             SVGObj.setAttribute("font-size", "13");
             SVGObj.setAttribute("fill", "rgb(0,0,0)");
