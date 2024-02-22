@@ -187,10 +187,10 @@
                     <select id="mySelect" onchange="setValue()">
                         <option value="ont">Nanopore</option>
                         <option value="illu">Illumina</option>
-                        <option value="pacbio">PacBio</option>
+                        <option value="pacbio">PacBio or Nanopore Duplex</option>
                     </select>
                     <br>
-                    <small class="text-muted">Window size will automatically adjusted</small>
+                    <small class="text-muted">Window size & indel rate will automatically adjusted</small>
                     <br>
                     <br>Gene Name (**):
                     <div class="popup" onclick="myFunction8()">(? Click here!)
@@ -243,16 +243,8 @@
                         <option value="Il_pac">Illumina or PacBio</option>
                       </select> -->
                     <!-- <br>  <br>  -->
-                    Drag the slider to change the interested region
-                    <div class="popup" onclick="myFunction6()">(? Click here!)
-                        <span class="popuptext" id="help6">You can shift the centre of interest region with respect to the double strand breakpoint (DSB) to the left or right. Default value is double strand breaking point 0. Click to close</span>
-                    </div>
-                <div class="slidecontainer">
-                    <input type="range" min="-30" max="30" value="0" class="slider" id="myRange" oninput="this.nextElementSibling.value = this.value">
-                    Offset w.r.t DSP: <span id="offset_var">0</span> 
-                    <br>
-                        
-                        <br>Interested region (optional) +/- bp: 
+                
+                        Interested region (optional) +/- bp: 
                         <div class="popup" onclick="myFunction5()">(? Click here!)
                             <span class="popuptext" id="help5"> For ONT reads, it is recommended to use -/+15 bases around the predicted DNA lesion. Larger regions are prone to false positive indels. Larger regions (total of 200-250 bp) can be safely used with Illumina reads. You can drag and drop the central point of the predicted double strand break in the genomic sequence to the left or to the right. Default value 0 is double strand breaking point- Crisprnano will use the first index of sgRNA mapped on reference. Click again to close</span>
                         </div>
@@ -262,7 +254,7 @@
                         <div class="popup" onclick="myFunction9()">(? Click here!)
                             <span class="popuptext" id="help9">The Indel Threshold determines at what relative occurrence an individual indel mutation is considered as a unique allele of the respective clone analyzed, and is thus displayed in the alignment list. Low threshold values can result in false positive allele calling due to sequencing errors, whereas high threshold values result in false negative allele calling. Values in between 0 - 100 % can be entered. We recommend to use 5% for ONT reads and 2% for Illumina reads (default is set to 5%). Click again to close.</span>
                         </div> 
-                        <br><input type="text" size="30" class="input_form" name="MutationThreshold" value="2" onchange="checkValue();"><br>
+                        <br><input type="text" size="30" class="input_form" name="MutationThreshold" value="5" onchange="checkValue();"><br>
                     
                     <p></p>
 
@@ -271,11 +263,24 @@
                     <br>
                   </div>
 
-                </div>
+                
 
                 <!-- <a href="https://iufduesseldorf-my.sharepoint.com/:u:/g/personal/thach_nguyen_iuf-duesseldorf_de/ER4kM3RQaRJLiltUCpcT2iMBiEvGvs3u2NiDTdtSPBLE1Q?e=8FEAJc">(Our test sample)</a><br> -->
  
-
+                <br>
+                <br>
+                <br>
+                <br>                    <br>
+                <br>                    <br>
+                <br>                    <br>
+                <br>
+                <br>
+                <br>                    <br>
+                <br>                    <br>
+                <br>                    <br>
+                <br>                    <br>
+                <br>                    <br>
+                <br>
                 
                 <a style="font-style: italic;">
                     CRISPRnano website is free and open to all users and there is no login required.<br>
@@ -566,16 +571,16 @@ function checkValue() {
 
 function setValue() {
     // Get the input value
-    const region_analyse1 = document.getElementsByName('region_analyse')[0].value;
     // Define the target string to check occurrence
-    const MutationThreshold1 = document.getElementsByName("MutationThreshold")[0].value;
 
     var mySelect = document.getElementById('mySelect');
     if (mySelect.value == 'ont'){
         document.getElementsByName('region_analyse')[0].value = "40";
+        document.getElementsByName("MutationThreshold")[0].value = '5'
     }
     else {
         document.getElementsByName('region_analyse')[0].value = "45";
+        document.getElementsByName("MutationThreshold")[0].value = '2'
     } 
 }
 
@@ -3297,10 +3302,7 @@ function myFunction5() {
     var popup = document.getElementById("help5");
     popup.classList.toggle("show");
 }
-function myFunction6() {
-    var popup = document.getElementById("help6");
-    popup.classList.toggle("show");
-}
+
 function myFunction7() {
     var popup = document.getElementById("help7");
     popup.classList.toggle("show");
@@ -3339,8 +3341,6 @@ function Start(){
     rightbs = document.getElementsByName("RightBS")[0].value.toUpperCase(); // sgRNA seq  
     
     MutationThreshold = document.getElementsByName("MutationThreshold")[0].value;
-    // offset_DSB = slider.value;
-    offset_DSB = 0
     region_analyse = document.getElementsByName("region_analyse")[0].value;
 
     //Find Target site in the reference sequence/locus:
@@ -3388,10 +3388,10 @@ function Start(){
     RightBsPos = locus.search(rightbs);
     //breaking point on locus 
     if (rightbs!=rightbs != document.getElementsByName("RightBS")[0].value.toUpperCase()){
-        BreakPoint = RightBsPos + rightbs.length + offset_DSB*1-10;
+        BreakPoint = RightBsPos + rightbs.length -10;
     }
     else{
-        BreakPoint = RightBsPos + rightbs.length + offset_DSB*1
+        BreakPoint = RightBsPos + rightbs.length 
     }
     
     var evt = document.getElementById('files');
@@ -3466,7 +3466,7 @@ function Start2(){
         }   
         else {
             RightBsPos_off[i] = rst[1];
-            BreakPoint_off[i] = RightBsPos_off[i] + rightbs.length + offset_DSB*1
+            BreakPoint_off[i] = RightBsPos_off[i] + rightbs.length
         }
     }    
     CurrentFileId_off = CurrentAlignment;
@@ -3497,15 +3497,6 @@ var bst_nt5 = [
     4, 4, 4, 4,  4, 4, 4, 4,  4, 4, 4, 4,  4, 4, 4, 4
 ];
 
-var slider = document.getElementById("myRange");
-var output = 0;
-// var output = document.getElementById("offset_var");
-output.innerHTML = slider.value;
-
-slider.oninput = function() {
-output.innerHTML = this.value;
-}
-
 var currenttab = 0;
 TabClicked(0);
 
@@ -3526,7 +3517,6 @@ var CurrentFileId;
 var CurrentFileId_off;
 var MutationThreshold = 0.1
 var BreakPoint;
-var offset_DSB = 0;
 var rightbs;
 
 var PhredThreshold = 40; // 7 +33
