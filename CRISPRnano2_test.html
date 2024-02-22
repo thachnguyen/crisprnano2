@@ -184,11 +184,13 @@
                     <br><input type="file" id="files" class="input_form" name="files[]" multiple=""><br>
                     <br>
                     <label for="cars">Data type:</label>
-                    <select id="mySelect" onchange="checkValue()">
+                    <select id="mySelect" onchange="setValue()">
                         <option value="ont">Nanopore</option>
                         <option value="illu">Illumina</option>
                         <option value="pacbio">PacBio</option>
                     </select>
+                    <br>
+                    <small class="text-muted">Window size will automatically adjusted</small>
                     <br>
                     <br>Gene Name (**):
                     <div class="popup" onclick="myFunction8()">(? Click here!)
@@ -254,7 +256,7 @@
                         <div class="popup" onclick="myFunction5()">(? Click here!)
                             <span class="popuptext" id="help5"> For ONT reads, it is recommended to use -/+15 bases around the predicted DNA lesion. Larger regions are prone to false positive indels. Larger regions (total of 200-250 bp) can be safely used with Illumina reads. You can drag and drop the central point of the predicted double strand break in the genomic sequence to the left or to the right. Default value 0 is double strand breaking point- Crisprnano will use the first index of sgRNA mapped on reference. Click again to close</span>
                         </div>
-                        <br><input type="text" size="30" name="region_analyse" value="45" class="input_form" onchange="checkValue();"><br>
+                        <br><input type="text" size="30" name="region_analyse" value="40" class="input_form" onchange="checkValue();"><br>
 
                         <br>Indel Threshold [%]: 
                         <div class="popup" onclick="myFunction9()">(? Click here!)
@@ -273,9 +275,8 @@
 
                 <!-- <a href="https://iufduesseldorf-my.sharepoint.com/:u:/g/personal/thach_nguyen_iuf-duesseldorf_de/ER4kM3RQaRJLiltUCpcT2iMBiEvGvs3u2NiDTdtSPBLE1Q?e=8FEAJc">(Our test sample)</a><br> -->
  
-                <br>
-                <br>
-                <br>
+
+                
                 <a style="font-style: italic;">
                     CRISPRnano website is free and open to all users and there is no login required.<br>
                     To use CRISPRnano, you must enable JavaScript on your web browser.<br>
@@ -559,8 +560,16 @@ function checkValue() {
     }
     if (region_analyse1*1 > 70||region_analyse1*1<30) {
     alert('System only support region area from 30-70 bp');
-    document.getElementsByName('region_analyse')[0].value = "45";
-    }
+    document.getElementsByName('region_analyse')[0].value = "40";
+    } 
+}
+
+function setValue() {
+    // Get the input value
+    const region_analyse1 = document.getElementsByName('region_analyse')[0].value;
+    // Define the target string to check occurrence
+    const MutationThreshold1 = document.getElementsByName("MutationThreshold")[0].value;
+
     var mySelect = document.getElementById('mySelect');
     if (mySelect.value == 'ont'){
         document.getElementsByName('region_analyse')[0].value = "40";
@@ -568,9 +577,8 @@ function checkValue() {
     else {
         document.getElementsByName('region_analyse')[0].value = "45";
     } 
-
-
 }
+
 
 //Drag and interactive
 
@@ -593,8 +601,8 @@ function AlignmentMouseMove(evt)
         //alert(x-AlignmentLastX);
         var shift = (x-AlignmentLastX)/12;
         AlignmentStartPos -= shift;
-        if (AlignmentStartPos < 0) AlignmentStartPos = 0;
-        if (AlignmentStartPos > 250-80) AlignmentStartPos = 250-80;
+        if (AlignmentStartPos < -30) AlignmentStartPos = -30;
+        if (AlignmentStartPos > 50) AlignmentStartPos = 50;
         PlotAlignment(CurrentAlignment, locus);
 
         AlignmentLastX = x;
@@ -2794,7 +2802,6 @@ function PlotAlignment(barcode, locus){
     for (let x=xfrom; x<xto; x++){
         //draw base:
         SVGObj= document.createElementNS(NS,"text");
-        SVGObj.setAttribute("x", 120+12*(x-xfrom)+2);
         SVGObj.setAttribute("y", ysize+delypos+20);
         SVGObj.setAttribute("font-size", "14");
         if (x>=RightBsPos && x<RightBsPos+rightbs.length) SVGObj.setAttribute("fill", "rgb(0,0,250)");
@@ -2815,7 +2822,6 @@ function PlotAlignment(barcode, locus){
     for (let x=RightBsPos; x<RightBsPos+rightbs.length; x++){
         //draw base:
         SVGObj= document.createElementNS(NS,"text");
-        SVGObj.setAttribute("x", 120+12*(x-xfrom)+2);
         SVGObj.setAttribute("y", ysize+delypos);
         SVGObj.setAttribute("font-size", "14");
         SVGObj.setAttribute("fill", "rgb(0,0,0)");
@@ -2854,7 +2860,7 @@ function PlotAlignment(barcode, locus){
     delypos+=delyshift;
     var id1 = 1;
     for (let key in aln_dict_fil[barcode]){
-        for (let x=xfrom+15; x<xto+15; x++){
+        for (let x=0; x<30*2; x++){
             //draw main track:
             if ((key[x]==locus[BreakPoint-region_analyse+x])||(key[x]=='N')||(key[x]=='-')||(typeof(key[x])=='undefined')){
                 SVGObj= document.createElementNS(svgns, "rect");
@@ -2865,13 +2871,16 @@ function PlotAlignment(barcode, locus){
                 SVGObj.setAttribute("fill", "rgb(216,216,216");
                 SVGObj.setAttribute("text-anchor", "middle");
                 SVGObj.setAttribute("pointer-events","none");
-
                 svg.appendChild(SVGObj);
-
+            }
+        }
+        for (let x=xfrom-10; x<xto-10; x++){
+            //draw main track:
+            if ((key[x]==locus[BreakPoint-region_analyse+x])||(key[x]=='N')||(key[x]=='-')||(typeof(key[x])=='undefined')){
                 SVGObj= document.createElementNS(NS, "text");
-                SVGObj.setAttribute("x", 120+12*(x)+2);
                 SVGObj.setAttribute("y", ysize+delypos);
                 SVGObj.setAttribute("font-size", "13");
+                SVGObj.setAttribute("font-weight", "400");
                 if (key[x]=="T"){SVGObj.textContent = key[x];
                     SVGObj.setAttribute("fill", "rgb(255,0,0");
                 }
@@ -2890,7 +2899,7 @@ function PlotAlignment(barcode, locus){
                 else if (key[x]=="-"){SVGObj.textContent = key[x];
                     SVGObj.setAttribute("fill", "rgb(0,0,0");
                 }
-                SVGObj.setAttribute("x", 120+12*(x));
+                SVGObj.setAttribute("x", 120+12*(x-xfrom+10));
                 SVGObj.setAttribute("text-anchor", "middle");
                 SVGObj.setAttribute("pointer-events","none");
 
@@ -2899,7 +2908,7 @@ function PlotAlignment(barcode, locus){
             else{
                 SVGObj= document.createElementNS(svgns, "rect");
                 SVGObj.style.stroke="rgb(0,0,0)";
-                SVGObj.setAttribute("x", 120+12*(x-xfrom)+2);
+                SVGObj.setAttribute("x", 115+12*(x-xfrom+10));
                 SVGObj.setAttribute("y", ysize+delypos-10);
                 SVGObj.setAttribute("width", "11");
                 SVGObj.setAttribute("height", "11");
@@ -2910,14 +2919,15 @@ function PlotAlignment(barcode, locus){
                 svg.appendChild(SVGObj);
 
                 SVGObj= document.createElementNS(NS, "text");
-                SVGObj.setAttribute("x", 120+12*(x)+2);
                 SVGObj.setAttribute("y", ysize+delypos);
                 SVGObj.setAttribute("font-size", "13");
+                SVGObj.setAttribute("font-weight", "600");
+
                 if (key[x]=="T"){SVGObj.textContent = key[x];
                     SVGObj.setAttribute("fill", "rgb(255,0,0");
                 }
                 else if (key[x]=="A"){SVGObj.textContent = key[x];
-                    SVGObj.setAttribute("fill", "rgb(0,255,0");
+                    SVGObj.setAttribute("fill", "rgb(0,150,0");
                 }
                 else if (key[x]=="C"){SVGObj.textContent = key[x];
                     SVGObj.setAttribute("fill", "rgb(0,0,255");
@@ -2931,21 +2941,33 @@ function PlotAlignment(barcode, locus){
                 else if (key[x]=="-"){SVGObj.textContent = key[x];
                     SVGObj.setAttribute("fill", "rgb(0,0,0");
                 }
-                SVGObj.setAttribute("x", 120+12*(x-xfrom)+2);
+                SVGObj.setAttribute("x", 120+12*(x-xfrom+10));
                 SVGObj.setAttribute("text-anchor", "middle");
                 SVGObj.setAttribute("pointer-events","none");
 
                 svg.appendChild(SVGObj);
             }
         }
-
-        for (let x=xfrom; x<xto; x++){
+        var image_loc = 0;
+        for (let x=xfrom-10; x<xto-10; x++){
+            if (x>0){
             //draw insert:
             SVGObj= document.createElementNS(svgns, "rect");
             // if ((key[x+region_analyse*2]!="\xa0")&&(key[x+region_analyse*2]!="\n")){
             if ('ACTG'.includes(key[x+region_analyse*2])){
+                if (image_loc == 0){
+                    var imageElement = document.createElementNS(NS, "image");
+                    imageElement.setAttribute("x", 120+12*(x-xfrom+10)-16); // Set the x-coordinate of the image
+                        
+                    imageElement.setAttribute("y", ysize+delypos+4); // Set the y-coordinate of the image
+                    imageElement.setAttribute("width", 12); // Set the width of the image
+                    imageElement.setAttribute("height", 12); // Set the height of the image
+                    imageElement.setAttribute("href", "crisprnano2/insert.svg"); // Set the path to your image file
+                    svg.appendChild(imageElement);
+                    image_loc =1;
+                }
                 SVGObj.style.stroke="rgb(255,0,0)";
-                SVGObj.setAttribute("x", 120+12*(x-xfrom)+2);
+                SVGObj.setAttribute("x", 120+12*(x-xfrom+10));
                 SVGObj.setAttribute("y", ysize+delypos+4);
                 SVGObj.setAttribute("width", "12");
                 SVGObj.setAttribute("height", "12");
@@ -2956,7 +2978,7 @@ function PlotAlignment(barcode, locus){
             }
 
             SVGObj= document.createElementNS(NS,"text");
-            SVGObj.setAttribute("x", 120+12*(x-xfrom)+7);
+            SVGObj.setAttribute("x", 120+12*(x-xfrom+10)+5);
             SVGObj.setAttribute("y", ysize+delypos+15);
             SVGObj.setAttribute("font-size", "13");
             SVGObj.setAttribute("fill", "rgb(0,0,0)");
@@ -2964,6 +2986,7 @@ function PlotAlignment(barcode, locus){
             SVGObj.setAttribute("text-anchor", "middle");
             SVGObj.setAttribute("pointer-events","none");
             svg.appendChild(SVGObj);
+            }
         }
         
         SVGObj= document.createElementNS(NS,"text");
@@ -2974,7 +2997,7 @@ function PlotAlignment(barcode, locus){
         svg.appendChild(SVGObj);
 
         SVGObj= document.createElementNS(NS,"text");
-        SVGObj.setAttribute("x", 10+ 120+24*(region_analyse)+2 );
+        SVGObj.setAttribute("x", 10+ 120+24*(30)+2 );
         SVGObj.setAttribute("y", ysize+delypos);
         SVGObj.setAttribute("font-size", "14");
         // Count INDEL's length
@@ -3190,7 +3213,7 @@ function PlotAlignment_off(gene_i)
         svg.appendChild(SVGObj);
 
         SVGObj= document.createElementNS(NS,"text");
-        SVGObj.setAttribute("x", 10+ 120+24*(region_analyse)+2 );
+        SVGObj.setAttribute("x", 10+ 120+24*(30)+2 );
         SVGObj.setAttribute("y", ysize+delypos);
         SVGObj.setAttribute("font-size", "14");
         // Count INDEL's length
@@ -3316,7 +3339,8 @@ function Start(){
     rightbs = document.getElementsByName("RightBS")[0].value.toUpperCase(); // sgRNA seq  
     
     MutationThreshold = document.getElementsByName("MutationThreshold")[0].value;
-    offset_DSB = slider.value;
+    // offset_DSB = slider.value;
+    offset_DSB = 0
     region_analyse = document.getElementsByName("region_analyse")[0].value;
 
     //Find Target site in the reference sequence/locus:
@@ -3474,7 +3498,8 @@ var bst_nt5 = [
 ];
 
 var slider = document.getElementById("myRange");
-var output = document.getElementById("offset_var");
+var output = 0;
+// var output = document.getElementById("offset_var");
 output.innerHTML = slider.value;
 
 slider.oninput = function() {
