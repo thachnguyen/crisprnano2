@@ -606,8 +606,8 @@ function AlignmentMouseMove(evt)
         //alert(x-AlignmentLastX);
         var shift = (x-AlignmentLastX)/12;
         AlignmentStartPos -= shift;
-        if (AlignmentStartPos < -30) AlignmentStartPos = -30;
-        if (AlignmentStartPos > 50) AlignmentStartPos = 50;
+        if (AlignmentStartPos < -region_analyse) AlignmentStartPos = -region_analyse;
+        if (AlignmentStartPos > region_analyse+10) AlignmentStartPos = region_analyse+10;
         PlotAlignment(CurrentAlignment, locus);
 
         AlignmentLastX = x;
@@ -1878,9 +1878,9 @@ function DrawPie_bulk()
     var ROT= ["rgb(232,0,30)","rgb(255,102,0)","rgb(252,176,78)"]; 
     var BLAU=["rgb(50,42,126)","rgb(16,115,179)","rgb(38,170,220)"];
 
-    var size = 200;
-    var midx = 250;
-    var midy = 250;
+    var size = 100;
+    var midx = 125;
+    var midy = 125;
 
     var sum = 0;
     var inf_indel1 =  Array(6)
@@ -2799,8 +2799,6 @@ function PlotAlignment(barcode, locus){
 
     delypos+=delyshift;
 
-    // var xfrom = BreakPoint-region_analyse*1;
-    // var xto = BreakPoint+region_analyse*1;
     var xfrom = BreakPoint-30 +Math.floor(AlignmentStartPos);
     var xto = xfrom +60;
     //wt:
