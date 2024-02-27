@@ -200,7 +200,7 @@
                     <!-- <input type="submit" name="submit" value="Click here to get your fasta" class="btn btn-secondary btn-sm" id="get_fasta" onclick="getFastaSequence();"> -->
                     <br>
                     <input type="text" class="input_form" size="40" name="GeneName" value="" onchange="getFastaSequence()"><br>
-
+                    <small class="text-muted">Gene names are from <a href="https://crisprnano.de/genename.txt">this list</a></small><br>
                     <br>Nuclease Target Site (*): 
                     <div class="popup" onclick="myFunction4()">(? Click here!)
                         <span class="popuptext" id="help4">In this field the nuclease target site is entered. The sequence has to be in the same orientation as the reference sequence above. Click again to close</span>
@@ -262,9 +262,6 @@
                     <br>
                     <br>
                   </div>
-
-                
-
                 <!-- <a href="https://iufduesseldorf-my.sharepoint.com/:u:/g/personal/thach_nguyen_iuf-duesseldorf_de/ER4kM3RQaRJLiltUCpcT2iMBiEvGvs3u2NiDTdtSPBLE1Q?e=8FEAJc">(Our test sample)</a><br> -->
  
                 <br>
@@ -484,6 +481,7 @@
                         <!-- <input type="submit" name="submit" value="Click here get gene list fasta" class="btn btn-secondary btn-sm" id="get_fasta" onclick="getFastaSequence_list();"> -->
                         <br>
                         <input type="text" class="input_form" size="40" name="GeneName_list" id="GeneName_list" value="" onchange="checkOccurrence(); getFastaSequence_list();"><br>
+                        
                         <br>
                         <input type="submit" name="submit" value="START OFFTARGET ANALYZER " class="btn btn-primary btn-sm" id="submit" onclick="Start2();">
                         <div id="progress1" style="display:none; padding: 10px; border: 10px solid #CCC; background: #EEE; width:80%; position:absolute; top:40%;left:0%">
@@ -3553,6 +3551,9 @@ var RestFromLastChunk = "";
 var chunksize = 1024*1024;
 var gene_id = 0;
 var gene_list = ''
+
+
+ 
 
 </script>
 </html>
