@@ -965,18 +965,6 @@ function ReverseComplement(s)
 }
 
 
-// function ReverseComplement(A)
-// {
-//     var dummy = "";
-//     for (var i=0; i<A.length; i++) {
-//         if (A[A.length-1-i] == 'G') dummy += 'C';
-//         if (A[A.length-1-i] == 'A') dummy += 'T';
-//         if (A[A.length-1-i] == 'T') dummy += 'A';
-//         if (A[A.length-1-i] == 'C') dummy += 'G';
-//     }
-//     return dummy;
-// }
-
 function getFastaSequence() {
     var myFastaURL;
     if (document.URL.includes('www')){
@@ -1179,20 +1167,6 @@ function FileReceived() {
                                 try{
                                 read = ReverseComplement(read);
                                 rst = bsa_align(target, read, [ms, mms], [gapo, gape]);
-                                // if (rst[0] < (region_analyse*1+10)){
-                                // try{
-                                //     read = ReverseString(read)
-                                //     rst = bsa_align(target, read, [ms, mms], [gapo, gape])
-                                //     if (rst[0] < (region_analyse*1+10)){
-                                //         try{
-                                //             read = ReverseComplement(read)
-                                //             rst = bsa_align(target, read, [ms, mms], [gapo, gape])
-                                //         }                                
-                                //         catch (error){}
-                                //     }
-                                // }
-                                // catch (error){}
-                                // }
                                 }
                                 catch (error){}
                             }
@@ -1223,27 +1197,12 @@ function FileReceived() {
                     
             } 
             else {
-                // var check_roi = roi.some(roi1 => roi.includes(roi1));
                 if (read.includes(locus_check)||ReverseComplement(read).includes(locus_check)){// UPDATE v2.0 checking 4 posiblities of read, threshold score =region_analyse+10 
                     var rst = bsa_align(target, read, [ms, mms], [gapo, gape]);
                     if (rst[0] < (region_analyse*1)){
                         try{
                         read = ReverseComplement(read);
                         rst = bsa_align(target, read, [ms, mms], [gapo, gape]);
-                        // if (rst[0] < (region_analyse*1+10)){
-                        // try{
-                        //     read = ReverseString(read)
-                        //     rst = bsa_align(target, read, [ms, mms], [gapo, gape])
-                        //     if (rst[0] < (region_analyse*1+10)){
-                        //         try{
-                        //             read = ReverseComplement(read)
-                        //             rst = bsa_align(target, read, [ms, mms], [gapo, gape])
-                        //         }                                
-                        //         catch (error){}
-                        //     }
-                        // }
-                        // catch (error){}
-                        // }
                         }
                         catch (error){}
                     }
@@ -2216,7 +2175,6 @@ function DrawPie_bulk()
     // svg.appendChild(SVGObj);
     document.title = "Bulk Result for "+document.getElementsByName("GeneName")[0].value+" ("+files.length+" barcodes read)";
 }
-
 
 function DrawPie_off()
 {
