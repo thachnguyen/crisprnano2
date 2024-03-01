@@ -164,6 +164,8 @@
             <div class="text-center">
                 <div class="btn-group btn-group-lg mr-3" role="group" id="aBtnGroup" aria-label="Basic example">
                     <button type="button"  name="setup" class="btn btn-info" onclick="TabClicked(0);">ANALYZER SETTING</button>
+                    <div id="save" style="display:none">test</div>
+
                     <button type="button"  name="result" class="btn btn-info" onclick="TabClicked(1);">RESULTS</button>
                     <button type="button"  name="bulkview_result" class="btn btn-info" onclick="TabClicked(4);">BULK VIEWER</button>
                     <button type="button"  name="offtarget_result" class="btn btn-info" onclick="TabClicked(5);">OFF-TARGET ANALYSIS</button>
@@ -497,17 +499,17 @@
 
 
 
-                <!-- <div style="position:absolute; right:10%; top:0%" id="restart" align="right">
-                    <button onclick="SaveSVG();">Save pie charts (.svg)</button>
+                <div style="position:absolute; right:10%; top:0%" id="restart" align="right">
+                    <button onclick="SaveReport();">Save Indel report .csv</button>
                     <br>
-                    <br><button onclick="PrintSVG();">Print pie charts (.pdf)</button>
+                    <!-- <br><button onclick="PrintSVG();">Print pie charts (.pdf)</button>
                     <br>
                     <br><button onclick="SaveSVGAlignment();">Save alignment (.svg)</button>
                     <br>
                     <br><button onclick="PrintSVGAlignment();">Print alignment (.pdf)</button>
                     <br>
-                    //<br><button onclick="SaveTable();">Save mutation statistics (.txt)</button> -->
-                <!-- </div> --> 
+                    //<br><button onclick="SaveTable();">Save mutation statistics (.txt)</button> --> 
+                </div> 
             </div>
 
             <div id="bulkview_result" style="position: absolute; left: 20px; top: 160px; display: none;">
@@ -612,12 +614,10 @@ function AlignmentMouseMove(evt)
     }
     return false;
 }
-function AlignmentMouseUp(evt)
-{
+function AlignmentMouseUp(evt) {
     AlignmentDragging = false;
     return false;
 }
-
 
 // Alignment algorithms
 // modified version of Smith Watermann algorithm using adaptive aligning
@@ -2613,38 +2613,39 @@ function Seq_Type_Detector(){
 //Alignment summary plot:
 function PlotAlignment(barcode, locus){
     //compute number of aligned read
+    // check genotype
     var id = barcode;
 
     for (let key in aln_dict[id]){
         sum_track[id] += aln_dict[id][key];
     }
-    var not_align = 0;
-    var no_indel = 0; 
-    var inf_indel =  0;
-    var out_indel = 0;
+    // var not_align = 0;
+    // var no_indel = 0; 
+    // var inf_indel =  0;
+    // var out_indel = 0;
     var sum = 0;
     var read_ambigous =0;
-    var targetingOligo = 0;
+    // var targetingOligo = 0;
     for (var i=0; i<hits[id].length; i++){
         if (hits[id][i]>=0){
             switch (hits[id][i]){
-                case 0:
-                    not_align++;
-                    break;
+                // case 0:
+                //     not_align++;
+                //     break;
                 case 1:
-                    no_indel++;
+                    // no_indel++;
                     sum++
                     break;
                 case 2:
-                    inf_indel++;
+                    // inf_indel++;
                     sum++
                     break;
                 case 3: 
-                    out_indel++;
+                    // out_indel++;
                     sum++
                     break;
                 case 7: 
-                    targetingOligo++;
+                    // targetingOligo++;
                     sum++
                     break;
                 case 8: 
@@ -2657,7 +2658,7 @@ function PlotAlignment(barcode, locus){
 
     summary_track[id][0] = sum + read_ambigous;
     summary_track[id][5] = read_ambigous;
-    summary_track[id][6] = not_align;
+    // summary_track[id][6] = not_align;
     summary_track[id][7] = sum;
 
     for (let key in aln_dict[id]){
@@ -2677,8 +2678,10 @@ function PlotAlignment(barcode, locus){
     aln_dict_fil[id] = Object.fromEntries(items.map(([v, k]) => [v, k]));
 
     var no_indel = 0; 
+    var no_indel_arr = []
     var inf_indel =  0;
     var out_indel = 0;
+    var out_indel_arr = []
     var sum = 0;
     var targetingOligo = 0;
 
@@ -2686,12 +2689,14 @@ function PlotAlignment(barcode, locus){
         switch (aln_type_dict[id][key]){
             case 1:
                 no_indel+=aln_dict_fil[id][key];
+                no_indel_arr.push(aln_dict_fil[id][key])
                 break;
             case 2:
                 inf_indel+=aln_dict_fil[id][key];
                 break;
             case 3: 
                 out_indel+=aln_dict_fil[id][key];
+                out_indel_arr.push(aln_dict_fil[id][key])
                 break;
             case 7: 
                 targetingOligo+=aln_dict_fil[id][key];
@@ -2699,11 +2704,32 @@ function PlotAlignment(barcode, locus){
         }
     }
 
+    // check genotype
     summary_track[id][1] = targetingOligo;
     summary_track[id][2] = no_indel;
     summary_track[id][3] = inf_indel;
     summary_track[id][4] = out_indel;
     summary_track[id][7] = no_indel+inf_indel+out_indel+targetingOligo;
+    summary_track_select[id+1] =  [targetingOligo, no_indel, inf_indel, out_indel, summary_track[id][7]]
+
+    if (targetingOligo/summary_track[id][7] > 0.95) {
+        genotype[id] = 'KI'
+    }
+    else if ((out_indel/summary_track[id][7] < 0.65) && (out_indel/summary_track[id][7] > 0.35) && (Object.keys(aln_dict_fil[id]) ==2)) {
+        genotype[id] = 'HET'
+    }
+    else if ((no_indel_arr.length ==2) && (out_indel/summary_track[id][7] > 0.95)) {
+        if (no_indel_arr[0]/summary_track[id][7]> 0.4) {
+            genotype[id] = 'HET'
+        }
+    }
+
+    else if ((out_indel/summary_track[id][7] >0.95)&& (out_indel_arr.length ==2)&& (out_indel_arr[0]/summary_track[id][7] > 0.35)&& (out_indel_arr[0]/summary_track[id][7] < 0.65)) {
+        genotype[id] = 'KO'
+    }
+    else {
+        genotype[id] = ''
+    }
 
     //aggregate aln_track
     //Find top 3:
@@ -3185,13 +3211,13 @@ function PlotAlignment_off(gene_i)
 }
 
 
-function SaveSVG()
-{
-    var svg = document.getElementById("DIV_piecharts");
+function SaveReport() {
     //alert(svg.innerHTML);
-    var bb = new Blob([svg.innerHTML], {type: 'text/plain'});
+    const csvContent = summary_track_select.map(row => row.join(",")).join("\n");
+ 
+    var bb = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
     var a = document.createElement('a');
-    a.download = document.getElementsByName("GeneName")[0].value+".svg";
+    a.download = document.getElementsByName("GeneName")[0].value+".csv";
     a.href = window.URL.createObjectURL(bb);
     a.textContent = 'Click here to save';
     a.dataset.downloadurl = ['text/plain', a.download, a.href].join(':');
@@ -3357,6 +3383,7 @@ function Start(){
     CurrentFileId = 0;
     CurrentFileChunk = 0;
     ReadNextFileChunk();
+
 }
 
 function Start2(){
@@ -3475,6 +3502,9 @@ var PhredThreshold = 40; // 7 +33
 
 var sum_track = Array(96)
 var summary_track = Array(96)
+var summary_track_select = Array(97)
+summary_track_select[0] = ["Oligo", "WT", "In-frame", "Out-frame", "Total-Aligned"]
+
 
 var region_analyse =30;
 
@@ -3507,6 +3537,7 @@ var RestFromLastChunk = "";
 var chunksize = 1024*1024;
 var gene_id = 0;
 var gene_list = ''
+var genotype = Array(96)
 
 </script>
 </html>

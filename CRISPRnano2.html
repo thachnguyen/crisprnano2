@@ -164,6 +164,8 @@
             <div class="text-center">
                 <div class="btn-group btn-group-lg mr-3" role="group" id="aBtnGroup" aria-label="Basic example">
                     <button type="button"  name="setup" class="btn btn-info" onclick="TabClicked(0);">ANALYZER SETTING</button>
+                    <div id="save" style="display:none">test</div>
+
                     <button type="button"  name="result" class="btn btn-info" onclick="TabClicked(1);">RESULTS</button>
                     <button type="button"  name="bulkview_result" class="btn btn-info" onclick="TabClicked(4);">BULK VIEWER</button>
                     <button type="button"  name="offtarget_result" class="btn btn-info" onclick="TabClicked(5);">OFF-TARGET ANALYSIS</button>
@@ -182,7 +184,17 @@
                     <span class="popuptext" id="help1">FASTQ output files from Illumina or ONT. We recommend file's size smaller than 200MB. Make sure that the correct ordering is applied in the file browser. The file allocation to individual pie charts can be verified by the numbers given at alignment track. Click again to close.</span>
                 </div>
                     <br><input type="file" id="files" class="input_form" name="files[]" multiple=""><br>
-                    <br>Gene Name:
+                    <br>
+                    <label for="cars">Data type:</label>
+                    <select id="mySelect" onchange="setValue()">
+                        <option value="ont">Nanopore</option>
+                        <option value="illu">Illumina</option>
+                        <option value="pacbio">PacBio or Nanopore Duplex</option>
+                    </select>
+                    <br>
+                    <small class="text-muted">Window size & indel rate will automatically adjusted</small>
+                    <br>
+                    <br>Gene Name (**):
                     <div class="popup" onclick="myFunction8()">(? Click here!)
                         <span class="popuptext" id="help8">Name of the study gene (Human only). Click to close.</span>
                     </div>
@@ -190,7 +202,7 @@
                     <!-- <input type="submit" name="submit" value="Click here to get your fasta" class="btn btn-secondary btn-sm" id="get_fasta" onclick="getFastaSequence();"> -->
                     <br>
                     <input type="text" class="input_form" size="40" name="GeneName" value="" onchange="getFastaSequence()"><br>
-
+                    <small class="text-muted">Gene names are from <a href="https://crisprnano.de/genename.txt">this list</a></small><br>
                     <br>Nuclease Target Site (*): 
                     <div class="popup" onclick="myFunction4()">(? Click here!)
                         <span class="popuptext" id="help4">In this field the nuclease target site is entered. The sequence has to be in the same orientation as the reference sequence above. Click again to close</span>
@@ -215,7 +227,7 @@
                 </div>
 
                 <div class="column">
-                    <h3>Optional parameter</h3>
+                    <h3>Optional parameters</h3>
                     Sequence (if genename given, leave it blank):                 
                     <div class="popup" onclick="myFunction3()">(? Click here!)
                         <span class="popuptext" id="help3">Reference amplicon length should be in the range of 200-300 bases with the nuclease target site located roughly in the middle. You can get the reference from Ensembl link below. Click again to close</span>
@@ -233,26 +245,18 @@
                         <option value="Il_pac">Illumina or PacBio</option>
                       </select> -->
                     <!-- <br>  <br>  -->
-                    Drag the slider to change the interested region
-                    <div class="popup" onclick="myFunction6()">(? Click here!)
-                        <span class="popuptext" id="help6">You can shift the centre of interest region with respect to the double strand breakpoint (DSB) to the left or right. Default value is double strand breaking point 0. Click to close</span>
-                    </div>
-                <div class="slidecontainer">
-                    <input type="range" min="-30" max="30" value="0" class="slider" id="myRange" oninput="this.nextElementSibling.value = this.value">
-                    Offset w.r.t DSP: <span id="offset_var">0</span> 
-                    <br>
-                        
-                        <br>Interested region (optional) +/- bp: 
+                
+                        Interested region (optional) +/- bp: 
                         <div class="popup" onclick="myFunction5()">(? Click here!)
                             <span class="popuptext" id="help5"> For ONT reads, it is recommended to use -/+15 bases around the predicted DNA lesion. Larger regions are prone to false positive indels. Larger regions (total of 200-250 bp) can be safely used with Illumina reads. You can drag and drop the central point of the predicted double strand break in the genomic sequence to the left or to the right. Default value 0 is double strand breaking point- Crisprnano will use the first index of sgRNA mapped on reference. Click again to close</span>
                         </div>
-                        <br><input type="text" size="30" name="region_analyse" value="30" class="input_form" onchange="checkValue();"><br>
+                        <br><input type="text" size="30" name="region_analyse" value="40" class="input_form" onchange="checkValue();"><br>
 
                         <br>Indel Threshold [%]: 
                         <div class="popup" onclick="myFunction9()">(? Click here!)
                             <span class="popuptext" id="help9">The Indel Threshold determines at what relative occurrence an individual indel mutation is considered as a unique allele of the respective clone analyzed, and is thus displayed in the alignment list. Low threshold values can result in false positive allele calling due to sequencing errors, whereas high threshold values result in false negative allele calling. Values in between 0 - 100 % can be entered. We recommend to use 5% for ONT reads and 2% for Illumina reads (default is set to 5%). Click again to close.</span>
                         </div> 
-                        <br><input type="text" size="30" class="input_form" name="MutationThreshold" value="2" onchange="checkValue();"><br>
+                        <br><input type="text" size="30" class="input_form" name="MutationThreshold" value="5" onchange="checkValue();"><br>
                     
                     <p></p>
 
@@ -260,14 +264,23 @@
                     <br>
                     <br>
                   </div>
-
-                </div>
-
                 <!-- <a href="https://iufduesseldorf-my.sharepoint.com/:u:/g/personal/thach_nguyen_iuf-duesseldorf_de/ER4kM3RQaRJLiltUCpcT2iMBiEvGvs3u2NiDTdtSPBLE1Q?e=8FEAJc">(Our test sample)</a><br> -->
  
                 <br>
                 <br>
                 <br>
+                <br>                    <br>
+                <br>                    <br>
+                <br>                    <br>
+                <br>
+                <br>
+                <br>                    <br>
+                <br>                    <br>
+                <br>                    <br>
+                <br>                    <br>
+                <br>                    <br>
+                <br>
+                
                 <a style="font-style: italic;">
                     CRISPRnano website is free and open to all users and there is no login required.<br>
                     To use CRISPRnano, you must enable JavaScript on your web browser.<br>
@@ -275,6 +288,9 @@
                     <br>
                 <a style="font-style: italic;"> (*) Mandatory field 
                 <br>
+                <a style="font-style: italic;"> (**) If Gene name is blank, customer sequence must given 
+                    <br>
+                    <br>
                 <br>
                 Reference: <br>
                 Nguyen, T., Ramachandran, H., Martins, S., Krutmann, J. and Rossi, A., 2022. Identification of genome edited cells using CRISPRnano. Nucleic Acids Research.<br></a>
@@ -458,7 +474,7 @@
                         <input class="form-check-input" type="checkbox" id="bulkview">
                         <label class="form-check-label" for="bulkview">SWITCH TO BULK VIEW </label>
                       </div>
-
+                      <small class="text-muted">NOTE: Bulk view use lower percentage threshold</small>
                     <h4>OFF TARGET Analysis (optional)</h4>    
                         <br>List of offset Gene names (separate by ,):
                         <div class="popup" onclick="myFunction8()">(? Click here!)
@@ -467,6 +483,8 @@
                         <!-- <input type="submit" name="submit" value="Click here get gene list fasta" class="btn btn-secondary btn-sm" id="get_fasta" onclick="getFastaSequence_list();"> -->
                         <br>
                         <input type="text" class="input_form" size="40" name="GeneName_list" id="GeneName_list" value="" onchange="checkOccurrence(); getFastaSequence_list();"><br>
+                        <small class="text-muted">Off-target analysis will check up to 4 genes in a single run</small>
+
                         <br>
                         <input type="submit" name="submit" value="START OFFTARGET ANALYZER " class="btn btn-primary btn-sm" id="submit" onclick="Start2();">
                         <div id="progress1" style="display:none; padding: 10px; border: 10px solid #CCC; background: #EEE; width:80%; position:absolute; top:40%;left:0%">
@@ -475,23 +493,23 @@
                     </div>
 
                 <div id="DIV_alignment">
-                    <svg id="SVGmut" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="1300" height="5000">
+                    <svg id="SVGmut" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="1600" height="5000">
                     </svg>
                 </div>
 
 
 
-                <!-- <div style="position:absolute; right:10%; top:0%" id="restart" align="right">
-                    <button onclick="SaveSVG();">Save pie charts (.svg)</button>
+                <div style="position:absolute; right:10%; top:0%" id="restart" align="right">
+                    <button onclick="SaveReport();">Save Indel report .csv</button>
                     <br>
-                    <br><button onclick="PrintSVG();">Print pie charts (.pdf)</button>
+                    <!-- <br><button onclick="PrintSVG();">Print pie charts (.pdf)</button>
                     <br>
                     <br><button onclick="SaveSVGAlignment();">Save alignment (.svg)</button>
                     <br>
                     <br><button onclick="PrintSVGAlignment();">Print alignment (.pdf)</button>
                     <br>
-                    //<br><button onclick="SaveTable();">Save mutation statistics (.txt)</button> -->
-                <!-- </div> --> 
+                    //<br><button onclick="SaveTable();">Save mutation statistics (.txt)</button> --> 
+                </div> 
             </div>
 
             <div id="bulkview_result" style="position: absolute; left: 20px; top: 160px; display: none;">
@@ -500,7 +518,7 @@
                     </svg>
                 </div>
                 <div id="DIV_alignment_bulk">
-                    <svg id="SVGmut" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="1300" height="5000">
+                    <svg id="SVGmut" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="1600" height="5000">
                     </svg>
                 </div>
             </div>
@@ -513,7 +531,7 @@
                     </div>
                 </div>
                 <div id="DIV_alignment_off">
-                    <svg id="SVGmut_off" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="1300" height="5000">
+                    <svg id="SVGmut_off" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="1600" height="5000">
                     </svg>
                 </div>
             </div>
@@ -546,48 +564,59 @@ function checkValue() {
     alert('Please check the Mutation threshold again');
     document.getElementsByName("MutationThreshold")[0].value = '2';
     }
-    if (region_analyse1*1 > 40||region_analyse1*1<20) {
-    alert('System only support region area from 20-40 bp');
-    document.getElementsByName('region_analyse')[0].value = "30";
-    }
+    if (region_analyse1*1 > 70||region_analyse1*1<30) {
+    alert('System only support region area from 30-70 bp');
+    document.getElementsByName('region_analyse')[0].value = "40";
+    } 
 }
-// Trim low quality functions
-function trimLowQuality(fileContent) {
-        const lines = fileContent.trim().split('\n');
-        var trimmedLines = [];
-        for (let i = 0; i < lines.length; i += 4) {
-            const trim_data = trimLowQualitySequence(lines[i], lines[i + 1], lines[i + 3])
-            const trimmedSequence_list = trim_data[0];
-            const trim_qual_list = trim_data[1]
-            if (trimmedSequence_list.length > 0) {
-                for (let j = 0; j < trimmedSequence_list.length; j++) {
-                trimmedLines.push(lines[i], trimmedSequence_list[j], '+', trim_qual_list[j]);
-            }
-        }
-        }
-        return trimmedLines.join('\n');         
-    }   
 
-function trimLowQualitySequence(read_id, sequence, quality) {
-    const threshold = 10; // Adjust this threshold as needed
-    const min_length = 50;
-    var trimmedSequence_list = [];
-    var trim_qual_list = []; 
-    var trim_seq = ''
-    var trim_qual = '' 
-    for (let i = 0; i < quality.length; i++) {
-            if (quality.charCodeAt(i) - 33 >= threshold) {
-            trim_seq += sequence[i];
-            trim_qual += quality[i];
-            }
-            else if (trim_seq.length > min_length){
-                trimmedSequence_list.push(trim_seq)
-                trim_qual_list.push(trim_qual)
-                trim_seq = ''
-                trim_qual = '' 
-            }
+function setValue() {
+    // Get the input value
+    // Define the target string to check occurrence
+
+    var mySelect = document.getElementById('mySelect');
+    if (mySelect.value == 'ont'){
+        document.getElementsByName('region_analyse')[0].value = "40";
+        document.getElementsByName("MutationThreshold")[0].value = '5'
     }
-    return [trimmedSequence_list, trim_qual_list]
+    else {
+        document.getElementsByName('region_analyse')[0].value = "45";
+        document.getElementsByName("MutationThreshold")[0].value = '2'
+    } 
+}
+
+//Drag and interactive
+
+var AlignmentDragging = false, AlignmentLastX, AlignmentLastY, AlignmentStartPos = 0;
+
+function AlignmentMouseDown(evt)
+{
+    AlignmentLastX = evt.clientX;
+    AlignmentLastY = evt.clientY;
+    AlignmentDragging = true;
+    return false;
+}
+function AlignmentMouseMove(evt)
+{
+    if (AlignmentDragging)
+    {
+        var x = evt.clientX;
+        var y = evt.clientY;
+
+        //alert(x-AlignmentLastX);
+        var shift = (x-AlignmentLastX)/12;
+        AlignmentStartPos -= shift;
+        if (AlignmentStartPos < -region_analyse) AlignmentStartPos = -region_analyse;
+        if (AlignmentStartPos > region_analyse+10) AlignmentStartPos = region_analyse+10;
+        PlotAlignment(CurrentAlignment, locus);
+
+        AlignmentLastX = x;
+    }
+    return false;
+}
+function AlignmentMouseUp(evt) {
+    AlignmentDragging = false;
+    return false;
 }
 
 // Alignment algorithms
@@ -890,8 +919,6 @@ function bsa_cigar2gaps_breakpoint(target, query, start, cigar, bkp1, bkp2){
     return [[oq.substr(bkp1-start, bkp2-bkp1), oq1.substr(bkp1-start, bkp2-bkp1)], aln_type, gap_len];
 }
 
-
-
 function TabClicked(i)
 {
     if (i==0) document.getElementById("setup").style.display = "";
@@ -935,18 +962,6 @@ function ReverseComplement(s)
 	return t;
 }
 
-
-// function ReverseComplement(A)
-// {
-//     var dummy = "";
-//     for (var i=0; i<A.length; i++) {
-//         if (A[A.length-1-i] == 'G') dummy += 'C';
-//         if (A[A.length-1-i] == 'A') dummy += 'T';
-//         if (A[A.length-1-i] == 'T') dummy += 'A';
-//         if (A[A.length-1-i] == 'C') dummy += 'G';
-//     }
-//     return dummy;
-// }
 
 function getFastaSequence() {
     var myFastaURL;
@@ -1150,20 +1165,6 @@ function FileReceived() {
                                 try{
                                 read = ReverseComplement(read);
                                 rst = bsa_align(target, read, [ms, mms], [gapo, gape]);
-                                // if (rst[0] < (region_analyse*1+10)){
-                                // try{
-                                //     read = ReverseString(read)
-                                //     rst = bsa_align(target, read, [ms, mms], [gapo, gape])
-                                //     if (rst[0] < (region_analyse*1+10)){
-                                //         try{
-                                //             read = ReverseComplement(read)
-                                //             rst = bsa_align(target, read, [ms, mms], [gapo, gape])
-                                //         }                                
-                                //         catch (error){}
-                                //     }
-                                // }
-                                // catch (error){}
-                                // }
                                 }
                                 catch (error){}
                             }
@@ -1194,27 +1195,12 @@ function FileReceived() {
                     
             } 
             else {
-                // var check_roi = roi.some(roi1 => roi.includes(roi1));
                 if (read.includes(locus_check)||ReverseComplement(read).includes(locus_check)){// UPDATE v2.0 checking 4 posiblities of read, threshold score =region_analyse+10 
                     var rst = bsa_align(target, read, [ms, mms], [gapo, gape]);
                     if (rst[0] < (region_analyse*1)){
                         try{
                         read = ReverseComplement(read);
                         rst = bsa_align(target, read, [ms, mms], [gapo, gape]);
-                        // if (rst[0] < (region_analyse*1+10)){
-                        // try{
-                        //     read = ReverseString(read)
-                        //     rst = bsa_align(target, read, [ms, mms], [gapo, gape])
-                        //     if (rst[0] < (region_analyse*1+10)){
-                        //         try{
-                        //             read = ReverseComplement(read)
-                        //             rst = bsa_align(target, read, [ms, mms], [gapo, gape])
-                        //         }                                
-                        //         catch (error){}
-                        //     }
-                        // }
-                        // catch (error){}
-                        // }
                         }
                         catch (error){}
                     }
@@ -1268,8 +1254,8 @@ function FileReceived_off() {
     var cursor = 0, origlen = original.length;
     // alignment parameter for affine score DP algorithms 
     var ms = 1 // match score
-    var mms = -2 //mismatch score
-    var gapo = -2  // gap open score
+    var mms = -1 //mismatch score
+    var gapo = -4  // gap open score
     var gape = -1  // gap extent score
     // var id = CurrentFileId;
     while (true) {
@@ -1847,9 +1833,9 @@ function DrawPie_bulk()
     var ROT= ["rgb(232,0,30)","rgb(255,102,0)","rgb(252,176,78)"]; 
     var BLAU=["rgb(50,42,126)","rgb(16,115,179)","rgb(38,170,220)"];
 
-    var size = 200;
-    var midx = 250;
-    var midy = 250;
+    var size = 100;
+    var midx = 125;
+    var midy = 125;
 
     var sum = 0;
     var inf_indel1 =  Array(6)
@@ -2187,7 +2173,6 @@ function DrawPie_bulk()
     // svg.appendChild(SVGObj);
     document.title = "Bulk Result for "+document.getElementsByName("GeneName")[0].value+" ("+files.length+" barcodes read)";
 }
-
 
 function DrawPie_off()
 {
@@ -2584,7 +2569,7 @@ function PieClick_off(evt){
     SelectClone_off(xx+12*yy);
 }
 
-function SelectClone(barcode){
+function SelectClone(barcode) {
     bulkview = document.getElementById("bulkview").checked;
     if (bulkview){
         if (AlignmentPrecalc[barcode]){
@@ -2598,11 +2583,13 @@ function SelectClone(barcode){
     else if (AlignmentPrecalc[barcode]){
             document.getElementById("DIV_alignment").innerHTML = AlignmentPrecalc[barcode];
             CurrentAlignment = barcode;
+            AlignmentStartPos = 0;
+            PlotAlignment(barcode, locus);
             }
     else alert("No data available for the selected barcode.");
 }
 
-function SelectClone_off(barcode){
+function SelectClone_off(barcode) {
     if (AlignmentPrecalc_off[barcode]){
             CurrentAlignment_off = barcode;
             DrawPie_off();
@@ -2626,38 +2613,39 @@ function Seq_Type_Detector(){
 //Alignment summary plot:
 function PlotAlignment(barcode, locus){
     //compute number of aligned read
+    // check genotype
     var id = barcode;
 
     for (let key in aln_dict[id]){
         sum_track[id] += aln_dict[id][key];
     }
-    var not_align = 0;
-    var no_indel = 0; 
-    var inf_indel =  0;
-    var out_indel = 0;
+    // var not_align = 0;
+    // var no_indel = 0; 
+    // var inf_indel =  0;
+    // var out_indel = 0;
     var sum = 0;
     var read_ambigous =0;
-    var targetingOligo = 0;
+    // var targetingOligo = 0;
     for (var i=0; i<hits[id].length; i++){
         if (hits[id][i]>=0){
             switch (hits[id][i]){
-                case 0:
-                    not_align++;
-                    break;
+                // case 0:
+                //     not_align++;
+                //     break;
                 case 1:
-                    no_indel++;
+                    // no_indel++;
                     sum++
                     break;
                 case 2:
-                    inf_indel++;
+                    // inf_indel++;
                     sum++
                     break;
                 case 3: 
-                    out_indel++;
+                    // out_indel++;
                     sum++
                     break;
                 case 7: 
-                    targetingOligo++;
+                    // targetingOligo++;
                     sum++
                     break;
                 case 8: 
@@ -2670,7 +2658,7 @@ function PlotAlignment(barcode, locus){
 
     summary_track[id][0] = sum + read_ambigous;
     summary_track[id][5] = read_ambigous;
-    summary_track[id][6] = not_align;
+    // summary_track[id][6] = not_align;
     summary_track[id][7] = sum;
 
     for (let key in aln_dict[id]){
@@ -2690,8 +2678,10 @@ function PlotAlignment(barcode, locus){
     aln_dict_fil[id] = Object.fromEntries(items.map(([v, k]) => [v, k]));
 
     var no_indel = 0; 
+    var no_indel_arr = []
     var inf_indel =  0;
     var out_indel = 0;
+    var out_indel_arr = []
     var sum = 0;
     var targetingOligo = 0;
 
@@ -2699,12 +2689,14 @@ function PlotAlignment(barcode, locus){
         switch (aln_type_dict[id][key]){
             case 1:
                 no_indel+=aln_dict_fil[id][key];
+                no_indel_arr.push(aln_dict_fil[id][key])
                 break;
             case 2:
                 inf_indel+=aln_dict_fil[id][key];
                 break;
             case 3: 
                 out_indel+=aln_dict_fil[id][key];
+                out_indel_arr.push(aln_dict_fil[id][key])
                 break;
             case 7: 
                 targetingOligo+=aln_dict_fil[id][key];
@@ -2712,11 +2704,32 @@ function PlotAlignment(barcode, locus){
         }
     }
 
+    // check genotype
     summary_track[id][1] = targetingOligo;
     summary_track[id][2] = no_indel;
     summary_track[id][3] = inf_indel;
     summary_track[id][4] = out_indel;
     summary_track[id][7] = no_indel+inf_indel+out_indel+targetingOligo;
+    summary_track_select[id+1] =  [targetingOligo, no_indel, inf_indel, out_indel, summary_track[id][7]]
+
+    if (targetingOligo/summary_track[id][7] > 0.95) {
+        genotype[id] = 'KI'
+    }
+    else if ((out_indel/summary_track[id][7] < 0.65) && (out_indel/summary_track[id][7] > 0.35) && (Object.keys(aln_dict_fil[id]) ==2)) {
+        genotype[id] = 'HET'
+    }
+    else if ((no_indel_arr.length ==2) && (out_indel/summary_track[id][7] > 0.95)) {
+        if (no_indel_arr[0]/summary_track[id][7]> 0.4) {
+            genotype[id] = 'HET'
+        }
+    }
+
+    else if ((out_indel/summary_track[id][7] >0.95)&& (out_indel_arr.length ==2)&& (out_indel_arr[0]/summary_track[id][7] > 0.35)&& (out_indel_arr[0]/summary_track[id][7] < 0.65)) {
+        genotype[id] = 'KO'
+    }
+    else {
+        genotype[id] = ''
+    }
 
     //aggregate aln_track
     //Find top 3:
@@ -2729,6 +2742,11 @@ function PlotAlignment(barcode, locus){
     var svgns = "http://www.w3.org/2000/svg";
     var strokew = "0.5";
 
+    svg.addEventListener("mousedown", AlignmentMouseDown, false);
+            svg.addEventListener("mousemove", AlignmentMouseMove, false);
+            svg.addEventListener("mouseup", AlignmentMouseUp, false);
+            svg.setAttributeNS(null, "onmousedown", "return false;"); //prevents marking
+
     while (svg.lastChild){
         svg.removeChild(svg.lastChild);
     }
@@ -2739,7 +2757,7 @@ function PlotAlignment(barcode, locus){
     var SVGObj= document.createElementNS(NS,"text");
     SVGObj.setAttribute("x", 40);
     SVGObj.setAttribute("y", ysize+delypos);
-    SVGObj.setAttribute("font-size", "14");
+    SVGObj.setAttribute("font-size", "16");
     SVGObj.setAttribute("font-weight", "600");
     SVGObj.textContent = "SUMMARY: Gene: "+document.getElementsByName("GeneName")[0].value+"   |   File "+GetWellPos(barcode)+": "+files[barcode].name;
     svg.appendChild(SVGObj);
@@ -2748,26 +2766,25 @@ function PlotAlignment(barcode, locus){
     SVGObj= document.createElementNS(NS,"text");
     SVGObj.setAttribute("x", 40);
     SVGObj.setAttribute("y", ysize+delypos);
-    SVGObj.setAttribute("font-size", "14");
+    SVGObj.setAttribute("font-size", "16");
     SVGObj.textContent = "Total aligned reads: " + summary_track[barcode][7] +"   |  Outframe indel: " +summary_track[barcode][4]+ " READS, (" +(summary_track[barcode][4]*100/summary_track[barcode][7]).toFixed(2)+"%)" +"   |  Inframe indel: " +summary_track[barcode][3]+ " READS, (" +(summary_track[barcode][3]*100/summary_track[barcode][7]).toFixed(2)+"%)";
     svg.appendChild(SVGObj);
     delypos+=30;
     SVGObj= document.createElementNS(NS,"text");
     SVGObj.setAttribute("x", 40);
     SVGObj.setAttribute("y", ysize+delypos);
-    SVGObj.setAttribute("font-size", "14");
+    SVGObj.setAttribute("font-size", "16");
     SVGObj.textContent = "targetingOligo reads: " + summary_track[barcode][1] +"   |  No indel: " +summary_track[barcode][2] +" READS, (" +(summary_track[barcode][2]*100/summary_track[barcode][7]).toFixed(2)+"%)" +"   | Read ambigous: " +summary_track[barcode][5] //+"   | Not aligned to interested region: " +summary_track[barcode][6];
     svg.appendChild(SVGObj);
 
     delypos+=delyshift;
 
-    var xfrom = BreakPoint-region_analyse*1;
-    var xto = BreakPoint+region_analyse*1;
+    var xfrom = BreakPoint-30 +Math.floor(AlignmentStartPos);
+    var xto = xfrom +60;
     //wt:
     for (let x=xfrom; x<xto; x++){
         //draw base:
         SVGObj= document.createElementNS(NS,"text");
-        SVGObj.setAttribute("x", 120+12*(x-xfrom)+2);
         SVGObj.setAttribute("y", ysize+delypos+20);
         SVGObj.setAttribute("font-size", "14");
         if (x>=RightBsPos && x<RightBsPos+rightbs.length) SVGObj.setAttribute("fill", "rgb(0,0,250)");
@@ -2788,7 +2805,6 @@ function PlotAlignment(barcode, locus){
     for (let x=RightBsPos; x<RightBsPos+rightbs.length; x++){
         //draw base:
         SVGObj= document.createElementNS(NS,"text");
-        SVGObj.setAttribute("x", 120+12*(x-xfrom)+2);
         SVGObj.setAttribute("y", ysize+delypos);
         SVGObj.setAttribute("font-size", "14");
         SVGObj.setAttribute("fill", "rgb(0,0,0)");
@@ -2827,7 +2843,7 @@ function PlotAlignment(barcode, locus){
     delypos+=delyshift;
     var id1 = 1;
     for (let key in aln_dict_fil[barcode]){
-        for (let x=0; x<region_analyse*2; x++){
+        for (let x=0; x<30*2; x++){
             //draw main track:
             if ((key[x]==locus[BreakPoint-region_analyse+x])||(key[x]=='N')||(key[x]=='-')||(typeof(key[x])=='undefined')){
                 SVGObj= document.createElementNS(svgns, "rect");
@@ -2837,12 +2853,17 @@ function PlotAlignment(barcode, locus){
                 SVGObj.setAttribute("height", "11");
                 SVGObj.setAttribute("fill", "rgb(216,216,216");
                 SVGObj.setAttribute("text-anchor", "middle");
+                SVGObj.setAttribute("pointer-events","none");
                 svg.appendChild(SVGObj);
-
+            }
+        }
+        for (let x=xfrom-10; x<xto-10; x++){
+            //draw main track:
+            if ((key[x]==locus[BreakPoint-region_analyse+x])||(key[x]=='N')||(key[x]=='-')||(typeof(key[x])=='undefined')){
                 SVGObj= document.createElementNS(NS, "text");
-                SVGObj.setAttribute("x", 120+12*(x)+2);
                 SVGObj.setAttribute("y", ysize+delypos);
                 SVGObj.setAttribute("font-size", "13");
+                SVGObj.setAttribute("font-weight", "400");
                 if (key[x]=="T"){SVGObj.textContent = key[x];
                     SVGObj.setAttribute("fill", "rgb(255,0,0");
                 }
@@ -2861,30 +2882,35 @@ function PlotAlignment(barcode, locus){
                 else if (key[x]=="-"){SVGObj.textContent = key[x];
                     SVGObj.setAttribute("fill", "rgb(0,0,0");
                 }
-                SVGObj.setAttribute("x", 120+12*(x));
+                SVGObj.setAttribute("x", 120+12*(x-xfrom+10));
                 SVGObj.setAttribute("text-anchor", "middle");
+                SVGObj.setAttribute("pointer-events","none");
+
                 svg.appendChild(SVGObj);
             }
             else{
                 SVGObj= document.createElementNS(svgns, "rect");
                 SVGObj.style.stroke="rgb(0,0,0)";
-                SVGObj.setAttribute("x", 120+12*(x)-5);
+                SVGObj.setAttribute("x", 115+12*(x-xfrom+10));
                 SVGObj.setAttribute("y", ysize+delypos-10);
                 SVGObj.setAttribute("width", "11");
                 SVGObj.setAttribute("height", "11");
                 SVGObj.setAttribute("fill", "rgb(216,216,216");
                 SVGObj.setAttribute("text-anchor", "middle");
+                SVGObj.setAttribute("pointer-events","none");
+
                 svg.appendChild(SVGObj);
 
                 SVGObj= document.createElementNS(NS, "text");
-                SVGObj.setAttribute("x", 120+12*(x)+2);
                 SVGObj.setAttribute("y", ysize+delypos);
                 SVGObj.setAttribute("font-size", "13");
+                SVGObj.setAttribute("font-weight", "600");
+
                 if (key[x]=="T"){SVGObj.textContent = key[x];
                     SVGObj.setAttribute("fill", "rgb(255,0,0");
                 }
                 else if (key[x]=="A"){SVGObj.textContent = key[x];
-                    SVGObj.setAttribute("fill", "rgb(0,255,0");
+                    SVGObj.setAttribute("fill", "rgb(0,150,0");
                 }
                 else if (key[x]=="C"){SVGObj.textContent = key[x];
                     SVGObj.setAttribute("fill", "rgb(0,0,255");
@@ -2898,35 +2924,52 @@ function PlotAlignment(barcode, locus){
                 else if (key[x]=="-"){SVGObj.textContent = key[x];
                     SVGObj.setAttribute("fill", "rgb(0,0,0");
                 }
-                SVGObj.setAttribute("x", 120+12*(x));
+                SVGObj.setAttribute("x", 120+12*(x-xfrom+10));
                 SVGObj.setAttribute("text-anchor", "middle");
+                SVGObj.setAttribute("pointer-events","none");
+
                 svg.appendChild(SVGObj);
             }
         }
-
-        for (let x=0; x<region_analyse*2; x++){
+        var image_loc = 0;
+        for (let x=xfrom-10; x<xto-10; x++){
+            if (x>0){
             //draw insert:
             SVGObj= document.createElementNS(svgns, "rect");
             // if ((key[x+region_analyse*2]!="\xa0")&&(key[x+region_analyse*2]!="\n")){
             if ('ACTG'.includes(key[x+region_analyse*2])){
+                if (image_loc == 0){
+                    var imageElement = document.createElementNS(NS, "image");
+                    imageElement.setAttribute("x", 120+12*(x-xfrom+10)-16); // Set the x-coordinate of the image
+                        
+                    imageElement.setAttribute("y", ysize+delypos+4); // Set the y-coordinate of the image
+                    imageElement.setAttribute("width", 12); // Set the width of the image
+                    imageElement.setAttribute("height", 12); // Set the height of the image
+                    imageElement.setAttribute("href", "crisprnano2/insert.svg"); // Set the path to your image file
+                    svg.appendChild(imageElement);
+                    image_loc =1;
+                }
                 SVGObj.style.stroke="rgb(255,0,0)";
-                SVGObj.setAttribute("x", 120+12*(x)-12);
+                SVGObj.setAttribute("x", 120+12*(x-xfrom+10));
                 SVGObj.setAttribute("y", ysize+delypos+4);
                 SVGObj.setAttribute("width", "12");
                 SVGObj.setAttribute("height", "12");
                 SVGObj.setAttribute("fill", "rgb(255,255,255");
                 SVGObj.setAttribute("text-anchor", "middle");
+                SVGObj.setAttribute("pointer-events","none");
                 svg.appendChild(SVGObj);
             }
 
             SVGObj= document.createElementNS(NS,"text");
-            SVGObj.setAttribute("x", 120+12*(x)-6);
+            SVGObj.setAttribute("x", 120+12*(x-xfrom+10)+5);
             SVGObj.setAttribute("y", ysize+delypos+15);
             SVGObj.setAttribute("font-size", "13");
             SVGObj.setAttribute("fill", "rgb(0,0,0)");
             SVGObj.textContent = key[x+region_analyse*2];
             SVGObj.setAttribute("text-anchor", "middle");
+            SVGObj.setAttribute("pointer-events","none");
             svg.appendChild(SVGObj);
+            }
         }
         
         SVGObj= document.createElementNS(NS,"text");
@@ -2937,7 +2980,7 @@ function PlotAlignment(barcode, locus){
         svg.appendChild(SVGObj);
 
         SVGObj= document.createElementNS(NS,"text");
-        SVGObj.setAttribute("x", 10+ 120+24*(region_analyse)+2 );
+        SVGObj.setAttribute("x", 10+ 120+24*(30)+2 );
         SVGObj.setAttribute("y", ysize+delypos);
         SVGObj.setAttribute("font-size", "14");
         // Count INDEL's length
@@ -3153,7 +3196,7 @@ function PlotAlignment_off(gene_i)
         svg.appendChild(SVGObj);
 
         SVGObj= document.createElementNS(NS,"text");
-        SVGObj.setAttribute("x", 10+ 120+24*(region_analyse)+2 );
+        SVGObj.setAttribute("x", 10+ 120+24*(30)+2 );
         SVGObj.setAttribute("y", ysize+delypos);
         SVGObj.setAttribute("font-size", "14");
         // Count INDEL's length
@@ -3168,13 +3211,13 @@ function PlotAlignment_off(gene_i)
 }
 
 
-function SaveSVG()
-{
-    var svg = document.getElementById("DIV_piecharts");
+function SaveReport() {
     //alert(svg.innerHTML);
-    var bb = new Blob([svg.innerHTML], {type: 'text/plain'});
+    const csvContent = summary_track_select.map(row => row.join(",")).join("\n");
+ 
+    var bb = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
     var a = document.createElement('a');
-    a.download = document.getElementsByName("GeneName")[0].value+".svg";
+    a.download = document.getElementsByName("GeneName")[0].value+".csv";
     a.href = window.URL.createObjectURL(bb);
     a.textContent = 'Click here to save';
     a.dataset.downloadurl = ['text/plain', a.download, a.href].join(':');
@@ -3237,10 +3280,7 @@ function myFunction5() {
     var popup = document.getElementById("help5");
     popup.classList.toggle("show");
 }
-function myFunction6() {
-    var popup = document.getElementById("help6");
-    popup.classList.toggle("show");
-}
+
 function myFunction7() {
     var popup = document.getElementById("help7");
     popup.classList.toggle("show");
@@ -3279,7 +3319,6 @@ function Start(){
     rightbs = document.getElementsByName("RightBS")[0].value.toUpperCase(); // sgRNA seq  
     
     MutationThreshold = document.getElementsByName("MutationThreshold")[0].value;
-    offset_DSB = slider.value;
     region_analyse = document.getElementsByName("region_analyse")[0].value;
 
     //Find Target site in the reference sequence/locus:
@@ -3309,7 +3348,7 @@ function Start(){
     }
     
     //check other field 
-    if (region_analyse*1>40){
+    if (region_analyse*1>80){
         alert('Please reduce the region analyse value');
         return
     }
@@ -3327,10 +3366,10 @@ function Start(){
     RightBsPos = locus.search(rightbs);
     //breaking point on locus 
     if (rightbs!=rightbs != document.getElementsByName("RightBS")[0].value.toUpperCase()){
-        BreakPoint = RightBsPos + rightbs.length + offset_DSB*1-10;
+        BreakPoint = RightBsPos + rightbs.length -10;
     }
     else{
-        BreakPoint = RightBsPos + rightbs.length + offset_DSB*1
+        BreakPoint = RightBsPos + rightbs.length 
     }
     
     var evt = document.getElementById('files');
@@ -3344,6 +3383,7 @@ function Start(){
     CurrentFileId = 0;
     CurrentFileChunk = 0;
     ReadNextFileChunk();
+
 }
 
 function Start2(){
@@ -3405,7 +3445,7 @@ function Start2(){
         }   
         else {
             RightBsPos_off[i] = rst[1];
-            BreakPoint_off[i] = RightBsPos_off[i] + rightbs.length + offset_DSB*1
+            BreakPoint_off[i] = RightBsPos_off[i] + rightbs.length
         }
     }    
     CurrentFileId_off = CurrentAlignment;
@@ -3436,14 +3476,6 @@ var bst_nt5 = [
     4, 4, 4, 4,  4, 4, 4, 4,  4, 4, 4, 4,  4, 4, 4, 4
 ];
 
-var slider = document.getElementById("myRange");
-var output = document.getElementById("offset_var");
-output.innerHTML = slider.value;
-
-slider.oninput = function() {
-output.innerHTML = this.value;
-}
-
 var currenttab = 0;
 TabClicked(0);
 
@@ -3464,13 +3496,15 @@ var CurrentFileId;
 var CurrentFileId_off;
 var MutationThreshold = 0.1
 var BreakPoint;
-var offset_DSB = 0;
 var rightbs;
 
 var PhredThreshold = 40; // 7 +33
 
 var sum_track = Array(96)
 var summary_track = Array(96)
+var summary_track_select = Array(97)
+summary_track_select[0] = ["Oligo", "WT", "In-frame", "Out-frame", "Total-Aligned"]
+
 
 var region_analyse =30;
 
@@ -3503,6 +3537,7 @@ var RestFromLastChunk = "";
 var chunksize = 1024*1024;
 var gene_id = 0;
 var gene_list = ''
+var genotype = Array(96)
 
 </script>
 </html>
