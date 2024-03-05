@@ -2710,7 +2710,7 @@ function PlotAlignment(barcode, locus){
     summary_track[id][3] = inf_indel;
     summary_track[id][4] = out_indel;
     summary_track[id][7] = no_indel+inf_indel+out_indel+targetingOligo;
-    summary_track_select[id+1] =  [targetingOligo, no_indel, inf_indel, out_indel, summary_track[id][7]]
+    summary_track_select[id+1] =  [GetWellPos(id), targetingOligo, no_indel, inf_indel, out_indel, summary_track[id][7]]
 
     if (targetingOligo/summary_track[id][7] > 0.95) {
         genotype[id] = 'KI'

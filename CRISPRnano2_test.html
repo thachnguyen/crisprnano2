@@ -1734,8 +1734,12 @@ function DrawPie()
         SVGObj.setAttribute("font-size", "11");
         SVGObj.setAttribute("text-anchor", "middle");
         SVGObj.setAttribute("pointer-events","none");
-
-        SVGObj.textContent = GetWellPos(barcode);
+        if (genotype[barcode]==''||!genotype[barcode]){
+            SVGObj.textContent = GetWellPos(barcode)
+        }
+        else if (genotype[barcode]) {
+            SVGObj.textContent = GetWellPos(barcode)+ " ("+ genotype[barcode]+ ")";
+        }
         svg.appendChild(SVGObj);
     }
     //legende:
@@ -2684,6 +2688,7 @@ function PlotAlignment(barcode, locus){
     var out_indel_arr = []
     var sum = 0;
     var targetingOligo = 0;
+    var targetingOligo_arr = [];
 
     for (let key in aln_dict_fil[id]){
         switch (aln_type_dict[id][key]){
@@ -2700,35 +2705,51 @@ function PlotAlignment(barcode, locus){
                 break;
             case 7: 
                 targetingOligo+=aln_dict_fil[id][key];
+                targetingOligo_arr.push(aln_dict_fil[id][key])
                 break;
         }
     }
 
-    // check genotype
+    // For saving csv
     summary_track[id][1] = targetingOligo;
     summary_track[id][2] = no_indel;
     summary_track[id][3] = inf_indel;
     summary_track[id][4] = out_indel;
     summary_track[id][7] = no_indel+inf_indel+out_indel+targetingOligo;
-    summary_track_select[id+1] =  [targetingOligo, no_indel, inf_indel, out_indel, summary_track[id][7]]
-
-    if (targetingOligo/summary_track[id][7] > 0.95) {
-        genotype[id] = 'KI'
-    }
-    else if ((out_indel/summary_track[id][7] < 0.65) && (out_indel/summary_track[id][7] > 0.35) && (Object.keys(aln_dict_fil[id]) ==2)) {
-        genotype[id] = 'HET'
-    }
-    else if ((no_indel_arr.length ==2) && (out_indel/summary_track[id][7] > 0.95)) {
-        if (no_indel_arr[0]/summary_track[id][7]> 0.4) {
-            genotype[id] = 'HET'
-        }
-    }
-
-    else if ((out_indel/summary_track[id][7] >0.95)&& (out_indel_arr.length ==2)&& (out_indel_arr[0]/summary_track[id][7] > 0.35)&& (out_indel_arr[0]/summary_track[id][7] < 0.65)) {
-        genotype[id] = 'KO'
+    if (summary_track[id][7]>0) {
+        summary_track_select[id+1] =  [GetWellPos(id), (targetingOligo/summary_track[id][7]*100).toFixed(2), (no_indel/summary_track[id][7]*100).toFixed(2), (inf_indel/summary_track[id][7]*100).toFixed(2), (out_indel/summary_track[id][7]*100).toFixed(2), summary_track[id][7]]
     }
     else {
-        genotype[id] = ''
+        summary_track_select[id+1] =  [GetWellPos(id), targetingOligo, no_indel, inf_indel, out_indel, summary_track[id][7]]
+
+    }
+
+    // check genotype
+    if (summary_track[id][7] > 50) {
+        if (targetingOligo/summary_track[id][7] > 0.95) {
+            if (targetingOligo_arr.length==2) {
+                if (targetingOligo_arr[0]/(targetingOligo_arr[0]+targetingOligo_arr[1])>0.3 ||targetingOligo_arr[0]/(targetingOligo_arr[0]+targetingOligo_arr[1])<0.7){
+                    genotype[id] = 'KI/KI'
+                }
+                else {
+                    genotype[id] = 'KI/'
+                }
+            }
+            else {
+                    genotype[id] = 'KI/'
+                }
+        }
+        else if (Object.keys(aln_dict_fil[id]).length ==2) {
+            if ((out_indel/summary_track[id][7] < 0.7)&& (inf_indel/summary_track[id][7] < 0.7) && (targetingOligo/summary_track[id][7]<0.7)) {
+            genotype[id] = 'HET'
+            }
+            else if ((out_indel/summary_track[id][7] >0.95)&& (out_indel_arr.length ==2)&& (out_indel_arr[0]/summary_track[id][7] > 0.35)&& (out_indel_arr[0]/summary_track[id][7] < 0.65)) {
+                genotype[id] = 'KO'
+            }
+        }
+        else {
+            genotype[id] = ''
+        }
     }
 
     //aggregate aln_track
@@ -3503,7 +3524,7 @@ var PhredThreshold = 40; // 7 +33
 var sum_track = Array(96)
 var summary_track = Array(96)
 var summary_track_select = Array(97)
-summary_track_select[0] = ["Oligo", "WT", "In-frame", "Out-frame", "Total-Aligned"]
+summary_track_select[0] = ["Sample", "%Oligo (KI)", "% WT", "% In-frame", "% Out-frame", "# Total Aligned Read"]
 
 
 var region_analyse =30;
