@@ -2732,11 +2732,11 @@ function PlotAlignment(barcode, locus){
                     genotype[id] = 'KI/KI'
                 }
                 else {
-                    genotype[id] = 'KI/'
+                    genotype[id] = 'KI'
                 }
             }
             else {
-                    genotype[id] = 'KI/'
+                    genotype[id] = 'KI'
                 }
         }
         else if (Object.keys(aln_dict_fil[id]).length ==2) {
@@ -2802,7 +2802,7 @@ function PlotAlignment(barcode, locus){
 
     var xfrom = BreakPoint-30 +Math.floor(AlignmentStartPos);
     var xto = xfrom +60;
-    //wt:
+    //wt: REFERENCES SEQ
     for (let x=xfrom; x<xto; x++){
         //draw base:
         SVGObj= document.createElementNS(NS,"text");
@@ -2864,6 +2864,14 @@ function PlotAlignment(barcode, locus){
     delypos+=delyshift;
     var id1 = 1;
     for (let key in aln_dict_fil[barcode]){
+        //aggregate WT
+        if (no_indel_arr.length >1){
+
+        }
+
+        else {
+
+        }
         for (let x=0; x<30*2; x++){
             //draw main track:
             if ((key[x]==locus[BreakPoint-region_analyse+x])||(key[x]=='N')||(key[x]=='-')||(typeof(key[x])=='undefined')){
