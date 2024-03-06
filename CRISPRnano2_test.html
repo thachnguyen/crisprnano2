@@ -2671,16 +2671,6 @@ function PlotAlignment(barcode, locus){
         }
     }
     
-    // sort aligment tract
-    var items = Object.keys(aln_dict_fil[id]).map(function(key) {
-    return [key, aln_dict_fil[id][key]];
-    });
-    // Sort the array based on the second element
-    items.sort(function(first, second) {
-    return second[1] - first[1];
-    });
-    aln_dict_fil[id] = Object.fromEntries(items.map(([v, k]) => [v, k]));
-
     var no_indel = 0; 
     var no_indel_arr = []
     var inf_indel =  0;
@@ -2752,6 +2742,17 @@ function PlotAlignment(barcode, locus){
         }
     }
 
+    // sort aligment tract
+    var items = Object.keys(aln_dict_fil[id]).map(function(key) {
+    return [key, aln_dict_fil[id][key]];
+    });
+    // Sort the array based on the second element
+    items.sort(function(first, second) {
+    return second[1] - first[1];
+    });
+    aln_dict_fil[id] = Object.fromEntries(items.map(([v, k]) => [v, k]));
+
+    
     //aggregate aln_track
     //Find top 3:
     var aln_type = ["Not align","No indel", "Inframe Indel", "Outframe indel", "", "","", "targetingOligo", "Ambigious"]
@@ -2870,9 +2871,7 @@ function PlotAlignment(barcode, locus){
         }
 
         else {
-
-        }
-        for (let x=0; x<30*2; x++){
+            for (let x=0; x<30*2; x++){
             //draw main track:
             if ((key[x]==locus[BreakPoint-region_analyse+x])||(key[x]=='N')||(key[x]=='-')||(typeof(key[x])=='undefined')){
                 SVGObj= document.createElementNS(svgns, "rect");
@@ -2960,6 +2959,9 @@ function PlotAlignment(barcode, locus){
                 svg.appendChild(SVGObj);
             }
         }
+
+        }
+
         var image_loc = 0;
         for (let x=xfrom-10; x<xto-10; x++){
             if (x>0){
