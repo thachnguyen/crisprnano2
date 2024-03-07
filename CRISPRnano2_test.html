@@ -2666,7 +2666,7 @@ function PlotAlignment(barcode, locus){
     summary_track[id][7] = sum;
 
     for (let key in aln_dict[id]){
-        if ((aln_dict[id][key]>10)&&(aln_dict[id][key]>(1*MutationThreshold*summary_track[id][0]/100))&&(key.split('\n')[0].trim().length>region_analyse*2-4)){
+        if ((aln_type_dict[id][key]!=8)&&(aln_dict[id][key]>10)&&(aln_dict[id][key]>(1*MutationThreshold*summary_track[id][0]/100))&&(key.split('\n')[0].trim().length>region_analyse*2-4)){
             aln_dict_fil[id][key] = aln_dict[id][key];
         }
     }
@@ -2684,7 +2684,7 @@ function PlotAlignment(barcode, locus){
         switch (aln_type_dict[id][key]){
             case 1:
                 no_indel+=aln_dict_fil[id][key];
-                no_indel_arr.push(aln_dict_fil[id][key])
+                no_indel_arr[key] = aln_dict_fil[id][key]
                 break;
             case 2:
                 inf_indel+=aln_dict_fil[id][key];
@@ -2698,6 +2698,24 @@ function PlotAlignment(barcode, locus){
                 targetingOligo_arr.push(aln_dict_fil[id][key])
                 break;
         }
+    }
+    
+    //update new WT candidate, keep maximum
+    if (Object.keys(no_indel_arr).length >1){
+        let maxValue = -Infinity;
+            var sum_wt = 0;
+            var candidate_wt;
+            for (const key1 in no_indel_arr) {
+                const value = no_indel_arr[key1];
+                if (value > maxValue) {
+                maxValue = value;
+                candidate_wt = key1;
+                }
+                sum_wt += value;
+                delete aln_dict_fil[key1];
+            }
+            //update new candidate WT (max)
+            aln_dict_fil[candidate_wt] = sum_wt;
     }
 
     // For saving csv
@@ -2866,68 +2884,67 @@ function PlotAlignment(barcode, locus){
     var id1 = 1;
     for (let key in aln_dict_fil[barcode]){
         //aggregate WT
-        if (no_indel_arr.length >1){
+        if (Object.keys(no_indel_arr).length >1){
 
         }
-
         else {
             for (let x=0; x<30*2; x++){
-            //draw main track:
-            if ((key[x]==locus[BreakPoint-region_analyse+x])||(key[x]=='N')||(key[x]=='-')||(typeof(key[x])=='undefined')){
-                SVGObj= document.createElementNS(svgns, "rect");
-                SVGObj.setAttribute("x", 120+12*(x)-5);
-                SVGObj.setAttribute("y", ysize+delypos-10);
-                SVGObj.setAttribute("width", "11");
-                SVGObj.setAttribute("height", "11");
-                SVGObj.setAttribute("fill", "rgb(216,216,216");
-                SVGObj.setAttribute("text-anchor", "middle");
-                SVGObj.setAttribute("pointer-events","none");
-                svg.appendChild(SVGObj);
-            }
-        }
-        for (let x=xfrom-10; x<xto-10; x++){
-            //draw main track:
-            if ((key[x]==locus[BreakPoint-region_analyse+x])||(key[x]=='N')||(key[x]=='-')||(typeof(key[x])=='undefined')){
-                SVGObj= document.createElementNS(NS, "text");
-                SVGObj.setAttribute("y", ysize+delypos);
-                SVGObj.setAttribute("font-size", "13");
-                SVGObj.setAttribute("font-weight", "400");
-                if (key[x]=="T"){SVGObj.textContent = key[x];
-                    SVGObj.setAttribute("fill", "rgb(255,0,0");
+                //draw main track:
+                if ((key[x]==locus[BreakPoint-region_analyse+x])||(key[x]=='N')||(key[x]=='-')||(typeof(key[x])=='undefined')){
+                    SVGObj= document.createElementNS(svgns, "rect");
+                    SVGObj.setAttribute("x", 120+12*(x)-5);
+                    SVGObj.setAttribute("y", ysize+delypos-10);
+                    SVGObj.setAttribute("width", "11");
+                    SVGObj.setAttribute("height", "11");
+                    SVGObj.setAttribute("fill", "rgb(216,216,216");
+                    SVGObj.setAttribute("text-anchor", "middle");
+                    SVGObj.setAttribute("pointer-events","none");
+                    svg.appendChild(SVGObj);
+                    }
                 }
-                else if (key[x]=="A"){SVGObj.textContent = key[x];
-                    SVGObj.setAttribute("fill", "rgb(0,150,0");
-                }
-                else if (key[x]=="C"){SVGObj.textContent = key[x];
-                    SVGObj.setAttribute("fill", "rgb(0,0,255");
-                }
-                else if (key[x]=="G"){SVGObj.textContent = key[x];
-                    SVGObj.setAttribute("fill", "rgb(200, 100, 0");
-                }
-                else if (key[x]=="N"){SVGObj.textContent = key[x];
-                    SVGObj.setAttribute("fill", "rgb(0, 0, 0");
-                }
-                else if (key[x]=="-"){SVGObj.textContent = key[x];
-                    SVGObj.setAttribute("fill", "rgb(0,0,0");
-                }
-                SVGObj.setAttribute("x", 120+12*(x-xfrom+10));
-                SVGObj.setAttribute("text-anchor", "middle");
-                SVGObj.setAttribute("pointer-events","none");
+            for (let x=xfrom-10; x<xto-10; x++){
+                //draw main track:
+                if ((key[x]==locus[BreakPoint-region_analyse+x])||(key[x]=='N')||(key[x]=='-')||(typeof(key[x])=='undefined')){
+                    SVGObj= document.createElementNS(NS, "text");
+                    SVGObj.setAttribute("y", ysize+delypos);
+                    SVGObj.setAttribute("font-size", "13");
+                    SVGObj.setAttribute("font-weight", "400");
+                    if (key[x]=="T"){SVGObj.textContent = key[x];
+                        SVGObj.setAttribute("fill", "rgb(255,0,0");
+                    }
+                    else if (key[x]=="A"){SVGObj.textContent = key[x];
+                        SVGObj.setAttribute("fill", "rgb(0,150,0");
+                    }
+                    else if (key[x]=="C"){SVGObj.textContent = key[x];
+                        SVGObj.setAttribute("fill", "rgb(0,0,255");
+                    }
+                    else if (key[x]=="G"){SVGObj.textContent = key[x];
+                        SVGObj.setAttribute("fill", "rgb(200, 100, 0");
+                    }
+                    else if (key[x]=="N"){SVGObj.textContent = key[x];
+                        SVGObj.setAttribute("fill", "rgb(0, 0, 0");
+                    }
+                    else if (key[x]=="-"){SVGObj.textContent = key[x];
+                        SVGObj.setAttribute("fill", "rgb(0,0,0");
+                    }
+                    SVGObj.setAttribute("x", 120+12*(x-xfrom+10));
+                    SVGObj.setAttribute("text-anchor", "middle");
+                    SVGObj.setAttribute("pointer-events","none");
 
-                svg.appendChild(SVGObj);
-            }
-            else{
-                SVGObj= document.createElementNS(svgns, "rect");
-                SVGObj.style.stroke="rgb(0,0,0)";
-                SVGObj.setAttribute("x", 115+12*(x-xfrom+10));
-                SVGObj.setAttribute("y", ysize+delypos-10);
-                SVGObj.setAttribute("width", "11");
-                SVGObj.setAttribute("height", "11");
-                SVGObj.setAttribute("fill", "rgb(216,216,216");
-                SVGObj.setAttribute("text-anchor", "middle");
-                SVGObj.setAttribute("pointer-events","none");
+                    svg.appendChild(SVGObj);
+                }
+                else {
+                    SVGObj= document.createElementNS(svgns, "rect");
+                    SVGObj.style.stroke="rgb(0,0,0)";
+                    SVGObj.setAttribute("x", 115+12*(x-xfrom+10));
+                    SVGObj.setAttribute("y", ysize+delypos-10);
+                    SVGObj.setAttribute("width", "11");
+                    SVGObj.setAttribute("height", "11");
+                    SVGObj.setAttribute("fill", "rgb(216,216,216");
+                    SVGObj.setAttribute("text-anchor", "middle");
+                    SVGObj.setAttribute("pointer-events","none");
 
-                svg.appendChild(SVGObj);
+                    svg.appendChild(SVGObj);
 
                 SVGObj= document.createElementNS(NS, "text");
                 SVGObj.setAttribute("y", ysize+delypos);
@@ -2957,9 +2974,8 @@ function PlotAlignment(barcode, locus){
                 SVGObj.setAttribute("pointer-events","none");
 
                 svg.appendChild(SVGObj);
+                }
             }
-        }
-
         }
 
         var image_loc = 0;
