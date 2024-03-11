@@ -90,6 +90,9 @@
 }
 
     </style>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.0/xlsx.full.min.js"></script>
+
     <meta http-equiv="CACHE-CONTROL" content="NO-CACHE">
         <title>CRISPRnano2</title>
 
@@ -500,7 +503,9 @@
 
 
                 <div style="position:absolute; right:10%; top:0%" id="restart" align="right">
-                    <button onclick="SaveReport();">Save Indel report .csv</button>
+                    <button onclick="SaveReport();">Save Indel report Excel format .XLSX</button>
+                    <br>
+                    <button onclick="SaveReportcsv();">Save Indel report CSV format .csv</button>
                     <br>
                     <!-- <br><button onclick="PrintSVG();">Print pie charts (.pdf)</button>
                     <br>
@@ -3336,6 +3341,24 @@ function PlotAlignment_off(gene_i)
 
 
 function SaveReport() {
+    //alert(svg.innerHTML);
+    const workbook = XLSX.utils.book_new();
+    const worksheet = XLSX.utils.aoa_to_sheet(summary_track_select);
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Sheet1");
+    const excelBuffer = XLSX.write(workbook, { type: "array", bookType: "xlsx" });
+    const bb = new Blob([excelBuffer], { type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" });
+
+    // var bb = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+    var a = document.createElement('a');
+    a.download = document.getElementsByName("GeneName")[0].value+".xlsx";
+    a.href = window.URL.createObjectURL(bb);
+    a.textContent = 'Click here to save';
+    a.dataset.downloadurl = ['text/plain', a.download, a.href].join(':');
+    document.getElementById("save").appendChild(a);
+    a.click();
+}
+
+function SaveReportcsv() {
     //alert(svg.innerHTML);
     const csvContent = summary_track_select.map(row => row.join("\t")).join("\n");
  
