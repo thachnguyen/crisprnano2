@@ -90,6 +90,9 @@
 }
 
     </style>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.0/xlsx.full.min.js"></script>
+
     <meta http-equiv="CACHE-CONTROL" content="NO-CACHE">
         <title>CRISPRnano2</title>
 
@@ -500,7 +503,9 @@
 
 
                 <div style="position:absolute; right:10%; top:0%" id="restart" align="right">
-                    <button onclick="SaveReport();">Save Indel report .csv</button>
+                    <button onclick="SaveReport();">Save Indel report Excel format .XLSX</button>
+                    <br>
+                    <button onclick="SaveReportcsv();">Save Indel report CSV format .csv</button>
                     <br>
                     <!-- <br><button onclick="PrintSVG();">Print pie charts (.pdf)</button>
                     <br>
@@ -1832,7 +1837,7 @@ function DrawPie_bulk()
     //reset svg:
     while (svg.lastChild) svg.removeChild(svg.lastChild);
     //register mouse listener:
-    svg.addEventListener("mousedown", PieClick, false);
+    // svg.addEventListener("mousedown", PieClick, false);
 
     var ROT= ["rgb(232,0,30)","rgb(255,102,0)","rgb(252,176,78)"]; 
     var BLAU=["rgb(50,42,126)","rgb(16,115,179)","rgb(38,170,220)"];
@@ -2623,10 +2628,7 @@ function PlotAlignment(barcode, locus){
     for (let key in aln_dict[id]){
         sum_track[id] += aln_dict[id][key];
     }
-    // var not_align = 0;
-    // var no_indel = 0; 
-    // var inf_indel =  0;
-    // var out_indel = 0;
+ 
     var sum = 0;
     var read_ambigous =0;
     // var targetingOligo = 0;
@@ -2978,12 +2980,9 @@ function PlotAlignment(barcode, locus){
                 SVGObj.setAttribute("font-weight", "400");
                 SVGObj.textContent = no_indel_arr[Object.keys(no_indel_arr)[0]] +Object.keys(no_indel_arr)[0][x]+ '/'+no_indel_arr[Object.keys(no_indel_arr)[1]] +Object.keys(no_indel_arr)[1][x]
                 SVGObj.setAttribute("x", 120+12*(x-xfrom+11));
-                SVGObj.setAttribute("text-anchor", "middle");
+                SVGObj.setAttribute("text-anchor", "right");
                 SVGObj.setAttribute("pointer-events","none");
                 svg.appendChild(SVGObj);
-
-
-
                 
                 SVGObj= document.createElementNS(NS, "text");
                 SVGObj.setAttribute("y", ysize+delypos-5);
@@ -3342,6 +3341,24 @@ function PlotAlignment_off(gene_i)
 
 
 function SaveReport() {
+    //alert(svg.innerHTML);
+    const workbook = XLSX.utils.book_new();
+    const worksheet = XLSX.utils.aoa_to_sheet(summary_track_select);
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Sheet1");
+    const excelBuffer = XLSX.write(workbook, { type: "array", bookType: "xlsx" });
+    const bb = new Blob([excelBuffer], { type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" });
+
+    // var bb = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+    var a = document.createElement('a');
+    a.download = document.getElementsByName("GeneName")[0].value+".xlsx";
+    a.href = window.URL.createObjectURL(bb);
+    a.textContent = 'Click here to save';
+    a.dataset.downloadurl = ['text/plain', a.download, a.href].join(':');
+    document.getElementById("save").appendChild(a);
+    a.click();
+}
+
+function SaveReportcsv() {
     //alert(svg.innerHTML);
     const csvContent = summary_track_select.map(row => row.join("\t")).join("\n");
  
