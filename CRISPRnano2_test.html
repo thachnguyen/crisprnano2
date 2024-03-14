@@ -532,9 +532,20 @@
                     <div class = "box">
                     <svg id="SVGpie_bulk" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="500" height="500"></svg>
                     </div>
-                    <div id="QC_plot" class = "box" style="width: 500px; height: 500px;"></div>
-                    <div id="read_plot" class = "box"style="width: 500px; height: 500px;"></div>
+                    <div class ="box">
+                    <div id="QC_plot" class = "box" style="width: 400px; height: 400px;"></div>
+                    <div id="read_plot" class = "box"style="width: 400px; height: 400px;"></div>
+                    <div id="GC_plot" class = "box" style="width: 400px; height: 400px;"></div>
+                    </div>
                 </div>
+
+                <!-- <div class="slidecontainer">
+                    <input type="range" min="0" max="50" value="0" class="slider" id="myRange" oninput="this.nextElementSibling.value = this.value">
+                    <p>Indel threshold (%): <span id="threshold_bulk"></span> 
+                    </p>
+                    <br> <br><br>
+                  </div> -->
+               
                 
                 <div id="DIV_alignment_bulk" >
                     <svg id="SVGmut_bulk" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="1600" height="5000">
@@ -653,8 +664,7 @@ function AlignmentMouseMove_bulk(evt)
         AlignmentStartPos -= shift;
         if (AlignmentStartPos < -region_analyse) AlignmentStartPos = -region_analyse;
         if (AlignmentStartPos > region_analyse+10) AlignmentStartPos = region_analyse+10;
-        PlotAlignment_bulk(CurrentAlignment, locus);
-
+        PlotAlignment_bulk(CurrentAlignment, locus, bulk_threshold);
         AlignmentLastX = x;
     }
     return false;
@@ -1124,6 +1134,7 @@ function FileReceived() {
         else cursor = cursor4+1;
 
         var read = original.slice(cursor1+1,cursor2);
+        gcContent[id].push(calculateGCContent(read)); 
         var phred = original.slice(cursor3+1,cursor4); 
         var readlen = read.length;
         var aln_type;
@@ -1889,27 +1900,13 @@ function DrawPie_bulk()
         inf_indel1[i] = 0;
         out_indel1[i] = 0;
     }
-    // classify indel into several subset
-    for (let key in aln_dict[barcode]){
-        if ((aln_dict[barcode][key]> 10)&&(key.split('\n')[0].trim().length>region_analyse*2-4)){
-            aln_dict_fil[barcode][key] = aln_dict[barcode][key];
-        }
-    }
-    // sort aligment tract
-    var items = Object.keys(aln_dict_fil[barcode]).map(function(key) {
-    return [key, aln_dict_fil[barcode][key]];
-    });
-    // Sort the array based on the second element
-    items.sort(function(first, second) {
-    return second[1] - first[1];
-    });
-    aln_dict_fil[barcode] = Object.fromEntries(items.map(([v, k]) => [v, k]));
 
-    for (let key in aln_dict_fil[barcode]){
+
+    for (let key in aln_dict_bulk){
         if (aln_type_dict[barcode][key] == 2){
             for (let i=0; i <6; i++){
                 if (inf_indel1[i]==0){
-                    inf_indel1[i]=aln_dict_fil[barcode][key];
+                    inf_indel1[i]=aln_dict_bulk[key];
                     sum += inf_indel1[i]
                     break;
                 }
@@ -1917,7 +1914,7 @@ function DrawPie_bulk()
         } else if (aln_type_dict[barcode][key] == 3){
             for (let i=0; i <6; i++){
                 if (out_indel1[i]==0){
-                    out_indel1[i]=aln_dict_fil[barcode][key];
+                    out_indel1[i]=aln_dict_bulk[key];
                     sum += out_indel1[i]
                     break;
                 }
@@ -2221,7 +2218,7 @@ function DrawPie_bulk()
         xaxis: {
             title: 'Quality Score',
             range: [-10, 60], // Set the x-axis range from 0 to 40
-            dtick: 2
+            dtick: 5
         },
         yaxis: {
             title: 'Count'
@@ -2257,6 +2254,37 @@ function DrawPie_bulk()
 
     // Plot
     Plotly.newPlot('read_plot', histogramData1, layout1);
+
+
+       // Parse FASTQ data and extract quality scores
+
+    const gcData = gcContent[barcode];
+    const binnedgcData = binQualityScores(gcData, 1);
+
+    // Create histogram data
+    const histogramData2 = [
+            {
+                x: binnedgcData.map((count, index) => index * 1),
+                y: binnedgcData,
+                type: 'bar'
+            }
+        ];
+
+    // Set layout
+    const layout2 = {
+        title: 'GC Content Histogram',
+        xaxis: {
+            title: 'GC Content %',
+            range: [10, 80], // Set the x-axis range from 0 to 40
+            dtick: 5
+        },
+        yaxis: {
+            title: 'Count'
+        }
+    };
+
+    // Plot
+    Plotly.newPlot('GC_plot', histogramData2, layout2);
 
     document.title = "Bulk Result for "+document.getElementsByName("GeneName")[0].value+" ("+files.length+" barcodes read)";
 }
@@ -2662,9 +2690,9 @@ function SelectClone(barcode) {
         if (AlignmentPrecalc[barcode]){
             CurrentAlignment = barcode;
             AlignmentStartPos = 0;
-            PlotAlignment_bulk(barcode, locus)
+            PlotAlignment_bulk(barcode, locus, bulk_threshold)
             document.getElementById("DIV_alignment_bulk").innerHTML = AlignmentPrecalc_bulk;
-            PlotAlignment_bulk(barcode, locus)
+            PlotAlignment_bulk(barcode, locus, bulk_threshold)
             DrawPie_bulk();
         }
     } 
@@ -3212,7 +3240,7 @@ function PlotAlignment(barcode, locus){
     AlignmentPrecalc[barcode] = document.getElementById("DIV_alignment").innerHTML;
 }
 
-function PlotAlignment_bulk(barcode, locus){
+function PlotAlignment_bulk(barcode, locus, bulk_threshold){
     //compute number of aligned read
     // check genotype
     var id = barcode;
@@ -3249,20 +3277,17 @@ function PlotAlignment_bulk(barcode, locus){
                     break;
                 case 8: 
                     read_ambigous++;
-                //     sum++
-                //     break;
             }
         }
     }
 
     summary_track[id][0] = sum + read_ambigous;
     summary_track[id][5] = read_ambigous;
-    // summary_track[id][6] = not_align;
     summary_track[id][7] = sum;
 
     for (let key in aln_dict[id]){
-        if ((aln_type_dict[id][key]!=8)&&(aln_dict[id][key]>10)&&(aln_dict[id][key]>(1*MutationThreshold*summary_track[id][0]/100))&&(key.split('\n')[0].trim().length>region_analyse*2-4)){
-            aln_dict_fil[id][key] = aln_dict[id][key];
+        if ((aln_type_dict[id][key]!=8)&&(aln_dict[id][key]>10)&&(aln_dict[id][key]>(1*bulk_threshold*summary_track[id][0]/100))&&(key.split('\n')[0].trim().length>region_analyse*2-4)){
+            aln_dict_bulk[key] = aln_dict[id][key];
         }
     }
     
@@ -3275,22 +3300,22 @@ function PlotAlignment_bulk(barcode, locus){
     var targetingOligo = 0;
     var targetingOligo_arr = [];
 
-    for (let key in aln_dict_fil[id]){
+    for (let key in aln_dict_bulk){
         switch (aln_type_dict[id][key]){
             case 1:
-                no_indel+=aln_dict_fil[id][key];
-                no_indel_arr[key] = aln_dict_fil[id][key];
+                no_indel+=aln_dict_bulk[key];
+                no_indel_arr[key] = aln_dict_bulk[key];
                 break;
             case 2:
-                inf_indel+=aln_dict_fil[id][key];
+                inf_indel+=aln_dict_bulk[key];
                 break;
             case 3: 
-                out_indel+=aln_dict_fil[id][key];
-                out_indel_arr.push(aln_dict_fil[id][key])
+                out_indel+=aln_dict_bulk[key];
+                out_indel_arr.push(aln_dict_bulk[key])
                 break;
             case 7: 
-                targetingOligo+=aln_dict_fil[id][key];
-                targetingOligo_arr.push(aln_dict_fil[id][key])
+                targetingOligo+=aln_dict_bulk[key];
+                targetingOligo_arr.push(aln_dict_bulk[key])
                 break;
         }
     }
@@ -3307,10 +3332,10 @@ function PlotAlignment_bulk(barcode, locus){
                 candidate_wt = key1;
                 }
                 sum_wt += value;
-                delete aln_dict_fil[id][key1];
+                delete aln_dict_bulk[key1];
             }
             //update new candidate WT (max)
-            aln_dict_fil[id][candidate_wt] = sum_wt;
+            aln_dict_bulk[candidate_wt] = sum_wt;
     }
 
     // For saving csv
@@ -3327,43 +3352,16 @@ function PlotAlignment_bulk(barcode, locus){
 
     }
 
-    // check genotype
-    if (summary_track[id][7] > 50) {
-        if (targetingOligo/summary_track[id][7] > 0.95) {
-            if (targetingOligo_arr.length==2) {
-                if (targetingOligo_arr[0]/(targetingOligo_arr[0]+targetingOligo_arr[1])>0.3 ||targetingOligo_arr[0]/(targetingOligo_arr[0]+targetingOligo_arr[1])<0.7){
-                    genotype[id] = 'KI/KI'
-                }
-                else {
-                    genotype[id] = 'KI'
-                }
-            }
-            else {
-                    genotype[id] = 'KI'
-                }
-        }
-        else if (Object.keys(aln_dict_fil[id]).length ==2) {
-            if ((out_indel/summary_track[id][7] < 0.7)&& (inf_indel/summary_track[id][7] < 0.7) && (targetingOligo/summary_track[id][7]<0.7)) {
-            genotype[id] = 'HET'
-            }
-            else if ((out_indel/summary_track[id][7] >0.95)&& (out_indel_arr.length ==2)&& (out_indel_arr[0]/summary_track[id][7] > 0.35)&& (out_indel_arr[0]/summary_track[id][7] < 0.65)) {
-                genotype[id] = 'KO'
-            }
-        }
-        else {
-            genotype[id] = ''
-        }
-    }
 
     // sort aligment tract
-    var items = Object.keys(aln_dict_fil[id]).map(function(key) {
-    return [key, aln_dict_fil[id][key]];
+    var items = Object.keys(aln_dict_bulk).map(function(key) {
+    return [key, aln_dict_bulk[key]];
     });
     // Sort the array based on the second element
     items.sort(function(first, second) {
     return second[1] - first[1];
     });
-    aln_dict_fil[id] = Object.fromEntries(items.map(([v, k]) => [v, k]));
+    aln_dict_bulk = Object.fromEntries(items.map(([v, k]) => [v, k]));
 
     
     //aggregate aln_track
@@ -3478,7 +3476,7 @@ function PlotAlignment_bulk(barcode, locus){
     delypos+=delyshift;
     var id1 = 1;
 
-    for (let key in aln_dict_fil[barcode]){
+    for (let key in aln_dict_bulk){
         //aggregate WT
         for (let x=0; x<30*2; x++){
             //draw main track:
@@ -3718,7 +3716,7 @@ function PlotAlignment_bulk(barcode, locus){
         // Count INDEL's length
         var gap_len1 = (key.substring(region_analyse*2 +1, region_analyse*4).split("G").length-1) +(key.substring(region_analyse*2 +1, region_analyse*4).split("A").length-1) +(key.substring(region_analyse*2 +1, region_analyse*4).split("T").length-1) +(key.substring(region_analyse*2 +1, region_analyse*4).split("C").length-1) - (key.split("-").length-1);
 
-        SVGObj.textContent +="TYPE: "+ aln_type[aln_type_dict[barcode][key]] + ", (" + gap_len1 + " bp)" +" | " +aln_dict_fil[barcode][key] +"  Reads, " + (aln_dict_fil[barcode][key]/summary_track[barcode][7]*100).toFixed(2) + " %";
+        SVGObj.textContent +="TYPE: "+ aln_type[aln_type_dict[barcode][key]] + ", (" + gap_len1 + " bp)" +" | " +aln_dict_bulk[key] +"  Reads, " + (aln_dict_bulk[key]/summary_track[barcode][7]*100).toFixed(2) + " %";
         svg.appendChild(SVGObj);
         id1+=1;
         delypos+=delyshift;
@@ -4060,6 +4058,7 @@ function Start(){
         aln_dict[i] = {}
         aln_dict_fil[i] = {}
         aln_type_dict[i] = {}
+        gcContent[i] = []
     }
     AlignmentPrecalc = new Array(96);
     for (var i=0; i<96; i++){
@@ -4240,6 +4239,16 @@ function binQualityScores(qualityScores, resolution) {
             return bins;
         }
 
+function calculateGCContent(sequence) {
+    let gcCount = 0;
+    for (let i = 0; i < sequence.length; i++) {
+        if (sequence[i] === 'G' || sequence[i] === 'C') {
+            gcCount++;
+        }
+    }
+    return (gcCount / sequence.length) * 100;
+}
+
 var currenttab = 0;
 TabClicked(0);
 
@@ -4305,6 +4314,21 @@ var gene_id = 0;
 var gene_list = ''
 var genotype = Array(96)
 var aln_dict_bulk 
+var gcContent = Array(96)
+
+
+var bulk_threshold = 0.1
+
+// var slider = document.getElementById("myRange");
+// slider.onchange = PlotAlignment_bulk(CurrentAlignment, locus, bulk_threshold)
+
+// var output = document.getElementById("threshold_bulk");
+// output.innerHTML = slider.value;
+// slider.oninput = function() {
+//         output.innerHTML = this.value;
+//         }
+
+
 
 </script>
 </html>

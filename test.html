@@ -3,15 +3,67 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Recommend Value from Text File</title>
+    <title>Quality Score Plot</title>
+    <!-- Include Plotly.js -->
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
 </head>
 <body>
+    <div id="plot"></div>
 
-        <label for="inputField">Input Field:</label>
-        <input type="text" id="inputField" name="inputField">
-        <div id="recommendations"></div>
+    <script>
+        // Function to parse FASTQ data and extract quality scores
+        function parseFASTQ(data) {
+            const lines = data.trim().split('\n');
+            const qualities = [];
 
+            for (let i = 3; i < lines.length; i += 4) {
+                const qualityLine = lines[i].trim();
+                for (let j = 0; j < qualityLine.length; j++) {
+                    qualities.push(qualityLine.charCodeAt(j) - 33);
+                }
+            }
 
-    <script src="script.js"></script>
+            return qualities;
+        }
+
+        // Example FASTQ data
+        const fastqData = `
+@SEQ_ID
+GATTTGGGGTTCAAAGCAGTATCGATCAAATAGTAAATCCATTTGTTCAACTCACAGTTT
++
+!''*((((***+))%%%++)(%%%%).1***-+*''))**55CCF>>>>>>CCCCCCC65
+@SEQ_ID
+GATTTGGGGTTCAAAGCAGTATCGATCAAATAGTAAATCCATTTGTTCAACTCACAGTTT
++
+!''*((((***+))%%%++)(%%%%).1***-+*''))**55CCF>>>>>>CCCCCCC65
+`;
+
+        // Parse FASTQ data and extract quality scores
+        const qualityScores = parseFASTQ(fastqData);
+
+        // Create histogram data
+        const histogramData = [
+            {
+                x: qualityScores,
+                type: 'histogram'
+            }
+        ];
+
+        // Set layout with x-axis range
+        const layout = {
+            title: 'Quality Score Histogram',
+            xaxis: {
+                title: 'Quality Score',
+                range: [0, 40], // Set the x-axis range from 0 to 40
+                dtick: 1, // Set the resolution to 1
+            },
+            yaxis: {
+                title: 'Count'
+            }
+        };
+
+        // Plot
+        Plotly.newPlot('plot', histogramData, layout);
+    </script>
 </body>
 </html>
