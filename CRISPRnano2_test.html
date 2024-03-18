@@ -531,7 +531,7 @@
                 <div id="DIV_piecharts_bulk" >
                     <div>
                     <div class= "box">
-                    <svg id="SVGpie_bulk" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="350" height="300"></svg>
+                    <svg id="SVGpie_bulk" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="400" height="300"></svg>
                     </div>
                     <div id="Indel_plot" class = "box" style="width: 400px; height: 300px;"></div>
                     </div>
@@ -1458,7 +1458,7 @@ function FileReceived_off() {
     summary_track_off[gene_id][7] = sum;
 
     for (let key in aln_dict_off[gene_id]){
-        if ((aln_dict_off[gene_id][key]>10)&&(aln_dict_off[gene_id][key]>(1*MutationThreshold*summary_track_off[gene_id][0]/100))&&(key.split('\n')[0].trim().length>region_analyse*2-4)){
+        if ((aln_dict_off[gene_id][key]>10)&&(aln_dict_off[gene_id][key]>(1*MutationThreshold*summary_track_off[gene_id][7]/100))&&(key.split('\n')[0].trim().length>region_analyse*2-4)){
             aln_dict_fil_off[gene_id][key] = aln_dict_off[gene_id][key];
         }
     }
@@ -1501,7 +1501,7 @@ function ReadNextFileChunk_off(){
     reader = new FileReader();
     reader.onload = FileReceived_off;
     reader.readAsText(files[CurrentFileId_off].slice(CurrentFileChunk*chunksize, (CurrentFileChunk+1)*chunksize));
-    document.getElementById('progress1').innerHTML = "OFFTARGET Gene: "+gene_list[gene_id] +"analysing.\n Current file "+(CurrentFileId_off+1)+": "+Math.round(CurrentFileChunk*chunksize/1000000)+ "MB / "+Math.round(files[CurrentFileId_off].size/1000000)+" MB processed. Please keep this windows open!";
+    document.getElementById('progress1').innerHTML = "OFFTARGET Gene: "+gene_list[gene_id] +" Analysing.\n Current file "+(CurrentFileId_off+1)+": "+Math.round(CurrentFileChunk*chunksize/1000000)+ "MB / "+Math.round(files[CurrentFileId_off].size/1000000)+" MB processed. Please keep this windows open!";
 }
 
 function DrawPie()
@@ -2644,12 +2644,6 @@ function DrawPie_off()
         if (i>=4 && i<7) SVGObj.style.fill=ROT[i-4];
         if (i==7) SVGObj.style.fill="rgb(200,200,200)";
         if (i==8) SVGObj.style.fill="rgb(0,200,0)";
-        // if (i==9) SVGObj.style.fill="rgb(70,70,70)";
-        if (i==10){
-            SVGObj.style.fill="none";
-            SVGObj.style.stroke="rgb(0,0,0)";
-            SVGObj.setAttributeNS(null, "stroke-width", 0.5);
-        }
         svg.appendChild(SVGObj);
     }
 
@@ -2799,7 +2793,7 @@ function PlotAlignment(barcode, locus){
     summary_track[id][7] = sum;
 
     for (let key in aln_dict[id]){
-        if ((aln_type_dict[id][key]!=8)&&(aln_dict[id][key]>10)&&(aln_dict[id][key]>(1*MutationThreshold*summary_track[id][0]/100))&&(key.split('\n')[0].trim().length>region_analyse*2-4)){
+        if ((aln_type_dict[id][key]!=8)&&(aln_dict[id][key]>10)&&(aln_dict[id][key]>(1*MutationThreshold*summary_track[id][7]/100))&&(key.split('\n')[0].trim().length>region_analyse*2-4)){
             aln_dict_fil[id][key] = aln_dict[id][key];
         }
     }
@@ -3500,7 +3494,6 @@ function PlotAlignment_bulk(barcode, locus, bulk_threshold){
 
     //for indel plot
     var indel_info = []
-    var loc_indel
 
     for (let key in aln_dict_bulk){
         //aggregate WT
@@ -3746,16 +3739,28 @@ function PlotAlignment_bulk(barcode, locus, bulk_threshold){
         
         if (gap_len1*1<0){
             loc_indel = key.search('-') -BreakPoint;
-            indel_info.push([gap_len1, loc_indel])
+            if (rightbs!=document.getElementsByName("RightBS")[0].value.replace(/[\s\n]+/g, '').toUpperCase()){
+                indel_info.push([gap_len1, loc_indel + rightbs.length])
+            }
+            else {
+                indel_info.push([gap_len1, loc_indel])
+            }
         } 
         else if (gap_len1*1>0){
             var ins_str = key.split('\n')[1]
+            var tmp_ins = -1000
             for (let i = 0; i < ins_str.length; i++) {
-                if ("ACTG".includes(ins_str[i])) {
+                if ("ACTG".includes(ins_str[i])&&tmp_ins==-1000) {
                     loc_indel = i - BreakPoint
+                    tmp_ins = 1
+                    if (rightbs!=document.getElementsByName("RightBS")[0].value.replace(/[\s\n]+/g, '').toUpperCase()){
+                        indel_info.push([gap_len1, loc_indel + rightbs.length])
+                        }
+                        else {
+                            indel_info.push([gap_len1, loc_indel])
+                        }
                 }
             }
-            indel_info.push([gap_len1, loc_indel])
         }
         svg.appendChild(SVGObj);
         id1+=1;
@@ -3763,16 +3768,23 @@ function PlotAlignment_bulk(barcode, locus, bulk_threshold){
     }
     AlignmentPrecalc_bulk = document.getElementById("DIV_alignment_bulk").innerHTML;
 
-    const uniqueArray = indel_info.filter((arr, index, self) => 
+    if (indel_info.length !=0){
+        const uniqueArray = indel_info.filter((arr, index, self) => 
             index === self.findIndex((a) => 
                 a.toString() === arr.toString()
             )
         );
-    indel_info= uniqueArray
-    // Set layout
-    const transposedData = indel_info[0].map((col, i) => indel_info.map(row => row[i]));
-    const xValues = transposedData[1];
-    const yValues = transposedData[0];
+        indel_info= uniqueArray
+        // Set layout
+        const transposedData = indel_info[0].map((col, i) => indel_info.map(row => row[i]));
+        var xValues = transposedData[1];
+        var yValues = transposedData[0];
+
+    }
+    else {
+        var xValues = [];
+        var yValues = [];
+    }
 
       // Separate positive and negative values
     const positiveX = [];
@@ -3790,7 +3802,6 @@ function PlotAlignment_bulk(barcode, locus, bulk_threshold){
         }
     }
 
-
       // Creating traces for positive and negative values
         const tracePositive = {
             x: positiveX,
@@ -3799,7 +3810,9 @@ function PlotAlignment_bulk(barcode, locus, bulk_threshold){
             marker: {
             color: 'blue'
             },
-            name: 'INSERTION'
+            name: 'INSERTION',
+            text: positiveX.map((xVal, index) => `Indel Loc: ${xVal}, Indel Size: ${negativeY[index]}`), // Display x and y values on positive bars
+            textposition: 'auto'
         };
 
         const traceNegative = {
@@ -3809,13 +3822,15 @@ function PlotAlignment_bulk(barcode, locus, bulk_threshold){
             marker: {
             color: 'orange'
             },
-            name: 'DELETION'
+            name: 'DELETION',
+            text: negativeX.map((xVal, index) => `Indel Loc: ${xVal}, Indel Size: ${negativeY[index]}`), // Display x and y values on negative bars
+            textposition: 'auto'
         };
 
         const layout = {
-        title: 'Location of Indel',
+        title: 'Indel Size and Location',
         xaxis: {
-        title: 'Location of indel (0 is Break Point)',
+        title: 'Indel Size and Location',
         range: [-40, 40]
         },
         yaxis: {
@@ -3824,7 +3839,8 @@ function PlotAlignment_bulk(barcode, locus, bulk_threshold){
         legend: {
         x: 1,
         xanchor: 'left',
-        y: 1
+        y: 1,
+        showlegend: true
         }
     };
 
