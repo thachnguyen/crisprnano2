@@ -494,29 +494,39 @@
                         <input class="form-check-input" type="checkbox" id="bulkview">
                         <label class="form-check-label" for="bulkview">SWITCH TO BULK/SINGLE CLONE VIEW </label>
                       </div>
-                      <small class="text-muted">NOTE: Bulk view use lower percentage threshold</small>
+                      <small class="text-muted">NOTE: Click to the sample after selecting above option. Bulk view use lower percentage threshold</small>
+                      <br>
+                      <br>
                     <h4>OFF TARGET Analysis (optional)</h4>    
-                        <br>List of offset Gene names (separate by ,):
+                        List of offset Gene names (separate by ,):
                         <div class="popup" onclick="myFunction8()">(? Click here!)
                             <span class="popuptext" id="help8">Name of the study genes, seperate by , . Click to close.</span>
                         </div>
-                        <!-- <input type="submit" name="submit" value="Click here get gene list fasta" class="btn btn-secondary btn-sm" id="get_fasta" onclick="getFastaSequence_list();"> -->
                         <br>
                         <input type="text" class="input_form" size="40" name="GeneName_list" id="GeneName_list" value="" onchange="checkOccurrence(); getFastaSequence_list();"><br>
                         <small class="text-muted">Off-target analysis will check up to 4 genes in a single run</small>
 
                         <br>
                         <input type="submit" name="submit" value="START OFFTARGET ANALYZER " class="btn btn-primary btn-sm" id="submit" onclick="Start2();">
+                        <br>
+                        <br>
+                        <h4>Save data</h4> 
+                        <button class="btn btn-secondary btn-sm" onclick="SaveReport();">Indel report Excel .XLSX</button>
+                        <br>
+                        <br>
+                        <button class="btn btn-secondary btn-sm" onclick="SaveReportcsv();">Indel report CSV .csv</button>
+                        <br> 
+                        <br>
+                        <button class="btn btn-secondary btn-sm" onclick="SaveSVGAlignment();">Save alignment (.svg)</button> 
+                        <br>
+                        <br>
+                        <button class="btn btn-secondary btn-sm" onclick="PrintSVG();">Print pie charts (.pdf)</button> 
                         <div id="progress1" style="display:none; padding: 10px; border: 10px solid #CCC; background: #EEE; width:80%; position:absolute; top:40%;left:0%">
                         </div>
                             <br>
                     </div>
 
                 <div style="position:absolute; right:10%; top:0%" id="restart" align="right">
-                    <button onclick="SaveReport();">Save Indel report Excel format .XLSX</button>
-                    <br>
-                    <button onclick="SaveReportcsv();">Save Indel report CSV format .csv</button>
-                    <br>
                     <!-- <br><button onclick="PrintSVG();">Print pie charts (.pdf)</button>
                     <br>
                     <br><button onclick="SaveSVGAlignment();">Save alignment (.svg)</button>
@@ -530,14 +540,14 @@
             <div id="bulkview_result" style="position: absolute; left: 20px; top: 160px; display: none;">
                 <div id="DIV_piecharts_bulk" >
                     <div>
-                    <div class= "box">
-                    <svg id="SVGpie_bulk" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="400" height="300"></svg>
+                    <div class="box">
+                        <svg id="SVGpie_bulk" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="400" height="300"></svg>
                     </div>
                     <div id="Indel_plot" class = "box" style="width: 400px; height: 300px;"></div>
                     </div>
                     <div>
                     <div id="QC_plot" class = "box" style="width: 400px; height: 300px;"></div>
-                    <div id="read_plot" class = "box" style="width: 400px; height: 300px;"></div>
+                    <div id="read_plot" class = "box" style="width: 480px; height: 300px;"></div>
                     <div id="GC_plot" class = "box" style="width: 400px; height: 300px;"></div>
                     </div>
                 </div>
@@ -559,7 +569,7 @@
             <div id="offtarget_view" style="position: absolute; left: 20px; top: 160px; display: none;">
                 <div class="column">
                     <div id="DIV_piecharts_off">
-                        <svg id="SVGpie_off" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="900" height="520">
+                        <svg id="SVGpie_off" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="1600" height="420">
                         </svg>
                     </div>
                 </div>
@@ -1167,7 +1177,10 @@ function FileReceived() {
         }
         mean_phred = mean_phred/readlen; 
         phred_array[id].push(mean_phred)
-        length_array[id].push(readlen)
+        if (readlen >10) {
+            length_array[id].push(readlen)
+        }
+        
     
         if (mean_phred > PhredThreshold){ 
             if (targetingOligo !=""){
@@ -2349,9 +2362,9 @@ function DrawPie_off()
         if (summary_track_off[barcode][7] > maxsum) maxsum = summary_track_off[barcode][7];
     }
     
-    for (var barcode=0; barcode<4; barcode++)
-    {
+    for (var barcode=0; barcode<4; barcode++) {
         var sum = 0;
+        var gene_i = barcode;
         var inf_indel1 =  Array(6)
         var out_indel1 = Array(6)
         var oligo
@@ -2379,7 +2392,7 @@ function DrawPie_off()
         }
         
         var size = 2*24*Math.sqrt(summary_track_off[barcode][7]/maxsum);
-        var midx = (barcode%12)*100 + 100;
+        var midx = (barcode%12)*180 + 300;
         var midy = Math.floor(barcode/12) * 65 + 100;
 
         if (summary_track_off[barcode][7] > 0) {
@@ -2594,22 +2607,6 @@ function DrawPie_off()
             SVGObj.style.fill=ROT[2];
             SVGObj.setAttribute("pointer-events","none");
             svg.appendChild(SVGObj);
-
-            // targetingOligo
-            var lastangle = angle;
-            angle+=2*3.1415*0.995*summary_track_off[barcode][1]/summary_track_off[barcode][7];
-
-            var startx = size*Math.cos(lastangle);
-            var starty = size*Math.sin(lastangle);
-            var plusx = size*(Math.cos(angle)-Math.cos(lastangle));
-            var plusy = size*(Math.sin(angle)-Math.sin(lastangle));
-            var largearc = 0;
-            if (angle-lastangle > 3.1415) largearc = 1;
-            var SVGObj= document.createElementNS(NS,"path");
-            SVGObj.setAttributeNS(null, "d", "M "+midx+","+midy+" l "+startx+","+starty+" a "+size+" "+size+" 0 "+largearc+" 1 "+plusx+" "+plusy+" z");
-            SVGObj.style.fill="rgb(0,232,30)";
-            SVGObj.setAttribute("pointer-events","none");
-            svg.appendChild(SVGObj);
             // read_ambigous, remove in v2.0
         }
 
@@ -2621,80 +2618,124 @@ function DrawPie_off()
         SVGObj.setAttribute("y", midy+120);
         SVGObj.setAttribute("font-size", "14");
         SVGObj.setAttribute("text-anchor", "middle");
+        SVGObj.setAttribute("font-weight", "600");
         SVGObj.setAttribute("pointer-events","none");
         SVGObj.textContent = gene_list[barcode];
         svg.appendChild(SVGObj);
+
+        SVGObj= document.createElementNS(NS,"text");
+        SVGObj.setAttribute("x", midx);
+        SVGObj.setAttribute("y", midy+150);
+        SVGObj.setAttribute("font-size", "14");
+        SVGObj.setAttribute("text-anchor", "middle");
+        SVGObj.textContent = summary_track_off[gene_i][7]
+        svg.appendChild(SVGObj);
+
+        SVGObj= document.createElementNS(NS,"text");
+        SVGObj.setAttribute("x", midx);
+        SVGObj.setAttribute("y", midy+170);
+        SVGObj.setAttribute("font-size", "14");
+        SVGObj.setAttribute("text-anchor", "middle");
+        SVGObj.textContent = summary_track_off[gene_i][3]+ " Reads, (" +divide_zero(summary_track_off[gene_i][3]*100, summary_track_off[gene_i][7]).toFixed(2)+"%)";
+        svg.appendChild(SVGObj);
+
+        SVGObj= document.createElementNS(NS,"text");
+        SVGObj.setAttribute("x", midx);
+        SVGObj.setAttribute("y", midy+190);
+        SVGObj.setAttribute("font-size", "14");
+        SVGObj.setAttribute("text-anchor", "middle");
+        SVGObj.textContent = summary_track_off[gene_i][4]+ " Reads, (" +divide_zero(summary_track_off[gene_i][4]*100,summary_track_off[gene_i][7]).toFixed(2)+"%)" 
+        svg.appendChild(SVGObj);
+
+        SVGObj= document.createElementNS(NS,"text");
+        SVGObj.setAttribute("x", midx);
+        SVGObj.setAttribute("y", midy+210);
+        SVGObj.setAttribute("font-size", "14");
+        SVGObj.setAttribute("text-anchor", "middle");
+        SVGObj.textContent = summary_track_off[gene_i][2] +" Reads, (" +divide_zero(summary_track_off[gene_i][2]*100,summary_track_off[gene_i][7]).toFixed(2) +"%)" 
+        svg.appendChild(SVGObj);
+
+        var imageElement = document.createElementNS(NS, "image");
+        imageElement.setAttribute("x", midx-15);
+        imageElement.setAttribute("y", midy+250);
+        if (summary_track_off[gene_i][7] <5 || divide_zero(summary_track_off[gene_i][4]*100,summary_track_off[gene_i][7])< 2){
+        imageElement.setAttribute("href", "crisprnano2/OK.ico");
+        imageElement.setAttribute("width", 40); // Set the width of the image
+        imageElement.setAttribute("height", 40); // Set the height of the image 
+        }
+        else {
+            imageElement.setAttribute("href", "crisprnano2/warning.png"); // Set the path to your image file
+            imageElement.setAttribute("width", 80); // Set the width of the image
+            imageElement.setAttribute("height", 80); // Set the height of the image
+            imageElement.setAttribute("x", midx-30);
+            imageElement.setAttribute("y", midy+230);
+        }
+        svg.appendChild(imageElement);
     }
-    //legende:
-    var midx = 13*50 + 25;
-    var midy = 0 * 65 + 25;
-    for (var i=0; i<8; i++) {
-        var vol = Math.floor(maxsum/100)*100/Math.pow(2,i);
-        var size = 24*Math.sqrt(vol/maxsum);
-        //SVG:
-        var SVGObj= document.createElementNS(NS,"circle");
-        SVGObj.setAttributeNS(null, "cx", midx);
+
+        //legende:
+    midx = 25;
+    midy = 270;
+    for (var i=0; i<3; i++){
+        SVGObj= document.createElementNS(NS,"circle");
+        SVGObj.setAttributeNS(null, "cx", midx+20*i);
         SVGObj.setAttributeNS(null, "cy", midy);
-        SVGObj.setAttributeNS(null, "r" , size);
-        SVGObj.style.fill="none";
-        SVGObj.style.stroke="rgb(100,100,100)";
-        svg.appendChild(SVGObj);
-        var SVGObj= document.createElementNS(NS,"text");
-        SVGObj.setAttribute("font-family", "sans-serif");
-        SVGObj.setAttribute("font-weight", "100");
-        SVGObj.setAttribute("x", midx+40);
-        SVGObj.setAttribute("y", midy+3);
-        SVGObj.setAttribute("font-size", "12");
-        SVGObj.textContent = Math.round(vol) + " reads";
-        svg.appendChild(SVGObj);
-        midy += size*2+10;
-    }
-    for (var i=0; i<11; i++)
-    {
-        var SVGObj= document.createElementNS(NS,"circle");
-        SVGObj.setAttributeNS(null, "cx", midx-6);
-        SVGObj.setAttributeNS(null, "cy", midy+30+20*i);
         SVGObj.setAttributeNS(null, "r" , 6);
         SVGObj.style.fill="none";
-        if (i<3) SVGObj.style.fill=BLAU[i];
-        if (i>=4 && i<7) SVGObj.style.fill=ROT[i-4];
-        if (i==7) SVGObj.style.fill="rgb(200,200,200)";
-        if (i==8) SVGObj.style.fill="rgb(0,200,0)";
+        SVGObj.style.fill=BLAU[i];
         svg.appendChild(SVGObj);
     }
+    for (var i=0; i<3; i++){
+        SVGObj= document.createElementNS(NS,"circle");
+        SVGObj.setAttributeNS(null, "cx", midx+20*i);
+        SVGObj.setAttributeNS(null, "cy", midy +20);
+        SVGObj.setAttributeNS(null, "r" , 6);
+        SVGObj.style.fill="none";
+        SVGObj.style.fill=ROT[i];
+        svg.appendChild(SVGObj);
+    }
+    SVGObj= document.createElementNS(NS,"circle");
+    SVGObj.setAttributeNS(null, "cx", midx+20);
+    SVGObj.setAttributeNS(null, "cy", midy +40);
+    SVGObj.setAttributeNS(null, "r" , 6);
+    SVGObj.style.fill="none";
+    SVGObj.style.fill="rgb(200,200,200)";
+    svg.appendChild(SVGObj);
 
     SVGObj= document.createElementNS(NS,"text");
     SVGObj.setAttribute("font-family", "sans-serif");
     SVGObj.setAttribute("font-weight", "100");
-    SVGObj.setAttribute("x", midx+40);
-    SVGObj.setAttribute("y", midy+53);
+    SVGObj.setAttribute("x", midx+80);
+    SVGObj.setAttribute("y", midy-20);
     SVGObj.setAttribute("font-size", "12");
-    SVGObj.textContent = "in-frame indels";
+    SVGObj.textContent = "TOTAL ALIGNED READS "
     svg.appendChild(SVGObj);
-    var SVGObj= document.createElementNS(NS,"text");
+
+    SVGObj= document.createElementNS(NS,"text");
     SVGObj.setAttribute("font-family", "sans-serif");
     SVGObj.setAttribute("font-weight", "100");
-    SVGObj.setAttribute("x", midx+40);
-    SVGObj.setAttribute("y", midy+53+80);
+    SVGObj.setAttribute("x", midx+80);
+    SVGObj.setAttribute("y", midy);
     SVGObj.setAttribute("font-size", "12");
-    SVGObj.textContent = "out-of-frame indels";
+    SVGObj.textContent = "in-frame indels: "
     svg.appendChild(SVGObj);
-    var SVGObj= document.createElementNS(NS,"text");
+    SVGObj= document.createElementNS(NS,"text");
     SVGObj.setAttribute("font-family", "sans-serif");
     SVGObj.setAttribute("font-weight", "100");
-    SVGObj.setAttribute("x", midx+40);
-    SVGObj.setAttribute("y", midy+53+120);
+    SVGObj.setAttribute("x", midx+80);
+    SVGObj.setAttribute("y", midy+20)
     SVGObj.setAttribute("font-size", "12");
-    SVGObj.textContent = "no indel";
+    SVGObj.textContent = "out-of-frame indels: "
     svg.appendChild(SVGObj);
-    var SVGObj= document.createElementNS(NS,"text");
+    SVGObj= document.createElementNS(NS,"text");
     SVGObj.setAttribute("font-family", "sans-serif");
     SVGObj.setAttribute("font-weight", "100");
-    SVGObj.setAttribute("x", midx+40);
-    SVGObj.setAttribute("y", midy+53+140);
+    SVGObj.setAttribute("x", midx+80);
+    SVGObj.setAttribute("y", midy+40)
     SVGObj.setAttribute("font-size", "12");
-    SVGObj.textContent = "targeted mutagenesis";
+    SVGObj.textContent = "no indel: "
     svg.appendChild(SVGObj);
+ 
     document.title = "Off-target Result for "+document.getElementsByName("GeneName")[0].value+" ("+files.length+" barcodes read)";
 }
 
@@ -2713,7 +2754,7 @@ function PieClick_off(evt){
     var left = document.getElementById("SVGpie_off").getBoundingClientRect().left;
     var x = evt.clientX-left;
     var y = evt.clientY-top1;
-    var xx = Math.round((x-100)/100);
+    var xx = Math.round((x-300)/180);
     var yy = Math.round((y-100)/65);
     SelectClone_off(xx+12*yy);
 }
@@ -2746,7 +2787,6 @@ function SelectClone_off(barcode) {
             PlotAlignment_off(CurrentAlignment_off)
             document.getElementById("DIV_alignment_off").innerHTML = AlignmentPrecalc_off[barcode];
             PlotAlignment_off(CurrentAlignment_off)
-            // DrawPie_off();
         }
     else alert("No data available for the selected barcode.");
 }
@@ -3819,7 +3859,7 @@ function PlotAlignment_bulk(barcode, locus, bulk_threshold){
             color: 'blue'
             },
             name: 'INSERTION',
-            text: positiveX.map((xVal, index) => `Indel Loc: ${xVal}, Indel Size: ${negativeY[index]}`), // Display x and y values on positive bars
+            text: positiveX.map((xVal, index) => `Indel Loc: ${xVal}, Indel Size: ${positiveY[index]}`), // Display x and y values on positive bars
             textposition: 'auto'
         };
 
@@ -3991,24 +4031,11 @@ function PlotAlignment_off(gene_i)
     var SVGObj= document.createElementNS(NS,"text");
     SVGObj.setAttribute("x", 40);
     SVGObj.setAttribute("y", ysize+delypos);
-    SVGObj.setAttribute("font-size", "14");
-    SVGObj.textContent = "OFF-TARGET SUMMARY: Gene: "+gene_list[gene_i]+"   |   File "+files[CurrentFileId_off].name;
+    SVGObj.setAttribute("font-size", "17");
+    SVGObj.setAttribute("font-weight", "700");
+    SVGObj.textContent = "OFF-TARGET ALIGNMENT SUMMARY: Gene: "+gene_list[gene_i]+"   |   File "+files[CurrentFileId_off].name;
     svg.appendChild(SVGObj);
-    delypos+=30;
-
-    SVGObj= document.createElementNS(NS,"text");
-    SVGObj.setAttribute("x", 40);
-    SVGObj.setAttribute("y", ysize+delypos);
-    SVGObj.setAttribute("font-size", "14");
-    SVGObj.textContent = "Total aligned reads: " + summary_track_off[gene_i][7] +"   |  Outframe indel: " +summary_track_off[gene_i][4]+ " READS, (" +(summary_track_off[gene_i][4]*100/summary_track_off[gene_i][7]).toFixed(2)+"%)" +"   |  Inframe indel: " +summary_track_off[gene_i][3]+ " READS, (" +(summary_track_off[gene_i][3]*100/summary_track_off[gene_i][7]).toFixed(2)+"%)";
-    svg.appendChild(SVGObj);
-    delypos+=30;
-    SVGObj= document.createElementNS(NS,"text");
-    SVGObj.setAttribute("x", 40);
-    SVGObj.setAttribute("y", ysize+delypos);
-    SVGObj.setAttribute("font-size", "14");
-    SVGObj.textContent = "No indel: " +summary_track_off[gene_i][2] +" READS, (" +(summary_track_off[gene_i][2]*100/summary_track_off[gene_i][7]).toFixed(2)+"%)" +"   | Read ambigous: " +summary_track_off[gene_i][5] //+"   | Not aligned to interested region: " +summary_track[barcode][6];
-    svg.appendChild(SVGObj);
+    delypos+=10;
 
     delypos+=delyshift;
 
@@ -4361,8 +4388,8 @@ function SaveReportcsv() {
 function SaveSVGAlignment()
 {
     var svg = document.getElementById("DIV_alignment");
-    //alert(svg.innerHTML);
-    var bb = new Blob([svg.innerHTML], {type: 'text/plain'});
+    var svgContent = svg.innerHTML.replace(/&nbsp;/g, ' ');
+    var bb = new Blob([svgContent], {type: 'text/plain'});
     var a = document.createElement('a');
     a.download = document.getElementsByName("GeneName")[0].value+" "+GetWellPos(CurrentAlignment)+".svg";
     a.href = window.URL.createObjectURL(bb);
@@ -4630,6 +4657,14 @@ function calculateGCContent(sequence) {
     return (gcCount / sequence.length) * 100;
 }
 
+function divide_zero(a, b) {
+    if (b === 0) {
+        return 0;
+    } else {
+        return a / b;
+    }
+}
+
 var currenttab = 0;
 TabClicked(0);
 
@@ -4696,8 +4731,6 @@ var gene_list = ''
 var genotype = Array(96)
 var aln_dict_bulk 
 var gcContent = Array(96)
-
-
 var bulk_threshold = 0.1
 
 // var slider = document.getElementById("myRange");
@@ -4708,8 +4741,5 @@ var bulk_threshold = 0.1
 // slider.oninput = function() {
 //         output.innerHTML = this.value;
 //         }
-
-
-
 </script>
 </html>

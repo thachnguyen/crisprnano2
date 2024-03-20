@@ -494,29 +494,39 @@
                         <input class="form-check-input" type="checkbox" id="bulkview">
                         <label class="form-check-label" for="bulkview">SWITCH TO BULK/SINGLE CLONE VIEW </label>
                       </div>
-                      <small class="text-muted">NOTE: Bulk view use lower percentage threshold</small>
+                      <small class="text-muted">NOTE: Click to the sample after selecting above option. Bulk view use lower percentage threshold</small>
+                      <br>
+                      <br>
                     <h4>OFF TARGET Analysis (optional)</h4>    
-                        <br>List of offset Gene names (separate by ,):
+                        List of offset Gene names (separate by ,):
                         <div class="popup" onclick="myFunction8()">(? Click here!)
                             <span class="popuptext" id="help8">Name of the study genes, seperate by , . Click to close.</span>
                         </div>
-                        <!-- <input type="submit" name="submit" value="Click here get gene list fasta" class="btn btn-secondary btn-sm" id="get_fasta" onclick="getFastaSequence_list();"> -->
                         <br>
                         <input type="text" class="input_form" size="40" name="GeneName_list" id="GeneName_list" value="" onchange="checkOccurrence(); getFastaSequence_list();"><br>
                         <small class="text-muted">Off-target analysis will check up to 4 genes in a single run</small>
 
                         <br>
                         <input type="submit" name="submit" value="START OFFTARGET ANALYZER " class="btn btn-primary btn-sm" id="submit" onclick="Start2();">
+                        <br>
+                        <br>
+                        <h4>Save data</h4> 
+                        <button class="btn btn-secondary btn-sm" onclick="SaveReport();">Indel report Excel .XLSX</button>
+                        <br>
+                        <br>
+                        <button class="btn btn-secondary btn-sm" onclick="SaveReportcsv();">Indel report CSV .csv</button>
+                        <br> 
+                        <br>
+                        <button class="btn btn-secondary btn-sm" onclick="SaveSVGAlignment();">Save alignment (.svg)</button> 
+                        <br>
+                        <br>
+                        <button class="btn btn-secondary btn-sm" onclick="PrintSVG();">Print pie charts (.pdf)</button> 
                         <div id="progress1" style="display:none; padding: 10px; border: 10px solid #CCC; background: #EEE; width:80%; position:absolute; top:40%;left:0%">
                         </div>
                             <br>
                     </div>
 
                 <div style="position:absolute; right:10%; top:0%" id="restart" align="right">
-                    <button onclick="SaveReport();">Save Indel report Excel format .XLSX</button>
-                    <br>
-                    <button onclick="SaveReportcsv();">Save Indel report CSV format .csv</button>
-                    <br>
                     <!-- <br><button onclick="PrintSVG();">Print pie charts (.pdf)</button>
                     <br>
                     <br><button onclick="SaveSVGAlignment();">Save alignment (.svg)</button>
@@ -2352,8 +2362,7 @@ function DrawPie_off()
         if (summary_track_off[barcode][7] > maxsum) maxsum = summary_track_off[barcode][7];
     }
     
-    for (var barcode=0; barcode<4; barcode++)
-    {
+    for (var barcode=0; barcode<4; barcode++) {
         var sum = 0;
         var gene_i = barcode;
         var inf_indel1 =  Array(6)
@@ -2643,9 +2652,25 @@ function DrawPie_off()
         SVGObj.setAttribute("y", midy+210);
         SVGObj.setAttribute("font-size", "14");
         SVGObj.setAttribute("text-anchor", "middle");
-        SVGObj.textContent = summary_track_off[gene_i][2] +" Reads, (" +divide_zero(summary_track_off[gene_i][2]*100,summary_track_off[gene_i][7]) +"%)" 
+        SVGObj.textContent = summary_track_off[gene_i][2] +" Reads, (" +divide_zero(summary_track_off[gene_i][2]*100,summary_track_off[gene_i][7]).toFixed(2) +"%)" 
         svg.appendChild(SVGObj);
 
+        var imageElement = document.createElementNS(NS, "image");
+        imageElement.setAttribute("x", midx-15);
+        imageElement.setAttribute("y", midy+250);
+        if (summary_track_off[gene_i][7] <5 || divide_zero(summary_track_off[gene_i][4]*100,summary_track_off[gene_i][7])< 2){
+        imageElement.setAttribute("href", "crisprnano2/OK.ico");
+        imageElement.setAttribute("width", 40); // Set the width of the image
+        imageElement.setAttribute("height", 40); // Set the height of the image 
+        }
+        else {
+            imageElement.setAttribute("href", "crisprnano2/warning.png"); // Set the path to your image file
+            imageElement.setAttribute("width", 80); // Set the width of the image
+            imageElement.setAttribute("height", 80); // Set the height of the image
+            imageElement.setAttribute("x", midx-30);
+            imageElement.setAttribute("y", midy+230);
+        }
+        svg.appendChild(imageElement);
     }
 
         //legende:
@@ -2669,13 +2694,13 @@ function DrawPie_off()
         SVGObj.style.fill=ROT[i];
         svg.appendChild(SVGObj);
     }
-        SVGObj= document.createElementNS(NS,"circle");
-        SVGObj.setAttributeNS(null, "cx", midx+20);
-        SVGObj.setAttributeNS(null, "cy", midy +40);
-        SVGObj.setAttributeNS(null, "r" , 6);
-        SVGObj.style.fill="none";
-        SVGObj.style.fill="rgb(200,200,200)";
-        svg.appendChild(SVGObj);
+    SVGObj= document.createElementNS(NS,"circle");
+    SVGObj.setAttributeNS(null, "cx", midx+20);
+    SVGObj.setAttributeNS(null, "cy", midy +40);
+    SVGObj.setAttributeNS(null, "r" , 6);
+    SVGObj.style.fill="none";
+    SVGObj.style.fill="rgb(200,200,200)";
+    svg.appendChild(SVGObj);
 
     SVGObj= document.createElementNS(NS,"text");
     SVGObj.setAttribute("font-family", "sans-serif");
@@ -2710,31 +2735,7 @@ function DrawPie_off()
     SVGObj.setAttribute("font-size", "12");
     SVGObj.textContent = "no indel: "
     svg.appendChild(SVGObj);
-    // //legende:
-    // var midx = 13*50 + 25;
-    // var midy = 0 * 65 + 25;
-    // for (var i=0; i<8; i++) {
-    //     var vol = Math.floor(maxsum/100)*100/Math.pow(2,i);
-    //     var size = 24*Math.sqrt(vol/maxsum);
-    //     //SVG:
-    //     var SVGObj= document.createElementNS(NS,"circle");
-    //     SVGObj.setAttributeNS(null, "cx", midx);
-    //     SVGObj.setAttributeNS(null, "cy", midy);
-    //     SVGObj.setAttributeNS(null, "r" , size);
-    //     SVGObj.style.fill="none";
-    //     SVGObj.style.stroke="rgb(100,100,100)";
-    //     svg.appendChild(SVGObj);
-    //     var SVGObj= document.createElementNS(NS,"text");
-    //     SVGObj.setAttribute("font-family", "sans-serif");
-    //     SVGObj.setAttribute("font-weight", "100");
-    //     SVGObj.setAttribute("x", midx+40);
-    //     SVGObj.setAttribute("y", midy+3);
-    //     SVGObj.setAttribute("font-size", "12");
-    //     SVGObj.textContent = Math.round(vol) + " reads";
-    //     svg.appendChild(SVGObj);
-    //     midy += size*2+10;
-    // }
-
+ 
     document.title = "Off-target Result for "+document.getElementsByName("GeneName")[0].value+" ("+files.length+" barcodes read)";
 }
 
@@ -4387,8 +4388,8 @@ function SaveReportcsv() {
 function SaveSVGAlignment()
 {
     var svg = document.getElementById("DIV_alignment");
-    //alert(svg.innerHTML);
-    var bb = new Blob([svg.innerHTML], {type: 'text/plain'});
+    var svgContent = svg.innerHTML.replace(/&nbsp;/g, ' ');
+    var bb = new Blob([svgContent], {type: 'text/plain'});
     var a = document.createElement('a');
     a.download = document.getElementsByName("GeneName")[0].value+" "+GetWellPos(CurrentAlignment)+".svg";
     a.href = window.URL.createObjectURL(bb);
@@ -4730,8 +4731,6 @@ var gene_list = ''
 var genotype = Array(96)
 var aln_dict_bulk 
 var gcContent = Array(96)
-
-
 var bulk_threshold = 0.1
 
 // var slider = document.getElementById("myRange");
@@ -4742,8 +4741,5 @@ var bulk_threshold = 0.1
 // slider.oninput = function() {
 //         output.innerHTML = this.value;
 //         }
-
-
-
 </script>
 </html>
