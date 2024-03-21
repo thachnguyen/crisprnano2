@@ -399,25 +399,25 @@
                     <tr>
                         <td>Linux</td>
                         <td>Ubuntu 20.04</td>
-                        <td>Version 99.0.4844.51</td>
-                        <td>98.0</td>
+                        <td>Version 122.0.6261.128</td>
+                        <td>125.0</td>
                         <td>n/a</td>
                         <td>n/a</td>
                     </tr>
                     <tr>
                         <td>MacOS</td>
                         <td>Monterey</td>
-                        <td>Version 99.0.4844.51</td>
-                        <td>98.0</td>
+                        <td>Version 122.0.6261.128</td>
+                        <td>125.0</td>
                         <td>n/a</td>
                         <td>15.3 </td>
                     </tr>
                     <tr>
                         <td>Windows</td>
                         <td>10</td>
-                        <td>Version 99.0.4844.51</td>
-                        <td>98.0</td>
-                        <td>99.0.115039</td>
+                        <td>Version 122.0.6261.128</td>
+                        <td>125.0</td>
+                        <td>122.0.6261.128</td>
                         <td>n/a</td>
                     </tr>
                   </tbody></table>
@@ -1857,24 +1857,41 @@ function DrawPie()
         svg.appendChild(SVGObj);
         midy += size*2+10;
     }
-    for (var i=0; i<11; i++)
-    {
+    for (var i=0; i<3; i++){
         var SVGObj= document.createElementNS(NS,"circle");
-        SVGObj.setAttributeNS(null, "cx", midx-6);
-        SVGObj.setAttributeNS(null, "cy", midy+30+20*i);
+        SVGObj.setAttributeNS(null, "cx", midx +20*i -10);
+        SVGObj.setAttributeNS(null, "cy", midy+30+20);
         SVGObj.setAttributeNS(null, "r" , 6);
-        SVGObj.style.fill="none";
-        if (i<3) SVGObj.style.fill=BLAU[i];
-        if (i>=4 && i<7) SVGObj.style.fill=ROT[i-4];
-        if (i==8) SVGObj.style.fill="rgb(200,200,200)";
-        if (i==9) SVGObj.style.fill="rgb(0,200,0)";
+        SVGObj.style.fill=BLAU[i];
+        svg.appendChild(SVGObj);
+    }
+    for (var i=0; i<3; i++){
+        SVGObj= document.createElementNS(NS,"circle");
+        SVGObj.setAttributeNS(null, "cx", midx +20*i -10);
+        SVGObj.setAttributeNS(null, "cy", midy+30+40);
+        SVGObj.setAttributeNS(null, "r" , 6);
+        SVGObj.style.fill=ROT[i];
         svg.appendChild(SVGObj);
     }
 
+    SVGObj= document.createElementNS(NS,"circle");
+    SVGObj.setAttributeNS(null, "cx", midx +10);
+    SVGObj.setAttributeNS(null, "cy", midy+30+60);
+    SVGObj.setAttributeNS(null, "r" , 6);
+    SVGObj.style.fill="rgb(200,200,200)";
+    svg.appendChild(SVGObj);
+
+    SVGObj= document.createElementNS(NS,"circle");
+    SVGObj.setAttributeNS(null, "cx", midx +10);
+    SVGObj.setAttributeNS(null, "cy", midy+30+80);
+    SVGObj.setAttributeNS(null, "r" , 6);
+    SVGObj.style.fill="rgb(0,200,0)";
+    svg.appendChild(SVGObj);
+        
     var SVGObj= document.createElementNS(NS,"text");
     SVGObj.setAttribute("font-family", "sans-serif");
     SVGObj.setAttribute("font-weight", "100");
-    SVGObj.setAttribute("x", midx+40);
+    SVGObj.setAttribute("x", midx+50);
     SVGObj.setAttribute("y", midy+53);
     SVGObj.setAttribute("font-size", "12");
     SVGObj.textContent = "in-frame indels";
@@ -1882,24 +1899,24 @@ function DrawPie()
     var SVGObj= document.createElementNS(NS,"text");
     SVGObj.setAttribute("font-family", "sans-serif");
     SVGObj.setAttribute("font-weight", "100");
-    SVGObj.setAttribute("x", midx+40);
-    SVGObj.setAttribute("y", midy+53+80);
+    SVGObj.setAttribute("x", midx+50);
+    SVGObj.setAttribute("y", midy+53+20);
     SVGObj.setAttribute("font-size", "12");
     SVGObj.textContent = "out-of-frame indels";
     svg.appendChild(SVGObj);
     var SVGObj= document.createElementNS(NS,"text");
     SVGObj.setAttribute("font-family", "sans-serif");
     SVGObj.setAttribute("font-weight", "100");
-    SVGObj.setAttribute("x", midx+40);
-    SVGObj.setAttribute("y", midy+53+140);
+    SVGObj.setAttribute("x", midx+50);
+    SVGObj.setAttribute("y", midy+53+40);
     SVGObj.setAttribute("font-size", "12");
     SVGObj.textContent = "no indel";
     svg.appendChild(SVGObj);
     var SVGObj= document.createElementNS(NS,"text");
     SVGObj.setAttribute("font-family", "sans-serif");
     SVGObj.setAttribute("font-weight", "100");
-    SVGObj.setAttribute("x", midx+40);
-    SVGObj.setAttribute("y", midy+53+160);
+    SVGObj.setAttribute("x", midx+50);
+    SVGObj.setAttribute("y", midy+53+60);
     SVGObj.setAttribute("font-size", "12");
     SVGObj.textContent = "targeted mutagenesis";
     svg.appendChild(SVGObj);
