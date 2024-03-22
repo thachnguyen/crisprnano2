@@ -416,7 +416,7 @@
                         <td>Windows</td>
                         <td>10</td>
                         <td>Version 122.0.6261.128</td>
-                        <td>125.0</td>
+                        <td>98.0</td>
                         <td>122.0.6261.128</td>
                         <td>n/a</td>
                     </tr>
@@ -2940,7 +2940,7 @@ function PlotAlignment(barcode, locus){
                 }
         }
         else if (Object.keys(aln_dict_fil[id]).length ==2) {
-            if ((out_indel/summary_track[id][7] > 0.3)&&(out_indel/summary_track[id][7] < 0.7)&& (inf_indel/summary_track[id][7] > 0.3) && (inf_indel/summary_track[id][7] < 0.7) && (targetingOligo/summary_track[id][7]<0.7)&& (targetingOligo/summary_track[id][7]>0.3)) {
+            if ((out_indel/summary_track[id][7] < 0.7)&& (inf_indel/summary_track[id][7] < 0.7) && (targetingOligo/summary_track[id][7]<0.7)) {
             genotype[id] = 'HET'
             }
             else if ((out_indel/summary_track[id][7] >0.95)&& (out_indel_arr.length ==2)&& (out_indel_arr[0]/summary_track[id][7] > 0.35)&& (out_indel_arr[0]/summary_track[id][7] < 0.65)) {
