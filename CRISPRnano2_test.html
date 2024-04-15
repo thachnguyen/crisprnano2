@@ -310,8 +310,8 @@
                 <br>
                 Reference: <br>
                 Nguyen, T., Ramachandran, H., Martins, S., Krutmann, J. and Rossi, A., 2022. Identification of genome edited cells using CRISPRnano. Nucleic Acids Research.<br></a>
-                <br><br>
                 <br>
+                Question: thach.nguyen**(replace with email symbol)**iuf-duesseldorf.de
             </div>
         
             <div id="about" style="position: absolute; left: 20px; top: 120px; width: 70%; display: none;">
@@ -503,10 +503,18 @@
                             <span class="popuptext" id="help8">Name of the study genes, seperate by , . Click to close.</span>
                         </div>
                         <br>
+                        
                         <input type="text" class="input_form" size="40" name="GeneName_list" id="GeneName_list" value="" onchange="checkOccurrence(); getFastaSequence_list();"><br>
                         <small class="text-muted">Off-target analysis will check up to 4 genes in a single run</small>
-
                         <br>
+                        List of offset sgRNA:
+                        <br>
+                        <input type="text" class="input_form" size="40" name="GeneName_list" id="GeneName_list" value="" onchange="checkOccurrence(); getFastaSequence_list();"><br>
+                        <input type="text" class="input_form" size="40" name="GeneName_list" id="GeneName_list" value="" onchange="checkOccurrence(); getFastaSequence_list();"><br>
+                        <input type="text" class="input_form" size="40" name="GeneName_list" id="GeneName_list" value="" onchange="checkOccurrence(); getFastaSequence_list();"><br>
+                        <input type="text" class="input_form" size="40" name="GeneName_list" id="GeneName_list" value="" onchange="checkOccurrence(); getFastaSequence_list();"><br>
+
+
                         <input type="submit" name="submit" value="START OFFTARGET ANALYZER " class="btn btn-primary btn-sm" id="submit" onclick="Start2();">
                         <br>
                         <br>
@@ -1271,17 +1279,23 @@ function FileReceived() {
                             str1 += fmt[1] + '\n';
                             //aggregate aln track into dictionary
                             // if (containsAny(locus, str2_arr)||containsAny(ReverseComplement(locus), str2_arr)){
-                            if (aln_type !=0){
-                                if (aln_dict[id].hasOwnProperty(str1)){
-                                    aln_dict[id][str1]+=1
+                            var distance_del = Math.abs(fmt[0].indexOf('-') - BreakPoint)
+                            var distance_ins = getFirstNucleotideIndex(fmt[1]) == -1 ? 0:Math.abs(getFirstNucleotideIndex(fmt[1]) - BreakPoint)
+
+                            // narrow down windows -20
+                            if ((distance_del< final_filter_size +10)&&distance_ins < final_filter_size +10){
+                                if (aln_type !=0){
+                                    if (aln_dict[id].hasOwnProperty(str1)){
+                                        aln_dict[id][str1]+=1
+                                    }
+                                    else {
+                                        aln_dict[id][str1] = 1
+                                        aln_type_dict[id][str1] = aln_type
+                                    }
                                 }
-                                else {
-                                    aln_dict[id][str1] = 1
-                                    aln_type_dict[id][str1] = aln_type
+                                if (str1.trim().length>(region_analyse*2-2)){
+                                    hits[id].push(aln_type);
                                 }
-                            }
-                            if (str1.trim().length>(region_analyse*2-2)){
-                                hits[id].push(aln_type);
                             }
                         }           
                     }
@@ -1305,21 +1319,27 @@ function FileReceived() {
                     // var str2_arr = fmt[0].split('-')
                     str1 += fmt[0] + '\n';
                     str1 += fmt[1] + '\n';
-                    //aggregate aln track into dictionary
-                    // if (containsAny(locus, str2_arr)||containsAny(ReverseComplement(locus), str2_arr)){
-                    if (aln_type !=0){
-                        if (aln_dict[id].hasOwnProperty(str1)){
-                            aln_dict[id][str1]+=1
+                    var distance_del = Math.abs(fmt[0].indexOf('-') - BreakPoint)
+                    var distance_ins = getFirstNucleotideIndex(fmt[1]) == -1 ? 0:Math.abs(getFirstNucleotideIndex(fmt[1]) - BreakPoint)
+
+                            // narrow down windows -20
+                    if ((distance_del< final_filter_size+2)&&distance_ins < final_filter_size+2){
+                        //aggregate aln track into dictionary
+                        // if (containsAny(locus, str2_arr)||containsAny(ReverseComplement(locus), str2_arr)){
+                        if (aln_type !=0){
+                            if (aln_dict[id].hasOwnProperty(str1)){
+                                aln_dict[id][str1]+=1
+                            }
+                            else {
+                                aln_dict[id][str1] = 1
+                                aln_type_dict[id][str1] = aln_type
+                            }
                         }
-                        else {
-                            aln_dict[id][str1] = 1
-                            aln_type_dict[id][str1] = aln_type
+                        if (str1.trim().length>(region_analyse*2-2)){
+                            hits[id].push(aln_type);
                         }
-                    }
-                    if (str1.trim().length>(region_analyse*2-2)){
-                        hits[id].push(aln_type);
-                    }
-                }           
+                }
+            }           
             }
         }
     }
@@ -3559,6 +3579,8 @@ function PlotAlignment_bulk(barcode, locus, bulk_threshold){
 
     //for indel plot
     var indel_info = []
+    var indel_info_dist = []
+    indel_info_hist = []
 
     for (let key in aln_dict_bulk){
         //aggregate WT
@@ -3803,12 +3825,17 @@ function PlotAlignment_bulk(barcode, locus, bulk_threshold){
         SVGObj.textContent +="TYPE: "+ aln_type[aln_type_dict[barcode][key]] + ", (" + gap_len1 + " bp)" +" | " +aln_dict_bulk[key] +"  Reads, " + (aln_dict_bulk[key]/summary_track[barcode][7]*100).toFixed(2) + " %";
         
         if (gap_len1*1<0){
-            loc_indel = key.search('-') -BreakPoint;
+            loc_indel = key.search('-') - BreakPoint;
             if (rightbs!=document.getElementsByName("RightBS")[0].value.replace(/[\s\n]+/g, '').toUpperCase()){
                 indel_info.push([gap_len1, loc_indel + rightbs.length])
+                indel_info_dist.push([aln_dict_bulk[key], loc_indel + rightbs.length])
+                indel_info_hist.push([gap_len1, loc_indel + rightbs.length, aln_dict_bulk[key]/summary_track[barcode][7]*100, aln_dict_bulk[key]])
+
             }
             else {
                 indel_info.push([gap_len1, loc_indel])
+                indel_info_dist.push([aln_dict_bulk[key], loc_indel])
+                indel_info_hist.push([gap_len1, loc_indel, aln_dict_bulk[key]/summary_track[barcode][7]*100, aln_dict_bulk[key]])
             }
         } 
         else if (gap_len1*1>0){
@@ -3820,9 +3847,13 @@ function PlotAlignment_bulk(barcode, locus, bulk_threshold){
                     tmp_ins = 1
                     if (rightbs!=document.getElementsByName("RightBS")[0].value.replace(/[\s\n]+/g, '').toUpperCase()){
                         indel_info.push([gap_len1, loc_indel + rightbs.length])
+                        indel_info_dist.push([aln_dict_bulk[key], loc_indel+ rightbs.length])
+                        indel_info_hist.push([gap_len1, loc_indel + rightbs.length, aln_dict_bulk[key]/summary_track[barcode][7]*100, aln_dict_bulk[key]])
                         }
                         else {
                             indel_info.push([gap_len1, loc_indel])
+                            indel_info_dist.push([aln_dict_bulk[key]])
+                            indel_info_hist.push([gap_len1, loc_indel, aln_dict_bulk[key]/summary_track[barcode][7]*100, aln_dict_bulk[key]])
                         }
                 }
             }
@@ -3896,7 +3927,7 @@ function PlotAlignment_bulk(barcode, locus, bulk_threshold){
         title: 'Indel Size and Location',
         xaxis: {
         title: 'Indel Size and Location',
-        range: [-40, 40]
+        range: [-80, 80]
         },
         yaxis: {
         title: 'Indel size (bp)'
@@ -4468,7 +4499,8 @@ function myFunction8() {
 }
 function myFunction9() {
     var popup = document.getElementById("help9");
-    popup.classList.toggle("show");}
+    popup.classList.toggle("show");
+}
 
 function myFunction10() {
     var popup = document.getElementById("help10");
@@ -4682,6 +4714,18 @@ function divide_zero(a, b) {
     }
 }
 
+
+function getFirstNucleotideIndex(sequence) {
+    const nucleotides = ['A', 'T', 'C', 'G'];
+    for (let i = 0; i < sequence.length; i++) {
+        const char = sequence[i].toUpperCase(); // Convert to uppercase for case insensitivity
+        if (nucleotides.includes(char)) {
+            return i; // Return the index of the first nucleotide found
+        }
+    }
+    return -1; // Return -1 if no nucleotide is found in the sequence
+}
+
 var currenttab = 0;
 TabClicked(0);
 
@@ -4749,6 +4793,8 @@ var genotype = Array(96)
 var aln_dict_bulk 
 var gcContent = Array(96)
 var bulk_threshold = 0.1
+var indel_info_hist
+var final_filter_size =20
 
 // var slider = document.getElementById("myRange");
 // slider.onchange = PlotAlignment_bulk(CurrentAlignment, locus, bulk_threshold)
