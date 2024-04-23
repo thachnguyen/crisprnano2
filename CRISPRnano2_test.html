@@ -43,6 +43,10 @@
   user-select: none;
 }
 
+.hidden {
+      display: none;
+    }
+
 /* The actual popup */
 .popup .popuptext {
   visibility: hidden;
@@ -507,13 +511,22 @@
                         <input type="text" class="input_form" size="40" name="GeneName_list" id="GeneName_list" value="" onchange="checkOccurrence(); getFastaSequence_list();"><br>
                         <small class="text-muted">Off-target analysis will check up to 4 genes in a single run</small>
                         <br>
-                        List of offset sgRNA:
+                        <button id="toggleButton">List of offset sgRNA:</button>
                         <br>
-                        <input type="text" class="input_form" size="40" name="GeneName_list" id="GeneName_list" value="" onchange="checkOccurrence(); getFastaSequence_list();"><br>
-                        <input type="text" class="input_form" size="40" name="GeneName_list" id="GeneName_list" value="" onchange="checkOccurrence(); getFastaSequence_list();"><br>
-                        <input type="text" class="input_form" size="40" name="GeneName_list" id="GeneName_list" value="" onchange="checkOccurrence(); getFastaSequence_list();"><br>
-                        <input type="text" class="input_form" size="40" name="GeneName_list" id="GeneName_list" value="" onchange="checkOccurrence(); getFastaSequence_list();"><br>
-
+                        <small class="text-muted">If off-target sgRNA empty, system will take the previous sgRNA to find region of interest</small>
+                        <br>
+                        <div id="sgRNAContainer" class="hidden">
+                        <br>
+                        <input type="text" class="input_form" size="40" name="sgRNA1" id="sgRNA1" value="" ><br>
+                        <br>
+                        <input type="text" class="input_form" size="40" name="sgRNA2" id="sgRNA2" value=""><br>
+                        <br>
+                        <input type="text" class="input_form" size="40" name="sgRNA3" id="sgRNA3" value=""><br>
+                        <br>
+                        <input type="text" class="input_form" size="40" name="sgRNA4" id="sgRNA4" value=""><br>
+                        <br>
+                        </div>
+                        <br>
 
                         <input type="submit" name="submit" value="START OFFTARGET ANALYZER " class="btn btn-primary btn-sm" id="submit" onclick="Start2();">
                         <br>
@@ -560,14 +573,6 @@
                     </div>
                 </div>
 
-                <!-- <div class="slidecontainer">
-                    <input type="range" min="0" max="50" value="0" class="slider" id="myRange" oninput="this.nextElementSibling.value = this.value">
-                    <p>Indel threshold (%): <span id="threshold_bulk"></span> 
-                    </p>
-                    <br> <br><br>
-                  </div> -->
-               
-                
                 <div id="DIV_alignment_bulk" >
                     <svg id="SVGmut_bulk" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="1600" height="5000">
                     </svg>
@@ -4601,7 +4606,11 @@ function Start2(){
     gene_list = document.getElementsByName("GeneName_list")[0].value.split(',')
     rightbs = document.getElementsByName("RightBS")[0].value.replace(/[\s\n]+/g, '').toUpperCase(); // sgRNA seq
     region_analyse = document.getElementsByName("region_analyse")[0].value;
-
+    rightbs_off_1 = document.getElementsByName("sgRNA1")[0].value.replace(/[\s\n]+/g, '').toUpperCase(); // sgRNA seq  
+    rightbs_off_2 = document.getElementsByName("sgRNA2")[0].value.replace(/[\s\n]+/g, '').toUpperCase(); // sgRNA seq  
+    rightbs_off_3 = document.getElementsByName("sgRNA3")[0].value.replace(/[\s\n]+/g, '').toUpperCase(); // sgRNA seq  
+    rightbs_off_4 = document.getElementsByName("sgRNA4")[0].value.replace(/[\s\n]+/g, '').toUpperCase(); // sgRNA seq  
+    var rightbs_off = [rightbs_off_1, rightbs_off_2, rightbs_off_3, rightbs_off_4]
     //reset all varibles
     for (var i=0; i<4; i++){
         sum_track_off[i] = 0;
@@ -4628,7 +4637,13 @@ function Start2(){
     }
 
     for (let i = 0; i<locus_list.length; i++){
-        var rst = bsa_align(locus_list[i], rightbs, [ms, mms], [gapo, gape]);
+        if (rightbs_off[i]==''){
+            var rst = bsa_align(locus_list[i], rightbs, [ms, mms], [gapo, gape]);
+        }
+        else {
+            var rst = bsa_align(locus_list[i], rightbs_off[i], [ms, mms], [gapo, gape]);
+        }
+        
         if (rst[0]<(rightbs.length/2)){
             rst = bsa_align(ReverseComplement(locus_list[i]), rightbs, [ms, mms], [gapo, gape]);
             if (rst[0]<(rightbs.length/2)){
@@ -4747,6 +4762,10 @@ var CurrentFileId_off;
 var MutationThreshold = 0.1
 var BreakPoint;
 var rightbs;
+var rightbs_off_1;
+var rightbs_off_2;
+var rightbs_off_3;
+var rightbs_off_4;
 
 var PhredThreshold = 40; // 7 +33
 
@@ -4804,5 +4823,13 @@ var final_filter_size =20
 // slider.oninput = function() {
 //         output.innerHTML = this.value;
 //         }
+const toggleButton = document.getElementById('toggleButton');
+const sgRNAContainer = document.getElementById('sgRNAContainer');
+
+toggleButton.addEventListener('click', function() {
+    sgRNAContainer.classList.toggle('hidden');
+});
+
+
 </script>
 </html>
