@@ -4538,6 +4538,7 @@ function SaveProject() {
     MutationThreshold = document.getElementsByName("MutationThreshold")[0].value;
     var InitialVariables = new Uint32Array(16);
     InitialVariables[0] = 1; //Version
+    numsamples = files.length
     InitialVariables[1] = numsamples; //Sample Num
     //string lengths:
     InitialVariables[2] = document.getElementsByName("GeneName")[0].value.length;
@@ -4559,28 +4560,14 @@ function SaveProject() {
 
     for (var id=0; id<numsamples; id++)
     {
-        var SimpleValues = new Array(16);
-        SimpleValues[0] = Sample[id].plateposition;
-        SimpleValues[1] = Sample[id].totalreads;
-        SimpleValues[2] = Sample[id].numalleles;
-        SimpleValues[3] = Sample[id].numevents;
-        SimpleValues[4] = Sample[id].unresolved;
-        SimpleValues[5] = Sample[id].phreddropout;
-        SimpleValues[6] = Sample[id].restinframe;
-        SimpleValues[7] = Sample[id].restoutofframe;
-        SimpleValues[8] = Sample[id].wt;
-        SimpleValues[9] = Sample[id].ins;
-        SimpleValues[10] = Sample[id].del;
-        SimpleValues[11] = Sample[id].outsideindel;
-        SimpleValues[12] = Sample[id].tsindel;
-        SimpleValues[13] = Sample[id].frameshift;
-        SimpleValues[14] = Sample[id].targeted;
-        SimpleValues[15] = Sample[id].filename.length;
+        var SimpleValues = new Array(2);
+        SimpleValues[0] = hits[id];
+        SimpleValues[1] = aln_dict[id]
 
-        blob = new Blob([blob, SimpleValues, Sample[id].delspan, Sample[id].delstart, Sample[id].delend, Sample[id].inspos, Sample[id].indellen, Sample[id].delMH, Sample[id].allelepos, Sample[id].allelelen, Sample[id].allelereads, Sample[id].allelelogo, Sample[id].eventpos, Sample[id].eventlen, Sample[id].eventreads], {type: 'text/plain'});
+        blob = new Blob([blob, SimpleValues], {type: 'text/plain'});
 
         //Add Text values:
-        blob = new Blob([blob, Sample[id].filename], {type: 'text/plain'});
+        // blob = new Blob([blob, Sample[id].filename], {type: 'text/plain'});
     }
 
     //encode as base64 and embed into html file:
