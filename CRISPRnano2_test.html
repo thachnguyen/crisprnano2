@@ -1161,6 +1161,9 @@ function FileReceived() {
 
     //check target oligo in reference or reverse ref
     if (targetingOligo !=""){
+            if (targetingOligo.length > 40){
+                targetingOligo = targetingOligo.substring(Math.floor(targetingOligo.length/2)-20, Math.floor(targetingOligo.length/2)+20)
+            }
             var score_oligo_ref_fw = bsa_align(locus.substring(BreakPoint-region_analyse*1, BreakPoint + region_analyse*1), targetingOligo, [ms, mms], [gapo, gape]); 
             var score_oligo_ref_rv = bsa_align(locus.substring(BreakPoint-region_analyse*1, BreakPoint + region_analyse*1), ReverseComplement(targetingOligo), [ms, mms], [gapo, gape]);
             var oligo_index = score_oligo_ref_fw[0]>=score_oligo_ref_rv[0] ? score_oligo_ref_fw[1] : score_oligo_ref_rv[1]
