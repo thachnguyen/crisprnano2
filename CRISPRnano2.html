@@ -198,8 +198,8 @@
                     <br>
                     <label for="cars">Data type:</label>
                     <select id="mySelect" onchange="setValue()">
-                        <option value="ont">Nanopore</option>
                         <option value="illu">Illumina</option>
+                        <option value="ont">Nanopore</option>
                         <option value="pacbio">PacBio or Nanopore Duplex</option>
                     </select>
                     <br>
@@ -261,18 +261,18 @@
                         <div class="popup" onclick="myFunction5()">(? Click here!)
                             <span class="popuptext" id="help5"> For ONT reads, it is recommended to use -/+15 bases around the predicted DNA lesion. Larger regions are prone to false positive indels. Larger regions (total of 200-250 bp) can be safely used with Illumina reads. You can drag and drop the central point of the predicted double strand break in the genomic sequence to the left or to the right. Default value 0 is double strand breaking point- Crisprnano will use the first index of sgRNA mapped on reference. Click again to close</span>
                         </div>
-                        <br><input type="text" size="30" name="region_analyse" value="40" class="input_form" onchange="checkValue();"><br>
+                        <br><input type="text" size="30" name="region_analyse" value="45" class="input_form" onchange="checkValue();"><br>
 
                         <br>Indel Threshold [%]: 
                         <div class="popup" onclick="myFunction9()">(? Click here!)
                             <span class="popuptext" id="help9">The Indel Threshold determines at what relative occurrence an individual indel mutation is considered as a unique allele of the respective clone analyzed, and is thus displayed in the alignment list. Low threshold values can result in false positive allele calling due to sequencing errors, whereas high threshold values result in false negative allele calling. Values in between 0 - 100 % can be entered. We recommend to use 5% for ONT reads and 2% for Illumina reads (default is set to 5%). Click again to close.</span>
                         </div> 
-                        <br><input type="text" size="30" class="input_form" name="MutationThreshold" value="5" onchange="checkValue();"><br>
+                        <br><input type="text" size="30" class="input_form" name="MutationThreshold" value="2" onchange="checkValue();"><br>
                         <br>PHred Threshold: 
                         <div class="popup" onclick="myFunction10()">(? Click here!)
                             <span class="popuptext" id="help10">The Quality threshold determine the minimum filter base, For Illumina it should be >20, For ONT it should be >10, Click again to close.</span>
                         </div> 
-                        <br><input type="text" size="30" class="input_form" name="Phred" value="10" onchange="checkValue();"><br>
+                        <br><input type="text" size="30" class="input_form" name="Phred" value="20" onchange="checkValue();"><br>
 
                     <p></p>
 
