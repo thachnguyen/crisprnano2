@@ -3914,8 +3914,6 @@ function PlotAlignment_bulk(barcode, locus, bulk_threshold){
 
 }
 
-
-
 //Alignment summary plot:
 function PlotAlignment_off(gene_i)
 {
@@ -4436,6 +4434,27 @@ function PrintSVGAlignment(){
     printWindow.print();
     printWindow.close();
 }
+
+function Check_micro_homology(sequence_seq){
+    var micro_homology = ''
+    const startIndex = sequence_seq.indexOf('-');
+    const endIndex = sequence_seq.lastIndexOf('-') + 1;
+    var ref_seq = locus.substring(10, sequence_seq.length + 10)
+    if (startIndex !=0){
+        for (let i = startIndex; i < endIndex; i++) {
+            if (ref_seq[i]==ref_seq[i+endIndex-startIndex]){
+                micro_homology+=ref_seq[i]
+            }
+            else{
+                break
+            }
+        }
+    }
+    return micro_homology; 
+    
+}
+
+
 // For google site
 function myFunction1() {
     var popup = document.getElementById("help1");

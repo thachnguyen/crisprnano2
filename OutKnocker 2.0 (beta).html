@@ -1,0 +1,3405 @@
+
+<!-- saved from url=(0041)http://www.outknocker.org/outknocker2.htm -->
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=windows-1252"><meta http-equiv="Content-Script-Type" content="text/javascript">
+<meta http-equiv="CACHE-CONTROL" content="NO-CACHE">
+    
+        
+            <style>
+                div.expandable {
+                    background-color: rgba(255, 255, 255, 0.2);
+                    padding: 20px;
+                    line-height: 25px;
+                }
+                div.helpbox {
+                    padding: 10px;
+                    background: rgba(255, 255, 255, 0.8);
+                    position:fixed;
+                    width:20%;
+                    bottom:20px;
+                    right:20px;
+                    text-align: justify;
+                }
+                div.selector {
+                    background-color: rgba(255, 255, 255, 0.95);
+                    position: absolute;
+                    padding: 20px;
+                    line-height: 25px;
+                }
+                button {
+                    background: none;
+                    background-color: rgba(38,170,220, 0.3);
+                    border: none;
+                    border-radius: 3px;
+                    margin-top: 3px;
+                    padding: 3px;
+                    font-size: 12;
+                }
+                button:hover {
+                    background-color: rgba(38,170,220, 0.8);
+                }
+                input {
+                    border: none;
+                    background-color: rgba(255,255,255, 0.8);
+                    margin-top: 3px;
+                    margin-bottom: 3px;
+                    padding: 5px;
+                }
+                button.expand {
+                    float: right;
+                    margin-top: -5px;
+                }
+                textarea {
+                    padding: 10px;
+                    border: none;
+                    background: none;
+                    background: rgba(255, 255, 255, 0.8);
+                    resize: none;
+                }
+            </style>
+            <title>OutKnocker 2.0 (beta)</title>
+        </head>
+        <body background="./OutKnocker 2.0 (beta)_files/brown1.jpg" style="background-attachment: fixed; font-family: Helvetica; font-weight: 100; overflow-x: hidden; display: block;" ondrop="FileDrop(event);">
+
+
+            <div id="save" style="display:none">test</div>
+            <div id="tabconnector" style="position: absolute; margin: auto; left: -375px; right: 375px; top: 45px; width: 240px; height: 15px; background-color: rgba(255, 255, 255, 0.2);"></div>
+
+            <div id="plan" style="position: absolute; margin: auto; left: 0px; right: 0px; top: 60px; width: 950px; background-color: rgba(255, 255, 255, 0.2); padding: 20px;">
+                <br>
+                <b>1. Plan a Genome Editing experiment:</b> (<a href="http://www.outknocker.org/example.htm">Example project</a>)
+                <br>
+                <br>
+                <div style="background-color: rgba(255, 255, 255, 0.2); padding: 20px;">
+                    <b>1.1 Choose a target site</b>
+                    <div id="choosetargetsite" style="">
+                        <br>Species of target cells:
+                        <select id="species" onchange="LoadLibrary(this.value);UpdateProtocols();">
+                            <option value="homosapiens">Homo Sapiens</option>
+                            <option value="musmusculus">Mus Musculus</option>
+                        </select>
+                        <br>
+                        <br>Monoclonal / polyclonal experiment:
+                        <select id="monopoly" onchange="UpdateProtocols();">
+                            <option value="mono">monoclonal (generate knock out clones)</option>
+                            <option value="poly">polyclonal (analyze genome editing)</option>
+                        </select>
+                        <br>
+                        <br>Nuclease enzyme:
+                        <select id="nuclease" onchange="">
+                            <option value="spCas9">spCas9</option>
+                        </select>
+                        <br>
+                        <br>Gene name: <button onclick="help(&#39;In this field the symbol of the gene that you want to target is entered.&#39;)">?</button>
+                        <br><input type="text" id="gene" oninput="FindGRNA(this.value);" value="BIRC3" onblur="setTimeout(&#39;Hide_auto_complete();&#39;,100);">
+                        <br>
+                        <br>Nuclease Target Site (for double-nickases and TALENs both targetsites must be spanned): <button onclick="help(&#39;In this field the nuclease target site is entered. The sequence does not have to be in the same orientation as the PCR amplicon sequence above.&#39;)">?</button><br><input type="text" size="40" name="RightBS" id="targetsite2" value="CCACGGAAATATCCACTGTTTTC" oninput="document.getElementById(&#39;targetsite3&#39;).value=this.value;UpdateLICOligo();"><br>
+
+                        <div id="targetsite"></div>
+                        <div id="gene_auto_complete" class="selector" style="display:none;"></div>
+                    </div>
+                </div>
+                <br>
+                <div class="expandable">
+                    <b>1.2 Order oligonucleotides and other materials</b> (<a href="javascript:DownloadProtocol(&#39;materials&#39;,&#39;Materials.htm&#39;);">download list</a>)
+                    <button class="expand" onclick="ToggleDivDisplay(&#39;materials&#39;);">... </button>
+                    <div id="materials" style="display:none;">
+                        <br><u>1.2.1 Oligonucleotides:</u>
+                        <div id="LIColigo">gRNA oligo: </div>
+                        Constant gRNA antisense oligo (PAGE-purified): /5Phos/AACGGACTAGCCTTATTTTAACTTGCTATTTCTAGCTCTAAAAC
+                        <div id="PCRfwd">PCR fwd primer: </div>
+                        <div id="PCRrev">PCR rev primer: </div>
+                        Barcode D501:	AATGATACGGCGACCACCGAGATCTACACTATAGCCTACACTCTTTCCCTACACGACGCT
+                        <br>Barcode D502:	AATGATACGGCGACCACCGAGATCTACACATAGAGGCACACTCTTTCCCTACACGACGCT
+                        <br>Barcode D503:	AATGATACGGCGACCACCGAGATCTACACCCTATCCTACACTCTTTCCCTACACGACGCT
+                        <br>Barcode D504:	AATGATACGGCGACCACCGAGATCTACACGGCTCTGAACACTCTTTCCCTACACGACGCT
+                        <br>Barcode D505:	AATGATACGGCGACCACCGAGATCTACACAGGCGAAGACACTCTTTCCCTACACGACGCT
+                        <br>Barcode D506:	AATGATACGGCGACCACCGAGATCTACACTAATCTTAACACTCTTTCCCTACACGACGCT
+                        <br>Barcode D507:	AATGATACGGCGACCACCGAGATCTACACCAGGACGTACACTCTTTCCCTACACGACGCT
+                        <br>Barcode D508:	AATGATACGGCGACCACCGAGATCTACACGTACTGACACACTCTTTCCCTACACGACGCT
+                        <br>Barcode D701:	CAAGCAGAAGACGGCATACGAGATCGAGTAATGTGACTGGAGTTCAGACGTGTGCT
+                        <br>Barcode D702:	CAAGCAGAAGACGGCATACGAGATTCTCCGGAGTGACTGGAGTTCAGACGTGTGCT
+                        <br>Barcode D703:	CAAGCAGAAGACGGCATACGAGATAATGAGCGGTGACTGGAGTTCAGACGTGTGCT
+                        <br>Barcode D704:	CAAGCAGAAGACGGCATACGAGATGGAATCTCGTGACTGGAGTTCAGACGTGTGCT
+                        <br>Barcode D705:	CAAGCAGAAGACGGCATACGAGATTTCTGAATGTGACTGGAGTTCAGACGTGTGCT
+                        <br>Barcode D706:	CAAGCAGAAGACGGCATACGAGATACGAATTCGTGACTGGAGTTCAGACGTGTGCT
+                        <br>Barcode D707:	CAAGCAGAAGACGGCATACGAGATAGCTTCAGGTGACTGGAGTTCAGACGTGTGCT
+                        <br>Barcode D708:	CAAGCAGAAGACGGCATACGAGATGCGCATTAGTGACTGGAGTTCAGACGTGTGCT
+                        <br>Barcode D709:	CAAGCAGAAGACGGCATACGAGATCATAGCCGGTGACTGGAGTTCAGACGTGTGCT
+                        <br>Barcode D710:	CAAGCAGAAGACGGCATACGAGATTTCGCGGAGTGACTGGAGTTCAGACGTGTGCT
+                        <br>Barcode D711:	CAAGCAGAAGACGGCATACGAGATGCGCGAGAGTGACTGGAGTTCAGACGTGTGCT
+                        <br>Barcode D712:	CAAGCAGAAGACGGCATACGAGATCTATCGCTGTGACTGGAGTTCAGACGTGTGCT
+                        <br>U6 seq: GCATATACGATACAAGGCTGTTAG
+                        <br>
+                        <br><u>2.2 Other materials:</u>
+                        <br>FastDigest ApaI (Thermo Fisher)
+                        <br>FastDigest SpeI (Thermo Fisher)
+                        <br>T4 DNA polymerase (NEB)
+                        <br>dTTP (NEB)
+                        <br>pCAS9-mCherry empty (<a target="_blank" href="http://www.addgene.org/80975/" onclick="PreventDivToggle(event);">Addgene</a>)
+                        <br>GeneJuice (Merck Millipore)
+                        <br>Phusion Polymerase (NEB)
+                    </div>
+                </div>
+                <br>
+                <div class="expandable">
+                    <b>1.3 Assemble gRNA construct</b> (<a href="javascript:DownloadProtocol(&#39;assemble&#39;,&#39;Assembly Protocol.htm&#39;);">download protocol</a>)
+                    <button class="expand" onclick="ToggleDivDisplay(&#39;assemble&#39;);">... </button>
+                    <div id="assemble" style="display:none;">
+                        <br><u>1.3.1 Make chemo-competent bacteria:</u>
+                        <br>Streak out DH10B bacteria on an LB-agar plate without antibiotic, incubate at 37C over night
+                        <br>Inoculate a liquid culture in LB medium from a single colony. Shake at 37C over night
+                        <br>Inoculate 250ml of LB +20mM MgSO4 with 2.5ml of the overnight culture. Grow until OD reaches 0.4-0.6
+                        <br>Pellet bacteria at 4C and resuspend in 100ml buffer A (30mM potassium acetate, 10mM CaCl2, 50mM MnCl2,
+                        100mM RbCl, 15% glycerol, pH 5.8 adjusted by acetic acid) on ice
+                        <br>Incubate the cells on ice for 5 minutes, pellet at 4C, resuspend in 10ml buffer B (100mM MOPS, 75mM CaCl2, 10mM RbCl,
+                        15% glycerol, pH 6.5 adjusted with KOH) on ice
+                        <br>Incubate cells on ice for 30 minutes, aliquot into 50�l per tube, snap-freeze in liquid nitrogen
+                        <br>Store at -80C
+                        <br>
+                        <br><u>1.3.2 Digest backbone plasmid:</u>
+                        <br>5�l	FastDigest Green buffer
+                        <br>8�g plasmid DNA (pCAS9-mCherry empty)
+                        <br>to 46�l water
+                        <br>2�l FastDigest ApaI
+                        <br>2�l FastDigest BcuI
+                        <br>Incubate for 3h at 37C in a thermocycler
+                        <br>Column-purify using AnalytikJena PCR purification kit or similar; elute in 15�l water
+                        <br>
+                        <br><u>1.3.3 Chew-back 3' ends:</u>
+                        <br>10�l 10x NEBuffer 2
+                        <br>10�l column eluate
+                        <br>1�l dTTP 100mM
+                        <br>1�l BSA 10mg/ml
+                        <br>74.66�l water
+                        <br>3.33�l T4 DNA polymerase (3 U/�l)
+                        <br>Incubate for 5 minutes at 27C in a thermocycler, put on ice
+                        <br>Incubate for 20 minutes at 75C in a pre-heated thermocycler
+                        <br>
+                        <br><u>1.3.4 Prepare cloning mastermix:</u>
+                        <br>add 5�l Constant gRNA antisense oligo (100�M)
+                        <br>add 10�l 10x NEBuffer 2
+                        <br>Store cloning mastermix at 4C for up to 3 months
+                        <br>
+                        <br><u>1.3.5 Assemble gRNA construct:</u>
+                        <br>Dilute gene-specific gRNA oligo (100�M) 1:100 in water
+                        <br>Mix 2�l of oligo dilution with 2�l of cloning mastermix
+                        <br>In parallel, prepare a water control (2�l water + 2�l mastermix)
+                        <br>Anneal in a thermocycler using the following temperature ramp:
+                        <br>75C -&gt; 55C at 2.5 minutes per degree Celsius
+                        <br>55C for 30 minutes
+                        <br>55C -&gt; 25C at 2.5 minutes per degree Celsius
+                        <br>
+                        <br><u>1.3.6 Transform bacteria:</u>
+                        <br>Thaw 2x 50�l competent bacteria on ice
+                        <br>Add 4�l assembly per tube, flick the tube
+                        <br>Heat to 42C for 1 minute
+                        <br>Cool on ice for 2 minutes
+                        <br>Streak on LB-Amp Agar plates, incubate at 37C over night
+                        <br>The next day, the water control should contain &gt;20x less colonies than the real assembly
+                        <br>
+                        <br><u>3.7 Expand a clone:</u>
+                        <br>Inoculate a LB-Amp liquid culture and shake it over night at 37C
+                        <br>Perform a miniprep and sequence the plasmid DNA using the primer U6-seq
+                        <br>The sequencing result has to contain the complete gene-specific gRNA oligo sequence
+                    </div>
+                </div>
+
+
+
+                <br>
+
+                <div class="expandable">
+                    <b>1.4 Perform Genome Editing</b> (<a href="javascript:DownloadProtocol(&#39;genomeediting&#39;,&#39;Genome Editing Protocol.htm&#39;);">download protocol</a>)
+                    <button class="expand" onclick="ToggleDivDisplay(&#39;genomeediting&#39;);">... </button>
+                    <div id="genomeediting" style="display:none;">
+                        <br>
+                        <div id="transfection"><u>1.4.1 Transfect HEK293T cells:</u><br>Plate HEK293T cells at a density of 25,000 cells per 96-well in DMEM containing 10% FCS, 1 mM sodium pyruvate, and 10 mg/l Ciprofloxacin<br>Let cells adhere for 16h at 37C 5% CO2<br>Mix 200ng of the assembled plasmid with 25�l Optimem in an 1.5ml tube<br>Mix 0.5�l GeneJuice with 25�l Optimem, incubate for 5 minutes at room temperature<br>Combine both solutions and mix, incubate for 20 minutes at room temperature<br>Add dropwise to a single 96-well of cells<br>Incubate cells for 2 days at 37C 5% CO2</div>
+                        <div id="cellcloning">
+                            <br>
+                            <u>1.4.2 Single cell cloning:</u>
+                            <br>Remove the medium, add 30�l 0.05% Trypsin solution to the well, incubate for 5 minutes at 37C
+                            <br>Add 200�l medium and resuspend
+                            <br>Count a fraction of the cells
+                            <br>Plate cells at a density of 0.5 cells per well into 10 96-well plates
+                            <br>Grow clones for 1-3 weeks until they on average cover a quarter of the well
+                            <br>
+                            <br><u>1.4.3 Clone picking and duplication:</u>
+                            <br>Trypsinize 96 wells with a growing clone in them
+                            <br>Resuspend clones in 200�l medium and transfer to a new 96-well plate
+                            <br>When the plate is full, transfer 100�l from each well to a second 96-well plate
+                            <br>Incubate cells for 2 days at 37C
+                        </div>
+                    </div>
+                </div>
+
+                <br>
+                <div class="expandable">
+                    <b>1.5 Perform Deep Sequencing</b> (<a href="javascript:DownloadProtocol(&#39;deepsequencing&#39;,&#39;Deep Sequencing Protocol.htm&#39;);">download protocol</a>)
+                    <button class="expand" onclick="ToggleDivDisplay(&#39;deepsequencing&#39;);">... </button>
+                    <div id="deepsequencing" style="display:none;">
+                        <br><u>1.5.1 Lysis of the cells:</u>
+                        <br>Prepare a stock of a 1x direct lysis buffer (1 mM CaCl2, 3 mM MgCl2, 1 mM EDTA, 1% Triton X-100, 10 mM Tris pH 7.5)
+                        <br>Add 0.2 mg/ml Proteinase K to an aliquot of the lysis buffer
+                        <br>Remove the medium from one copy of the cell clones
+                        <br>Add 30�l lysis buffer and resuspend, transfer to a 96-well PCR plate
+                        <br>Incubate for 10min at 65C and for 15min at 95C, then store on ice
+                        <br>
+                        <br>
+                        <div id="firstPCR"><u>1.5.2 First PCR</u><br>Prepare a 120x PCR mastermix containing:<br>- 300�l Phusion HF buffer<br>- 30�l dNTP mix 10mM<br>- 7.5�l fwd primer 100�M<br>- 7.5�l rev primer 100�M<br>- 15�l Phusion polymerase<br>- 900�l water<br>In a 96-well PCR plate, mix 2�l lysate with 10.5�l mastermix<br>Run with the protocol: 2min 98C, 19x(20sec 98C, 20sec 60C, 30sec 72C), 2min 72C</div>
+                        <br><u>1.5.3 Preparation of barcode primer plate:</u>
+                        <br>Pipet 2.5�l of each of the primers D501-D508 into all wells of rows A-H, respectively, of a round-well 96-well plate
+                        <br>Pipet 2.5�l of each of the primers D701-D712 into all wells of column 1-12, respectively, of the plate
+                        <br>Add 95�l water to each well of the plate and resuspend
+                        <br>
+                        <br><u>1.5.4 Second PCR</u>
+                        <br>Prepare a 120x PCR mastermix containing:
+                        <br>- 300�l Phusion HF buffer
+                        <br>- 30�l dNTP mix 10mM
+                        <br>- 15�l Phusion polymerase
+                        <br>- 615�l water
+                        <br>In a 96-well PCR plate, mix 2�l first PCR,  2.5�l barcode primer mix, and 8�l mastermix. Avoid contaminating the barcode plate.
+                        <br>Run with the protocol: 2min 98C, 19x(20sec 98C, 20sec 60C, 30sec 72C), 2min 72C
+                        <br>
+                        <br><u>1.5.5 Prepare DNA for a MiSeq run:</u>
+                        <br>Mix all PCR products in a single tube
+                        <br>Run PCR products on a 1% agarose gel, cut the 400-500bp band, purify it using a column purification kit, and elute in 200�l water
+                        <br>Precipitate by adding 1�l glycogen, 20�l 3M NaOAc pH 5.2, 220�l isopropanol, incubate for 20minutes on ice
+                        <br>Spin for 15 minutes at 4C, remove supernatant, wash with 70% ethanol, spin for 5 minutes, remove most liquid
+                        <br>Pulse spin, remove remaining liquid, dry pellet until it gets transparent
+                        <br>Resuspend in 35�l water for 5min at 37C, spin 3min full speed, carefully transfer 25�l from the top to a fresh tube
+                        <br>Measure the concentration twice using a NanoDrop spectrometer
+                        <br>
+                        <br><u>1.5.6 Start a MiSeq run</u>
+                        <br>Thaw a MiSeq 300 cycles v2 cassette in a waterbath for 1h
+                        <br>Rename <a target="_blank" href="http://www.outknocker.org/SampleSheet.csv" onclick="PreventDivToggle(event);">this samplesheet</a> to the name of the cassette (typically MS...-300V2) and copy it to the folder D:\Illumina\...
+                        <br>Mix appropriate amounts of all DNA samples to be sequenced into 350�l of Illumina hyb buffer. 32ng of DNA roughly give rise to 1 mio reads. For genotyping 96 clones, anything above 200,000 reads would be sufficient.
+                        <br>Mix 10�l of DNA dilution with 10�l 0.2N NaOH, incubate for 5 minutes at room temperature, then add 980�l hyb buffer and store on ice
+                        <br>Mix 180�l of denatured DNA with 420�l of hyb buffer in a fresh tube and transfer completely to the sample well of the reagent cassette. Store cassette on ice.
+                        <br>Clean flow cell with water and ethanol and insert into the MiSeq. Insert cassette and buffer flask, empty the waste container and start the standard sequencing program.
+                        <br>
+                        <br><u>1.5.7 Retrieve and analyze the data:</u>
+                        <br>When the run is finished after about 22h, follow the wash instructions on the MiSeq screen
+                        <br>Copy the 384 zipped FASTQ files from the folder D:\Illumina\Miseq output\-your-run-\data\intensities\basecalling to a USB drive
+                        <br>Copy the files to your computer and unzip them (double-click on a mac), then delete the zipped files
+                        <br>Click ANALYZE DATA below to analyze sequencing data and follow the instructions
+                    </div>
+                </div>
+                <br>
+                <button onclick="TabClicked(1);">ANALYZE DATA (proceede to step 2)</button>
+                <br><br>
+            </div>
+
+            <div id="setup" style="position: absolute; margin: auto; left: 0px; right: 0px; top: 60px; width: 950px; background-color: rgba(255, 255, 255, 0.2); padding: 20px; display: none;">
+                <br><b>2. Analyze Sequencing Data:</b>
+                <br>
+                <br>
+                <div onclick="" style="background-color: rgba(255, 255, 255, 0.2); padding: 20px;">
+                    <b></b>
+                    <div id="essentialparameters">
+
+                        Nuclease Target Site (for double-nickases and TALENs both targetsites must be spanned):
+                        <br><input type="text" size="40" name="targetsite3" id="targetsite3" value="CCACGGAAATATCCACTGTTTTC" oninput="document.getElementById(&#39;targetsite2&#39;).value=this.value;UpdateLICOligo();">
+                        <br>
+                        <br>
+                        <button id="loadfiles" onclick="document.getElementById(&#39;files&#39;).click();">Select FASTQ files</button>
+                        <button onclick="help(&#39;Here, up to 96 FASTQ output files of a MiSeq (TM) run can be selected. Given the fact that the output will be sorted according to the file list uploaded, make sure that the correct ordering is applied in the file browser. The file allocation to individual pie charts can be verified by the numbers given below the output pie charts.&#39;)">?</button> (<a href="http://www.outknocker.org/3_Hornung_testseq.fastq">example file</a>)<br><input style="display:none" type="file" id="files" name="files[]" multiple="">
+                        <br>Filename order:
+                        <br>
+                        <div id="fileorder_div" style="width: 410px;">
+                            <textarea id="fileorder_numbers" rows="10" style="width:40px; overflow-y:hidden; padding-right:0px;" readonly="">A1</textarea>
+                            <textarea id="fileorder" rows="10" style="width:360px; margin-left:-4px;" onclick="PreventDivToggle(event);" onscroll="UpdateFileOrderNumbers();" oninput="UpdateFileOrderNumbers();"></textarea>
+                        </div>
+                        <br>
+                        <br>Targeting mutagenesis oligonucleotide (optional): <button onclick="help(&#39;If a donor oligonucleotide was used to introduce a site specific genomic alteration (e.g. a single nucleotide base exchange), the respective sequence should be entered here. Please note that the sequence entered must be in the same orientation as the amplicon sequence. For optimal results, the sequence entered should not exceed 30 bases. If the oligonucleotide used is longer, it is recommended to use only the 30 bases surrounding the desired mutation. To highlight the specific genomic alteration in the alignment view, the respective region can be marked with square brackets.&#39;)">?</button><br><input type="text" style="width: 400px;" id="targetingoligo" name="TargetingOligo" value="" onclick="PreventDivToggle(event);"><br>
+                    </div>
+                </div>
+                <br>
+                <div class="expandable">
+                    <b>Advanced settings</b>
+                    <button class="expand" onclick="ToggleDivDisplay(&#39;optionalparameters&#39;);">... </button>
+                    <div id="optionalparameters" style="display:none;">
+                        <br>Reference Sequence (optional): <button onclick="help(&#39;The PCR amplicon sequence can be entered here. The sequence must start at the first locus-specific base of the forward primer (same direction as the sequencing primer). The PCR amplicon length should be in the range of 200-300 bases with the nuclease target site located roughly in the middle.&#39;)">?</button><br><input type="text" style="width: 400px;" id="locus" name="Locus" value=""><br>
+
+
+                        <br>Phred Score Threshold: <button onclick="help(&#39;A Phred Score Threshold is used to specifically consider the read quality of the two bases surrounding the indel position (one base preceding, one base following the indel position). We recommend a default Phred Score Threshold of 27, yet depending on the sequencing quality adjustments should be considered.&#39;)">?</button><br><input type="text" style="width: 400px;" id="phredthreshold" name="PhredThreshold" value="27" onclick="PreventDivToggle(event);"><br>
+
+                    </div>
+                </div>
+
+                <br>
+                <button onclick="Start();">START ANALYSIS (proceede to step 3)</button> (<a href="http://www.outknocker.org/example.htm">Example result</a>)
+                <br><br>
+                <output id="list"></output>
+                <br>
+            </div>
+
+            <div id="about" style="position: absolute; margin: auto; left:0; right:0; top:60px; width:950px; background-color: rgba(255, 255, 255, 0.2); padding: 20px; display:none">
+                <br>
+                <b>About OutKnocker.org:</b>
+                <br><br>
+                <br>OutKnocker 1.0 is a javascript-based program that was developed for rapid deep sequencing based genotyping of nuclease edited cell clones. OutKnocker was developed by J. Schmid-Burgk and T. Schmidt and coded by J. Schmid-Burgk in the group of Veit Hornung at Institute of Molecular Medicine, University Hospital, University of Bonn.
+                <br>
+                <br>OutKnocker 2.0 is developed by J. Schmid-Burgk in the group of Feng Zhang at Broad Institute of MIT and Harvard.
+                <br>
+                <br>The following example FASTQ file can be downloaded by right klicking: <a href="http://www.outknocker.org/3_Hornung_testseq.fastq">example file</a>. In this example, the human BIRC3 gene was targeted by CRISPR/Cas9 genome editing. The corresponding amplicon and target site sequences are entered above per default.
+                <br>
+                <br>
+                <br><b>Contact:</b>
+                <br>
+                <br>Veit Hornung
+                <br>Institute of Molecular Medicine
+                <br>University Hospital Bonn
+                <br>Sigmund-Freud-Str. 25
+                <br>53127 Bonn, Germany
+                <br>veit.hornung@uni-bonn.de
+                <br>
+                <br>
+                <br><b>Compatibility:</b>
+                <br>
+                <br>OutKnocker was successfully tested on:
+                <br><li>Mozilla Firefox version 47.0
+                <br></li><li>Google Chrome version 35.0
+                <br></li><li>Opera version 20.0
+                <br>
+                <br>
+                <br><b>Licence:</b>
+                <br>
+                <br>OutKnocker 1.0 can be redistributed and/or modified under the terms of the GNU General Public License (Version 2), as published by the Free Software Foundation. A copy of the license can be found online at www.gnu.org/licenses. OutKnocker is distributed in the hope that it will be useful, but without any warranty; without even the implied warranty of merchantability or fitness for a particular purpose. See the GNU General Public License for more details.
+                <br>
+                <br>
+                <br><b>Citing OutKnocker:</b>
+                <br>
+                <br>We kindly request that use of this software be cited in publications as:
+                <br>Jonathan L. Schmid-Burgk, Tobias Schmidt, Moritz M. Gaidt, Karin Pelka, Eicke Latz, Thomas S. Ebert, and Veit Hornung. Genome Research 2014
+                <br>
+                <br>
+                <br><b>Version history:</b>
+                <br>
+                <br>Outknocker V1.31 (07/2016)
+                <br>- Sequence logo is shown also for failed alignment reads
+                <br>
+                <br>Outknocker V1.3 (06/2016)
+                <br>- Navigation menu
+                <br>- A mutation statistics table can be generated allowing to assess polyclonal genome editing
+                <br>- Print / save as PDF
+                <br>- Small pie charts are clickable
+                <br>
+                <br>Outknocker V1.2 (06/2015)
+                <br>- Memory use is fixed to roughly 200 MB, sequence alignment visualization is always enabled
+                <br>- Mutation threshold for pie charts is fixed to 0.1% for better visualization of sequencing quality
+                <br>
+                <br>Outknocker V1.1 (05/2015)
+                <br>- Large files &gt;1 GB can be analyzed
+                <br>- Pie charts and alignments can be saved as SVG images
+                <br>- Minor bases are included in the alignment sequence logo
+                <br>- Small letters are allowed in the reference sequence and target site. Antisense target site sequences are allowed.
+                <br>
+                <br>Outknocker V1.0 (07/2014)
+                <br>- Public release of OutKnocker.org
+                <br>
+                <br>
+                <br><b>Privacy Policy:</b>
+                <br>
+                <br>
+
+The following data protection declaration applies to the use of our online offer OutKnocker.org (hereinafter "Website").
+
+We attach great importance to data protection. Your personal data is collected and processed in compliance with the applicable data protection regulations, in particular the General Data Protection Regulation (GDPR). We collect and process your personal data in order to be able to offer you the above-mentioned portal. This statement describes how and for what purpose your data is collected and used and what options you have in connection with personal data.
+
+By using this website, you consent to the collection, use and transfer of your information in accordance with this Privacy Policy.
+
+1 Responsibility
+
+Responsible for the collection, processing and use of your personal data within the meaning of Art. 4 No. 7 DSGVO is
+
+Jonathan Schmid-Burgk,
+Goebenstr. 28,
+53113 Bonn, Germany, jonathan@synleor.com
+
+If you wish to object to the collection, processing or use of your data by us in accordance with these data protection regulations as a whole or for individual measures, you can address your objection to the entity responsible.
+
+You can save and print this data protection declaration at any time.
+
+2 General website usage
+
+2.1 Hosting
+
+The hosting services we use serve to provide the following services: Infrastructure and platform services, computing capacity, storage and database services, security services and technical maintenance services that we use to operate the Site.
+
+We or our hosting provider process inventory data, content data, usage data, meta- and communication data of customers, interested parties and visitors of this online offer on the basis of our legitimate interests in an efficient and secure provision of this online offer according to Art. 6 Para. 1 S. 1 f) DSGVO in connection with Art. 28 DSBER.
+
+2.2 Access data
+
+We collect information about you when you use this website. We automatically collect information about your usage behavior and interaction with us and record data about your computer or mobile device. We collect, store and use data about every access to our online offer (so-called server log files). Access data includes, inter alia:
+
+    Name and URL of the retrieved file
+    Date and time of retrieval
+    transferred data volume
+    Message about successful retrieval (HTTP response code)
+    Browser type and browser version
+    operating system
+    Referer URL (i.e. the previously visited page)
+    Websites accessed by the user's system through our website
+    Internet service provider of the user
+    IP address and the requesting provider
+
+We use this log data without allocation to your person or other profiling for statistical evaluations for the purpose of operation, security and optimisation of our online offer, but also for anonymous recording of the number of visitors to our website (traffic) and the extent and type of use of our website and services. Based on this information, we can analyze traffic, troubleshoot and correct errors, and improve our services.
+
+This is also our legitimate interest pursuant to Art 6 para. 1 sentence 1 f) DSGVO.
+
+We reserve the right to check the log data subsequently if there is a justified suspicion of illegal use based on concrete evidence. We store IP addresses in the log files for a limited period of time if this is necessary for security purposes. We will delete the IP address if it is no longer required for security purposes. We also store IP addresses if we have a concrete suspicion of a criminal offence in connection with the use of our website.
+
+2.3 Cookies
+
+We do not use so-called session cookies or other cookies.
+
+2.4 Email-contact
+
+If you contact us (e.g. via contact form or e-mail), we store your details for processing the enquiry and in the event that follow-up questions arise.
+
+This is also our legitimate interest pursuant to Art 6 para. 1 sentence 1 f) DSGVO.
+
+We only store and use further personal data if you give your consent or if this is legally permissible without special consent.
+
+2.5 Storage time
+
+Unless specifically stated, we only store personal data for as long as is necessary to fulfil the purposes pursued.
+
+3 Rights of the data subject
+
+According to the applicable laws, you have various rights regarding your personal data. If you wish to assert these rights, please send your request by e-mail or by post to the address specified in section 1, clearly identifying yourself.
+
+Below you will find an overview of your rights.
+
+3.1 Right to confirmation and information
+
+You have the right to receive confirmation from us at any time as to whether personal data relating to you will be processed. If this is the case, you have the right to request from us free of charge information about the personal data stored about you together with a copy of this data. Furthermore, there is a right to the following information:
+
+    processing purposes;
+    the categories of personal data being processed;
+    the recipients or categories of recipients to whom the personal data have been or are still being disclosed, in particular recipients in third countries or international organizations;
+    if possible, the planned duration for which the personal data will be stored or, if this is not possible, the criteria for determining this duration;
+    the existence of a right to have your personal data concerning you corrected or deleted or to have the data controller restrict or object to such processing;
+    the existence of a right of appeal to a supervisory authority;
+    if the personal data is not collected from you, all available information about the origin of the data;
+    the existence of automated decision-making, including profiling in accordance with Article 22(1) and (4) DSGVO and - at least in these cases - meaningful information on the logic involved and the scope and intended effects of such processing for you.
+
+If personal data are transferred to a third country or an international organization, you have the right to be informed of the appropriate guarantees in accordance with Art. 46 DSGVO in connection with the transfer.
+
+3.2 Right to rectification
+
+You have the right to request us to correct any inaccurate personal data concerning you without delay. Taking into account the purposes of the processing, you have the right to request the completion of incomplete personal data, also by means of a supplementary declaration.
+
+3.3 Right to erasure ("right to be forgotten ")
+
+Pursuant to Art. 17 para. 1 DSGVO, you have the right to demand that we delete personal data concerning you without delay, and we are obliged to delete personal data without delay if one of the following reasons applies:
+
+    personal data are no longer necessary for the purposes for which they were collected or otherwise processed.
+    you withdraw your consent, on which the processing was based pursuant to Art. 6 para. 1 sentence 1 a) DSGVO or Art. 9 para. 2 a) DSGVO, and there is no other legal basis for the processing.
+    you file an objection to the processing pursuant to Art. 21 para. 1 DSGVO and there are no overriding legitimate grounds for the processing, or you file an objection to the processing pursuant to Art. 21 para. 2 DSGVO.
+    The personal data have been processed unlawfully.
+    the deletion of personal data is necessary to fulfil a legal obligation under Union law or the law of the Member States to which we are subject.
+    The personal data was collected in relation to information society services offered in accordance with Art. 8 para. 1 DSGVO.
+
+If we have made the personal data public and we are obliged to delete them pursuant to Art. 17 para. 1 DSGVO, we will take appropriate measures, including technical measures, taking into account the available technology and implementation costs, to inform those responsible for data processing who process the personal data that you have requested them to delete all links to this personal data or copies or replications of this personal data.
+
+3.4 Right to restriction of processing
+
+You have the right to request us to restrict processing if one of the following conditions is met:
+
+    you dispute the accuracy of your personal data for a period of time that enables us to verify the accuracy of your personal data,
+    the processing is unlawful and you have refused to delete the personal data and have instead requested the restriction of the use of the personal data;
+    we no longer need the personal data for the purposes of processing, but you do need the data to assert, exercise or defend legal claims, or
+    you have filed an objection against the processing pursuant to Art. 21 para. 1 DSGVO, as long as it is not yet clear whether the justified reasons of our company outweigh yours.
+
+3.5 Right to data portability
+
+You have the right to receive the personal data concerning you that you have provided to us in a structured, current and machine-readable format, and you have the right to transmit this data to another person in charge without our interference, provided that
+
+    processing is based on consent pursuant to Art. 6 para. 1 sentence 1 a) DSGVO or Art. 9 para. 2 a) DSGVO or on a contract pursuant to Art. 6 para. 1 sentence 1 b) DSGVO and
+    processing is carried out using automated methods
+
+When exercising your right to data transferability in accordance with paragraph 1, you have the right to request that the personal data be transferred directly by us to another person responsible, insofar as this is technically feasible
+
+3.6 Right to object
+
+You have the right to object at any time, for reasons arising from your particular situation, to the processing of personal data concerning you on the basis of Art. 6 para. 1 sentence 1 e) or f) DSGVO; this also applies to profiling based on these provisions. We no longer process personal data unless we can prove compelling grounds for processing that outweigh your interests, rights and freedoms, or the processing serves to assert, exercise or defend legal claims.
+
+If we process personal data for direct marketing purposes, you have the right to object at any time to the processing of personal data concerning you for the purpose of such advertising; this also applies to profiling, insofar as it is associated with such direct marketing.
+
+You have the right to object to the processing of personal data concerning you, for scientific or historical research purposes or for statistical purposes in accordance with Art. 89 para. 1 DSGVO, for reasons arising from your particular situation, unless the processing is necessary to fulfil a task in the public interest
+
+3.7 Automated individual decision-making, including profiling
+
+You have the right not to be subject to a decision based exclusively on automated processing - including profiling - that has legal effect against you or significantly impairs you in a similar manner.
+
+Automated decision-making based on the personal data collected does not take place.
+
+3.8 Right to revoke consent under data protection law
+
+You have the right to revoke your consent to the processing of personal data at any time.
+
+3.9 Right of appeal to a supervisory authority
+
+You have the right of appeal to a supervisory authority, in particular in the Member State where you are staying, working or suspected of having infringed the law, if you believe that the processing of personal data concerning you is unlawful
+
+4 Security of your personal data
+
+We make every effort to ensure the security of your data in accordance with the applicable data protection laws and technical possibilities.
+
+The servers we use are regularly and carefully secured
+
+5 Transfers of personal data to third countries or international organizations, no transfer to Non-EU-countries
+
+In principle, we only use your personal data within our company.
+
+In the event that we outsource certain parts of data processing ("server hosting"), we contractually oblige contractors to use personal data only in accordance with the requirements of data protection laws and to ensure the protection of the rights of the data subject.
+
+Data transmission to places or persons outside the EU outside the cases mentioned in paragraph 2 of this declaration does not take place and is not planned.
+
+6 Changes To This Privacy Policy
+
+We may update our Privacy Policy from time to time. We will notify you of any changes by posting the new Privacy Policy on this page.
+
+We will let you know via email and/or a prominent notice on our Service, prior to the change becoming effective and update the "effective date" at the top of this Privacy Policy.
+
+You are advised to review this Privacy Policy periodically for any changes. Changes to this Privacy Policy are effective when they are posted on this page.
+              <br><br>
+            </li></div>
+
+            <div id="results" style="position:absolute; left:20px; top:60px; right:20px; height:550px; background-color: rgba(255, 255, 255, 0.85); padding: 20px; display:none">
+                <div id="DIV_piecharts">
+
+                    <svg id="SVGkuchen" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="900" height="520">
+                    </svg>
+                </div>
+
+                <div style="position:absolute; right:20px; top:20px" id="restart" align="right">
+                    <button onclick="SaveProject();">SAVE PROJECT (.htm)</button>
+                    <br>
+                    <br><button onclick="SaveTable();">Save mutation statistics (.txt)</button>
+                    <br><button onclick="SaveAlleleTable();">Save allele list (.txt)</button>
+                    <br><button onclick="SaveCloneTable();">Save clone list (.txt)</button>
+                    <br><button onclick="SaveSVG();">Save pie charts (.svg)</button>
+                    <br><button onclick="PrintSVG();">Print pie charts (.pdf)</button>
+                    <br>
+                    <br><button onclick="location.reload();">Restart OutKnocker</button>
+                    <br>
+                </div>
+            </div>
+
+            <div id="results2" style="position: absolute; left: 20px; top: 670px; right: 20px; height: 550px; background-color: rgba(255, 255, 255, 0.85); padding: 20px; display: none;">
+                <br>
+                <div id="DIV_mutplot">
+                    <svg id="SVGmutplot" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="1300" height="520">
+                    </svg>
+                </div>
+
+                <div style="position:absolute; right:20px; top:20px" id="restart" align="right">
+                    <button onclick="SaveSVGmutplot();">Save mutation plot (.svg)</button>
+                    <br><button onclick="PrintSVGmutplot();">Print mutation plot (.pdf)</button>
+                    <br><button onclick="SavePositionalTable();">Save plot data (.txt)</button>
+                    <br>
+                </div>
+
+            </div>
+
+            <div id="results3" style="position: absolute; left: 20px; top: 1280px; right: 20px; background-color: rgba(255, 255, 255, 0.85); padding: 20px; display: none;">
+
+                <br>Allele Threshold [%]: <input type="text" style="width: 70px;" id="allelethreshold" name="MutationThreshold" value="2" onclick="PreventDivToggle(event);" oninput="CalcAlignment(CurrentAlignment);"> <button onclick="help(&#39;The Allele Threshold determines at what relative occurrence an individual indel mutation is considered as a unique allele of the respective clone analyzed, and is thus displayed in the alignment list. Low threshold values can result in false positive allele calling due to sequencing errors, whereas high threshold values result in false negative allele calling. Values in between 0 - 100 % can be entered (default is 2 %).&#39;)">?</button>
+                <br>
+                <div id="DIV_alignment">
+                    <svg id="SVGmut" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="1300" height="5000">
+                    </svg>
+                </div>
+
+                <div style="position:absolute; right:20px; top:20px" id="restart" align="right">
+                    <button onclick="SaveSVGAlignment();">Save alignment (.svg)</button>
+                    <br><button onclick="PrintSVGAlignment();">Print alignment (.pdf)</button>
+                    <br>
+                </div>
+
+            </div>
+
+
+            <div id="progress" style="display:none; padding: 10px; border: 10px solid #CCC; background: #EEE; width:20%; position:absolute; top:50%;left:40%">
+            </div>
+
+            <div id="help" class="helpbox" style="display:none;">
+                test
+            </div>
+
+            <div id="DIV_topmenu" style="position: absolute; margin: auto; left:0; right:0; top:0px; width:990px; height:50px; padding: 0px;">
+                <svg id="SVG_topmenu" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="100%" height="100%" onmousedown="return false;">
+                <rect fill="rgb(50,42,126)" x="0" y="20" width="240" height="20" opacity="0.9" onmouseover="evt.target.setAttribute(&#39;opacity&#39;,&#39;0.8&#39;);" onmouseout="evt.target.setAttribute(&#39;opacity&#39;,&#39;0.9&#39;);" onclick="TabClicked(0);"></rect><text font-family="sans-serif" font-weight="100" font-size="13" x="10" y="35" onclick="TabClicked(0);" pointer-events="none" style="fill: rgb(255, 255, 255);">1. Plan Genome Editing</text><rect fill="rgb(16,115,179)" x="250" y="20" width="240" height="20" opacity="0.9" onmouseover="evt.target.setAttribute(&#39;opacity&#39;,&#39;0.8&#39;);" onmouseout="evt.target.setAttribute(&#39;opacity&#39;,&#39;0.9&#39;);" onclick="TabClicked(1);"></rect><text font-family="sans-serif" font-weight="100" font-size="13" x="260" y="35" onclick="TabClicked(1);" pointer-events="none" style="fill: rgb(255, 255, 255);">2. Analyze Sequencing Data</text><rect fill="rgb(38,170,220)" x="500" y="20" width="240" height="20" opacity="0.9" onmouseover="evt.target.setAttribute(&#39;opacity&#39;,&#39;0.8&#39;);" onmouseout="evt.target.setAttribute(&#39;opacity&#39;,&#39;0.9&#39;);" onclick="TabClicked(2);"></rect><text font-family="sans-serif" font-weight="100" font-size="13" x="510" y="35" onclick="TabClicked(2);" pointer-events="none" style="fill: rgb(255, 255, 255);">3. Results</text><rect fill="rgb(50,42,126)" x="750" y="20" width="240" height="20" opacity="0.9" onmouseover="evt.target.setAttribute(&#39;opacity&#39;,&#39;0.8&#39;);" onmouseout="evt.target.setAttribute(&#39;opacity&#39;,&#39;0.9&#39;);" onclick="TabClicked(3);"></rect><text font-family="sans-serif" font-weight="100" font-size="13" x="760" y="35" onclick="TabClicked(3);" pointer-events="none" style="fill: rgb(255, 255, 255);">About OutKnocker.org / privacy</text></svg>
+            </div>
+
+        
+    
+
+    <script>
+
+
+        //NEW DATA MODEL:
+        //global data:
+        var locus, locuslen;
+        var RightBs="", RightBsAnti="", RightBsPos=0, RightBsLen=0;
+        var PhredThreshold = 33;
+        var TargetingOligo = "", TargetingOligoBracketFrom = -1, TargetingOligoBracketTo = -1;
+        //Sample Class:
+        var SampleClass = function()
+        {
+            this.filename = "";
+            this.plateposition = 0;
+            this.totalreads = 0; //total barcode reads, including unresolved, outside indels; NOT INCLUDING phred dropouts
+            this.delspan = new Uint32Array(250);
+            this.delstart = new Uint32Array(250);
+            this.delend = new Uint32Array(250);
+            this.inspos = new Uint32Array(250);
+            this.indellen = new Uint32Array(201);
+            this.delMH = new Uint32Array(20);
+
+            //10 alleles with logo:
+            this.numalleles = 0;
+            this.allelepos = new Uint8Array(10);
+            this.allelelen = new Uint8Array(10);
+            this.allelereads = new Uint32Array(10);
+            this.allelelogo = new Uint8Array(10*250*4); // (could be scaled down to max of 16 reads?) (always includes wt?) BIGGEST = 1MB
+
+            //100 events for pie chart:
+            this.numevents = 0;
+            this.eventpos = new Uint8Array(100);
+            this.eventlen = new Uint8Array(100);
+            this.eventreads = new Uint32Array(100);
+            this.unresolved = 0;
+            this.phreddropout = 0;
+            this.restinframe = 0;
+            this.restoutofframe = 0;
+
+            //stats for mut table:
+            this.wt = 0; //wild type reads
+            this.ins = 0; //total insertion reads
+            this.del = 0; //total deletion reads
+            this.tsindel = 0; //indel reads touching targetsite
+            this.outsideindel = 0; //indel reads not touching targetsite
+            this.frameshift = 0; //frameshift reads touching targetsite
+            this.targeted = 0; //targeted mutagenesis reads
+
+            //zero arrays:
+            for (var i=0; i<250; i++)
+            {
+                this.delspan[i] = 0;
+                this.delstart[i] = 0;
+                this.delend[i] = 0;
+                this.inspos[i] = 0;
+            }
+            for (var i=0; i<201; i++)
+            {
+                this.indellen[i] = 0;
+            }
+            for (var i=0; i<20; i++)
+            {
+                this.delMH[i] = 0;
+            }
+        }
+        var Sample = new Array(96*4); //this is the array of samples
+        var SampleMarked = new Array(96*4);
+        var numsamples = 0;
+
+        //set listener to file changes, in order to update the file order table:
+        document.getElementById("files").addEventListener('change', UpdateFileList, false);
+
+        //Top Menu:
+        var SVGtab = new Array(10), SVGtabtext = new Array(10);
+        var tabtextcontent = ["1. Plan Genome Editing","2. Analyze Sequencing Data","3. Results","About OutKnocker.org / privacy"];
+        var BLAU=["rgb(50,42,126)","rgb(16,115,179)","rgb(38,170,220)"];
+        function GenerateTopMenu()
+        {
+            var svg = document.getElementById("SVG_topmenu");
+            svg.setAttributeNS(null, "onmousedown", "return false;");
+            var NS="http://www.w3.org/2000/svg";
+
+            for (var i=0; i<4; i++)
+            {
+                SVGtab[i] = document.createElementNS(NS,"rect");
+                svg.appendChild(SVGtab[i]);
+                SVGtab[i].setAttribute("fill", BLAU[i%3]);
+                SVGtab[i].setAttribute("x", 0+i*250);
+                SVGtab[i].setAttribute("y",20);
+                SVGtab[i].setAttribute("width", 240);
+                SVGtab[i].setAttribute("height", 20);
+                SVGtab[i].setAttribute('opacity','0.9');
+                SVGtab[i].setAttributeNS(null, "onmouseover", "evt.target.setAttribute('opacity','0.8');");
+                SVGtab[i].setAttributeNS(null, "onmouseout",  "evt.target.setAttribute('opacity','0.9');");
+                SVGtab[i].setAttributeNS(null, "onclick","TabClicked("+i+");");
+
+                SVGtabtext[i] = document.createElementNS(NS,"text");
+                SVGtabtext[i].setAttribute("font-family", "sans-serif");
+                SVGtabtext[i].setAttribute("font-weight", "100");
+                SVGtabtext[i].setAttribute("font-size", "13");
+                SVGtabtext[i].setAttribute("x", 10+i*250);
+                SVGtabtext[i].setAttribute("y", 35);
+                SVGtabtext[i].style.fill="rgb(255,255,255)";
+                SVGtabtext[i].textContent = tabtextcontent[i];
+                SVGtabtext[i].setAttributeNS(null, "onclick","TabClicked("+i+");");
+                SVGtabtext[i].setAttribute("pointer-events","none");
+                svg.appendChild(SVGtabtext[i]);
+            }
+        }
+        var currenttab = 0;
+        function TabClicked(i)
+        {
+            //check if all forms are complete:
+            if (i>0 && i<3)
+            {
+                if (document.getElementById("gene").value == "")
+                {
+                    help("no gene name entered");
+                    return;
+                }
+                if (document.getElementById("targetsite2").value == "")
+                {
+                    help("No target site was entered.");
+                    return;
+                }
+            }
+            if (i>1 && i<3)
+            {
+                if (numsamples == 0)
+                {
+                    help("No analysis was performed.");
+                    return;
+                }
+            }
+
+            if (i==0) document.getElementById("plan").style.display = "";
+            else document.getElementById("plan").style.display = "none";
+
+            if (i==1) document.getElementById("setup").style.display = "";
+            else document.getElementById("setup").style.display = "none";
+
+            if (i==2)
+            {
+                //if (numsamples == 0) window.location = "example.htm"; //load example data
+
+                document.getElementById("results").style.display = "";
+                document.getElementById("results2").style.display = "";
+                document.getElementById("results3").style.display = "";
+            }
+            else
+            {
+                document.getElementById("results").style.display = "none";
+                document.getElementById("results2").style.display = "none";
+                document.getElementById("results3").style.display = "none";
+            }
+
+            if (i==3) document.getElementById("about").style.display = "";
+            else document.getElementById("about").style.display = "none";
+
+            document.getElementById("help").style.display = "none";
+
+            //move tab connector:
+            //document.getElementById("tabconnector").style.left = (20+i*250)+"px";
+            document.getElementById("tabconnector").style.left = (-125+(i-1)*250)+"px";
+            document.getElementById("tabconnector").style.right = (125-(i-1)*250)+"px";
+
+            if (i==2) document.getElementById("tabconnector").style.backgroundColor = "rgba(255, 255, 255, 0.85)";
+            else document.getElementById("tabconnector").style.backgroundColor = "rgba(255, 255, 255, 0.2)";
+
+            currenttab = i;
+        }
+        GenerateTopMenu();
+        TabClicked(0);
+
+
+        var hits = Array(96);
+        for (var i=0; i<96; i++)
+        {
+            hits[i] = Array(250);
+            for (var ii=0; ii<250; ii++)
+            {
+                hits[i][ii] = Array(201);
+            }
+        }
+        /*var HitReads = Array(96);
+        for (var i=0; i<96; i++)
+        {
+            HitReads[i] = Array(250);
+            for (var ii=0; ii<250; ii++)
+            {
+                HitReads[i][ii] = Array(150);
+                for (var iii=0; iii<150; iii++) HitReads[i][ii][iii] = "";
+            }
+        }*/
+        var HitLogo = new Uint32Array(250*201*250*4);
+        var AmpLogo = new Uint32Array(400*4);
+        var AlignmentPrecalc = new Array(96);
+        var MutPlotPrecalc = new Array(96);
+        var GATC = "GATC";
+
+        var FailedAlignmentReads = new Array(96);
+
+        var ShiftUnresolved = Array(96);
+        var PhredUnresolved = Array(96);
+        for (var i=0; i<96; i++)
+        {
+            ShiftUnresolved[i] = 0;
+            PhredUnresolved[i] = 0;
+        }
+
+        var files;
+        var reader;
+        var CurrentFileId, CurrentFileChunk;
+        var GlobalReadNum=0, GlobalAlignedReadNum=0;
+        var leftbs;
+        function ReverseComplement(A)
+        {
+            var dummy = "";
+            for (var i=0; i<A.length; i++)
+            {
+                if (A[A.length-1-i] == 'G') dummy += 'C';
+                if (A[A.length-1-i] == 'A') dummy += 'T';
+                if (A[A.length-1-i] == 'T') dummy += 'A';
+                if (A[A.length-1-i] == 'C') dummy += 'G';
+            }
+            return dummy;
+        }
+
+        function Start()
+        {
+            //reset arrays:
+            for (var i=0; i<96; i++)
+            {
+                for (var ii=0; ii<250; ii++) for (var iii=0; iii<201; iii++) hits[i][ii][iii] = 0;
+                ShiftUnresolved[i] = 0;
+                PhredUnresolved[i] = 0;
+                FailedAlignmentReads[i] = "";
+            }
+
+            locus = document.getElementsByName("Locus")[0].value.toUpperCase();
+            locuslen = locus.length;
+            RightBs = document.getElementsByName("RightBS")[0].value.toUpperCase();
+            RightBsAnti = ReverseComplement(RightBs);
+            RightBsLen = RightBs.length;
+
+            //All error checks:
+            if (RightBsLen == 0)
+            {
+                help("No target site was entered.");
+                return;
+            }
+            if (!files || files.length <= 0)
+            {
+                help("No files were specified.");
+                return;
+            }
+
+            //if no locus was entered:
+            if (locus=="")
+            {
+                CurrentFileId = 0;
+                CurrentFileChunk = 0;
+                RestFromLastChunk = "";
+                ReadNextFileChunkFindAmplicon();
+            }
+            else StartAlignment();
+        }
+        function StartAlignment()
+        {
+            PhredThreshold = document.getElementsByName("PhredThreshold")[0].value*1 + 33;
+
+            //Find Target site in the wild type sequence:
+            RightBsPos = locus.search(RightBs);
+            if (RightBsPos == -1)
+            {
+                //alert(ReverseComplement(RightBs));
+                RightBsPos = locus.search(ReverseComplement(RightBs));
+                if (RightBsPos == -1)
+                {
+                    help("The target site was not found in the reference sequence.");
+                    return;
+                }
+            }
+
+            //Parse targeting oligo seq:
+            var TargetingOligoDummy = document.getElementsByName("TargetingOligo")[0].value.toUpperCase();
+            var TargetingOligoLen = 0;
+            TargetingOligo = "";
+            TargetingOligoBracketFrom = 0;
+            TargetingOligoBracketTo = -1;
+            for (var i=0; i<TargetingOligoDummy.length; i++)
+            {
+                if (TargetingOligoDummy[i] == "[") TargetingOligoBracketFrom = TargetingOligoLen; else
+                if (TargetingOligoDummy[i] == "]") TargetingOligoBracketTo   = TargetingOligoLen; else
+                {
+                    TargetingOligo += TargetingOligoDummy[i];
+                    TargetingOligoLen++;
+                }
+            }
+            //if (TargetingOligoBracketTo == -1) TargetingOligoBracketTo = TargetingOligoLen;
+
+            CurrentFileId = 0;
+            CurrentFileChunk = 0;
+            RestFromLastChunk = "";
+            ReadNextFileChunk();
+        }
+
+        //Functions for finding the amplicon:
+        function ReadNextFileChunkFindAmplicon()
+        {
+            reader = new FileReader();
+            reader.onload = FileReceivedFindAmplicon;
+            reader.readAsText(files[CurrentFileId].slice(CurrentFileChunk*chunksize, (CurrentFileChunk+1)*chunksize));
+
+            //progress display:
+            help("File "+(CurrentFileId+1)+": "+Math.round(CurrentFileChunk*chunksize/1000000)+" MB processed (Finding Amplicon).");
+        }
+        function FileReceivedFindAmplicon() //this function is called for every chunk of sequencing data. here the amplicon sequence is searched
+        {
+            var original = RestFromLastChunk+reader.result;
+            var cursor = 0, origlen = original.length;
+
+            //Empty logo array:
+            if (CurrentFileChunk == 0 && CurrentFileId == 0) for (var i=0; i<400*4; i++) AmpLogo[i] = 0;
+
+            var id = CurrentFileId;
+            var readnum = 0;
+            while (true)
+            {
+                var cursor1 = cursor;
+                while (++cursor1<origlen && original[cursor1] != "\n");
+                var cursor2 = cursor1+1;
+                while (++cursor2<origlen && original[cursor2] != "\n");
+                var cursor3 = cursor2+1;
+                while (++cursor3<origlen && original[cursor3] != "\n");
+                var cursor4 = cursor3+1;
+                while (++cursor4<origlen && original[cursor4] != "\n");
+
+                if (cursor4 >= origlen) break;
+                else cursor = cursor4+1;
+
+                var read = original.slice(cursor1+1,cursor2);
+                var readlen = read.length;
+
+                //check if target site is present in the read:
+                var tspos = read.search(RightBs);
+                if (tspos == -1) tspos = read.search(RightBsAnti);
+                if (tspos != -1)
+                {
+                    //locus = read;
+                    //alert(tspos);
+                    RegisterAmpLogo(read);
+                }
+
+                readnum++;
+            }
+
+            RestFromLastChunk = original.substr(cursor);
+
+            reader.result = "";
+            reader = "";
+
+            //load the next chunk of data:
+            CurrentFileChunk++;
+            if ((CurrentFileChunk)*chunksize >= files[CurrentFileId].size) //end of file -> next file
+            {
+                CurrentFileChunk = 0;
+                RestFromLastChunk = "";
+                CurrentFileId++;
+            }
+            if (CurrentFileId < files.length && CurrentFileId<96)
+            {
+                setTimeout("ReadNextFileChunkFindAmplicon();",10);
+            }
+            else //Amplicon finding done:
+            {
+                locus = "";
+                for (var pos=0; pos<400; pos++)
+                {
+                    var max = 0, maxbase="";
+                    for (var base=0; base<4; base++) if (AmpLogo[4*pos+base] > max)
+                    {
+                        max = AmpLogo[4*pos+base];
+                        maxbase = GATC[base];
+                    };
+                    locus += maxbase;
+                }
+
+                if (locus=="") help("No wild type reads found in sequencing data");
+                else
+                {
+                    document.getElementsByName("Locus")[0].value = locus;
+                    locuslen = locus.length;
+                    StartAlignment(); //do the real alignment
+                }
+            }
+        }
+
+        //Functions for processing files during actual alignment:
+        var RestFromLastChunk = "";
+        var chunksize = 1024*1024;
+        function ReadNextFileChunk()
+        {
+            reader = new FileReader();
+            reader.onload = FileReceived;
+            reader.readAsText(files[CurrentFileId].slice(CurrentFileChunk*chunksize, (CurrentFileChunk+1)*chunksize));
+
+            //progress display:
+            //document.getElementById('progress').innerHTML = "File "+(CurrentFileId+1)+": "+Math.round(CurrentFileChunk*chunksize/1000000)+" MB processed.";
+            help("File "+(CurrentFileId+1)+": "+Math.round(CurrentFileChunk*chunksize/1000000)+" MB processed.");
+        }
+        function FileReceived() //this function is called for every chunk of sequencing data. here the actual alignment happens.
+        {
+            var original = RestFromLastChunk+reader.result;
+            var cursor = 0, origlen = original.length;
+
+            //Empty logo array:
+            if (CurrentFileChunk == 0)
+            {
+                for (var i=0; i<250*201*250*4; i++) HitLogo[i] = 0;
+            }
+
+            var id = CurrentFileId;
+
+            var readnum = 0;
+            while (true) //(readnum*4+3 < lines.length-1) //(lines[readnum*4+3])
+            {
+                var cursor1 = cursor;
+                while (++cursor1<origlen && original[cursor1] != "\n");
+                var cursor2 = cursor1+1;
+                while (++cursor2<origlen && original[cursor2] != "\n");
+                var cursor3 = cursor2+1;
+                while (++cursor3<origlen && original[cursor3] != "\n");
+                var cursor4 = cursor3+1;
+                while (++cursor4<origlen && original[cursor4] != "\n");
+                //alert(cursor+" "+cursor1+" "+cursor2+" "+cursor3+" "+cursor4);
+
+                if (cursor4 >= origlen) break;
+                else cursor = cursor4+1;
+
+                var read = original.slice(cursor1+1,cursor2); //lines[readnum*4+1];
+                var phred = original.slice(cursor3+1,cursor4); //lines[readnum*4+3];
+                var readlen = read.length;
+                //alert(CurrentFileChunk+" "+read+" "+read[0]);
+
+
+                //Is this the locus?
+                var unequalsum = 0;
+                for (var pos=0; pos<50; pos++)
+                {
+                    if (read[pos] != locus[pos]) unequalsum++;
+                    if (read[pos] != locus[pos] && pos < 5) {unequalsum=12; break;}
+                    if (unequalsum >= 12) break;
+                }
+
+                GlobalReadNum++;
+                if (unequalsum < 12) //75%
+                {
+                    GlobalAlignedReadNum++;
+
+                    var shiftfound = 0;
+
+                    var targetingoligopos = 10000;
+                    if (TargetingOligo != "") //First, try to match the targeting oligo
+                    {
+                        var TargetingOligoLen = TargetingOligo.length;
+                        for (var pos=0; pos < readlen-TargetingOligoLen; pos++) if (read.substr(pos, TargetingOligoLen) == TargetingOligo)
+                        {
+                            shiftfound = 2;
+                            targetingoligopos = pos;
+                            break;
+                        }
+                    }
+
+                    //pre-calc end to speed up:
+                    var end=readlen-30;
+                    if (end>locuslen-30) end=locuslen-30;
+                    if (end>250) end=250;
+                    if (end>RightBsPos+RightBsLen+20) end=RightBsPos+RightBsLen; //go 20 bases beyond the targetsite
+                    if (end>targetingoligopos) end=targetingoligopos;
+                    //go through the read bases:
+                    for (var pos=0; pos<end; pos++) if (read[pos] != locus[pos]) //mismatch
+                    {
+                        var wrongsum = 0;
+                        for (var i=pos; i<pos+10; i++) if (read[i] != locus[i]) wrongsum++;
+                        if (wrongsum >= 4)
+                        {
+                            //find shift:
+                            var bestshift = -1000;
+                            //var bestequal = 15; //75%
+                            var bestwrong = 5; //25%
+
+                            //deletion search:
+                            var end2 = locuslen-(pos+30);
+                            if (end2>100) end2 = 100;
+							for (var shift=0/*-(pos+10)*/; shift<end2; shift++) //scan complete locus
+                            {
+                                var wrong = 0;
+                                for (var i=pos+10; i<pos+30 /*&& i<readlen && i+shift<locuslen*/ && wrong<bestwrong; i++) if (read[i] != locus[i+shift]) wrong++; //both inactive stop conditions are always false
+                                if (wrong < bestwrong)
+                                {
+                                    bestwrong = wrong;
+                                    bestshift = shift;
+                                    if (bestwrong == 0) break; //cant get better, save time
+                                }
+                            }
+
+                            //insertion search:
+                            end2 = readlen-(pos+30);
+                            if (end2>100) end2 = 100;
+                            for (var shift=0/*-(pos+10)*/; shift<end2; shift++) //scan complete read
+                            {
+                                var wrong = 0;
+                                for (var i=pos+10; i<pos+30 /*&& i+shift<readlen && i<locuslen*/ && wrong<bestwrong; i++) if (locus[i] != read[i+shift]) wrong++; //both inactive stop conditions are always false
+                                if (wrong < bestwrong)
+                                {
+                                    bestwrong = wrong;
+                                    bestshift = -shift;
+                                    if (bestwrong == 0) break; //cant get better, save time
+                                }
+                            }
+
+                            if (100+bestshift >= 0 && 100+bestshift < 201)
+                            {
+                                if (phred.charCodeAt(pos-1) >= PhredThreshold && phred.charCodeAt(pos) >= PhredThreshold) //phred score must be high here
+								{
+									//if (BasewiseAlignment && hits[id][pos][10+bestshift] < 50) HitReads[id][pos][10+bestshift] += ">" + hits[id][pos][10+bestshift] + "<br>" + read + "<br>";
+                                    RegisterLogo(read, pos, 100+bestshift);
+
+
+                                    hits[id][pos][100+bestshift]++;
+                                    firstmismatch = pos;
+                                }
+                                else PhredUnresolved[id]++;
+
+                                shiftfound = 1;
+                                break;
+                            }
+                            else //no alignment found, discard read
+							{
+								shiftfound = 1;
+                                RegisterLogo(read, 249, 100);
+                                ShiftUnresolved[id]++;
+                                if (FailedAlignmentReads[id].length < 2500) FailedAlignmentReads[id] += read+"\n"; //capture some failed alignment reads for manual analysis
+                                break;
+							}
+                        }
+                    }
+
+                    if (shiftfound == 0) //wt counter
+                    {
+                        RegisterLogo(read, 0, 100);
+                        hits[id][0][100]++;
+                    }
+                    if (shiftfound == 2) //targeting oligo counter
+                    {
+                        RegisterLogo(read, targetingoligopos, 199);
+                        hits[id][targetingoligopos][199]++;
+                    }
+                }
+
+                readnum++;
+            }
+            //alert(readnum+" "+GlobalReadNum+" "+GlobalAlignedReadNum);
+
+            RestFromLastChunk = original.substr(cursor);
+
+            //lines = "";
+            reader.result = "";
+            reader = "";
+
+            //load the next chunk of data:
+            CurrentFileChunk++;
+            if ((CurrentFileChunk)*chunksize >= files[CurrentFileId].size) //end of file -> next file
+            {
+                ConsolidateData(id, hits[id], files[id].name);
+
+                //CalcAlignment(hits[id], id, locus);
+                //CalcMutationPlot(hits[id], id, locus);
+
+                CurrentFileChunk = 0;
+                RestFromLastChunk = "";
+                CurrentFileId++;
+            }
+            if (CurrentFileId < files.length && CurrentFileId<96)
+            {
+                setTimeout("ReadNextFileChunk();",10);
+            }
+            else
+            {
+                DrawPieCharts();
+                PieClick();
+                window.scroll(0,0);
+            }
+        }
+        function ConsolidateData(id, hits, filename)
+        {
+            //if file order list exists: reorder
+            var filelist = document.getElementById("fileorder").value;
+            if (filelist.length>0)
+            {
+                filelist = filelist.split("\n");
+                id = -1;
+                for (var i=0; i<filelist.length; i++) if (filelist[i] == filename) id = i;
+                if (id == -1) return;
+            }
+
+            if (id >= numsamples) numsamples = id+1; //could be more elegant
+
+            //generate sample object:
+            Sample[id] = new SampleClass();
+
+            //get simple data:
+            Sample[id].filename = filename.split(".")[0]; //files[id].name
+            Sample[id].plateposition = id;
+            Sample[id].unresolved = ShiftUnresolved[id];
+            Sample[id].phreddropout = PhredUnresolved[id];
+
+            //calculate total reads:
+            Sample[id].totalreads = 0;
+            for (var i=0; i<250; i++) for (var ii=0; ii<201; ii++) Sample[id].totalreads += hits[i][ii];
+            Sample[id].totalreads += Sample[id].unresolved;
+            //Sample[id].totalreads += Sample[id].phreddropout;
+
+            //calculate delspan, delstart, delend, inspos, indellen, delmh arrays:
+            if (Sample[id].totalreads > 0)
+            {
+                for (var i=0; i<250; i++) for (var ii=101; ii<201; ii++) //go through deletions
+                {
+                    var h = hits[i][ii];
+
+                    if (h>0)
+                    {
+                        for(var iii=i; iii<i+(ii-100); iii++) Sample[id].delspan[iii] += h;
+                        Sample[id].delstart[i] += h;
+                        Sample[id].delend[i+ii-100] += h;
+
+                        //get mh len:
+                        var mhlen = 0;
+                        for (var mhpos=i-1; mhpos>=0; mhpos--)
+                        {
+                            if (locus[mhpos] == locus[mhpos+ii-100]) mhlen++;
+                            else break;
+                        }
+                        if (mhlen < 20) Sample[id].delMH[mhlen]+=h;
+                        Sample[id].del += h;
+                    }
+                }
+                for (var i=0; i<250; i++) for (var ii=0; ii<100; ii++)
+                {
+                    Sample[id].inspos[i] += hits[i][ii]; //go through insertions
+                    Sample[id].ins += hits[i][ii];
+                }
+                for (var i=0; i<250; i++) for (var ii=0; ii<201; ii++) if (i!=0 || ii!=100) Sample[id].indellen[200-ii] += hits[i][ii];
+            }
+
+            //Find 10 most prominent alleles:
+            var taken = new Array(250*201);
+            for (var i=0; i<250; i++) for (var ii=0; ii<201; ii++) taken[i+ii*250] = false;
+            for (var a=0; a<10; a++)
+            {
+                var max = -1, maxi, maxii;
+                for (var i=0; i<250; i++) for (var ii=0; ii<201; ii++) if ((max==-1 || hits[i][ii] > max) && (!taken[i+ii*250]))
+                {
+                    max = hits[i][ii];
+                    maxi = i;
+                    maxii = ii;
+                }
+                if (max > 0)
+                {
+                    Sample[id].allelepos[a] = maxi;
+                    Sample[id].allelelen[a] = maxii;
+                    Sample[id].allelereads[a] = hits[maxi][maxii];
+                    //copy the seq-logo data:
+                    for (var seqpos=0; seqpos<250; seqpos++) for (var base=0; base<4; base++)
+                    {
+                        var LogoIndex = maxi*201*250*4 + maxii*250*4 + seqpos*4 + base;
+                        var LogoIndex2 = a*250*4 + seqpos*4 + base;
+                        Sample[id].allelelogo[LogoIndex2] = Math.floor(HitLogo[LogoIndex]*255/Sample[id].allelereads[a]); //scale to 255 reads
+                    }
+                    Sample[id].numalleles++;
+                    taken[maxi+maxii*250] = true;
+                }
+            }
+
+            //Find 100 most prominent events, excluding wt:
+            for (var i=0; i<250; i++) for (var ii=0; ii<201; ii++) taken[i+ii*250] = false;
+            for (var a=0; a<100; a++)
+            {
+                var max = -1, maxi, maxii;
+                for (var i=0; i<250; i++) for (var ii=0; ii<201; ii++) if ((max==-1 || hits[i][ii] > max) && (!taken[i+ii*250]) && (i!=0 || ii!=100))
+                {
+                    max = hits[i][ii];
+                    maxi = i;
+                    maxii = ii;
+                }
+                if (max > 0)
+                {
+                    Sample[id].eventpos[a] = maxi;
+                    Sample[id].eventlen[a] = maxii;
+                    Sample[id].eventreads[a] = hits[maxi][maxii];
+                    Sample[id].numevents++;
+                    taken[maxi+maxii*250] = true;
+                }
+            }
+
+            //Get mutation statistics (out of frame etc):
+            Sample[id].wt = hits[0][100];
+            Sample[id].outsideindel = 0;
+            Sample[id].tsindel = 0; //indels touching targetsite
+            Sample[id].frameshift = 0; //frameshift indels touching targetsite
+            Sample[id].targeted = 0;
+            for (var i=0; i<250; i++) for (var ii=0; ii<201; ii++) if (i!=0 || ii!=100)
+            {
+                if (ii == 199) Sample[id].targeted += hits[i][ii];
+
+                //anymut += hits[i][ii];
+
+                //check if mutation touches the target site:
+                var ok = false;
+                if (i >= RightBsPos && i < RightBsPos+RightBsLen) ok = true;
+                if (i < RightBsPos && i+ii-100 >= RightBsPos+RightBsLen) ok = true;
+                for (var iii=i; iii<i+ii-100; iii++) if (iii >= RightBsPos && iii < RightBsPos+RightBsLen) ok = true;
+                if (ok)
+                {
+                    Sample[id].tsindel += hits[i][ii];
+
+                    var frameshift = (3000-(ii-100))%3;
+                    if (frameshift != 0) Sample[id].frameshift += hits[i][ii];
+                }
+                else Sample[id].outsideindel += hits[i][ii];
+            }
+
+        }
+
+        function RegisterLogo(read, pos, shift)
+        {
+            for (var seqpos=0; seqpos<250; seqpos++) for (var base=0; base<4; base++) if (read[seqpos] == GATC[base])
+            {
+                var LogoIndex = pos*201*250*4 + shift*250*4 + seqpos*4 + base;
+                HitLogo[LogoIndex]++;
+            }
+        }
+        function RegisterAmpLogo(read)
+        {
+            for (var seqpos=0; seqpos<read.length && seqpos<400; seqpos++) for (var base=0; base<4; base++) if (read[seqpos] == GATC[base])
+            {
+                var LogoIndex = seqpos*4 + base;
+                AmpLogo[LogoIndex]++;
+            }
+        }
+
+
+
+        var SVG_markingbox;
+        function DrawPieCharts()
+        {
+            var svg = document.getElementById("SVGkuchen");
+            var NS="http://www.w3.org/2000/svg";
+
+            TabClicked(2);
+
+            //reset svg:
+            while (svg.lastChild) svg.removeChild(svg.lastChild);
+
+            //register mouse listener:
+            svg.addEventListener("mousedown", PieClick, false);
+
+            var ROT= ["rgb(232,0,30)","rgb(255,102,0)","rgb(252,176,78)"]; //rgb(238,75,42)
+            var BLAU=["rgb(50,42,126)","rgb(16,115,179)","rgb(38,170,220)"];
+
+            var percent = Math.round(GlobalAlignedReadNum/GlobalReadNum*100);
+
+            var maxsum = 0;
+            for (var barcode=0; barcode<96; barcode++) if (Sample[barcode])
+            {
+                /*var sum = 0;
+                for (var i=0; i<250; i++) for (var ii=0; ii<201; ii++) sum += hits[barcode][i][ii];
+                sum += ShiftUnresolved[barcode];*/
+                var sum = Sample[barcode].totalreads;
+                if (sum > maxsum) maxsum = sum;
+            }
+            if (maxsum == 0)
+            {
+                help("No reads mapping to the reference sequence were found.");
+                return;
+            }
+
+            //marking box:
+            /*var SVGObj= document.createElementNS(NS,"path");
+            SVGObj.setAttributeNS(null, "d", "");
+            SVGObj.style.fill="rgb(230,230,230)";
+            SVGObj.setAttribute("pointer-events","none");
+            svg.appendChild(SVGObj);
+            SVG_markingbox = SVGObj;*/
+
+            for (var barcode=0; barcode<96; barcode++)
+            {
+                //marking box:
+                if (SampleMarked[barcode])
+                {
+                    var xx = barcode%12;
+                    var yy = Math.floor(barcode/12);
+                    var x1 = 25+50*(xx-0.52);
+                    var y1 = 25+65*(yy-0.4);
+                    var x2 = 25+50*(xx+0.52);
+                    var y2 = 25+65*(yy+0.7);
+
+                    var SVGObj= document.createElementNS(NS,"path");
+                    SVGObj.setAttributeNS(null, "d", "M"+x1+","+y1+" L"+x2+","+y1+" L"+x2+","+y2+" L"+x1+","+y2+" Z");
+                    SVGObj.style.fill="rgb(230,230,230)";
+                    SVGObj.setAttribute("pointer-events","none");
+                    svg.appendChild(SVGObj);
+                    //SVG_markingbox = SVGObj;
+                }
+
+                var sum = 0;
+                if (Sample[barcode]) sum = Sample[barcode].totalreads;
+                //var sum2 = 0;
+                //for (var i=0; i<250; i++) for (var ii=0; ii<201; ii++) if (hits[barcode][i][ii]*100/sum > /*MutationThreshold*/0.1 || (i==0 && ii==100)) sum2 += hits[barcode][i][ii];
+
+                //Include also unresolved and below threshold in total pie size:
+                var sum2 = sum;
+
+
+                var size = 24*Math.sqrt(sum2/maxsum);
+
+                var midx = (barcode%12)*50 + 25;
+                var midy = Math.floor(barcode/12) * 65 + 25;
+
+                if (sum2 > 0)
+                {
+                    //wt zeichnen:
+                    var winkel = -3.1415/2;
+                    var lastwinkel = winkel;
+                    winkel+=2*3.1415*0.995*Sample[barcode].wt/sum2;
+
+                    //SVG:
+                    var startx = size*Math.cos(lastwinkel);
+                    var starty = size*Math.sin(lastwinkel);
+                    var plusx = size*(Math.cos(winkel)-Math.cos(lastwinkel));
+                    var plusy = size*(Math.sin(winkel)-Math.sin(lastwinkel));
+                    var largearc = 0;
+                    if (winkel-lastwinkel > 3.1415) largearc = 1;
+                    var SVGObj= document.createElementNS(NS,"path");
+                    SVGObj.setAttributeNS(null, "d", "M "+midx+","+midy+" l "+startx+","+starty+" a "+size+" "+size+" 0 "+largearc+" 1 "+plusx+" "+plusy+" z");
+                    SVGObj.style.fill="rgb(200,200,200)";
+                    //SVGObj.setAttributeNS(null, "onclick","SelectClone("+barcode+");");
+                    SVGObj.setAttribute("pointer-events","none");
+                    svg.appendChild(SVGObj);
+
+                    var MutationNr=0, RestFrameshift=0, RestNoFrameshift=0;
+                    //for (var i=0; i<250; i++) for (var ii=0; ii<201; ii++) if (i!=0 || ii!=100)
+                    for (var e=0; e<Sample[barcode].numevents; e++)
+                    {
+                        var i = Sample[barcode].eventpos[e];
+                        var ii = Sample[barcode].eventlen[e];
+                        var h = Sample[barcode].eventreads[e];
+
+                        var frameshift = 1;
+                        if (((ii-100+3000)%3) == 0) frameshift = 0;
+
+                        if (h*100/sum > /*MutationThreshold*/0.1)
+                        {
+                            lastwinkel = winkel;
+                            winkel+=2*3.1415*0.995*h/sum2;
+
+                            //SVG:
+                            var startx = size*Math.cos(lastwinkel);
+                            var starty = size*Math.sin(lastwinkel);
+                            var plusx = size*(Math.cos(winkel)-Math.cos(lastwinkel));
+                            var plusy = size*(Math.sin(winkel)-Math.sin(lastwinkel));
+                            var largearc = 0;
+                            if (winkel-lastwinkel > 3.1415) largearc = 1;
+                            var SVGObj= document.createElementNS(NS,"path");
+                            SVGObj.setAttributeNS(null, "d", "M "+midx+","+midy+" l "+startx+","+starty+" a "+size+" "+size+" 0 "+largearc+" 1 "+plusx+" "+plusy+" z");
+                            if (frameshift) SVGObj.style.fill=ROT[MutationNr%3];
+                            else SVGObj.style.fill=BLAU[MutationNr%3];
+                            if (ii==199) SVGObj.style.fill="rgb(0,200,0)"; //targeted mutagenesis oligo
+                            //SVGObj.setAttributeNS(null, "onclick","SelectClone("+barcode+");");
+                            SVGObj.setAttribute("pointer-events","none");
+                            svg.appendChild(SVGObj);
+
+                            MutationNr++;
+                        }
+                        else if (frameshift) RestFrameshift += h;
+                        else if (!frameshift) RestNoFrameshift += h;
+                    }
+                }
+                //Draw rests:
+                if (RestFrameshift>0)
+                {
+                    lastwinkel = winkel;
+                    winkel+=2*3.1415*0.995*RestFrameshift/sum2;
+
+                    //SVG:
+                    var startx = size*Math.cos(lastwinkel);
+                    var starty = size*Math.sin(lastwinkel);
+                    var plusx = size*(Math.cos(winkel)-Math.cos(lastwinkel));
+                    var plusy = size*(Math.sin(winkel)-Math.sin(lastwinkel));
+                    var largearc = 0;
+                    if (winkel-lastwinkel > 3.1415) largearc = 1;
+                    var SVGObj= document.createElementNS(NS,"path");
+                    SVGObj.setAttributeNS(null, "d", "M "+midx+","+midy+" l "+startx+","+starty+" a "+size+" "+size+" 0 "+largearc+" 1 "+plusx+" "+plusy+" z");
+                    SVGObj.style.fill=ROT[MutationNr%3];
+                    SVGObj.setAttribute("pointer-events","none");
+                    svg.appendChild(SVGObj);
+
+                    MutationNr++;
+                }
+                if (RestNoFrameshift>0)
+                {
+                    lastwinkel = winkel;
+                    winkel+=2*3.1415*0.995*RestNoFrameshift/sum2;
+
+                    //SVG:
+                    var startx = size*Math.cos(lastwinkel);
+                    var starty = size*Math.sin(lastwinkel);
+                    var plusx = size*(Math.cos(winkel)-Math.cos(lastwinkel));
+                    var plusy = size*(Math.sin(winkel)-Math.sin(lastwinkel));
+                    var largearc = 0;
+                    if (winkel-lastwinkel > 3.1415) largearc = 1;
+                    var SVGObj= document.createElementNS(NS,"path");
+                    SVGObj.setAttributeNS(null, "d", "M "+midx+","+midy+" l "+startx+","+starty+" a "+size+" "+size+" 0 "+largearc+" 1 "+plusx+" "+plusy+" z");
+                    SVGObj.style.fill=BLAU[MutationNr%3];
+                    SVGObj.setAttribute("pointer-events","none");
+                    svg.appendChild(SVGObj);
+
+                    MutationNr++;
+                }
+
+                //add text element containing the shortened filename:
+                var SVGObj= document.createElementNS(NS,"text");
+                SVGObj.setAttribute("font-family", "sans-serif");
+                SVGObj.setAttribute("font-weight", "100");
+                /*if (barcode+1<10) SVGObj.setAttribute("x", midx-2);
+                else*/ SVGObj.setAttribute("x", midx);
+                SVGObj.setAttribute("y", midy+36);
+                SVGObj.setAttribute("font-size", "11");
+                SVGObj.setAttribute("text-anchor", "middle");
+                SVGObj.setAttribute("pointer-events","none");
+                var fn = "-";
+                //if (barcode<files.length && files[barcode].name.split("_").length>=1) fn = files[barcode].name.split("_")[0];
+                if (Sample[barcode])
+                {
+                    fn = Sample[barcode].filename.split(".")[0];
+                    if (fn.length > 4) fn = fn.substr(0,4)+"..";
+                }
+                SVGObj.textContent = GetWellPos(barcode); //fn;//barcode+1;
+                svg.appendChild(SVGObj);
+
+                //if a perfect KO: change filename color to red:
+                //count major frameshift alleles:
+                /*var readscovered=0, numframeshiftalleles=0;
+                //for (var i=0; i<250; i++) for (var ii=0; ii<201; ii++) if (i!=0 || ii!=100) if ((ii-100+999)%3 != 0)
+                if (Sample[barcode]) for (var e=0; e<Sample[barcode].numevents; e++) if (Sample[barcode].eventpos[e]!=0 || Sample[barcode].eventlen[e]!=100) if ((Sample[barcode].eventlen[e]-100+999)%3 != 0)
+                {
+                    if (Sample[barcode].eventreads[e]/sum*100 > 25)
+                    {
+                        readscovered += Sample[barcode].eventreads[e];
+                        numframeshiftalleles++;
+                    }
+                }
+                if (ShiftUnresolved[barcode]/sum*100 < 5 &&
+                    numframeshiftalleles >= 2 &&
+                    numframeshiftalleles <= 3 &&
+                    readscovered/sum*100 > 95 &&
+                    Sample[barcode].wt/sum*100 < 2) //less than 5% failed alignments, less than 2% wt reads, 2-3 frameshift alleles which make up >95% of reads
+                {
+                    SVGObj.textContent = GetWellPos(barcode)+" (KO)";
+                    SVGObj.style.fill="rgb(255,0,0)";
+                }*/
+
+                var genotype = Genotype(barcode);
+                if (genotype == "KO")
+                {
+                    SVGObj.textContent = GetWellPos(barcode)+" (KO)";
+                    SVGObj.style.fill="rgb(255,0,0)";
+                }
+                if (genotype == "HET")
+                {
+                    SVGObj.textContent = GetWellPos(barcode)+" (HET)";
+                    SVGObj.style.fill="rgb(50,50,255)";
+                }
+            }
+            //legende:
+            var midx = 13*50 + 25;
+            var midy = 0 * 65 + 25;
+            for (var i=0; i<8; i++)
+            {
+                var vol = Math.floor(maxsum/100)*100/Math.pow(2,i);
+                var size = 24*Math.sqrt(vol/maxsum);
+                //SVG:
+                var SVGObj= document.createElementNS(NS,"circle");
+                SVGObj.setAttributeNS(null, "cx", midx);
+                SVGObj.setAttributeNS(null, "cy", midy);
+                SVGObj.setAttributeNS(null, "r" , size);
+                SVGObj.style.fill="none";
+                SVGObj.style.stroke="rgb(100,100,100)";
+                svg.appendChild(SVGObj);
+
+                var SVGObj= document.createElementNS(NS,"text");
+                SVGObj.setAttribute("font-family", "sans-serif");
+                SVGObj.setAttribute("font-weight", "100");
+                SVGObj.setAttribute("x", midx+40);
+                SVGObj.setAttribute("y", midy+3);
+                SVGObj.setAttribute("font-size", "12");
+                SVGObj.textContent = Math.round(vol) + " reads";
+                svg.appendChild(SVGObj);
+
+                midy += size*2+10;
+            }
+            for (var i=0; i<11; i++)
+            {
+                var SVGObj= document.createElementNS(NS,"rect");
+                SVGObj.setAttribute("x", midx-6);
+                SVGObj.setAttribute("y", midy+50+20*i);
+                SVGObj.setAttribute("width", "11");
+                SVGObj.setAttribute("height", "11");
+                SVGObj.style.fill="none";
+                if (i<3) SVGObj.style.fill=BLAU[i];
+                if (i>=4 && i<7) SVGObj.style.fill=ROT[i-4];
+                if (i==8) SVGObj.style.fill="rgb(200,200,200)";
+                if (i==9) SVGObj.style.fill="rgb(0,200,0)";
+                if (i==10)
+                {
+                    SVGObj.style.fill="none";
+                    SVGObj.style.stroke="rgb(0,0,0)";
+                    SVGObj.setAttributeNS(null, "stroke-width", 0.5);
+                }
+                svg.appendChild(SVGObj);
+            }
+            var SVGObj= document.createElementNS(NS,"text");
+            SVGObj.setAttribute("font-family", "sans-serif");
+            SVGObj.setAttribute("font-weight", "100");
+            SVGObj.setAttribute("x", midx+40);
+            SVGObj.setAttribute("y", midy+80);
+            SVGObj.setAttribute("font-size", "12");
+            SVGObj.textContent = "in-frame indels";
+            svg.appendChild(SVGObj);
+            var SVGObj= document.createElementNS(NS,"text");
+            SVGObj.setAttribute("font-family", "sans-serif");
+            SVGObj.setAttribute("font-weight", "100");
+            SVGObj.setAttribute("x", midx+40);
+            SVGObj.setAttribute("y", midy+80+80);
+            SVGObj.setAttribute("font-size", "12");
+            SVGObj.textContent = "out-of-frame indels";
+            svg.appendChild(SVGObj);
+            var SVGObj= document.createElementNS(NS,"text");
+            SVGObj.setAttribute("font-family", "sans-serif");
+            SVGObj.setAttribute("font-weight", "100");
+            SVGObj.setAttribute("x", midx+40);
+            SVGObj.setAttribute("y", midy+80+140);
+            SVGObj.setAttribute("font-size", "12");
+            SVGObj.textContent = "no indel";
+            svg.appendChild(SVGObj);
+            var SVGObj= document.createElementNS(NS,"text");
+            SVGObj.setAttribute("font-family", "sans-serif");
+            SVGObj.setAttribute("font-weight", "100");
+            SVGObj.setAttribute("x", midx+40);
+            SVGObj.setAttribute("y", midy+80+160);
+            SVGObj.setAttribute("font-size", "12");
+            SVGObj.textContent = "targeted mutagenesis";
+            svg.appendChild(SVGObj);
+            var SVGObj= document.createElementNS(NS,"text");
+            SVGObj.setAttribute("font-family", "sans-serif");
+            SVGObj.setAttribute("font-weight", "100");
+            SVGObj.setAttribute("x", midx+40);
+            SVGObj.setAttribute("y", midy+80+180);
+            SVGObj.setAttribute("font-size", "12");
+            SVGObj.textContent = "failed alignment";
+            svg.appendChild(SVGObj);
+
+
+            //document.getElementById("title").innerHTML = "Result for "+document.getElementsByName("GeneName")[0].value+" ("+files.length+" barcodes read)";
+
+            document.title = "Result for "+document.getElementsByName("gene").value+" ("+numsamples+" barcodes read)";
+        }
+        function PieClick(evt)
+        {
+            var top = document.getElementById("SVGkuchen").getBoundingClientRect().top;
+            var left = document.getElementById("SVGkuchen").getBoundingClientRect().left;
+            var x=0, y=0;
+            if (evt)
+            {
+                x = evt.clientX-left;
+                y = evt.clientY-top;
+            }
+            var xx = Math.round((x-25)/50);
+            var yy = Math.round((y-25)/65);
+            var barcode = xx+12*yy;
+            if (barcode >= numsamples) return;
+
+            CurrentAlignment = barcode;
+            if (evt && !evt.metaKey) for (var i=0; i<numsamples; i++) SampleMarked[i] = false;
+            if (evt && !evt.metaKey) SampleMarked[barcode] = true;
+            else SampleMarked[barcode] = true-SampleMarked[barcode];
+            DrawPieCharts();
+
+            CalcMutationPlot(barcode);
+            AlignmentStartPos = RightBsPos+RightBsLen/2-40;
+            CalcAlignment(barcode);
+
+            //scroll down:
+            //if (evt && !evt.metaKey) window.scroll(0,650);
+        }
+
+        function Genotype(barcode)
+        {
+            //count major frameshift + wt alleles:
+            var readscovered=0, numframeshiftalleles=0;
+            if (Sample[barcode])
+            {
+                for (var e=0; e<Sample[barcode].numevents; e++) if (Sample[barcode].eventpos[e]!=0 || Sample[barcode].eventlen[e]!=100) if ((Sample[barcode].eventlen[e]-100+999)%3 != 0)
+                {
+                    if (Sample[barcode].eventreads[e]/Sample[barcode].totalreads*100 > 25)
+                    {
+                        readscovered += Sample[barcode].eventreads[e];
+                        numframeshiftalleles++;
+                    }
+                }
+                if (ShiftUnresolved[barcode]/Sample[barcode].totalreads*100 < 5 &&
+                    numframeshiftalleles >= 2 &&
+                    numframeshiftalleles <= 3 &&
+                    readscovered/Sample[barcode].totalreads*100 > 95 &&
+                    Sample[barcode].wt/Sample[barcode].totalreads*100 < 2) return "KO"; //less than 5% failed alignments, less than 2% wt reads, 2-3 frameshift alleles which make up >95% of reads
+
+                if (ShiftUnresolved[barcode]/Sample[barcode].totalreads*100 < 5 &&
+                    numframeshiftalleles >= 1 &&
+                    numframeshiftalleles <= 2 &&
+                    (readscovered+Sample[barcode].wt)/Sample[barcode].totalreads*100 > 95 &&
+                    Sample[barcode].wt/Sample[barcode].totalreads*100 > 30) return "HET";
+            }
+
+            return "";
+        }
+
+        /*function SelectReads(barcode, i, ii)
+        {
+            var out = document.getElementById('mutations');
+            out.innerHTML = HitReads[barcode][i][ii];
+            //alert(barcode+" "+i+" "+ii+" "+HitReads[barcode][i][ii]);
+        }*/
+
+        var CurrentAlignment = 0;
+
+
+        function GetWellPos(i)
+        {
+            var ABC = "ABCDEFGH";
+            return ABC[Math.floor(i/12)] + ((i%12)+1);
+        }
+
+        //Alignment plot:
+        function CalcAlignment(id)
+        {
+            var yproj = 2;
+            var ysize = 30;
+            var maxdel = 70;
+            var xfrom = /*RightBsPos-20*/Math.floor(AlignmentStartPos), xto = xfrom+80;
+            if (xto >= locus.length)
+            {
+                xfrom = locus.length-80;
+                xto = locus.length;
+            }
+            if (xto >= 250)
+            {
+                xfrom = 250-80;
+                xto = 250;
+            }
+            var xsize = xto-xfrom;
+
+            //Find Max:
+            /*var max=0;
+            for (var x=xfrom; x<xto; x++)
+            for (var y=0; y<maxdel; y++)
+			if (hits[x][y] > max)
+            max = hits[x][y];
+            var maxfactor = 1;
+            if (max>0) maxfactor = 130/max;*/
+            var maxfactor = 1;
+
+            var MutationThreshold = document.getElementsByName("MutationThreshold")[0].value;
+
+            /*var sum = 0; for (var i=0; i<250; i++) for (var ii=0; ii<201; ii++) sum += hits[i][ii];
+            sum += ShiftUnresolved[barcode];*/
+            var sum = Sample[id].totalreads;
+
+            var svg = document.getElementById("SVGmut");
+            var NS="http://www.w3.org/2000/svg";
+            var strokew = "0.5";
+
+            svg.addEventListener("mousedown", AlignmentMouseDown, false);
+            svg.addEventListener("mousemove", AlignmentMouseMove, false);
+            svg.addEventListener("mouseup", AlignmentMouseUp, false);
+            svg.setAttributeNS(null, "onmousedown", "return false;"); //prevents marking
+
+            //Clear:
+            while (svg.lastChild)
+            {
+                svg.removeChild(svg.lastChild);
+            }
+
+            var delypos=20, delyshift=40;
+
+            //bc, readsum:
+            var SVGObj= document.createElementNS(NS,"text");
+            SVGObj.setAttribute("x", 10);
+            SVGObj.setAttribute("y", ysize+delypos);
+            SVGObj.setAttribute("font-size", "14");
+            SVGObj.setAttribute("pointer-events","none");
+            SVGObj.textContent = "Gene: "+document.getElementsByName("gene").value+"   |   File "+GetWellPos(id)+": "+Sample[id].filename+"   |   Amplicon reads: "+sum+"   |   indel frequency: "+Math.round(Sample[id].tsindel/Sample[id].totalreads*1000)/10+"%";
+            svg.appendChild(SVGObj);
+            delypos+=delyshift;
+
+            //Highlight Targetsite:
+            var tsfrom = RightBsPos-xfrom;
+            if (tsfrom<0) tsfrom = 0;
+            if (tsfrom>80) tsfrom = 80;
+            var tsto = RightBsPos+RightBsLen-xfrom;
+            if (tsto<0) tsto = 0;
+            if (tsto>80) tsto = 80;
+            if (tsto>tsfrom)
+            {
+                path = "M"+(120+12*tsfrom-6)+",75 L"+(120+12*tsto-6)+",75 L"+(120+12*tsto-6)+",94 L"+(120+12*tsfrom-6)+",94 Z";
+                var SVGObj= document.createElementNS(NS,"path");
+                SVGObj.setAttributeNS(null, "d", path);
+                SVGObj.style.stroke="none";
+                SVGObj.style.fill="rgb(255,255,0)";
+                svg.appendChild(SVGObj);
+            }
+
+            //wt:
+            for (var x=xfrom; x<xto; x++)
+            {
+                //draw base:
+                var SVGObj= document.createElementNS(NS,"text");
+                SVGObj.setAttribute("x", 120+12*(x-xfrom)+2);
+                SVGObj.setAttribute("y", ysize+delypos);
+                SVGObj.setAttribute("font-size", "14");
+                /*if (x>=RightBsPos && x<RightBsPos+RightBsLen) SVGObj.setAttribute("fill", "rgb(0,0,200)");
+                else SVGObj.setAttribute("fill", "rgb(0,0,0)");*/
+                SVGObj.textContent = locus[x];
+                SVGObj.setAttribute("x", 120+12*(x-xfrom));
+                SVGObj.setAttribute("text-anchor", "middle");
+                SVGObj.setAttribute("pointer-events","none");
+                svg.appendChild(SVGObj);
+            }
+            //reference:
+            var SVGObj= document.createElementNS(NS,"text");
+            SVGObj.setAttribute("x", 10);
+            SVGObj.setAttribute("y", ysize+delypos);
+            SVGObj.setAttribute("font-size", "14");
+            SVGObj.setAttribute("pointer-events","none");
+            SVGObj.textContent += "REFERENCE";
+            svg.appendChild(SVGObj);
+            //line:
+            var SVGObj= document.createElementNS(NS,"path");
+            SVGObj.setAttributeNS(null, "d", "M 10,"+(ysize+delypos+5.5)+" L 1073,"+(ysize+delypos+5.5));
+            SVGObj.style.stroke="rgb(0,0,0)";
+            SVGObj.setAttributeNS(null, "stroke-width", 1);
+            svg.appendChild(SVGObj);
+            delypos+=delyshift;
+
+            //Del seq:
+            var indelnr=0;
+            var callsum=0;
+            //for (var i=0; i<250; i++) for (var ii=0; ii<201; ii++)
+            for (var a=0; a<Sample[id].numalleles; a++)
+            {
+                var hitnum = Sample[id].allelereads[a]; //hits[i][ii];
+                var i = Sample[id].allelepos[a];
+                var ii = Sample[id].allelelen[a];
+                if (i==249 && ii==100) //failed alignment
+                {
+                    hitnum = Sample[id].unresolved;
+                }
+                if (hitnum*100/sum > MutationThreshold || (i==249 && ii==100))
+                {
+                    var wtx=0;
+                    var stackingpos;
+                    for (var x=xfrom; wtx<xto-1 && x<250; x++) for (var base=0; base<4; base++)
+                    {
+                        wtx = x;
+                        if (x >= i && ii!=199) wtx += ii-100;
+
+                        //get base strength:
+                        var LogoIndex = a*250*4 + x*4 + base;
+                        var basehits = Sample[id].allelelogo[LogoIndex], totalbasehits = 255;
+
+                        //calculate base fraction:
+                        var basefraction = basehits/totalbasehits;
+
+                        if (base==0) stackingpos = 0;
+                        if (basefraction > 0.2 && wtx-xfrom>=0 && wtx-xfrom<80)
+                        {
+                            //draw base:
+                            var SVGObj= document.createElementNS(NS,"text");
+                            SVGObj.setAttribute("x", 120+12*(wtx-xfrom));
+                            SVGObj.setAttribute("y", ysize+delypos-stackingpos);
+                            //color:
+                            if (GATC[base] != locus[wtx]) SVGObj.setAttribute("fill", "rgb(232,0,30)");
+                            else SVGObj.setAttribute("fill", "rgb(0,0,0)");
+                            if (ii == 199 && x >= i+TargetingOligoBracketFrom && x < i+TargetingOligoBracketTo) SVGObj.setAttribute("fill", "rgb(0,232,30)");
+                            //inserts low:
+                            if (x >= i && x < i-(ii-100))
+                            {
+                                SVGObj.setAttribute("x", 120+12*(wtx-xfrom+(100-ii)/2));
+                                SVGObj.setAttribute("y", ysize+delypos+15*0.9-stackingpos);
+                                SVGObj.setAttribute("fill", "rgb(0,0,0)");
+                            }
+
+                            SVGObj.setAttribute("font-size", 14*basefraction);
+                            stackingpos += 14*basefraction*0.8;
+                            SVGObj.setAttribute("text-anchor", "middle");
+                            SVGObj.setAttribute("pointer-events","none");
+                            SVGObj.textContent = GATC[base];
+                            if (x == i-1 && ii<100) SVGObj.textContent += "|";
+                            svg.appendChild(SVGObj);
+
+                            //striche:
+                            if (x == i && ii > 100 && ii != 199) for (var strichnr=0; strichnr<ii-100; strichnr++) if (wtx-xfrom-1-strichnr >= 0 && wtx-xfrom-1-strichnr<80)
+                            {
+                                var SVGObj= document.createElementNS(NS,"text");
+                                SVGObj.setAttribute("x", 120+12*(wtx-xfrom-1-strichnr));
+                                SVGObj.setAttribute("y", ysize+delypos);
+                                SVGObj.setAttribute("font-size", 14);
+                                SVGObj.setAttribute("text-anchor", "middle");
+                                SVGObj.setAttribute("pointer-events","none");
+                                SVGObj.textContent = "-";
+                                svg.appendChild(SVGObj);
+                            }
+                        }
+                    }
+                    //Percent:
+                    var SVGObj= document.createElementNS(NS,"text");
+                    SVGObj.setAttribute("x", 100+12*(xto+3-xfrom));
+                    SVGObj.setAttribute("y", ysize+delypos);
+                    SVGObj.setAttribute("font-size", "14");
+                    SVGObj.setAttribute("pointer-events","none");
+                    SVGObj.textContent = ""+Math.round(hitnum*100/sum)+"%";
+                    svg.appendChild(SVGObj);
+                    //reads:
+                    var SVGObj= document.createElementNS(NS,"text");
+                    SVGObj.setAttribute("x", 100+12*(xto+3-xfrom));
+                    SVGObj.setAttribute("y", ysize+delypos+15*0.9);
+                    SVGObj.setAttribute("font-size", "14");
+                    SVGObj.setAttribute("pointer-events","none");
+                    SVGObj.textContent = ""+hitnum+" reads";
+                    svg.appendChild(SVGObj);
+
+                    //INDEL:
+                    var SVGObj= document.createElementNS(NS,"text");
+                    SVGObj.setAttribute("x", 10);
+                    SVGObj.setAttribute("y", ysize+delypos+15*0.9);
+                    SVGObj.setAttribute("font-size", "14");
+                    SVGObj.setAttribute("pointer-events","none");
+                    if (i==0 && ii==100) SVGObj.textContent = "no indel";
+                    if (ii<100) SVGObj.textContent = " "+(100-ii)+"nt insertion";
+                    if (ii>100) SVGObj.textContent = " "+(ii-100)+"nt deletion";
+                    if (ii == 199) SVGObj.textContent = "targeted mutagenesis";
+                    if (i==249) SVGObj.textContent = "Failed alignment";
+                    svg.appendChild(SVGObj);
+
+                    //Indel nr:
+                    var SVGObj= document.createElementNS(NS,"text");
+                    SVGObj.setAttribute("x", 10);
+                    SVGObj.setAttribute("y", ysize+delypos);
+                    SVGObj.setAttribute("font-size", "14");
+                    SVGObj.setAttribute("pointer-events","none");
+                    SVGObj.textContent += "CALL #"+(indelnr+1);
+                    svg.appendChild(SVGObj);
+                    indelnr++;
+
+                    delypos+=delyshift;
+                    callsum += hitnum;
+                }
+            }
+
+            //Below calling threshold:
+            var SVGObj= document.createElementNS(NS,"text");
+            SVGObj.setAttribute("x", 10);
+            SVGObj.setAttribute("y", ysize+delypos);
+            SVGObj.setAttribute("font-size", "14");
+            SVGObj.textContent += "BELOW CALLING THRESHOLD";
+            SVGObj.setAttribute("pointer-events","none");
+            svg.appendChild(SVGObj);
+            var SVGObj= document.createElementNS(NS,"text");
+            SVGObj.setAttribute("x", 100+12*(xto+3-xfrom));
+            SVGObj.setAttribute("y", ysize+delypos);
+            SVGObj.setAttribute("font-size", "14");
+            SVGObj.setAttribute("pointer-events","none");
+            var rest = sum-callsum;
+            SVGObj.textContent = ""+Math.round(rest*100/sum)+"% ("+rest+" reads)";
+            svg.appendChild(SVGObj);
+            delypos+=delyshift;
+
+            //Alignment Dropouts:
+            /*var SVGObj= document.createElementNS(NS,"text");
+            SVGObj.setAttribute("x", 10);
+            SVGObj.setAttribute("y", ysize+delypos);
+            SVGObj.setAttribute("font-size", "14");
+            SVGObj.textContent += "FAILED ALIGNMENT";
+            svg.appendChild(SVGObj);
+            var SVGObj= document.createElementNS(NS,"text");
+            SVGObj.setAttribute("x", 100+12*(xto+3-xfrom));
+            SVGObj.setAttribute("y", ysize+delypos);
+            SVGObj.setAttribute("font-size", "14");
+            SVGObj.textContent = ""+Math.round(ShiftUnresolved[barcode]*100/sum)+"% ("+ShiftUnresolved[barcode]+" reads)";
+            svg.appendChild(SVGObj);
+            delypos+=delyshift;*/
+
+            //Phred Dropouts:
+            var SVGObj= document.createElementNS(NS,"text");
+            SVGObj.setAttribute("x", 10);
+            SVGObj.setAttribute("y", ysize+delypos);
+            SVGObj.setAttribute("font-size", "14");
+            SVGObj.setAttribute("pointer-events","none");
+            SVGObj.textContent += "Phred score dropouts: "+Sample[id].phreddropout+" reads";
+            svg.appendChild(SVGObj);
+
+            //AlignmentPrecalc[barcode] = document.getElementById("DIV_alignment").innerHTML;
+        }
+
+        //mutation plot:
+        var drawdelspan=true, drawdelstart=true, drawdelend=true, drawinspos=true;
+        function CalcMutationPlot(id)
+        {
+            var svg = document.getElementById("SVGmutplot");
+            var NS="http://www.w3.org/2000/svg";
+
+            //Clear:
+            while (svg.lastChild) svg.removeChild(svg.lastChild);
+
+            var xsize = 400;
+
+            //calculate deletion array (aggregate all marked barcodes):
+            var sum = 0, totalindels = 0, totaldels = 0;
+            var delspanA = new Array(250);
+            var delstartA = new Array(250);
+            var delendA = new Array(250);
+            var insposA = new Array(250);
+            var indellenA = new Array(201);
+            var delMHA = new Array(11);
+            for (var ii=0; ii<250; ii++)
+            {
+                delspanA[ii] = 0;
+                delstartA[ii] = 0;
+                delendA[ii] = 0;
+                insposA[ii] = 0;
+            }
+            for (var ii=0; ii<201; ii++) indellenA[ii] = 0;
+            for (var ii=0; ii<11; ii++) delMHA[ii] = 0;
+            for (var i=0; i<numsamples; i++) if (SampleMarked[i])
+            {
+                sum += Sample[i].totalreads;
+                totalindels += Sample[i].ins+Sample[i].del;
+                totaldels += Sample[i].del;
+
+                for (var ii=0; ii<250; ii++)
+                {
+                    delspanA[ii] += Sample[i].delspan[ii];
+                    delstartA[ii] += Sample[i].delstart[ii];
+                    delendA[ii] += Sample[i].delend[ii];
+                    insposA[ii] += Sample[i].inspos[ii];
+                }
+                for (var ii=0; ii<201; ii++) indellenA[ii] += Sample[i].indellen[ii];
+                for (var ii=0; ii<11; ii++) delMHA[ii] += Sample[i].delMH[ii];
+            }
+
+            //draw:
+            if (sum > 0)
+            {
+                if (totalindels>10)
+                {
+                    //Draw Base Loss:
+                    var path = "M50,210";
+                    for (var i=0; i<250; i++)
+                    {
+                        path += " L"+(50+i*4)+","+(210-delspanA[i]/totalindels*200);
+                        path += " L"+(50+(i+1)*4)+","+(210-delspanA[i]/totalindels*200);
+                    }
+                    path += "L"+(50+250*4)+",210 Z";
+                    var SVGObj= document.createElementNS(NS,"path");
+                    SVGObj.setAttributeNS(null, "d", path);
+                    SVGObj.style.stroke="none";
+                    SVGObj.style.fill="rgb(255,0,0)";
+                    if (drawdelspan) svg.appendChild(SVGObj);
+
+                    //Draw Del Start:
+                    path = "M50,210";
+                    for (var i=0; i<250; i++)
+                    {
+                        path += " L"+(50+i*4-1)+","+(210-0);
+                        path += " L"+(50+i*4-1)+","+(210-delstartA[i]/totalindels*200);
+                        path += " L"+(50+i*4+1)+","+(210-delstartA[i]/totalindels*200);
+                        path += " L"+(50+i*4+1)+","+(210-0);
+                    }
+                    path += "L"+(50+250*4)+",210 Z";
+                    var SVGObj= document.createElementNS(NS,"path");
+                    SVGObj.setAttributeNS(null, "d", path);
+                    SVGObj.style.stroke="none";
+                    SVGObj.style.fill="rgb(0,150,255)";
+                    if (drawdelstart) svg.appendChild(SVGObj);
+
+                    //Draw Del End:
+                    path = "M50,210";
+                    for (var i=0; i<250; i++)
+                    {
+                        path += " L"+(50+i*4-1)+","+(210-0);
+                        path += " L"+(50+i*4-1)+","+(210-delendA[i]/totalindels*200);
+                        path += " L"+(50+i*4+1)+","+(210-delendA[i]/totalindels*200);
+                        path += " L"+(50+i*4+1)+","+(210-0);
+                    }
+                    path += "L"+(50+250*4)+",210 Z";
+                    var SVGObj= document.createElementNS(NS,"path");
+                    SVGObj.setAttributeNS(null, "d", path);
+                    SVGObj.style.stroke="none";
+                    SVGObj.style.fill="rgb(150,0,255)";
+                    if (drawdelend) svg.appendChild(SVGObj);
+
+                    //Draw Ins Pos:
+                    path = "M50,210";
+                    for (var i=0; i<250; i++)
+                    {
+                        path += " L"+(50+i*4-1)+","+(210-0);
+                        path += " L"+(50+i*4-1)+","+(210-insposA[i]/totalindels*200);
+                        path += " L"+(50+i*4+1)+","+(210-insposA[i]/totalindels*200);
+                        path += " L"+(50+i*4+1)+","+(210-0);
+                    }
+                    path += "L"+(50+250*4)+",210 Z";
+                    var SVGObj= document.createElementNS(NS,"path");
+                    SVGObj.setAttributeNS(null, "d", path);
+                    SVGObj.style.stroke="none";
+                    SVGObj.style.fill="rgb(0,150,0)";
+                    if (drawinspos) svg.appendChild(SVGObj);
+
+                    //Draw Indel length:
+                    path = "M50,460";
+                    for (var i=0; i<201; i++)
+                    {
+                        path += " L"+(50+i*4-2)+","+(460-indellenA[i]/totalindels*200);
+                        path += " L"+(50+i*4+2)+","+(460-indellenA[i]/totalindels*200);
+                    }
+                    path += "L"+(50+201*4)+",460 Z";
+                    var SVGObj= document.createElementNS(NS,"path");
+                    SVGObj.setAttributeNS(null, "d", path);
+                    SVGObj.style.stroke="none";
+                    SVGObj.style.fill="rgb(0,150,0)";
+                    svg.appendChild(SVGObj);
+                }
+
+                //Draw MH:
+                if (totaldels>10)
+                {
+                    path = "M968,460";
+                    for (var i=0; i<11; i++)
+                    {
+                        //path += " L"+(970+i*8-2)+","+(460-MH[i]/sum*200);
+                        //path += " L"+(970+i*8+2)+","+(460-MH[i]/sum*200);
+
+                        path += " L"+(970+i*8-2)+","+(460-0);
+                        path += " L"+(970+i*8-2)+","+(460-delMHA[i]/totaldels*200);
+                        path += " L"+(970+i*8+2)+","+(460-delMHA[i]/totaldels*200);
+                        path += " L"+(970+i*8+2)+","+(460-0);
+                    }
+                    path += "L"+(970+10*8)+",460 Z";
+                    var SVGObj= document.createElementNS(NS,"path");
+                    SVGObj.setAttributeNS(null, "d", path);
+                    SVGObj.style.stroke="none";
+                    SVGObj.style.fill="rgb(255,0,0)";
+                    svg.appendChild(SVGObj);
+                }
+            }
+
+            //Target site:
+            var SVGObj= document.createElementNS(NS,"path");
+            var x1 = 50+4*RightBsPos;
+            var x2 = 50+4*(RightBsPos+RightBsLen);
+            SVGObj.setAttributeNS(null, "d", "M"+x1+",210 L"+x2+",210 L"+x2+",218 L"+x1+",218 Z");
+            SVGObj.style.stroke="none";
+            SVGObj.style.fill="rgb(255,220,0)";
+            svg.appendChild(SVGObj);
+
+            //Achsen zeichnen:
+            var SVGObj= document.createElementNS(NS,"path");
+            SVGObj.setAttributeNS(null, "d", "M50,9.5 L50,210 L"+(50+(250-1)*4)+",210");
+            SVGObj.style.stroke="rgb(0,0,0)";
+            SVGObj.style.fill="none";
+            SVGObj.setAttributeNS(null, "stroke-width", 1);
+            svg.appendChild(SVGObj);
+            //y axis marking:
+            for (var i=0; i<=5; i++)
+            {
+                var y = 200/5*i;
+                var SVGObj= document.createElementNS(NS,"path");
+                SVGObj.setAttributeNS(null, "d", "M 45,"+(210-y)+" L 50,"+(210-y));
+                SVGObj.style.stroke="rgb(0,0,0)";
+                SVGObj.style.fill="none";
+                SVGObj.setAttributeNS(null, "stroke-width", 1);
+                svg.appendChild(SVGObj);
+
+                //Beschriftung:
+                var SVGObj= document.createElementNS(NS,"text");
+                SVGObj.setAttribute("x", 42);
+                SVGObj.setAttribute("y", 213-y);
+                SVGObj.setAttribute("font-size", "11");
+                SVGObj.setAttribute("font-weight", "bold");
+                SVGObj.setAttribute("text-anchor", "end");
+                SVGObj.textContent = ""+Math.round(i*20);// /5*(max)/ydivisor*10)/10;
+                svg.appendChild(SVGObj);
+            }
+            //x axis marking:
+            for (var i=0; i<250; i++)
+            {
+                var y = 200/5*i;
+                var SVGObj= document.createElementNS(NS,"path");
+                SVGObj.setAttributeNS(null, "d", "M"+(50+i*4)+",209.5 L"+(50+i*4)+",214.5");
+                SVGObj.style.stroke="rgb(0,0,0)";
+                SVGObj.style.fill="none";
+                SVGObj.setAttributeNS(null, "stroke-width", 1);
+                svg.appendChild(SVGObj);
+            }
+            //Beschriftung X Axis:
+            var SVGObj= document.createElementNS(NS,"text");
+            SVGObj.setAttribute("x", 50+250/2*4);
+            SVGObj.setAttribute("y", 240);
+            SVGObj.setAttribute("font-size", "12");
+            //SVGObj.setAttribute("font-weight", "bold");
+            SVGObj.setAttribute("text-anchor", "middle");
+            SVGObj.textContent = "reference sequence position [bp]";
+            SVGObj.setAttribute("font-family", "sans-serif");
+            svg.appendChild(SVGObj);
+            //Beschriftung Y Axis:
+            var SVGObj= document.createElementNS(NS,"text");
+            SVGObj.setAttribute("x", 15);
+            SVGObj.setAttribute("y", 110);
+            SVGObj.setAttribute("font-size", "12");
+            //SVGObj.setAttribute("font-weight", "bold");
+            SVGObj.setAttribute("text-anchor", "middle");
+            SVGObj.setAttribute("transform", "rotate(-90 10,110)");
+            SVGObj.textContent = "fraction of indels [%]";
+            SVGObj.setAttribute("font-family", "sans-serif");
+            svg.appendChild(SVGObj);
+
+            //color legend:
+            var colleg=["rgb(255,0,0)","rgb(0,150,255)","rgb(150,0,255)","rgb(0,150,0)","rgb(255,220,0)"];
+            var collegtext = ["deletion span", "deletion start", "deletion end", "insertion position", "nuclease target site"];
+            for (var i=0; i<5; i++)
+            {
+                var SVGObj= document.createElementNS(NS,"rect");
+                SVGObj.setAttribute("x", 100);
+                SVGObj.setAttribute("y", 20+20*i);
+                SVGObj.setAttribute("width", "11");
+                SVGObj.setAttribute("height", "11");
+                if ((i==0 && drawdelspan) || (i==1 && drawdelstart) || (i==2 && drawdelend) || (i==3 && drawinspos) || i==4)
+                {
+                    SVGObj.style.fill=colleg[i];
+                }
+                else
+                {
+                    SVGObj.style.stroke=colleg[i];
+                    SVGObj.style.fill="none";
+                }
+                svg.appendChild(SVGObj);
+
+                var SVGObj= document.createElementNS(NS,"text");
+                SVGObj.setAttribute("x", 120);
+                SVGObj.setAttribute("y", 30+20*i);
+                SVGObj.setAttribute("font-size", "12");
+                SVGObj.setAttribute("font-family", "sans-serif");
+                SVGObj.setAttribute("pointer-events","none");
+                SVGObj.textContent = collegtext[i];
+                svg.appendChild(SVGObj);
+            }
+
+            //draw indel length plot:
+
+            //Achsen zeichnen:
+            var SVGObj= document.createElementNS(NS,"path");
+            SVGObj.setAttributeNS(null, "d", "M50,259.5 L50,460 L"+(50+(201-1)*4)+",460");
+            SVGObj.style.stroke="rgb(0,0,0)";
+            SVGObj.style.fill="none";
+            SVGObj.setAttributeNS(null, "stroke-width", 1);
+            svg.appendChild(SVGObj);
+            //y axis marking:
+            for (var i=0; i<=5; i++)
+            {
+                var y = 200/5*i;
+                var SVGObj= document.createElementNS(NS,"path");
+                SVGObj.setAttributeNS(null, "d", "M 45,"+(460-y)+" L 50,"+(460-y));
+                SVGObj.style.stroke="rgb(0,0,0)";
+                SVGObj.style.fill="none";
+                SVGObj.setAttributeNS(null, "stroke-width", 1);
+                svg.appendChild(SVGObj);
+
+                //Beschriftung:
+                var SVGObj= document.createElementNS(NS,"text");
+                SVGObj.setAttribute("x", 42);
+                SVGObj.setAttribute("y", 463-y);
+                SVGObj.setAttribute("font-size", "11");
+                SVGObj.setAttribute("font-weight", "bold");
+                SVGObj.setAttribute("text-anchor", "end");
+                SVGObj.textContent = ""+Math.round(i*20);// /5*(max)/ydivisor*10)/10;
+                svg.appendChild(SVGObj);
+            }
+            //x axis marking:
+            for (var i=0; i<201; i++)
+            {
+                var y = 200/5*i;
+                var SVGObj= document.createElementNS(NS,"path");
+                SVGObj.setAttributeNS(null, "d", "M"+(50+i*4)+",459.5 L"+(50+i*4)+",464.5");
+                if ((i+200)%10==0) SVGObj.setAttributeNS(null, "d", "M"+(50+i*4)+",459.5 L"+(50+i*4)+",467.5");
+                SVGObj.style.stroke="rgb(0,0,0)";
+                SVGObj.style.fill="none";
+                SVGObj.setAttributeNS(null, "stroke-width", 1);
+                svg.appendChild(SVGObj);
+
+                if ((i+200)%10==0)
+                {
+                    var SVGObj= document.createElementNS(NS,"text");
+                    SVGObj.setAttribute("x", 50+i*4);
+                    SVGObj.setAttribute("y", 480);
+                    SVGObj.setAttribute("font-size", "11");
+                    SVGObj.setAttribute("font-weight", "bold");
+                    SVGObj.setAttribute("text-anchor", "middle");
+                    SVGObj.textContent = ""+(i-100);
+                    svg.appendChild(SVGObj);
+                }
+            }
+            //Beschriftung X Axis:
+            var SVGObj= document.createElementNS(NS,"text");
+            SVGObj.setAttribute("x", 50+201/2*4);
+            SVGObj.setAttribute("y", 495);
+            SVGObj.setAttribute("font-size", "12");
+            //SVGObj.setAttribute("font-weight", "bold");
+            SVGObj.setAttribute("text-anchor", "middle");
+            SVGObj.textContent = "indel length [bp]";
+            SVGObj.setAttribute("font-family", "sans-serif");
+            svg.appendChild(SVGObj);
+            //Beschriftung Y Axis:
+            var SVGObj= document.createElementNS(NS,"text");
+            SVGObj.setAttribute("x", 15);
+            SVGObj.setAttribute("y", 360);
+            SVGObj.setAttribute("font-size", "12");
+            //SVGObj.setAttribute("font-weight", "bold");
+            SVGObj.setAttribute("text-anchor", "middle");
+            SVGObj.setAttribute("transform", "rotate(-90 10,360)");
+            SVGObj.textContent = "fraction of indels [%]";
+            SVGObj.setAttribute("font-family", "sans-serif");
+            svg.appendChild(SVGObj);
+
+
+            //draw microhomology plot:
+
+            //Achsen zeichnen:
+            var SVGObj= document.createElementNS(NS,"path");
+            SVGObj.setAttributeNS(null, "d", "M970,259.5 L970,460 L"+(970+(10)*8)+",460");
+            SVGObj.style.stroke="rgb(0,0,0)";
+            SVGObj.style.fill="none";
+            SVGObj.setAttributeNS(null, "stroke-width", 1);
+            svg.appendChild(SVGObj);
+            //y axis marking:
+            for (var i=0; i<=5; i++)
+            {
+                var y = 200/5*i;
+                var SVGObj= document.createElementNS(NS,"path");
+                SVGObj.setAttributeNS(null, "d", "M 965,"+(460-y)+" L 970,"+(460-y));
+                SVGObj.style.stroke="rgb(0,0,0)";
+                SVGObj.style.fill="none";
+                SVGObj.setAttributeNS(null, "stroke-width", 1);
+                svg.appendChild(SVGObj);
+
+                //Beschriftung:
+                var SVGObj= document.createElementNS(NS,"text");
+                SVGObj.setAttribute("x", 970-50+42);
+                SVGObj.setAttribute("y", 463-y);
+                SVGObj.setAttribute("font-size", "11");
+                SVGObj.setAttribute("font-weight", "bold");
+                SVGObj.setAttribute("text-anchor", "end");
+                SVGObj.textContent = ""+Math.round(i*20);// /5*(max)/ydivisor*10)/10;
+                svg.appendChild(SVGObj);
+            }
+            //x axis marking:
+            for (var i=0; i<=10; i++)
+            {
+                var y = 200/5*i;
+                var SVGObj= document.createElementNS(NS,"path");
+                SVGObj.setAttributeNS(null, "d", "M"+(970+i*8)+",459.5 L"+(970+i*8)+",464.5");
+                if ((i+200)%2==0) SVGObj.setAttributeNS(null, "d", "M"+(970+i*8)+",459.5 L"+(970+i*8)+",467.5");
+                SVGObj.style.stroke="rgb(0,0,0)";
+                SVGObj.style.fill="none";
+                SVGObj.setAttributeNS(null, "stroke-width", 1);
+                svg.appendChild(SVGObj);
+
+                if ((i+200)%2==0)
+                {
+                    var SVGObj= document.createElementNS(NS,"text");
+                    SVGObj.setAttribute("x", 970+i*8);
+                    SVGObj.setAttribute("y", 480);
+                    SVGObj.setAttribute("font-size", "11");
+                    SVGObj.setAttribute("font-weight", "bold");
+                    SVGObj.setAttribute("text-anchor", "middle");
+                    SVGObj.textContent = ""+(i);
+                    svg.appendChild(SVGObj);
+                }
+            }
+            //Beschriftung X Axis:
+            var SVGObj= document.createElementNS(NS,"text");
+            SVGObj.setAttribute("x", 970+11/2*8);
+            SVGObj.setAttribute("y", 495);
+            SVGObj.setAttribute("font-size", "12");
+            //SVGObj.setAttribute("font-weight", "bold");
+            SVGObj.setAttribute("text-anchor", "middle");
+            SVGObj.textContent = "microhomology [bp]";
+            SVGObj.setAttribute("font-family", "sans-serif");
+            svg.appendChild(SVGObj);
+            //Beschriftung Y Axis:
+            var SVGObj= document.createElementNS(NS,"text");
+            SVGObj.setAttribute("x", 970-50+15);
+            SVGObj.setAttribute("y", 360);
+            SVGObj.setAttribute("font-size", "12");
+            //SVGObj.setAttribute("font-weight", "bold");
+            SVGObj.setAttribute("text-anchor", "middle");
+            SVGObj.setAttribute("transform", "rotate(-90 930,360)");
+            SVGObj.textContent = "fraction of deletions [%]";
+            SVGObj.setAttribute("font-family", "sans-serif");
+            svg.appendChild(SVGObj);
+
+            //MutPlotPrecalc[barcode] = document.getElementById("DIV_mutplot").innerHTML;
+
+            svg.addEventListener("mousedown", PlotMouseDown, false);
+        }
+
+        function PlotMouseDown(evt)
+        {
+            var top = document.getElementById("SVGmutplot").getBoundingClientRect().top;
+            var left = document.getElementById("SVGmutplot").getBoundingClientRect().left;
+
+            var x = evt.clientX-left;
+            var y = evt.clientY-top;
+
+            if (x>100 && x<200 && y>15 && y<20+20*4)
+            {
+                var yy = Math.floor((y-15)/20);
+                //alert(yy);
+                if (yy==0) drawdelspan = true-drawdelspan;
+                if (yy==1) drawdelstart = true-drawdelstart;
+                if (yy==2) drawdelend = true-drawdelend;
+                if (yy==3) drawinspos = true-drawinspos;
+
+                CalcMutationPlot(CurrentAlignment);
+            }
+        }
+
+        var AlignmentDragging = false, AlignmentLastX, AlignmentLastY, AlignmentStartPos = 0;
+        function AlignmentMouseDown(evt)
+        {
+            AlignmentLastX = evt.clientX;
+            AlignmentLastY = evt.clientY;
+            AlignmentDragging = true;
+            return false;
+        }
+        function AlignmentMouseMove(evt)
+        {
+            if (AlignmentDragging)
+            {
+                var x = evt.clientX;
+                var y = evt.clientY;
+
+                //alert(x-AlignmentLastX);
+                var shift = (x-AlignmentLastX)/12;
+                AlignmentStartPos -= shift;
+                if (AlignmentStartPos < 0) AlignmentStartPos = 0;
+                if (AlignmentStartPos > 250-80) AlignmentStartPos = 250-80;
+                CalcAlignment(CurrentAlignment);
+
+                AlignmentLastX = x;
+            }
+            return false;
+        }
+        function AlignmentMouseUp(evt)
+        {
+            AlignmentDragging = false;
+            return false;
+        }
+
+        function SaveSVG()
+        {
+            var svg = document.getElementById("DIV_piecharts");
+            //alert(svg.innerHTML);
+            var bb = new Blob([svg.innerHTML], {type: 'text/plain'});
+
+            var a = document.createElement('a');
+            a.download = document.getElementById("gene").value+".svg";
+            a.href = window.URL.createObjectURL(bb);
+            a.textContent = 'Klick here to save';
+            a.dataset.downloadurl = ['text/plain', a.download, a.href].join(':');
+
+            document.getElementById("save").appendChild(a);
+            a.click();
+        }
+
+        function SaveSVGAlignment()
+        {
+            var svg = document.getElementById("DIV_alignment");
+            //alert(svg.innerHTML);
+            var bb = new Blob([svg.innerHTML], {type: 'text/plain'});
+
+            var a = document.createElement('a');
+            a.download = document.getElementById("gene").value+" "+GetWellPos(CurrentAlignment)+".svg";
+            a.href = window.URL.createObjectURL(bb);
+            a.textContent = 'Klick here to save';
+            a.dataset.downloadurl = ['text/plain', a.download, a.href].join(':');
+
+            document.getElementById("save").appendChild(a);
+            a.click();
+        }
+        function PrintSVGAlignment()
+        {
+            var printWindow = document.open('', 'Print', 'width=1250, height=400');
+            printWindow.document.writeln(document.getElementById("DIV_alignment").innerHTML);
+            printWindow.document.close();
+            printWindow.print();
+            printWindow.close();
+        }
+
+        function SaveSVGmutplot()
+        {
+            var svg = document.getElementById("DIV_mutplot");
+            //alert(svg.innerHTML);
+            var bb = new Blob([svg.innerHTML], {type: 'text/plain'});
+
+            var a = document.createElement('a');
+            a.download = document.getElementById("gene").value+" "+GetWellPos(CurrentAlignment)+".svg";
+            a.href = window.URL.createObjectURL(bb);
+            a.textContent = 'Klick here to save';
+            a.dataset.downloadurl = ['text/plain', a.download, a.href].join(':');
+
+            document.getElementById("save").appendChild(a);
+            a.click();
+        }
+        function PrintSVGmutplot()
+        {
+            var printWindow = document.open('', 'Print', 'width=1250, height=400');
+            printWindow.document.writeln(document.getElementById("DIV_mutplot").innerHTML);
+            printWindow.document.close();
+            printWindow.print();
+            printWindow.close();
+        }
+
+        function PrintSVG()
+        {
+            var printWindow = document.open('', 'Print', 'width=900, height=550');
+            printWindow.document.writeln(document.getElementById("DIV_piecharts").innerHTML);
+            printWindow.document.close();
+            printWindow.print();
+            printWindow.close();
+        }
+
+        function SaveTable()
+        {
+            var out = "file name\ttotal reads\twild type reads\tinsertion reads\tdeletion reads\tindels at targetsite\tframeshifts at targetsite\ttargeted mutagenesis\tindels outside of targetsite\tfailed alignments\n";
+            for (var barcode=0; barcode<96; barcode++)
+            {
+                //calculate relevant mutation rate:
+                /*var sum = 0; for (var i=0; i<250; i++) for (var ii=0; ii<201; ii++) sum += hits[barcode][i][ii];
+                var wt = 0, anymut = 0, relevantmut = 0, relevantframeshiftmut = 0, targetedmut = 0, failedalignment = 0;
+                for (var i=0; i<250; i++) for (var ii=0; ii<201; ii++) if (i!=0 || ii!=100)
+                {
+                    if (ii == 199) targetedmut += hits[barcode][i][ii];
+
+                    anymut += hits[barcode][i][ii];
+
+                    //check if mutation touches the target site:
+                    var ok = false;
+                    if (i >= RightBsPos && i < RightBsPos+RightBsLen) ok = true;
+                    if (i < RightBsPos && i+ii-100 >= RightBsPos+RightBsLen) ok = true;
+                    for (var iii=i; iii<i+ii-100; iii++) if (iii >= RightBsPos && iii < RightBsPos+RightBsLen) ok = true;
+                    if (ok)
+                    {
+                        relevantmut += hits[barcode][i][ii];
+
+                        var frameshift = (3000-(ii-100))%3;
+                        if (frameshift != 0) relevantframeshiftmut += hits[barcode][i][ii];
+                    }
+                }
+                wt = hits[barcode][0][100];
+                failedalignment = ShiftUnresolved[barcode];*/
+
+                //!! ACHTUNG: alte version hat bei sum nicht die dropouts einbezogen !!
+
+                //if (barcode<files.length && files[barcode].name.split("_").length>=1)
+                if (Sample[barcode])
+                {
+                    out += Sample[barcode].filename + "\t" + Sample[barcode].totalreads + "\t" + Sample[barcode].wt + "\t" + Sample[barcode].ins + "\t" + Sample[barcode].del + "\t" + Sample[barcode].tsindel + "\t" + Sample[barcode].frameshift + "\t" + Sample[barcode].targeted + "\t" + Sample[barcode].outsideindel + "\t" + Sample[barcode].unresolved + "\n";
+                }
+            }
+
+            var bb = new Blob([out], {type: 'text/plain'});
+            var a = document.createElement('a');
+            a.download = "mutation_table.txt";
+            a.href = window.URL.createObjectURL(bb);
+            a.textContent = 'Klick here to save';
+            a.dataset.downloadurl = ['text/plain', a.download, a.href].join(':');
+
+            document.getElementById("save").appendChild(a);
+            a.click();
+        }
+
+        function SaveProject()
+        {
+            var MutationThreshold = document.getElementsByName("MutationThreshold")[0].value;
+
+            var InitialVariables = new Uint32Array(16);
+            InitialVariables[0] = 1; //Version
+            InitialVariables[1] = numsamples; //Sample Num
+            //string lengths:
+            InitialVariables[2] = document.getElementById("gene").value.length;
+            InitialVariables[3] = locus.length;
+            InitialVariables[4] = TargetingOligo.length;
+            //analysis parameters:
+            InitialVariables[5] = RightBsPos; //Target site
+            InitialVariables[6] = RightBsLen;
+            InitialVariables[7] = MutationThreshold*100;
+            InitialVariables[8] = PhredThreshold-33;
+
+            var blob = new Blob([InitialVariables], {type: 'text/plain'});
+
+            //Add Text values:
+            blob = new Blob([blob, document.getElementById("gene").value], {type: 'text/plain'});
+            blob = new Blob([blob, locus], {type: 'text/plain'});
+            blob = new Blob([blob, TargetingOligo], {type: 'text/plain'});
+
+
+            for (var id=0; id<numsamples; id++)
+            {
+                var SimpleValues = new Uint32Array(16);
+                SimpleValues[0] = Sample[id].plateposition;
+                SimpleValues[1] = Sample[id].totalreads;
+                SimpleValues[2] = Sample[id].numalleles;
+                SimpleValues[3] = Sample[id].numevents;
+                SimpleValues[4] = Sample[id].unresolved;
+                SimpleValues[5] = Sample[id].phreddropout;
+                SimpleValues[6] = Sample[id].restinframe;
+                SimpleValues[7] = Sample[id].restoutofframe;
+                SimpleValues[8] = Sample[id].wt;
+                SimpleValues[9] = Sample[id].ins;
+                SimpleValues[10] = Sample[id].del;
+                SimpleValues[11] = Sample[id].outsideindel;
+                SimpleValues[12] = Sample[id].tsindel;
+                SimpleValues[13] = Sample[id].frameshift;
+                SimpleValues[14] = Sample[id].targeted;
+                SimpleValues[15] = Sample[id].filename.length;
+
+                blob = new Blob([blob, SimpleValues, Sample[id].delspan, Sample[id].delstart, Sample[id].delend, Sample[id].inspos, Sample[id].indellen, Sample[id].delMH, Sample[id].allelepos, Sample[id].allelelen, Sample[id].allelereads, Sample[id].allelelogo, Sample[id].eventpos, Sample[id].eventlen, Sample[id].eventreads], {type: 'text/plain'});
+
+                //Add Text values:
+                blob = new Blob([blob, Sample[id].filename], {type: 'text/plain'});
+            }
+
+            //encode as base64 and embed into html file:
+            var reader = new window.FileReader();
+            reader.onloadend = function()
+            {
+                base64data = reader.result;
+                base64data = base64data.split(",")[1]; //remove header
+
+                var html = "<meta http-equiv='refresh' content='0; url=http://www.outknocker.org/outknocker2.htm#"+base64data+"'>";
+                //alert(html);
+
+                //add SVG image as a preview:
+                html += "<html><body>"+document.getElementById("DIV_piecharts").innerHTML+"</body></html>";
+
+                var blob2 = new Blob([html], {type: 'text/plain'});
+                var a = document.createElement('a');
+                a.download = "PROJECT1.htm";
+                a.href = window.URL.createObjectURL(blob2);
+                a.textContent = 'Klick here to save';
+                a.dataset.downloadurl = ['text/plain', a.download, a.href].join(':');
+                document.getElementById("save").appendChild(a);
+                a.click();
+            }
+            reader.readAsDataURL(blob);
+        }
+        function LoadHash()
+        {
+            //alert(window.location.hash.length);
+            if (window.location.hash)
+            {
+                //alert(window.location.hash.substr(1));
+                var byteCharacters = atob(window.location.hash.substr(1));
+                var byteNumbers = new Array(byteCharacters.length);
+                for (var i = 0; i < byteCharacters.length; i++) byteNumbers[i] = byteCharacters.charCodeAt(i);
+                var byteArray = new Uint8Array(byteNumbers);
+                //alert(byteArray.length+" "+byteArray+" "+byteArray[0]);
+                var blob = new Blob([byteArray], {type: 'contentType'});
+                //alert(blob.size);
+
+                var reader = new window.FileReader();
+                reader.onloadend = function()
+                {
+                    var arraybuffer = reader.result;
+                    var pos = 0;
+                    var InitialVariables = new Uint32Array(arraybuffer.slice(pos, pos+=16*4));
+                    var version = InitialVariables[0];
+                    numsamples = InitialVariables[1];
+                    //string lengths:
+                    var genelen = InitialVariables[2];
+                    locuslen = InitialVariables[3];
+                    var targetingoligolen = InitialVariables[4];
+                    //analysis parameters:
+                    RightBsPos = InitialVariables[5]; //Target site
+                    RightBsLen = InitialVariables[6];
+                    document.getElementsByName("MutationThreshold")[0].value = InitialVariables[7]/100;
+                    PhredThreshold = InitialVariables[8];
+
+                    //get text values:
+                    var dummy = new Uint8Array(arraybuffer.slice(pos, pos+=genelen));
+                    document.getElementById("gene").value = String.fromCharCode.apply(null, dummy);
+                    var dummy = new Uint8Array(arraybuffer.slice(pos, pos+=locuslen));
+                    locus = String.fromCharCode.apply(null, dummy);
+                    var dummy = new Uint8Array(arraybuffer.slice(pos, pos+=targetingoligolen));
+                    TargetingOligo = String.fromCharCode.apply(null, dummy);
+
+                    for (var id=0; id<numsamples; id++)
+                    {
+                        Sample[id] = new SampleClass();
+
+                        var SimpleValues = new Uint32Array(arraybuffer.slice(pos, pos+=16*4));
+                        Sample[id].plateposition = SimpleValues[0];
+                        Sample[id].totalreads = SimpleValues[1];
+                        Sample[id].numalleles = SimpleValues[2];
+                        Sample[id].numevents = SimpleValues[3];
+                        Sample[id].unresolved = SimpleValues[4];
+                        Sample[id].phreddropout = SimpleValues[5];
+                        Sample[id].restinframe = SimpleValues[6];
+                        Sample[id].restoutofframe = SimpleValues[7];
+                        Sample[id].wt = SimpleValues[8];
+                        Sample[id].ins = SimpleValues[9];
+                        Sample[id].del = SimpleValues[10];
+                        Sample[id].outsideindel = SimpleValues[11];
+                        Sample[id].tsindel = SimpleValues[12];
+                        Sample[id].frameshift = SimpleValues[13];
+                        Sample[id].targeted = SimpleValues[14];
+                        var filenamelen = SimpleValues[15];
+
+                        Sample[id].delspan = new Uint32Array(arraybuffer.slice(pos, pos+=250*4));
+                        Sample[id].delstart = new Uint32Array(arraybuffer.slice(pos, pos+=250*4));
+                        Sample[id].delend = new Uint32Array(arraybuffer.slice(pos, pos+=250*4));
+                        Sample[id].inspos = new Uint32Array(arraybuffer.slice(pos, pos+=250*4));
+                        Sample[id].indellen = new Uint32Array(arraybuffer.slice(pos, pos+=201*4));
+                        Sample[id].delMH = new Uint32Array(arraybuffer.slice(pos, pos+=20*4));
+                        Sample[id].allelepos = new Uint8Array(arraybuffer.slice(pos, pos+=10*1));
+                        Sample[id].allelelen = new Uint8Array(arraybuffer.slice(pos, pos+=10*1));
+                        Sample[id].allelereads = new Uint32Array(arraybuffer.slice(pos, pos+=10*4));
+                        Sample[id].allelelogo = new Uint8Array(arraybuffer.slice(pos, pos+=10*250*4*1));
+                        Sample[id].eventpos = new Uint8Array(arraybuffer.slice(pos, pos+=100*1));
+                        Sample[id].eventlen = new Uint8Array(arraybuffer.slice(pos, pos+=100*1));
+                        Sample[id].eventreads = new Uint32Array(arraybuffer.slice(pos, pos+=100*4));
+
+                        //get filename:
+                        var filenamedummy = new Uint8Array(arraybuffer.slice(pos, pos+=filenamelen));
+                        Sample[id].filename = String.fromCharCode.apply(null, filenamedummy);
+                    }
+
+                    //test:
+                    //files = new Array(10);
+
+                    //Update GUI:
+                    var MutationThreshold = document.getElementsByName("MutationThreshold")[0].value;
+                    document.getElementById("locus").value = locus;
+                    document.getElementById("targetsite2").value = locus.substr(RightBsPos, RightBsLen);
+                    document.getElementById("allelethreshold").value = MutationThreshold;
+                    document.getElementById("phredthreshold").value = PhredThreshold;
+                    document.getElementById("targetingoligo").value = TargetingOligo;
+
+                    //Draw:
+                    DrawPieCharts();
+                    CurrentAlignment = 0;
+                    PieClick();
+
+                    window.location.hash = "";
+                }
+                reader.readAsArrayBuffer(blob);
+            }
+            else //load example data?
+            {
+                //window.location = "example.htm"; //problem: flackern, landet auf der results page
+            }
+        }
+        LoadHash();
+
+        function SaveAlleleTable()
+        {
+            var out = "position\tfile name\ttotal reads\tallele\tallele reads\tallele fraction\tindel length\tallele sequence\n";
+
+            for (var barcode=0; barcode<numsamples; barcode++)
+            {
+                var allele=0;
+
+                //for (var i=0; i<250; i++) for (var ii=0; ii<201; ii++)
+                for (var a=0; a<Sample[barcode].numalleles; a++)
+                {
+                    var i = Sample[barcode].allelepos[a];
+                    var ii = Sample[barcode].allelelen[a];
+                    var hitnum = Sample[barcode].allelereads[a];
+                    if (i==249 && ii==100) //failed alignment
+                    {
+                        hitnum = Sample[barcode].unresolved;
+                    }
+                    //if (hitnum*100/sum > MutationThreshold /*|| (i==249 && ii==100)*/)
+                    {
+                        out += GetWellPos(barcode);
+                        out += "\t"+Sample[barcode].filename;
+                        out += "\t"+Sample[barcode].totalreads;
+                        out += "\t#"+(allele+1);
+                        out += "\t"+hitnum;
+                        out += "\t"+Math.round(hitnum/Sample[barcode].totalreads*100*10)/10+"%";
+                        if (i==0 && ii==100) out += "\t"+"wt";
+                        else if (i==249 && ii==100) out += "\t"+"failed alignment";
+                        else
+                        {
+                            if (ii>100) out += "\t"+(100-ii);
+                            else out += "\t"+"+"+(100-ii);
+                        }
+                        //consensus seq:
+                        out += "\t";
+                        for (var pos=0; pos<250; pos++)
+                        {
+                            var max=0, maxbase="N";
+                            for (var base=0; base<4; base++)
+                            {
+                                var logopos = a*250*4 + pos*4 + base;
+                                if (Sample[barcode].allelelogo[logopos] > max)
+                                {
+                                    max = Sample[barcode].allelelogo[logopos];
+                                    maxbase = GATC[base];
+                                }
+                            }
+                            out += maxbase;
+                        }
+                        out += "\n";
+
+                        allele++;
+                    }
+                }
+            }
+
+            var bb = new Blob([out], {type: 'text/plain'});
+            var a = document.createElement('a');
+            a.download = "mutation_table.txt";
+            a.href = window.URL.createObjectURL(bb);
+            a.textContent = 'Klick here to save';
+            a.dataset.downloadurl = ['text/plain', a.download, a.href].join(':');
+
+            document.getElementById("save").appendChild(a);
+            a.click();
+        }
+
+        function SaveCloneTable()
+        {
+            var out = "position\tfile name\ttotal reads\tgenotype\n";
+
+            var max = 0;
+            for (var barcode=0; barcode<numsamples; barcode++) if (Sample[barcode].totalreads > max) max = Sample[barcode].totalreads;
+
+            for (var barcode=0; barcode<numsamples; barcode++)
+            {
+                out += GetWellPos(barcode);
+                out += "\t"+Sample[barcode].filename;
+                out += "\t"+Sample[barcode].totalreads;
+                if (Sample[barcode].totalreads >= max*0.02) out += "\t"+Genotype(barcode); //if this barcode has less than 2% of the max reads per barcode, don't call genotype
+                else out += "\tLOW READS";
+                out += "\n";
+            }
+
+            var bb = new Blob([out], {type: 'text/plain'});
+            var a = document.createElement('a');
+            a.download = "mutation_table.txt";
+            a.href = window.URL.createObjectURL(bb);
+            a.textContent = 'Klick here to save';
+            a.dataset.downloadurl = ['text/plain', a.download, a.href].join(':');
+
+            document.getElementById("save").appendChild(a);
+            a.click();
+        }
+
+        function SaveFailedAlignment()
+        {
+            var bb = new Blob([FailedAlignmentReads[CurrentAlignment]], {type: 'text/plain'});
+            var a = document.createElement('a');
+            a.download = "failed_alignment_reads.txt";
+            a.href = window.URL.createObjectURL(bb);
+            a.textContent = 'Klick here to save';
+            a.dataset.downloadurl = ['text/plain', a.download, a.href].join(':');
+
+            document.getElementById("save").appendChild(a);
+            a.click();
+        }
+
+        function SavePositionalTable()
+        {
+            //aggregate all marked barcodes:
+            var sum = 0, totalindels = 0, totalins = 0, totaldels = 0;
+            var filenames = "";
+            var delspanA = new Array(250);
+            var delstartA = new Array(250);
+            var delendA = new Array(250);
+            var insposA = new Array(250);
+            var indellenA = new Array(201);
+            var delMHA = new Array(11);
+            for (var ii=0; ii<250; ii++)
+            {
+                delspanA[ii] = 0;
+                delstartA[ii] = 0;
+                delendA[ii] = 0;
+                insposA[ii] = 0;
+            }
+            for (var ii=0; ii<201; ii++) indellenA[ii] = 0;
+            for (var ii=0; ii<11; ii++) delMHA[ii] = 0;
+            for (var i=0; i<numsamples; i++) if (SampleMarked[i])
+            {
+                sum += Sample[i].totalreads;
+                totalindels += Sample[i].ins+Sample[i].del;
+                totalins += Sample[i].ins;
+                totaldels += Sample[i].del;
+                if (filenames != "") filenames += ",";
+                filenames += Sample[i].filename;
+
+                for (var ii=0; ii<250; ii++)
+                {
+                    delspanA[ii] += Sample[i].delspan[ii];
+                    delstartA[ii] += Sample[i].delstart[ii];
+                    delendA[ii] += Sample[i].delend[ii];
+                    insposA[ii] += Sample[i].inspos[ii];
+                }
+                for (var ii=0; ii<201; ii++) indellenA[ii] += Sample[i].indellen[ii];
+                for (var ii=0; ii<11; ii++) delMHA[ii] += Sample[i].delMH[ii];
+            }
+
+            var out = "file names\t"+filenames;
+            out += "\namplicon\t"+locus;
+            out += "\ntarget site\t"+locus.substr(RightBsPos, RightBsLen);
+            out += "\ntotal reads\t"+sum;
+            out += "\nindel reads\t"+totalindels;
+            out += "\ninsertion reads\t"+totalins;
+            out += "\ndeletion reads\t"+totaldels;
+
+            out += "\n\ndataset";
+            for (var i=0; i<250; i++) if (i<locus.length)
+            {
+                if (i>=RightBsPos && i<RightBsPos+RightBsLen) out += "\t"+locus[i];
+                else out += "\t"+locus[i].toLowerCase();
+            }
+            out += "\ndeletion span";
+            for (var i=0; i<250; i++) out += "\t"+delspanA[i];
+            out += "\ndeletion start";
+            for (var i=0; i<250; i++) out += "\t"+delstartA[i];
+            out += "\ndeletion end";
+            for (var i=0; i<250; i++) out += "\t"+delendA[i];
+            out += "\ninsertion position";
+            for (var i=0; i<250; i++) out += "\t"+insposA[i];
+
+            out += "\n\ndataset";
+            for (var i=0; i<201; i++)
+            {
+                if (i>100) out += "\t+"+(i-100);
+                else out += "\t"+(i-100);
+            }
+            out += "\nindel length";
+            for (var i=0; i<201; i++) out += "\t"+indellenA[i];
+
+            out += "\n\ndataset";
+            for (var i=0; i<10; i++) out += "\t"+i+" bp";
+            out += "\nmicrohomology length";
+            for (var i=0; i<10; i++) out += "\t"+delMHA[i];
+
+            /*for (var barcode=0; barcode<96; barcode++) if (Sample[barcode])
+            {
+                if (Sample[barcode].totalreads > 0)
+                {
+                    out += "\n"+Sample[barcode].filename+"\t"+Sample[barcode].totalreads+"\t"+Sample[barcode].dels;
+
+                    for (var i=0; i<250; i++) out += "\t"+Sample[barcode].delspan[i];
+                }
+            }*/
+
+            var bb = new Blob([out], {type: 'text/plain'});
+            var a = document.createElement('a');
+            a.download = "mutation_table.txt";
+            a.href = window.URL.createObjectURL(bb);
+            a.textContent = 'Klick here to save';
+            a.dataset.downloadurl = ['text/plain', a.download, a.href].join(':');
+
+            document.getElementById("save").appendChild(a);
+            a.click();
+        }
+
+
+        //genome editing design:
+        var CRISPRlib = "";
+        function LoadLibrary(species)
+        {
+            //alert(species);
+            var filename = "spCas9_mouse_geckov2.txt";
+            if (species == "homosapiens") filename = "spCas9_human_geckov2.txt";
+
+            LoadLibFromDatabase(filename);
+
+            /*var xhr = new XMLHttpRequest(filename);
+            xhr.open('GET', filename, true);
+            xhr.responseType = 'text';
+            xhr.onprogress = function(evt)
+            {
+                if (currenttab == 0)
+                {
+                    //document.getElementById("progress").innerHTML = "Library loaded "+Math.round(evt.loaded/evt.total*100*10)/10+"%";
+                    //document.getElementById("progress").style.display = "";
+                    help("gRNA library loaded "+Math.round(evt.loaded/evt.total*100*10)/10+"%");
+                }
+            }
+            xhr.onload = function(evt)
+            {
+                //document.getElementById("progress").style.display = "none";
+                CRISPRlib = xhr.response;
+                FindGRNA(document.getElementById("gene").value);
+            }
+            xhr.send(null);*/
+        }
+        //LoadLibrary("homosapiens");
+
+        function FindGRNA(gene)
+        {
+            //clear the dropdown:
+            /*var select = document.getElementById("gRNAs");
+            var length = select.options.length;
+            for (i = 0; i < length; i++) select.options[0] = null;*/
+
+            var table = "";
+
+            if (gene.length >= 2)
+            {
+                //correct upper / lower case mouse / human:
+                var geneUpperCase = gene.toUpperCase();
+                var geneLowerCase = gene.toLowerCase();
+                //alert(geneLowerCase);
+                //mouse:
+                if (document.getElementById("species").value=="musmusculus") gene = geneUpperCase[0]+geneLowerCase.substr(1);
+                if (document.getElementById("species").value=="homosapiens") gene = geneUpperCase;
+
+                //only search at line braks:
+                //gene = "\n"+gene;
+
+                var pos=0, hit;
+                while (pos<CRISPRlib.length && (hit = CRISPRlib.indexOf(gene, pos)) != -1)
+                {
+                    var line="";
+                    pos = hit;
+                    while (pos<CRISPRlib.length && CRISPRlib[pos] != "\n")
+                    {
+                        line += CRISPRlib[pos++];
+                    }
+
+                    if (hit==0 || CRISPRlib[hit-1]=="\n")
+                    {
+                        line = line.split("\t");
+                        if (line.length >= 2)
+                        {
+                            //add to the dropdown:
+                            /*var option = document.createElement("option");
+                             option.text = line[0]+" "+line[1];
+                             option.value = line[2]+" "+line[3];
+                             select.add(option);*/
+
+                            table += "<button onclick='SelectGRNA(\""+line+"\");'>GeCKO v2.0 "+line[0]+" "+line[1]+"</button><br>";
+                        }
+                    }
+                }
+                if (CRISPRlib == "") table = "please wait for the gRNA library to be loaded.<br>";
+                table += "<button onclick='SelectGRNA();'>Enter custom target site</button>";
+            }
+
+
+
+            //select.options[0].selected = true;
+            //SelectGRNA(/*select.options[0].text*/0);
+
+            //move gene_auto_complete to input:
+            var gene_auto_complete = document.getElementById("gene_auto_complete");
+            var gene_input = document.getElementById("gene");
+            gene_auto_complete.innerHTML = table;
+            var x = gene_input.offsetLeft;
+            var y = gene_input.offsetTop+30;
+            gene_auto_complete.style.left = x;
+            gene_auto_complete.style.top = y;
+            if (table=="") gene_auto_complete.style.display = "none";
+            else gene_auto_complete.style.display = "";
+        }
+        function SelectGRNA(line)
+        {
+            document.getElementById("gene_auto_complete").style.display = "none";
+            document.getElementById("targetsite2").value = "";
+
+            if (!line) return;
+            line = line.split(",");
+            //alert(line);
+            var gene = line[0];
+            var ts = line[1];
+            var fwd = line[2];
+            var rev = line[3];
+
+
+            var fwd2 = "ACACTCTTTCCCTACACGACGCTCTTCCGATCT"+fwd;
+            var rev2 = "TGACTGGAGTTCAGACGTGTGCTCTTCCGATCT"+rev;
+
+            var pcrlink = "<a target='_blank' href='http://genome.ucsc.edu/cgi-bin/hgPcr?db=hg38&wp_target=genome&wp_f="+fwd+"&wp_r="+rev+"&Submit=submit&wp_size=4000&wp_perfect=15&wp_good=15&boolshad.wp_flipReverse=0'>Target region</a>";
+            if (document.getElementById("species").value=="musmusculus") pcrlink = "<a target='_blank' href='http://genome.ucsc.edu/cgi-bin/hgPcr?db=mm10&wp_target=genome&wp_f="+fwd+"&wp_r="+rev+"&Submit=submit&wp_size=4000&wp_perfect=15&wp_good=15&boolshad.wp_flipReverse=0'>PCR amplicon</a>";
+
+            document.getElementById("targetsite").innerHTML = /*"Target site: "+ts+*/ /*"<br>Library: <a target='_blank' href='https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4486245/'>GeCKO v2.0</a><br>"+*/ pcrlink;
+
+            document.getElementById("PCRfwd").innerHTML = "PCR fwd primer: "+fwd2;
+            document.getElementById("PCRrev").innerHTML = "PCR rev primer: "+rev2;
+            document.getElementById("targetsite2").value = ts;
+            document.getElementById("gene").value = gene;
+
+            UpdateLICOligo();
+        }
+        function Hide_auto_complete()
+        {
+            gene_auto_complete.style.display = "none";
+        }
+        function UpdateLICOligo()
+        {
+            var ts = document.getElementById("targetsite2").value;
+            if (ts.length > 20) ts = ts.substr(0,ts.length-3);
+            var oligo = "GGAAAGGACGAAACACC"+ts+"GTTTTAGAGCTAGAAATAGCAAGTTAAAATAAGG";
+            document.getElementById("LIColigo").innerHTML = "gRNA oligo: "+oligo;
+        }
+
+        function UpdateProtocols()
+        {
+            var species = document.getElementById("species").value;
+            if (species == "homosapiens") document.getElementById("transfection").innerHTML = "<u>1.4.1 Transfect HEK293T cells:</u><br>Plate HEK293T cells at a density of 25,000 cells per 96-well in DMEM containing 10% FCS, 1 mM sodium pyruvate, and 10 mg/l Ciprofloxacin<br>Let cells adhere for 16h at 37C 5% CO2<br>Mix 200ng of the assembled plasmid with 25�l Optimem in an 1.5ml tube<br>Mix 0.5�l GeneJuice with 25�l Optimem, incubate for 5 minutes at room temperature<br>Combine both solutions and mix, incubate for 20 minutes at room temperature<br>Add dropwise to a single 96-well of cells<br>Incubate cells for 2 days at 37C 5% CO2";
+            else document.getElementById("transfection").innerHTML = "<u>1.4.1 Transfect Neoro-2A cells:</u><br>Plate Neoro-2A cells at a density of 25,000 cells per 96-well in DMEM containing 10% FCS, 1 mM sodium pyruvate, and 10 mg/l Ciprofloxacin<br>Let cells adhere for 16h at 37C 5% CO2<br>Mix 200ng of the assembled plasmid with 25�l Optimem in an 1.5ml tube<br>Mix 0.5�l GeneJuice with 25�l Optimem, incubate for 5 minutes at room temperature<br>Combine both solutions and mix, incubate for 20 minutes at room temperature<br>Add dropwise to a single 96-well of cells<br>Incubate cells for 2 days at 37C 5% CO2";
+
+            var monopoly = document.getElementById("monopoly").value;
+            if (monopoly == "mono")
+            {
+                document.getElementById("cellcloning").style.display = "";
+                document.getElementById("firstPCR").innerHTML = "<u>1.5.2 First PCR</u><br>Prepare a 120x PCR mastermix containing:<br>- 300�l Phusion HF buffer<br>- 30�l dNTP mix 10mM<br>- 7.5�l fwd primer 100�M<br>- 7.5�l rev primer 100�M<br>- 15�l Phusion polymerase<br>- 900�l water<br>In a 96-well PCR plate, mix 2�l lysate with 10.5�l mastermix<br>Run with the protocol: 2min 98C, 19x(20sec 98C, 20sec 60C, 30sec 72C), 2min 72C";
+            }
+            else
+            {
+                document.getElementById("firstPCR").innerHTML = "<u>1.5.2 First PCR</u><br>Prepare a 120x PCR mastermix containing:<br>- 600�l Phusion HF buffer<br>- 60�l dNTP mix 10mM<br>- 15�l fwd primer 100�M<br>- 15�l rev primer 100�M<br>- 30�l Phusion polymerase<br>- 1800�l water<br>In a 96-well PCR plate, mix 4�l lysate with 21�l mastermix<br>Run with the protocol: 2min 98C, 19x(20sec 98C, 20sec 60C, 30sec 72C), 2min 72C";
+                document.getElementById("cellcloning").style.display = "none";
+            }
+        }
+        UpdateProtocols();
+
+        function ToggleDivDisplay(id)
+        {
+            var div = document.getElementById(id);
+            div.style.display = div.style.display === "none" ? "" : "none";
+        }
+        function PreventDivToggle(e)
+        {
+            e.stopPropagation();
+        }
+        function DownloadProtocol(id, filename)
+        {
+            //alert(id);
+
+            var text = document.getElementById(id);
+            //alert(svg.innerHTML);
+            var bb = new Blob([text.innerHTML], {type: 'text/plain'}); //textContent = enth�lt alles, keine html tags -> txt file, problem: enth�lt zu viele spaces
+
+            var a = document.createElement('a');
+            a.download = filename;
+            a.href = window.URL.createObjectURL(bb);
+            a.textContent = 'Klick here to save';
+            a.dataset.downloadurl = ['text/plain', a.download, a.href].join(':');
+
+            document.getElementById("save").appendChild(a);
+            a.click();
+        }
+
+        function help(text)
+        {
+            var div = document.getElementById("help");
+            if (!text || text=="")
+            {
+                div.style.display = "none";
+                //document.body.onclick="";
+                return;
+            }
+            div.innerHTML = text+"<br><button onclick='help();'>close</button>";
+            div.style.display = "";
+
+            //alert(document.body.onclick);
+            //div.onmousedown = "this.style.display = 'none';"
+            return false;
+        }
+
+
+        //file list:
+        function UpdateFileList()
+        {
+            files = document.getElementById('files').files;
+            UpdateFileListIntern(files);
+        }
+        function UpdateFileListIntern(files_param)
+        {
+            var num = files_param.length;
+
+            if (num > 96)
+            {
+                help("only 96 FASTQ files can be analyzed at a time");
+                num = 96;
+            }
+
+            var table = "";
+            for (var i=0; i<num; i++)
+            {
+                //alert(files[i]);
+
+                table += /*GetWellPos(i) + "\t" +*/ files_param[i].name+"\n";
+            }
+
+            document.getElementById("fileorder").value = table;
+            UpdateFileOrderNumbers();
+
+            /*var file = evt.files[0];
+            var reader = new FileReader();
+            reader.onload = function(evt2)
+            {
+                LoadTxt(evt2.target.result, evt.value);
+            };
+            reader.readAsText(file);*/
+        }
+        function UpdateFileOrderNumbers()
+        {
+            var fileorder = document.getElementById("fileorder").value.split("\n");
+            var num = fileorder.length;
+            //if (num>1 && fileorder[num-1]=="") num--;
+            if (num<1) num = 1;
+            if (num>96) num = 96;
+
+            var table = "";
+            for (var i=0; i<num; i++) table += GetWellPos(i)+"\n";
+
+            document.getElementById("fileorder_numbers").value = table;
+            document.getElementById("fileorder_numbers").scrollTop = document.getElementById("fileorder").scrollTop;
+        }
+
+        //File drag and drop:
+        var loadfiles = document.body; //document.getElementById("loadfiles");
+        loadfiles.addEventListener("dragover", FileDragHover, false);
+		loadfiles.addEventListener("dragleave", FileDragHover, false);
+		loadfiles.addEventListener("drop", FileSelectHandler, false);
+		loadfiles.style.display = "block";
+        function FileDragHover(e)
+        {
+            e.stopPropagation();
+            e.preventDefault();
+        }
+        function FileSelectHandler(e)
+        {
+            // cancel event and hover styling
+            FileDragHover(e);
+            files = e.target.files || e.dataTransfer.files;
+            UpdateFileListIntern(files);
+        }
+
+        //prevent unintended leaving the site:
+        /*window.onbeforeunload = function() {
+            return "Leaving this page will reset the data";
+        };*/
+
+        //store grna lib in indexedDB:
+        var indexedDB = window.indexedDB;
+        var IDBTransaction = window.IDBTransaction;
+        var dbVersion = 1.0;
+        // Create/open database
+        var request = indexedDB.open("OutKnockerFiles", dbVersion);
+        var db;
+        function createObjectStore (dataBase)
+        {
+            // Create an objectStore
+            console.log("Creating objectStore")
+            dataBase.createObjectStore("files");
+        }
+        function putFileInDb(blob, filename)
+        {
+            console.log("Putting files in IndexedDB");
+
+            // Open a transaction to the database
+            var readWriteMode = typeof IDBTransaction.READ_WRITE == "undefined" ? "readwrite" : IDBTransaction.READ_WRITE;
+            var transaction = db.transaction(["files"], readWriteMode);
+            console.log(transaction);
+            // Put the blob into the dabase
+            var put = transaction.objectStore("files").put(blob, filename).onsuccess = function (event) {
+                console.log("saved to database");
+            };
+        }
+        function LoadLibFromDatabase(filename)
+        {
+            console.log("Reading file from IndexedDB");
+
+            // Open a transaction to the database
+            var readWriteMode = typeof IDBTransaction.READ_WRITE == "undefined" ? "readwrite" : IDBTransaction.READ_WRITE;
+            var transaction = db.transaction(["files"], readWriteMode);
+            console.log(transaction);
+
+            // Retrieve the file
+            var objectStoreTitleRequest = transaction.objectStore("files").get(filename);
+            objectStoreTitleRequest.onsuccess = function (event) {
+                if (event.target.result)
+                {
+                    CRISPRlib = event.target.result;
+                    //FindGRNA(document.getElementById("gene").value);
+                    console.log("Got file from database!" /*+ CRISPRlib*/);
+                }
+                else
+                {
+                    console.log("not found in database");
+                    LoadLibFromFile(filename);
+                }
+            };
+        }
+        function LoadLibFromFile(filename)
+        {
+            var xhr = new XMLHttpRequest(filename);
+            xhr.open('GET', filename, true);
+            xhr.responseType = 'text';
+            xhr.onprogress = function(evt)
+            {
+                if (currenttab == 0) help("gRNA library loaded "+Math.round(evt.loaded/evt.total*100*10)/10+"%<br>(only needed once)");
+            }
+            xhr.onload = function(evt)
+            {
+                CRISPRlib = xhr.response;
+                //FindGRNA(document.getElementById("gene").value);
+                putFileInDb(xhr.response, filename);
+            }
+            xhr.send(null);
+        }
+        request.onerror = function (event) {
+            console.log("Error creating/accessing IndexedDB database");
+        };
+        request.onsuccess = function (event) {
+            console.log("Success creating/accessing IndexedDB database");
+            db = request.result;
+
+            db.onerror = function (event) {
+                console.log("Error creating/accessing IndexedDB database");
+            };
+
+            LoadLibrary("homosapiens");
+        };
+        request.onupgradeneeded = function (event) {
+            createObjectStore(event.target.result);
+        };
+
+    </script>
+</body></html>
