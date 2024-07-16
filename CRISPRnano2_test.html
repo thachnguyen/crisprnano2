@@ -652,12 +652,11 @@ function AlignmentMouseMove(evt)
     {
         var x = evt.clientX;
         var y = evt.clientY;
-
         //alert(x-AlignmentLastX);
         var shift = (x-AlignmentLastX)/12;
         AlignmentStartPos -= shift;
         if (AlignmentStartPos < -region_analyse) AlignmentStartPos = -region_analyse;
-        if (AlignmentStartPos > region_analyse+10) AlignmentStartPos = region_analyse+10;
+        if (AlignmentStartPos > region_analyse) AlignmentStartPos = region_analyse;
         PlotAlignment(CurrentAlignment, locus);
 
         AlignmentLastX = x;
@@ -2823,7 +2822,6 @@ function PlotAlignment(barcode, locus){
     for (let key in aln_dict[id]){
         sum_track[id] += aln_dict[id][key];
     }
- 
     var sum = 0;
     var read_ambigous =0;
     // var targetingOligo = 0;
@@ -3077,20 +3075,52 @@ function PlotAlignment(barcode, locus){
 
     for (let key in aln_dict_fil[barcode]){
         //aggregate WT
-        for (let x=0; x<30*2; x++){
+        var micro_homology_data = Check_micro_homology(key)
+        if (micro_homology_data[0]==''){
+            for (let x=xfrom-10; x<xto-10; x++){
             //draw main track:
-            if ((key[x]==locus[BreakPoint-region_analyse+x])||(key[x]=='N')||(key[x]=='-')||(typeof(key[x])=='undefined')){
-                SVGObj= document.createElementNS(svgns, "rect");
-                SVGObj.setAttribute("x", 120+12*(x)-5);
-                SVGObj.setAttribute("y", ysize+delypos-10);
-                SVGObj.setAttribute("width", "11");
-                SVGObj.setAttribute("height", "11");
-                SVGObj.setAttribute("fill", "rgb(255,255,255");
-                SVGObj.setAttribute("text-anchor", "middle");
-                SVGObj.setAttribute("pointer-events","none");
-                svg.appendChild(SVGObj);
+                if ((key[x]==locus[BreakPoint-region_analyse+x])||(key[x]=='N')||(key[x]=='-')||(typeof(key[x])=='undefined')){
+                    SVGObj= document.createElementNS(svgns, "rect");
+                    SVGObj.setAttribute("x", 120+12*(x)-5);
+                    SVGObj.setAttribute("y", ysize+delypos-10);
+                    SVGObj.setAttribute("width", "11");
+                    SVGObj.setAttribute("height", "11");
+                    SVGObj.setAttribute("fill", "rgb(255,255,255");
+                    SVGObj.setAttribute("text-anchor", "middle");
+                    SVGObj.setAttribute("pointer-events","none");
+                    svg.appendChild(SVGObj);
+                    }  
                 }
             }
+        else { 
+            for (let x=xfrom-10; x<xto-10; x++){
+                if (((x >= micro_homology_data[1]-xfrom+10)&&(x < micro_homology_data[1]-xfrom+10 + micro_homology_data[0].length))||((x >= micro_homology_data[2]-xfrom+10)&&(x < micro_homology_data[2]-xfrom+10 + micro_homology_data[0].length))){
+                    SVGObj= document.createElementNS(svgns, "rect");
+                    SVGObj.setAttribute("x", 120+12*(x)-5);
+                    SVGObj.setAttribute("y", ysize+delypos-10);
+                    SVGObj.setAttribute("width", "11");
+                    SVGObj.setAttribute("height", "11");
+                    SVGObj.setAttribute("fill", "rgb(0,255,255");
+                    SVGObj.setAttribute("text-anchor", "middle");
+                    SVGObj.setAttribute("pointer-events","none");
+                    svg.appendChild(SVGObj);
+                }
+                else{
+                    if ((key[x]==locus[BreakPoint-region_analyse+x])||(key[x]=='N')||(key[x]=='-')||(typeof(key[x])=='undefined')){
+                    SVGObj= document.createElementNS(svgns, "rect");
+                    SVGObj.setAttribute("x", 120+12*(x)-5);
+                    SVGObj.setAttribute("y", ysize+delypos-10);
+                    SVGObj.setAttribute("width", "11");
+                    SVGObj.setAttribute("height", "11");
+                    SVGObj.setAttribute("fill", "rgb(255,255,255");
+                    SVGObj.setAttribute("text-anchor", "middle");
+                    SVGObj.setAttribute("pointer-events","none");
+                    svg.appendChild(SVGObj);
+                    }  
+                }
+                }
+            }
+        
 
         if (aln_type_dict[id][key]==1 && (Object.keys(no_indel_arr).length ==2)){
             for (let x=xfrom-10; x<xto-10; x++){
@@ -3253,6 +3283,9 @@ function PlotAlignment(barcode, locus){
             else if (key[x]=="-"){SVGObj.textContent = key[x];
                 SVGObj.setAttribute("fill", "rgb(0,0,0");
             }
+
+
+
             SVGObj.setAttribute("x", 120+12*(x-xfrom+10));
             SVGObj.setAttribute("text-anchor", "middle");
             SVGObj.setAttribute("pointer-events","none");
@@ -4435,7 +4468,32 @@ function PrintSVGAlignment(){
     printWindow.close();
 }
 
+
+// Check micro homology for given sequence 
+// input: our alignment dictionary element does not contain insertion track
+
 function Check_micro_homology(sequence_seq){
+    var micro_homology = ''
+    const startIndex = sequence_seq.indexOf('-');
+    const endIndex = sequence_seq.lastIndexOf('-') + 1;
+    var ref_seq = locus.substring(10, sequence_seq.length + 10)
+    if (startIndex !=0){
+        for (let i = startIndex; i < endIndex; i++) {
+            if (ref_seq[i]==sequence_seq[i+endIndex-startIndex]){
+                micro_homology+=ref_seq[i]
+            }
+            else{
+                break
+            }
+        }
+    }
+    return [micro_homology, startIndex, endIndex];   
+}
+
+
+// Check duplication for insertion sequence 
+// input: our alignment dictionary element contains insertion track
+function Check_duplication(sequence_seq){
     var micro_homology = ''
     const startIndex = sequence_seq.indexOf('-');
     const endIndex = sequence_seq.lastIndexOf('-') + 1;
@@ -4450,8 +4508,7 @@ function Check_micro_homology(sequence_seq){
             }
         }
     }
-    return micro_homology; 
-    
+    return [micro_homology, startIndex, endIndex];   
 }
 
 
