@@ -655,8 +655,8 @@ function AlignmentMouseMove(evt)
         //alert(x-AlignmentLastX);
         var shift = (x-AlignmentLastX)/12;
         AlignmentStartPos -= shift;
-        if (AlignmentStartPos < -region_analyse) AlignmentStartPos = -region_analyse;
-        if (AlignmentStartPos > region_analyse) AlignmentStartPos = region_analyse;
+        if (AlignmentStartPos < -2*region_analyse) AlignmentStartPos = -2*region_analyse;
+        if (AlignmentStartPos > 2*region_analyse) AlignmentStartPos = 2*region_analyse;
         PlotAlignment(CurrentAlignment, locus);
 
         AlignmentLastX = x;
@@ -2813,7 +2813,7 @@ function GetWellPos(i)
     return ABC[Math.floor(i/12)] + ((i%12)+1);
 }
 
-//Alignment summary plot:
+//Alignment summary plot static:
 function PlotAlignment(barcode, locus){
     //compute number of aligned read
     // check genotype
@@ -3009,6 +3009,69 @@ function PlotAlignment(barcode, locus){
 
     delypos+=delyshift;
 
+  // Legend RIMA2
+    SVGObj= document.createElementNS(NS,"text");
+    SVGObj.setAttribute("y", ysize+delypos-70);
+    SVGObj.setAttribute("font-size", "24");
+    SVGObj.setAttribute("fill", "rgb(0,0,0)");
+    SVGObj.textContent = 'ANNOTATION';
+    SVGObj.setAttribute("x", 120+6*(120));
+    svg.appendChild(SVGObj);
+
+    SVGObj= document.createElementNS(svgns, "rect");
+    SVGObj.setAttribute("x", 120+6*(120));
+    SVGObj.setAttribute("y", ysize+delypos-60);
+    SVGObj.setAttribute("width", "11");
+    SVGObj.setAttribute("height", "11");
+    SVGObj.setAttribute("fill", "rgb(255,255,0");
+    SVGObj.style.stroke="rgb(255,0,0)";
+    SVGObj.setAttribute("pointer-events","none");
+    svg.appendChild(SVGObj);
+    SVGObj= document.createElementNS(NS,"text");
+    SVGObj.setAttribute("y", ysize+delypos-50);
+    SVGObj.setAttribute("font-size", "14");
+    SVGObj.setAttribute("fill", "rgb(0,0,0)");
+    SVGObj.textContent = 'DUPLICATED INSERTION';
+    SVGObj.setAttribute("x", 120+6*120+30);
+    svg.appendChild(SVGObj);
+
+    SVGObj= document.createElementNS(svgns, "rect");
+    SVGObj.setAttribute("x", 120+6*(120));
+    SVGObj.setAttribute("y", ysize+delypos-40);
+    SVGObj.setAttribute("width", "11");
+    SVGObj.setAttribute("height", "11");
+    SVGObj.setAttribute("fill", "rgb(0,255,255");
+    SVGObj.setAttribute("text-anchor", "middle");
+    SVGObj.setAttribute("pointer-events","none");
+    svg.appendChild(SVGObj);
+    SVGObj= document.createElementNS(NS,"text");
+    SVGObj.setAttribute("y", ysize+delypos-30);
+    SVGObj.setAttribute("font-size", "14");
+    SVGObj.setAttribute("fill", "rgb(0,0,0)");
+    SVGObj.textContent = 'MICRO HOMOLOGY';
+    SVGObj.setAttribute("x", 120+6*120+30);
+    svg.appendChild(SVGObj);
+
+    SVGObj= document.createElementNS(svgns, "rect");
+    SVGObj.setAttribute("x", 120+6*(120));
+    SVGObj.setAttribute("y", ysize+delypos-20);
+    SVGObj.setAttribute("width", "11");
+    SVGObj.setAttribute("height", "11");
+    SVGObj.setAttribute("fill", "rgb(255,255,255");
+    SVGObj.setAttribute("text-anchor", "middle");
+    SVGObj.style.stroke="rgb(255,0,0)";
+    SVGObj.setAttribute("pointer-events","none");
+    svg.appendChild(SVGObj);
+
+    SVGObj= document.createElementNS(NS,"text");
+    SVGObj.setAttribute("y", ysize+delypos-10);
+    SVGObj.setAttribute("font-size", "14");
+    SVGObj.setAttribute("fill", "rgb(0,0,0)");
+    SVGObj.textContent = 'NORMAL SNP/INSERTION';
+    SVGObj.setAttribute("x", 120+6*120+30);
+    svg.appendChild(SVGObj);
+
+
     var xfrom = BreakPoint-30 +Math.floor(AlignmentStartPos);
     var xto = xfrom +60;
     //wt: REFERENCES SEQ
@@ -3076,6 +3139,14 @@ function PlotAlignment(barcode, locus){
     for (let key in aln_dict_fil[barcode]){
         //aggregate WT
         var micro_homology_data = Check_micro_homology(key)
+        var duplication1 = Check_duplication(key)
+        if (micro_homology_data !=''&&micro_homology_data[0].length >=2){
+            var rima_class = 'classical MMEJ (c-MMEJ)'
+        }
+        else if (micro_homology_data !=''&&micro_homology_data[0].length<2){
+            var rima_class = 'Other-EJ (NHEJ, SD-MMEJ, TMEJ, etc)'
+        }
+         
         if (micro_homology_data[0]==''){
             for (let x=xfrom-10; x<xto-10; x++){
             //draw main track:
@@ -3121,7 +3192,6 @@ function PlotAlignment(barcode, locus){
                 }
             }
         
-
         if (aln_type_dict[id][key]==1 && (Object.keys(no_indel_arr).length ==2)){
             for (let x=xfrom-10; x<xto-10; x++){
             //draw main track:
@@ -3283,9 +3353,6 @@ function PlotAlignment(barcode, locus){
             else if (key[x]=="-"){SVGObj.textContent = key[x];
                 SVGObj.setAttribute("fill", "rgb(0,0,0");
             }
-
-
-
             SVGObj.setAttribute("x", 120+12*(x-xfrom+10));
             SVGObj.setAttribute("text-anchor", "middle");
             SVGObj.setAttribute("pointer-events","none");
@@ -3311,12 +3378,17 @@ function PlotAlignment(barcode, locus){
                     svg.appendChild(imageElement);
                     image_loc =1;
                 }
+                if (duplication1){
+                    SVGObj.setAttribute("fill", "rgb(255,255,0");
+                }
+                else{
+                    SVGObj.setAttribute("fill", "rgb(255,255,255");
+                }
                 SVGObj.style.stroke="rgb(255,0,0)";
                 SVGObj.setAttribute("x", 120+12*(x-xfrom+10));
                 SVGObj.setAttribute("y", ysize+delypos+4);
                 SVGObj.setAttribute("width", "12");
                 SVGObj.setAttribute("height", "12");
-                SVGObj.setAttribute("fill", "rgb(255,255,255");
                 SVGObj.setAttribute("text-anchor", "middle");
                 SVGObj.setAttribute("pointer-events","none");
                 svg.appendChild(SVGObj);
@@ -3350,6 +3422,17 @@ function PlotAlignment(barcode, locus){
 
         SVGObj.textContent +="TYPE: "+ aln_type[aln_type_dict[barcode][key]] + ", (" + gap_len1 + " bp)" +" | " +aln_dict_fil[barcode][key] +"  Reads, " + (aln_dict_fil[barcode][key]/summary_track[barcode][7]*100).toFixed(2) + " %";
         svg.appendChild(SVGObj);
+
+        SVGObj= document.createElementNS(NS,"text");
+        SVGObj.setAttribute("x", 10+ 120+24*(30)+2 );
+        SVGObj.setAttribute("y", ysize+delypos+13);
+        SVGObj.setAttribute("font-size", "14");
+        if (rima_class == 'classical MMEJ (c-MMEJ)'){
+            SVGObj.setAttribute("fill", "rgb(84, 199, 199)");
+        }
+        SVGObj.textContent +="RIMA classified as: "+ rima_class;
+        svg.appendChild(SVGObj);
+
         id1+=1;
         delypos+=delyshift;
     }
@@ -3628,7 +3711,7 @@ function PlotAlignment_bulk(barcode, locus, bulk_threshold){
                     SVGObj.setAttribute("pointer-events","none");
                     svg.appendChild(SVGObj);
                 }
-                SVGObj= document.createElementNS(NS, "text");
+                    SVGObj= document.createElementNS(NS, "text");
                     SVGObj.setAttribute("y", ysize+delypos);
                     SVGObj.setAttribute("font-size", "13");
                     SVGObj.setAttribute("font-weight", "400");
@@ -4494,21 +4577,15 @@ function Check_micro_homology(sequence_seq){
 // Check duplication for insertion sequence 
 // input: our alignment dictionary element contains insertion track
 function Check_duplication(sequence_seq){
-    var micro_homology = ''
-    const startIndex = sequence_seq.indexOf('-');
-    const endIndex = sequence_seq.lastIndexOf('-') + 1;
-    var ref_seq = locus.substring(10, sequence_seq.length + 10)
-    if (startIndex !=0){
-        for (let i = startIndex; i < endIndex; i++) {
-            if (ref_seq[i]==ref_seq[i+endIndex-startIndex]){
-                micro_homology+=ref_seq[i]
-            }
-            else{
-                break
-            }
-        }
+    var duplicate = false
+    const main_track = sequence_seq.split('\n')[0]
+    const insertion = sequence_seq.split('\n')[1]
+    const insertion_trim = insertion.trim()
+    if (insertion_trim !=''){
+        const index_in = insertion.indexOf(insertion_trim)
+        duplicate = (main_track.substring(index_in, index_in+insertion_trim.length)==insertion.substring(index_in, index_in+insertion_trim.length)||main_track.substring(index_in-insertion_trim.length, index_in)==insertion.substring(index_in, index_in+insertion_trim.length))
     }
-    return [micro_homology, startIndex, endIndex];   
+    return duplicate;   
 }
 
 
