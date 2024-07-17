@@ -2829,15 +2829,12 @@ function PlotAlignment(barcode, locus){
         if (hits[id][i]>=0){
             switch (hits[id][i]){
                 case 1:
-                    // no_indel++;
                     sum++
                     break;
                 case 2:
-                    // inf_indel++;
                     sum++
                     break;
                 case 3: 
-                    // out_indel++;
                     sum++
                     break;
                 case 7: 
@@ -3451,7 +3448,6 @@ function PlotAlignment_bulk(barcode, locus, bulk_threshold){
  
     var sum = 0;
     var read_ambigous =0;
-    // var targetingOligo = 0;
     for (var i=0; i<hits[id].length; i++){
         if (hits[id][i]>=0){
             switch (hits[id][i]){
