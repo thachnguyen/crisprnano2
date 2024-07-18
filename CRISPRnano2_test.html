@@ -2992,7 +2992,7 @@ function PlotAlignment(barcode, locus){
     SVGObj= document.createElementNS(NS,"text");
     SVGObj.setAttribute("y", ysize+delypos-70);
     SVGObj.setAttribute("font-size", "24");
-    SVGObj.setAttribute("fill", "rgb(0,0,0)");
+    SVGObj.setAttribute("fill", N_cl);
     SVGObj.textContent = 'ANNOTATION';
     SVGObj.setAttribute("x", 120+6*(120));
     svg.appendChild(SVGObj);
@@ -3003,13 +3003,13 @@ function PlotAlignment(barcode, locus){
     SVGObj.setAttribute("width", "11");
     SVGObj.setAttribute("height", "11");
     SVGObj.setAttribute("fill", "rgb(255,255,0");
-    SVGObj.style.stroke="rgb(255,0,0)";
+    SVGObj.style.stroke=T_cl;
     SVGObj.setAttribute("pointer-events","none");
     svg.appendChild(SVGObj);
     SVGObj= document.createElementNS(NS,"text");
     SVGObj.setAttribute("y", ysize+delypos-50);
     SVGObj.setAttribute("font-size", "14");
-    SVGObj.setAttribute("fill", "rgb(0,0,0)");
+    SVGObj.setAttribute("fill", N_cl);
     SVGObj.textContent = 'DUPLICATED INSERTION';
     SVGObj.setAttribute("x", 120+6*120+30);
     svg.appendChild(SVGObj);
@@ -3026,7 +3026,7 @@ function PlotAlignment(barcode, locus){
     SVGObj= document.createElementNS(NS,"text");
     SVGObj.setAttribute("y", ysize+delypos-30);
     SVGObj.setAttribute("font-size", "14");
-    SVGObj.setAttribute("fill", "rgb(0,0,0)");
+    SVGObj.setAttribute("fill", N_cl);
     SVGObj.textContent = 'MICRO HOMOLOGY';
     SVGObj.setAttribute("x", 120+6*120+30);
     svg.appendChild(SVGObj);
@@ -3038,14 +3038,14 @@ function PlotAlignment(barcode, locus){
     SVGObj.setAttribute("height", "11");
     SVGObj.setAttribute("fill", "rgb(255,255,255");
     SVGObj.setAttribute("text-anchor", "middle");
-    SVGObj.style.stroke="rgb(255,0,0)";
+    SVGObj.style.stroke=T_cl;
     SVGObj.setAttribute("pointer-events","none");
     svg.appendChild(SVGObj);
 
     SVGObj= document.createElementNS(NS,"text");
     SVGObj.setAttribute("y", ysize+delypos-10);
     SVGObj.setAttribute("font-size", "14");
-    SVGObj.setAttribute("fill", "rgb(0,0,0)");
+    SVGObj.setAttribute("fill", N_cl);
     SVGObj.textContent = 'NORMAL SNP/INSERTION';
     SVGObj.setAttribute("x", 120+6*120+30);
     svg.appendChild(SVGObj);
@@ -3060,7 +3060,7 @@ function PlotAlignment(barcode, locus){
         SVGObj.setAttribute("y", ysize+delypos+20);
         SVGObj.setAttribute("font-size", "14");
         if (x>=RightBsPos && x<RightBsPos+rightbs.length) SVGObj.setAttribute("fill", "rgb(0,0,250)");
-        else SVGObj.setAttribute("fill", "rgb(0,0,0)");
+        else SVGObj.setAttribute("fill", N_cl);
         SVGObj.textContent = locus[x];
         SVGObj.setAttribute("x", 120+12*(x-xfrom));
         SVGObj.setAttribute("text-anchor", "middle");
@@ -3079,7 +3079,7 @@ function PlotAlignment(barcode, locus){
         SVGObj= document.createElementNS(NS,"text");
         SVGObj.setAttribute("y", ysize+delypos);
         SVGObj.setAttribute("font-size", "14");
-        SVGObj.setAttribute("fill", "rgb(0,0,0)");
+        SVGObj.setAttribute("fill", N_cl);
         SVGObj.textContent = locus2[x];
         SVGObj.setAttribute("x", 120+12*(x-xfrom));
         SVGObj.setAttribute("text-anchor", "middle");
@@ -3109,7 +3109,7 @@ function PlotAlignment(barcode, locus){
     //line:
     SVGObj= document.createElementNS(NS,"path");
     SVGObj.setAttributeNS(null, "d", "M 5,"+(ysize+delypos+5.5)+" L 1200,"+(ysize+delypos+5.5));
-    SVGObj.style.stroke="rgb(0,0,0)";
+    SVGObj.style.stroke=N_cl;
     SVGObj.setAttributeNS(null, "stroke-width", 1);
     svg.appendChild(SVGObj);
     delypos+=delyshift;
@@ -3130,15 +3130,15 @@ function PlotAlignment(barcode, locus){
             for (let x=xfrom-10; x<xto-10; x++){
             //draw main track:
                 if ((key[x]==locus[BreakPoint-region_analyse+x])||(key[x]=='N')||(key[x]=='-')||(typeof(key[x])=='undefined')){
-                    SVGObj= document.createElementNS(svgns, "rect");
-                    SVGObj.setAttribute("x", 120+12*(x)-5);
-                    SVGObj.setAttribute("y", ysize+delypos-10);
-                    SVGObj.setAttribute("width", "11");
-                    SVGObj.setAttribute("height", "11");
-                    SVGObj.setAttribute("fill", "rgb(255,255,255");
-                    SVGObj.setAttribute("text-anchor", "middle");
-                    SVGObj.setAttribute("pointer-events","none");
-                    svg.appendChild(SVGObj);
+                    // SVGObj= document.createElementNS(svgns, "rect");
+                    // SVGObj.setAttribute("x", 120+12*(x)-5);
+                    // SVGObj.setAttribute("y", ysize+delypos-10);
+                    // SVGObj.setAttribute("width", "11");
+                    // SVGObj.setAttribute("height", "11");
+                    // SVGObj.setAttribute("fill", "rgb(255,255,255");
+                    // SVGObj.setAttribute("text-anchor", "middle");
+                    // SVGObj.setAttribute("pointer-events","none");
+                    // svg.appendChild(SVGObj);
                     }  
                 }
             }
@@ -3157,15 +3157,15 @@ function PlotAlignment(barcode, locus){
                 }
                 else{
                     if ((key[x]==locus[BreakPoint-region_analyse+x])||(key[x]=='N')||(key[x]=='-')||(typeof(key[x])=='undefined')){
-                    SVGObj= document.createElementNS(svgns, "rect");
-                    SVGObj.setAttribute("x", 120+12*(x)-5);
-                    SVGObj.setAttribute("y", ysize+delypos-10);
-                    SVGObj.setAttribute("width", "11");
-                    SVGObj.setAttribute("height", "11");
-                    SVGObj.setAttribute("fill", "rgb(255,255,255");
-                    SVGObj.setAttribute("text-anchor", "middle");
-                    SVGObj.setAttribute("pointer-events","none");
-                    svg.appendChild(SVGObj);
+                    // SVGObj= document.createElementNS(svgns, "rect");
+                    // SVGObj.setAttribute("x", 120+12*(x)-5);
+                    // SVGObj.setAttribute("y", ysize+delypos-10);
+                    // SVGObj.setAttribute("width", "11");
+                    // SVGObj.setAttribute("height", "11");
+                    // SVGObj.setAttribute("fill", "rgb(255,255,255");
+                    // SVGObj.setAttribute("text-anchor", "middle");
+                    // SVGObj.setAttribute("pointer-events","none");
+                    // svg.appendChild(SVGObj);
                     }  
                 }
                 }
@@ -3178,35 +3178,35 @@ function PlotAlignment(barcode, locus){
                 if ((Object.keys(no_indel_arr)[0][x]==locus[BreakPoint-region_analyse+x])||(key[x]=='N')||(key[x]=='-')||(typeof(key[x])=='undefined')){
                 }
                 else {
-                    SVGObj= document.createElementNS(svgns, "rect");
-                    SVGObj.style.stroke="rgb(0,0,0)";
-                    SVGObj.setAttribute("x", 115+12*(x-xfrom+10));
-                    SVGObj.setAttribute("y", ysize+delypos-10);
-                    SVGObj.setAttribute("width", "11");
-                    SVGObj.setAttribute("height", "11");
-                    SVGObj.setAttribute("fill", "rgb(255,255,255");
-                    SVGObj.setAttribute("text-anchor", "middle");
-                    SVGObj.setAttribute("pointer-events","none");
-                    svg.appendChild(SVGObj);
+                    // SVGObj= document.createElementNS(svgns, "rect");
+                    // SVGObj.style.stroke=N_cl;
+                    // SVGObj.setAttribute("x", 115+12*(x-xfrom+10));
+                    // SVGObj.setAttribute("y", ysize+delypos-10);
+                    // SVGObj.setAttribute("width", "11");
+                    // SVGObj.setAttribute("height", "11");
+                    // SVGObj.setAttribute("fill", "rgb(255,255,255");
+                    // SVGObj.setAttribute("text-anchor", "middle");
+                    // SVGObj.setAttribute("pointer-events","none");
+                    // svg.appendChild(SVGObj);
                 }
-                SVGObj= document.createElementNS(NS, "text");
+                    SVGObj= document.createElementNS(NS, "text");
                     SVGObj.setAttribute("y", ysize+delypos);
                     SVGObj.setAttribute("font-size", "13");
                     SVGObj.setAttribute("font-weight", "400");
                     if (key[x]=="T"){SVGObj.textContent = key[x];
-                        SVGObj.setAttribute("fill", "rgb(255,0,0");
+                        SVGObj.setAttribute("fill", T_cl);
                     }
                     else if (key[x]=="A"){SVGObj.textContent = key[x];
-                        SVGObj.setAttribute("fill", "rgb(0,150,0");
+                        SVGObj.setAttribute("fill", A_cl);
                     }
                     else if (key[x]=="C"){SVGObj.textContent = key[x];
-                        SVGObj.setAttribute("fill", "rgb(0,0,255");
+                        SVGObj.setAttribute("fill", C_cl);
                     }
                     else if (key[x]=="G"){SVGObj.textContent = key[x];
-                        SVGObj.setAttribute("fill", "rgb(200, 100, 0");
+                        SVGObj.setAttribute("fill", G_cl);
                     }
                     else if (key[x]=="N"){SVGObj.textContent = key[x];
-                        SVGObj.setAttribute("fill", "rgb(0, 0, 0");
+                        SVGObj.setAttribute("fill", N_cl);
                     }
                     else if (key[x]=="-"){SVGObj.textContent = key[x];
                         SVGObj.setAttribute("fill", "rgb(0,0,0");
@@ -3225,17 +3225,17 @@ function PlotAlignment(barcode, locus){
                 SVGObj.setAttribute("font-size", fontsize1);
                 SVGObj.setAttribute("font-weight", "600");
 
-                if (Object.keys(no_indel_arr)[0][x]=="T"){SVGObj.setAttribute("fill", "rgb(255,0,0");
+                if (Object.keys(no_indel_arr)[0][x]=="T"){SVGObj.setAttribute("fill", T_cl);
                 }
-                else if (Object.keys(no_indel_arr)[0][x]=="A"){SVGObj.setAttribute("fill", "rgb(0,150,0");
+                else if (Object.keys(no_indel_arr)[0][x]=="A"){SVGObj.setAttribute("fill", A_cl);
                 }
-                else if (Object.keys(no_indel_arr)[0][x]=="C"){SVGObj.setAttribute("fill", "rgb(0,0,255");
+                else if (Object.keys(no_indel_arr)[0][x]=="C"){SVGObj.setAttribute("fill", C_cl);
                 }
-                else if (Object.keys(no_indel_arr)[0][x]=="G"){SVGObj.setAttribute("fill", "rgb(200, 100, 0");
+                else if (Object.keys(no_indel_arr)[0][x]=="G"){SVGObj.setAttribute("fill", G_cl);
                 }
-                else if (Object.keys(no_indel_arr)[0][x]=="N"){SVGObj.setAttribute("fill", "rgb(0, 0, 0");
+                else if (Object.keys(no_indel_arr)[0][x]=="N"){SVGObj.setAttribute("fill", N_cl);
                 }
-                else if (Object.keys(no_indel_arr)[0][x]=="-"){SVGObj.setAttribute("fill", "rgb(0,0,0");
+                else if (Object.keys(no_indel_arr)[0][x]=="-"){SVGObj.setAttribute("fill", N_cl);
                 }
                 SVGObj.textContent = Object.keys(no_indel_arr)[0][x];
                 SVGObj.setAttribute("x", 120+12*(x-xfrom+10));
@@ -3268,15 +3268,15 @@ function PlotAlignment(barcode, locus){
                 SVGObj.setAttribute("font-size", fontsize2);
                 SVGObj.setAttribute("font-weight", "600");
 
-                if (Object.keys(no_indel_arr)[1][x]=="T"){SVGObj.setAttribute("fill", "rgb(255,0,0");
+                if (Object.keys(no_indel_arr)[1][x]=="T"){SVGObj.setAttribute("fill", T_cl);
                 }
-                else if (Object.keys(no_indel_arr)[1][x]=="A"){SVGObj.setAttribute("fill", "rgb(0,150,0");
+                else if (Object.keys(no_indel_arr)[1][x]=="A"){SVGObj.setAttribute("fill", A_cl);
                 }
-                else if (Object.keys(no_indel_arr)[1][x]=="C"){SVGObj.setAttribute("fill", "rgb(0,0,255");
+                else if (Object.keys(no_indel_arr)[1][x]=="C"){SVGObj.setAttribute("fill", C_cl);
                 }
-                else if (Object.keys(no_indel_arr)[1][x]=="G"){SVGObj.setAttribute("fill", "rgb(200, 100, 0");
+                else if (Object.keys(no_indel_arr)[1][x]=="G"){SVGObj.setAttribute("fill", G_cl);
                 }
-                else if (Object.keys(no_indel_arr)[1][x]=="N"){SVGObj.setAttribute("fill", "rgb(0, 0, 0");
+                else if (Object.keys(no_indel_arr)[1][x]=="N"){SVGObj.setAttribute("fill", N_cl);
                 }
                 else if (Object.keys(no_indel_arr)[1][x]=="-"){SVGObj.setAttribute("fill", "rgb(0,0,0");
                 }
@@ -3297,7 +3297,7 @@ function PlotAlignment(barcode, locus){
             }
             else {
                 SVGObj= document.createElementNS(svgns, "rect");
-                SVGObj.style.stroke="rgb(0,0,0)";
+                SVGObj.style.stroke=N_cl;
                 SVGObj.setAttribute("x", 115+12*(x-xfrom+10));
                 SVGObj.setAttribute("y", ysize+delypos-10);
                 SVGObj.setAttribute("width", "11");
@@ -3315,19 +3315,19 @@ function PlotAlignment(barcode, locus){
             SVGObj.setAttribute("font-size", "13");
 
             if (key[x]=="T"){SVGObj.textContent = key[x];
-                SVGObj.setAttribute("fill", "rgb(255,0,0");
+                SVGObj.setAttribute("fill", T_cl);
             }
             else if (key[x]=="A"){SVGObj.textContent = key[x];
-                SVGObj.setAttribute("fill", "rgb(0,150,0");
+                SVGObj.setAttribute("fill", A_cl);
             }
             else if (key[x]=="C"){SVGObj.textContent = key[x];
-                SVGObj.setAttribute("fill", "rgb(0,0,255");
+                SVGObj.setAttribute("fill", C_cl);
             }
             else if (key[x]=="G"){SVGObj.textContent = key[x];
-                SVGObj.setAttribute("fill", "rgb(200, 100, 0");
+                SVGObj.setAttribute("fill", G_cl);
             }
             else if (key[x]=="N"){SVGObj.textContent = key[x];
-                SVGObj.setAttribute("fill", "rgb(0, 0, 0");
+                SVGObj.setAttribute("fill", N_cl);
             }
             else if (key[x]=="-"){SVGObj.textContent = key[x];
                 SVGObj.setAttribute("fill", "rgb(0,0,0");
@@ -3363,7 +3363,7 @@ function PlotAlignment(barcode, locus){
                 else{
                     SVGObj.setAttribute("fill", "rgb(255,255,255");
                 }
-                SVGObj.style.stroke="rgb(255,0,0)";
+                SVGObj.style.stroke=T_cl;
                 SVGObj.setAttribute("x", 120+12*(x-xfrom+10));
                 SVGObj.setAttribute("y", ysize+delypos+4);
                 SVGObj.setAttribute("width", "12");
@@ -3377,7 +3377,7 @@ function PlotAlignment(barcode, locus){
             SVGObj.setAttribute("x", 120+12*(x-xfrom+10)+5);
             SVGObj.setAttribute("y", ysize+delypos+15);
             SVGObj.setAttribute("font-size", "13");
-            SVGObj.setAttribute("fill", "rgb(0,0,0)");
+            SVGObj.setAttribute("fill", N_cl);
             SVGObj.textContent = key[x+region_analyse*2];
             SVGObj.setAttribute("text-anchor", "middle");
             SVGObj.setAttribute("pointer-events","none");
@@ -3584,7 +3584,7 @@ function PlotAlignment_bulk(barcode, locus, bulk_threshold){
         SVGObj.setAttribute("y", ysize+delypos+20);
         SVGObj.setAttribute("font-size", "14");
         if (x>=RightBsPos && x<RightBsPos+rightbs.length) SVGObj.setAttribute("fill", "rgb(0,0,250)");
-        else SVGObj.setAttribute("fill", "rgb(0,0,0)");
+        else SVGObj.setAttribute("fill", N_cl);
         SVGObj.textContent = locus[x];
         SVGObj.setAttribute("x", 120+12*(x-xfrom));
         SVGObj.setAttribute("text-anchor", "middle");
@@ -3603,7 +3603,7 @@ function PlotAlignment_bulk(barcode, locus, bulk_threshold){
         SVGObj= document.createElementNS(NS,"text");
         SVGObj.setAttribute("y", ysize+delypos);
         SVGObj.setAttribute("font-size", "14");
-        SVGObj.setAttribute("fill", "rgb(0,0,0)");
+        SVGObj.setAttribute("fill", N_cl);
         SVGObj.textContent = locus2[x];
         SVGObj.setAttribute("x", 120+12*(x-xfrom));
         SVGObj.setAttribute("text-anchor", "middle");
@@ -3633,7 +3633,7 @@ function PlotAlignment_bulk(barcode, locus, bulk_threshold){
     //line:
     SVGObj= document.createElementNS(NS,"path");
     SVGObj.setAttributeNS(null, "d", "M 5,"+(ysize+delypos+5.5)+" L 1200,"+(ysize+delypos+5.5));
-    SVGObj.style.stroke="rgb(0,0,0)";
+    SVGObj.style.stroke=N_cl;
     SVGObj.setAttributeNS(null, "stroke-width", 1);
     svg.appendChild(SVGObj);
     delypos+=delyshift;
@@ -3647,15 +3647,15 @@ function PlotAlignment_bulk(barcode, locus, bulk_threshold){
         for (let x=0; x<30*2; x++){
             //draw main track:
             if ((key[x]==locus[BreakPoint-region_analyse+x])||(key[x]=='N')||(key[x]=='-')||(typeof(key[x])=='undefined')){
-                SVGObj= document.createElementNS(svgns, "rect");
-                SVGObj.setAttribute("x", 120+12*(x)-5);
-                SVGObj.setAttribute("y", ysize+delypos-10);
-                SVGObj.setAttribute("width", "11");
-                SVGObj.setAttribute("height", "11");
-                SVGObj.setAttribute("fill", "rgb(255,255,255");
-                SVGObj.setAttribute("text-anchor", "middle");
-                SVGObj.setAttribute("pointer-events","none");
-                svg.appendChild(SVGObj);
+                // SVGObj= document.createElementNS(svgns, "rect");
+                // SVGObj.setAttribute("x", 120+12*(x)-5);
+                // SVGObj.setAttribute("y", ysize+delypos-10);
+                // SVGObj.setAttribute("width", "11");
+                // SVGObj.setAttribute("height", "11");
+                // SVGObj.setAttribute("fill", "rgb(255,255,255");
+                // SVGObj.setAttribute("text-anchor", "middle");
+                // SVGObj.setAttribute("pointer-events","none");
+                // svg.appendChild(SVGObj);
                 }
             }
 
@@ -3667,7 +3667,7 @@ function PlotAlignment_bulk(barcode, locus, bulk_threshold){
                 }
                 else {
                     SVGObj= document.createElementNS(svgns, "rect");
-                    SVGObj.style.stroke="rgb(0,0,0)";
+                    SVGObj.style.stroke=N_cl;
                     SVGObj.setAttribute("x", 115+12*(x-xfrom+10));
                     SVGObj.setAttribute("y", ysize+delypos-10);
                     SVGObj.setAttribute("width", "11");
@@ -3682,22 +3682,22 @@ function PlotAlignment_bulk(barcode, locus, bulk_threshold){
                     SVGObj.setAttribute("font-size", "13");
                     SVGObj.setAttribute("font-weight", "400");
                     if (key[x]=="T"){SVGObj.textContent = key[x];
-                        SVGObj.setAttribute("fill", "rgb(255,0,0");
+                        SVGObj.setAttribute("fill", T_cl);
                     }
                     else if (key[x]=="A"){SVGObj.textContent = key[x];
-                        SVGObj.setAttribute("fill", "rgb(0,150,0");
+                        SVGObj.setAttribute("fill", A_cl);
                     }
                     else if (key[x]=="C"){SVGObj.textContent = key[x];
-                        SVGObj.setAttribute("fill", "rgb(0,0,255");
+                        SVGObj.setAttribute("fill", C_cl);
                     }
                     else if (key[x]=="G"){SVGObj.textContent = key[x];
-                        SVGObj.setAttribute("fill", "rgb(200, 100, 0");
+                        SVGObj.setAttribute("fill", G_cl);
                     }
                     else if (key[x]=="N"){SVGObj.textContent = key[x];
-                        SVGObj.setAttribute("fill", "rgb(0, 0, 0");
+                        SVGObj.setAttribute("fill", N_cl);
                     }
                     else if (key[x]=="-"){SVGObj.textContent = key[x];
-                        SVGObj.setAttribute("fill", "rgb(0,0,0");
+                        SVGObj.setAttribute("fill", N_cl);
                     }
                     SVGObj.setAttribute("x", 120+12*(x-xfrom+10));
                     SVGObj.setAttribute("text-anchor", "middle");
@@ -3713,17 +3713,17 @@ function PlotAlignment_bulk(barcode, locus, bulk_threshold){
                 SVGObj.setAttribute("font-size", fontsize1);
                 SVGObj.setAttribute("font-weight", "600");
 
-                if (Object.keys(no_indel_arr)[0][x]=="T"){SVGObj.setAttribute("fill", "rgb(255,0,0");
+                if (Object.keys(no_indel_arr)[0][x]=="T"){SVGObj.setAttribute("fill", T_cl);
                 }
-                else if (Object.keys(no_indel_arr)[0][x]=="A"){SVGObj.setAttribute("fill", "rgb(0,150,0");
+                else if (Object.keys(no_indel_arr)[0][x]=="A"){SVGObj.setAttribute("fill", A_cl);
                 }
-                else if (Object.keys(no_indel_arr)[0][x]=="C"){SVGObj.setAttribute("fill", "rgb(0,0,255");
+                else if (Object.keys(no_indel_arr)[0][x]=="C"){SVGObj.setAttribute("fill", C_cl);
                 }
-                else if (Object.keys(no_indel_arr)[0][x]=="G"){SVGObj.setAttribute("fill", "rgb(200, 100, 0");
+                else if (Object.keys(no_indel_arr)[0][x]=="G"){SVGObj.setAttribute("fill", G_cl);
                 }
-                else if (Object.keys(no_indel_arr)[0][x]=="N"){SVGObj.setAttribute("fill", "rgb(0, 0, 0");
+                else if (Object.keys(no_indel_arr)[0][x]=="N"){SVGObj.setAttribute("fill", N_cl);
                 }
-                else if (Object.keys(no_indel_arr)[0][x]=="-"){SVGObj.setAttribute("fill", "rgb(0,0,0");
+                else if (Object.keys(no_indel_arr)[0][x]=="-"){SVGObj.setAttribute("fill", N_cl);
                 }
                 SVGObj.textContent = Object.keys(no_indel_arr)[0][x];
                 SVGObj.setAttribute("x", 120+12*(x-xfrom+10));
@@ -3756,17 +3756,17 @@ function PlotAlignment_bulk(barcode, locus, bulk_threshold){
                 SVGObj.setAttribute("font-size", fontsize2);
                 SVGObj.setAttribute("font-weight", "600");
 
-                if (Object.keys(no_indel_arr)[1][x]=="T"){SVGObj.setAttribute("fill", "rgb(255,0,0");
+                if (Object.keys(no_indel_arr)[1][x]=="T"){SVGObj.setAttribute("fill", T_cl);
                 }
-                else if (Object.keys(no_indel_arr)[1][x]=="A"){SVGObj.setAttribute("fill", "rgb(0,150,0");
+                else if (Object.keys(no_indel_arr)[1][x]=="A"){SVGObj.setAttribute("fill", A_cl);
                 }
-                else if (Object.keys(no_indel_arr)[1][x]=="C"){SVGObj.setAttribute("fill", "rgb(0,0,255");
+                else if (Object.keys(no_indel_arr)[1][x]=="C"){SVGObj.setAttribute("fill", C_cl);
                 }
-                else if (Object.keys(no_indel_arr)[1][x]=="G"){SVGObj.setAttribute("fill", "rgb(200, 100, 0");
+                else if (Object.keys(no_indel_arr)[1][x]=="G"){SVGObj.setAttribute("fill", G_cl);
                 }
-                else if (Object.keys(no_indel_arr)[1][x]=="N"){SVGObj.setAttribute("fill", "rgb(0, 0, 0");
+                else if (Object.keys(no_indel_arr)[1][x]=="N"){SVGObj.setAttribute("fill", N_cl);
                 }
-                else if (Object.keys(no_indel_arr)[1][x]=="-"){SVGObj.setAttribute("fill", "rgb(0,0,0");
+                else if (Object.keys(no_indel_arr)[1][x]=="-"){SVGObj.setAttribute("fill", N_cl);
                 }
                 SVGObj.textContent = Object.keys(no_indel_arr)[1][x];
                 SVGObj.setAttribute("x", 120+12*(x-xfrom+10));
@@ -3785,7 +3785,7 @@ function PlotAlignment_bulk(barcode, locus, bulk_threshold){
             }
             else {
                 SVGObj= document.createElementNS(svgns, "rect");
-                SVGObj.style.stroke="rgb(0,0,0)";
+                SVGObj.style.stroke=N_cl;
                 SVGObj.setAttribute("x", 115+12*(x-xfrom+10));
                 SVGObj.setAttribute("y", ysize+delypos-10);
                 SVGObj.setAttribute("width", "11");
@@ -3803,22 +3803,22 @@ function PlotAlignment_bulk(barcode, locus, bulk_threshold){
             SVGObj.setAttribute("font-size", "13");
 
             if (key[x]=="T"){SVGObj.textContent = key[x];
-                SVGObj.setAttribute("fill", "rgb(255,0,0");
+                SVGObj.setAttribute("fill", T_cl);
             }
             else if (key[x]=="A"){SVGObj.textContent = key[x];
-                SVGObj.setAttribute("fill", "rgb(0,150,0");
+                SVGObj.setAttribute("fill", A_cl);
             }
             else if (key[x]=="C"){SVGObj.textContent = key[x];
-                SVGObj.setAttribute("fill", "rgb(0,0,255");
+                SVGObj.setAttribute("fill", C_cl);
             }
             else if (key[x]=="G"){SVGObj.textContent = key[x];
-                SVGObj.setAttribute("fill", "rgb(200, 100, 0");
+                SVGObj.setAttribute("fill", G_cl);
             }
             else if (key[x]=="N"){SVGObj.textContent = key[x];
-                SVGObj.setAttribute("fill", "rgb(0, 0, 0");
+                SVGObj.setAttribute("fill", N_cl);
             }
             else if (key[x]=="-"){SVGObj.textContent = key[x];
-                SVGObj.setAttribute("fill", "rgb(0,0,0");
+                SVGObj.setAttribute("fill", N_cl);
             }
             SVGObj.setAttribute("x", 120+12*(x-xfrom+10));
             SVGObj.setAttribute("text-anchor", "middle");
@@ -3845,7 +3845,7 @@ function PlotAlignment_bulk(barcode, locus, bulk_threshold){
                     svg.appendChild(imageElement);
                     image_loc =1;
                 }
-                SVGObj.style.stroke="rgb(255,0,0)";
+                SVGObj.style.stroke=T_cl;
                 SVGObj.setAttribute("x", 120+12*(x-xfrom+10));
                 SVGObj.setAttribute("y", ysize+delypos+4);
                 SVGObj.setAttribute("width", "12");
@@ -3860,7 +3860,7 @@ function PlotAlignment_bulk(barcode, locus, bulk_threshold){
             SVGObj.setAttribute("x", 120+12*(x-xfrom+10)+5);
             SVGObj.setAttribute("y", ysize+delypos+15);
             SVGObj.setAttribute("font-size", "13");
-            SVGObj.setAttribute("fill", "rgb(0,0,0)");
+            SVGObj.setAttribute("fill", N_cl);
             SVGObj.textContent = key[x+region_analyse*2];
             SVGObj.setAttribute("text-anchor", "middle");
             SVGObj.setAttribute("pointer-events","none");
@@ -4146,7 +4146,7 @@ function PlotAlignment_off(gene_i)
         SVGObj.setAttribute("y", ysize+delypos+20);
         SVGObj.setAttribute("font-size", "14");
         if (x>=RightBsPos && x<RightBsPos+rightbs.length) SVGObj.setAttribute("fill", "rgb(0,0,250)");
-        else SVGObj.setAttribute("fill", "rgb(0,0,0)");
+        else SVGObj.setAttribute("fill", N_cl);
         SVGObj.textContent = locus_list[gene_i][x];
         SVGObj.setAttribute("x", 120+12*(x-xfrom));
         SVGObj.setAttribute("text-anchor", "middle");
@@ -4165,7 +4165,7 @@ function PlotAlignment_off(gene_i)
         SVGObj= document.createElementNS(NS,"text");
         SVGObj.setAttribute("y", ysize+delypos);
         SVGObj.setAttribute("font-size", "14");
-        SVGObj.setAttribute("fill", "rgb(0,0,0)");
+        SVGObj.setAttribute("fill", N_cl);
         SVGObj.textContent = locus_list[barcode][x];
         SVGObj.setAttribute("x", 120+12*(x-xfrom));
         SVGObj.setAttribute("text-anchor", "middle");
@@ -4195,7 +4195,7 @@ function PlotAlignment_off(gene_i)
     //line:
     SVGObj= document.createElementNS(NS,"path");
     SVGObj.setAttributeNS(null, "d", "M 5,"+(ysize+delypos+5.5)+" L 1200,"+(ysize+delypos+5.5));
-    SVGObj.style.stroke="rgb(0,0,0)";
+    SVGObj.style.stroke=N_cl;
     SVGObj.setAttributeNS(null, "stroke-width", 1);
     svg.appendChild(SVGObj);
     delypos+=delyshift;
@@ -4206,15 +4206,15 @@ function PlotAlignment_off(gene_i)
         for (let x=0; x<30*2; x++){
             //draw main track:
             if ((key[x]==locus_list[barcode][BreakPoint-region_analyse+x])||(key[x]=='N')||(key[x]=='-')||(typeof(key[x])=='undefined')){
-                SVGObj= document.createElementNS(svgns, "rect");
-                SVGObj.setAttribute("x", 120+12*(x)-5);
-                SVGObj.setAttribute("y", ysize+delypos-10);
-                SVGObj.setAttribute("width", "11");
-                SVGObj.setAttribute("height", "11");
-                SVGObj.setAttribute("fill", "rgb(255,255,255");
-                SVGObj.setAttribute("text-anchor", "middle");
-                SVGObj.setAttribute("pointer-events","none");
-                svg.appendChild(SVGObj);
+                // SVGObj= document.createElementNS(svgns, "rect");
+                // SVGObj.setAttribute("x", 120+12*(x)-5);
+                // SVGObj.setAttribute("y", ysize+delypos-10);
+                // SVGObj.setAttribute("width", "11");
+                // SVGObj.setAttribute("height", "11");
+                // SVGObj.setAttribute("fill", "rgb(255,255,255");
+                // SVGObj.setAttribute("text-anchor", "middle");
+                // SVGObj.setAttribute("pointer-events","none");
+                // svg.appendChild(SVGObj);
                 }
             }
 
@@ -4226,7 +4226,7 @@ function PlotAlignment_off(gene_i)
                 }
                 else {
                     SVGObj= document.createElementNS(svgns, "rect");
-                    SVGObj.style.stroke="rgb(0,0,0)";
+                    SVGObj.style.stroke=N_cl;
                     SVGObj.setAttribute("x", 115+12*(x-xfrom+10));
                     SVGObj.setAttribute("y", ysize+delypos-10);
                     SVGObj.setAttribute("width", "11");
@@ -4241,22 +4241,22 @@ function PlotAlignment_off(gene_i)
                     SVGObj.setAttribute("font-size", "13");
                     SVGObj.setAttribute("font-weight", "400");
                     if (key[x]=="T"){SVGObj.textContent = key[x];
-                        SVGObj.setAttribute("fill", "rgb(255,0,0");
+                        SVGObj.setAttribute("fill", T_cl);
                     }
                     else if (key[x]=="A"){SVGObj.textContent = key[x];
-                        SVGObj.setAttribute("fill", "rgb(0,150,0");
+                        SVGObj.setAttribute("fill", A_cl);
                     }
                     else if (key[x]=="C"){SVGObj.textContent = key[x];
-                        SVGObj.setAttribute("fill", "rgb(0,0,255");
+                        SVGObj.setAttribute("fill", C_cl);
                     }
                     else if (key[x]=="G"){SVGObj.textContent = key[x];
-                        SVGObj.setAttribute("fill", "rgb(200, 100, 0");
+                        SVGObj.setAttribute("fill", G_cl);
                     }
                     else if (key[x]=="N"){SVGObj.textContent = key[x];
-                        SVGObj.setAttribute("fill", "rgb(0, 0, 0");
+                        SVGObj.setAttribute("fill", N_cl);
                     }
                     else if (key[x]=="-"){SVGObj.textContent = key[x];
-                        SVGObj.setAttribute("fill", "rgb(0,0,0");
+                        SVGObj.setAttribute("fill", N_cl);
                     }
                     SVGObj.setAttribute("x", 120+12*(x-xfrom+10));
                     SVGObj.setAttribute("text-anchor", "middle");
@@ -4272,17 +4272,17 @@ function PlotAlignment_off(gene_i)
                 SVGObj.setAttribute("font-size", fontsize1);
                 SVGObj.setAttribute("font-weight", "600");
 
-                if (Object.keys(no_indel_arr)[0][x]=="T"){SVGObj.setAttribute("fill", "rgb(255,0,0");
+                if (Object.keys(no_indel_arr)[0][x]=="T"){SVGObj.setAttribute("fill", T_cl);
                 }
-                else if (Object.keys(no_indel_arr)[0][x]=="A"){SVGObj.setAttribute("fill", "rgb(0,150,0");
+                else if (Object.keys(no_indel_arr)[0][x]=="A"){SVGObj.setAttribute("fill", A_cl);
                 }
-                else if (Object.keys(no_indel_arr)[0][x]=="C"){SVGObj.setAttribute("fill", "rgb(0,0,255");
+                else if (Object.keys(no_indel_arr)[0][x]=="C"){SVGObj.setAttribute("fill", C_cl);
                 }
-                else if (Object.keys(no_indel_arr)[0][x]=="G"){SVGObj.setAttribute("fill", "rgb(200, 100, 0");
+                else if (Object.keys(no_indel_arr)[0][x]=="G"){SVGObj.setAttribute("fill", G_cl);
                 }
-                else if (Object.keys(no_indel_arr)[0][x]=="N"){SVGObj.setAttribute("fill", "rgb(0, 0, 0");
+                else if (Object.keys(no_indel_arr)[0][x]=="N"){SVGObj.setAttribute("fill", N_cl);
                 }
-                else if (Object.keys(no_indel_arr)[0][x]=="-"){SVGObj.setAttribute("fill", "rgb(0,0,0");
+                else if (Object.keys(no_indel_arr)[0][x]=="-"){SVGObj.setAttribute("fill", N_cl);
                 }
                 SVGObj.textContent = Object.keys(no_indel_arr)[0][x];
                 SVGObj.setAttribute("x", 120+12*(x-xfrom+10));
@@ -4315,17 +4315,17 @@ function PlotAlignment_off(gene_i)
                 SVGObj.setAttribute("font-size", fontsize2);
                 SVGObj.setAttribute("font-weight", "600");
 
-                if (Object.keys(no_indel_arr)[1][x]=="T"){SVGObj.setAttribute("fill", "rgb(255,0,0");
+                if (Object.keys(no_indel_arr)[1][x]=="T"){SVGObj.setAttribute("fill", T_cl);
                 }
-                else if (Object.keys(no_indel_arr)[1][x]=="A"){SVGObj.setAttribute("fill", "rgb(0,150,0");
+                else if (Object.keys(no_indel_arr)[1][x]=="A"){SVGObj.setAttribute("fill", A_cl);
                 }
-                else if (Object.keys(no_indel_arr)[1][x]=="C"){SVGObj.setAttribute("fill", "rgb(0,0,255");
+                else if (Object.keys(no_indel_arr)[1][x]=="C"){SVGObj.setAttribute("fill", C_cl);
                 }
-                else if (Object.keys(no_indel_arr)[1][x]=="G"){SVGObj.setAttribute("fill", "rgb(200, 100, 0");
+                else if (Object.keys(no_indel_arr)[1][x]=="G"){SVGObj.setAttribute("fill", G_cl);
                 }
-                else if (Object.keys(no_indel_arr)[1][x]=="N"){SVGObj.setAttribute("fill", "rgb(0, 0, 0");
+                else if (Object.keys(no_indel_arr)[1][x]=="N"){SVGObj.setAttribute("fill", N_cl);
                 }
-                else if (Object.keys(no_indel_arr)[1][x]=="-"){SVGObj.setAttribute("fill", "rgb(0,0,0");
+                else if (Object.keys(no_indel_arr)[1][x]=="-"){SVGObj.setAttribute("fill", N_cl);
                 }
                 SVGObj.textContent = Object.keys(no_indel_arr)[1][x];
                 SVGObj.setAttribute("x", 120+12*(x-xfrom+10));
@@ -4344,7 +4344,7 @@ function PlotAlignment_off(gene_i)
             }
             else {
                 SVGObj= document.createElementNS(svgns, "rect");
-                SVGObj.style.stroke="rgb(0,0,0)";
+                SVGObj.style.stroke=N_cl;
                 SVGObj.setAttribute("x", 115+12*(x-xfrom+10));
                 SVGObj.setAttribute("y", ysize+delypos-10);
                 SVGObj.setAttribute("width", "11");
@@ -4362,22 +4362,22 @@ function PlotAlignment_off(gene_i)
             SVGObj.setAttribute("font-size", "13");
 
             if (key[x]=="T"){SVGObj.textContent = key[x];
-                SVGObj.setAttribute("fill", "rgb(255,0,0");
+                SVGObj.setAttribute("fill", T_cl);
             }
             else if (key[x]=="A"){SVGObj.textContent = key[x];
-                SVGObj.setAttribute("fill", "rgb(0,150,0");
+                SVGObj.setAttribute("fill", A_cl);
             }
             else if (key[x]=="C"){SVGObj.textContent = key[x];
-                SVGObj.setAttribute("fill", "rgb(0,0,255");
+                SVGObj.setAttribute("fill", C_cl);
             }
             else if (key[x]=="G"){SVGObj.textContent = key[x];
-                SVGObj.setAttribute("fill", "rgb(200, 100, 0");
+                SVGObj.setAttribute("fill", G_cl);
             }
             else if (key[x]=="N"){SVGObj.textContent = key[x];
-                SVGObj.setAttribute("fill", "rgb(0, 0, 0");
+                SVGObj.setAttribute("fill", N_cl);
             }
             else if (key[x]=="-"){SVGObj.textContent = key[x];
-                SVGObj.setAttribute("fill", "rgb(0,0,0");
+                SVGObj.setAttribute("fill", N_cl);
             }
             SVGObj.setAttribute("x", 120+12*(x-xfrom+10));
             SVGObj.setAttribute("text-anchor", "middle");
@@ -4404,7 +4404,7 @@ function PlotAlignment_off(gene_i)
                     svg.appendChild(imageElement);
                     image_loc =1;
                 }
-                SVGObj.style.stroke="rgb(255,0,0)";
+                SVGObj.style.stroke=T_cl;
                 SVGObj.setAttribute("x", 120+12*(x-xfrom+10));
                 SVGObj.setAttribute("y", ysize+delypos+4);
                 SVGObj.setAttribute("width", "12");
@@ -4419,7 +4419,7 @@ function PlotAlignment_off(gene_i)
             SVGObj.setAttribute("x", 120+12*(x-xfrom+10)+5);
             SVGObj.setAttribute("y", ysize+delypos+15);
             SVGObj.setAttribute("font-size", "13");
-            SVGObj.setAttribute("fill", "rgb(0,0,0)");
+            SVGObj.setAttribute("fill", N_cl);
             SVGObj.textContent = key[x+region_analyse*2];
             SVGObj.setAttribute("text-anchor", "middle");
             SVGObj.setAttribute("pointer-events","none");
@@ -4867,6 +4867,13 @@ var genotype = Array(96)
 var aln_dict_bulk 
 var gcContent = Array(96)
 var bulk_threshold = 0.1
+
+const T_cl = "rgb(255,0,0)"
+const A_cl = "rgb(0,150,0)"
+const C_cl ="rgb(0,0,255)"
+const G_cl = "rgb(200, 100, 0)"
+const N_cl = "rgb(0, 0, 0)"
+
 
 // var slider = document.getElementById("myRange");
 // slider.onchange = PlotAlignment_bulk(CurrentAlignment, locus, bulk_threshold)
