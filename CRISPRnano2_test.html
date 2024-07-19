@@ -43,6 +43,13 @@
   user-select: none;
 }
 
+.hidden {
+      display: none;
+    }
+.text-right {
+            text-align: right;
+        }
+        
 /* The actual popup */
 .popup .popuptext {
   visibility: hidden;
@@ -186,7 +193,63 @@
         </div>
         <br>
         <div id="setup" style="position:absolute; left:20px; top:80px">
-                <br>
+
+
+                <div class="column">
+                    <br>
+                    <br>
+
+
+                        <h5><a href="https://github.com/pinellolab/CRISPResso2">Manual</a></h5>
+                        <h5><a href="https://github.com/pinellolab/CRISPResso2" target="_top">Source code on Github</a></h5>
+                        
+                            <h3 id='optional_para'>Optional parameters</h3>
+                            <small class="text-muted">Click to expand</small>
+                            <div id = "optional_para_Container" class="hidden">
+                            Sequence (if genename given, leave it blank):                 
+                            <div class="popup" onclick="myFunction3()">(? Click here!)
+                                <span class="popuptext" id="help3">Reference amplicon length should be in the range of 200-300 bases with the nuclease target site located roughly in the middle. You can get the reference from Ensembl link below. Click again to close</span>
+                            </div>
+                            <br><input type="text" class="input_form" size="30" id="locus" name="Locus" value=""> 
+                            <br>
+                            <br>             
+                            <!-- <a href="http://ftp.ensembl.org/pub/release-105/fasta/homo_sapiens/dna/">(Ensembl reference)</a><br> -->
+                            <!-- Sequencing method:                 
+                            <div class="popup" onclick="myFunction3()">(? Click here!)
+                                <span class="popuptext" id="help3">Reference amplicon length should be in the range of 200-300 bases with the nuclease target site located roughly in the middle. You can get the reference from Ensembl link below. Click again to close</span>
+                            </div>
+                            <select id="seq_method" name="seq_method">
+                                <option value="ONT">Nanopore</option>
+                                <option value="Il_pac">Illumina or PacBio</option>
+                              </select> -->
+                            <!-- <br>  <br>  -->
+                            
+                                Interested region (optional) +/- bp: 
+                                <div class="popup" onclick="myFunction5()">(? Click here!)
+                                    <span class="popuptext" id="help5"> For ONT reads, it is recommended to use -/+15 bases around the predicted DNA lesion. Larger regions are prone to false positive indels. Larger regions (total of 200-250 bp) can be safely used with Illumina reads. You can drag and drop the central point of the predicted double strand break in the genomic sequence to the left or to the right. Default value 0 is double strand breaking point- Crisprnano will use the first index of sgRNA mapped on reference. Click again to close</span>
+                                </div>
+                                <br><input type="text" size="30" name="region_analyse" value="45" class="input_form" onchange="checkValue();"><br>
+        
+                                <br>Indel Threshold [%]: 
+                                <div class="popup" onclick="myFunction9()">(? Click here!)
+                                    <span class="popuptext" id="help9">The Indel Threshold determines at what relative occurrence an individual indel mutation is considered as a unique allele of the respective clone analyzed, and is thus displayed in the alignment list. Low threshold values can result in false positive allele calling due to sequencing errors, whereas high threshold values result in false negative allele calling. Values in between 0 - 100 % can be entered. We recommend to use 5% for ONT reads and 2% for Illumina reads (default is set to 5%). Click again to close.</span>
+                                </div> 
+                                <br><input type="text" size="30" class="input_form" id= "allelethreshold" name="MutationThreshold" value="2" onchange="checkValue();"><br>
+                                <br>PHred Threshold: 
+                                <div class="popup" onclick="myFunction10()">(? Click here!)
+                                    <span class="popuptext" id="help10">The Quality threshold determine the minimum filter base, For Illumina it should be >20, For ONT it should be >10, Click again to close.</span>
+                                </div> 
+                                <br><input type="text" size="30" class="input_form" id = "phredthreshold" name="Phred" value="20" onchange="checkValue();"><br>
+                            </div>
+                            <p></p>
+        
+                            <br> <br><br>                <br>
+                            <br>
+                            <br>
+                          
+
+
+                </div>
                 <br>
                 <div class="column">
                 <h3>Input data</h3>    
@@ -236,50 +299,9 @@
                     </div>
                     <br>
                 </div>
-
-                <div class="column">
-                    <h3>Optional parameters</h3>
-                    Sequence (if genename given, leave it blank):                 
-                    <div class="popup" onclick="myFunction3()">(? Click here!)
-                        <span class="popuptext" id="help3">Reference amplicon length should be in the range of 200-300 bases with the nuclease target site located roughly in the middle. You can get the reference from Ensembl link below. Click again to close</span>
-                    </div>
-                    <br><input type="text" class="input_form" size="30" name="Locus" value=""> 
-                    <br>
-                    <br>             
-                    <!-- <a href="http://ftp.ensembl.org/pub/release-105/fasta/homo_sapiens/dna/">(Ensembl reference)</a><br> -->
-                    <!-- Sequencing method:                 
-                    <div class="popup" onclick="myFunction3()">(? Click here!)
-                        <span class="popuptext" id="help3">Reference amplicon length should be in the range of 200-300 bases with the nuclease target site located roughly in the middle. You can get the reference from Ensembl link below. Click again to close</span>
-                    </div>
-                    <select id="seq_method" name="seq_method">
-                        <option value="ONT">Nanopore</option>
-                        <option value="Il_pac">Illumina or PacBio</option>
-                      </select> -->
-                    <!-- <br>  <br>  -->
                 
-                        Interested region (optional) +/- bp: 
-                        <div class="popup" onclick="myFunction5()">(? Click here!)
-                            <span class="popuptext" id="help5"> For ONT reads, it is recommended to use -/+15 bases around the predicted DNA lesion. Larger regions are prone to false positive indels. Larger regions (total of 200-250 bp) can be safely used with Illumina reads. You can drag and drop the central point of the predicted double strand break in the genomic sequence to the left or to the right. Default value 0 is double strand breaking point- Crisprnano will use the first index of sgRNA mapped on reference. Click again to close</span>
-                        </div>
-                        <br><input type="text" size="30" name="region_analyse" value="45" class="input_form" onchange="checkValue();"><br>
 
-                        <br>Indel Threshold [%]: 
-                        <div class="popup" onclick="myFunction9()">(? Click here!)
-                            <span class="popuptext" id="help9">The Indel Threshold determines at what relative occurrence an individual indel mutation is considered as a unique allele of the respective clone analyzed, and is thus displayed in the alignment list. Low threshold values can result in false positive allele calling due to sequencing errors, whereas high threshold values result in false negative allele calling. Values in between 0 - 100 % can be entered. We recommend to use 5% for ONT reads and 2% for Illumina reads (default is set to 5%). Click again to close.</span>
-                        </div> 
-                        <br><input type="text" size="30" class="input_form" name="MutationThreshold" value="2" onchange="checkValue();"><br>
-                        <br>PHred Threshold: 
-                        <div class="popup" onclick="myFunction10()">(? Click here!)
-                            <span class="popuptext" id="help10">The Quality threshold determine the minimum filter base, For Illumina it should be >20, For ONT it should be >10, Click again to close.</span>
-                        </div> 
-                        <br><input type="text" size="30" class="input_form" name="Phred" value="20" onchange="checkValue();"><br>
 
-                    <p></p>
-
-                    <br> <br><br>                <br>
-                    <br>
-                    <br>
-                  </div>
                 <!-- <a href="https://iufduesseldorf-my.sharepoint.com/:u:/g/personal/thach_nguyen_iuf-duesseldorf_de/ER4kM3RQaRJLiltUCpcT2iMBiEvGvs3u2NiDTdtSPBLE1Q?e=8FEAJc">(Our test sample)</a><br> -->
  
                 <br>
@@ -505,7 +527,24 @@
                         <br>
                         <input type="text" class="input_form" size="40" name="GeneName_list" id="GeneName_list" value="" onchange="checkOccurrence(); getFastaSequence_list();"><br>
                         <small class="text-muted">Off-target analysis will check up to 4 genes in a single run</small>
-
+                        <br>
+                        <button id="toggleButton">List of offset sgRNA:</button>
+                        <br>
+                        <small class="text-muted">If off-target sgRNA empty, system will take the previous sgRNA to find region of interest</small>
+                        <br>
+                        <div id="sgRNAContainer" class="hidden">
+                        <br>
+                        <small class="text-muted">sgRNA gene 1</small>
+                        <input type="text" class="input_form" size="40" name="sgRNA1" id="sgRNA1" value="" ><br>
+                        <br>
+                        <small class="text-muted">sgRNA gene 2</small>
+                        <input type="text" class="input_form" size="40" name="sgRNA2" id="sgRNA2" value=""><br>
+                        <br>
+                        <small class="text-muted">sgRNA gene 3</small>
+                        <input type="text" class="input_form" size="40" name="sgRNA3" id="sgRNA3" value=""><br>
+                        <br>
+                        <small class="text-muted">sgRNA gene 4</small>
+                        <input type="text" class="input_form" size="40" name="sgRNA4" id="sgRNA4" value=""><br>
                         <br>
                         <input type="submit" name="submit" value="START OFFTARGET ANALYZER " class="btn btn-primary btn-sm" id="submit" onclick="Start2();">
                         <br>
@@ -4874,6 +4913,18 @@ const C_cl ="rgb(0,0,255)"
 const G_cl = "rgb(200, 100, 0)"
 const N_cl = "rgb(0, 0, 0)"
 
+const toggleButton = document.getElementById('toggleButton');
+const sgRNAContainer = document.getElementById('sgRNAContainer');
+const optional_para = document.getElementById('optional_para');
+const optional_para_Container = document.getElementById('optional_para_Container');
+
+toggleButton.addEventListener('click', function() {
+    sgRNAContainer.classList.toggle('hidden');
+});
+
+optional_para.addEventListener('click', function() {
+    optional_para_Container.classList.toggle('hidden');
+});
 
 // var slider = document.getElementById("myRange");
 // slider.onchange = PlotAlignment_bulk(CurrentAlignment, locus, bulk_threshold)
