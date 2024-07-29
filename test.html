@@ -1,89 +1,38 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BAM File Reader</title>
+    <script src="https://cdn.jsdelivr.net/npm/igv@2.13.0/dist/igv.min.js"></script>
 </head>
 <body>
+    <input type="file" id="bamFileInput" accept=".bam,.bai">
+    <script>
+        document.getElementById('bamFileInput').addEventListener('change', async (event) => {
+            const bamFile = event.target.files[0];
+            const bamIndexFile = event.target.files[1]; // Assuming the second file is the index file (.bai)
 
-<div id="plot"></div>
+            const bamUrl = URL.createObjectURL(bamFile);
+            const bamIndexUrl = URL.createObjectURL(bamIndexFile);
 
-<script>
-  // Your 2D array
-  const data = [
-    [1, 2],
-    [-2, 3],
-    [4, 5]
-  ];
+            const config = {
+                url: bamUrl,
+                indexURL: bamIndexUrl,
+                format: 'bam'
+            };
 
-  // Transpose the data
-  const transposedData = data[0].map((col, i) => data.map(row => row[i]));
+            const bamReader = new igv.BamReader(config);
+            const chr = 'chr1';
+            const start = 0;
+            const end = 10000;
 
-  // Extracting x and y values
-  const xValues = transposedData[1];
-  const yValues = transposedData[0];
-
-  // Separate positive and negative values
-  const positiveX = [];
-  const positiveY = [];
-  const negativeX = [];
-  const negativeY = [];
-
-  for (let i = 0; i < yValues.length; i++) {
-    if (yValues[i] >= 0) {
-      positiveX.push(xValues[i]);
-      positiveY.push(yValues[i]);
-    } else {
-      negativeX.push(xValues[i]);
-      negativeY.push(yValues[i]);
-    }
-  }
-
-  // Creating traces for positive and negative values
-  const tracePositive = {
-    x: positiveX,
-    y: positiveY,
-    type: 'bar',
-    marker: {
-      color: 'green'
-    },
-    name: 'Positive',
-    text: positiveX.map(String), // Display x-values as text on positive bars
-    textposition: 'auto'
-  };
-
-  const traceNegative = {
-    x: negativeX,
-    y: negativeY,
-    type: 'bar',
-    marker: {
-      color: 'red'
-    },
-    name: 'Negative',
-    text: negativeX.map(String), // Display x-values as text on negative bars
-    textposition: 'auto'
-  };
-
-  // Layout for the plot
-  const layout = {
-    title: '2D Array Plot as Bar',
-    xaxis: {
-      title: 'X Axis'
-    },
-    yaxis: {
-      title: 'Y Axis'
-    },
-    legend: {
-      x: 1,
-      xanchor: 'right',
-      y: 1,
-      showlegend: true // Always show legend
-    }
-  };
-
-  // Plot the bar chart
-  Plotly.newPlot('plot', [tracePositive, traceNegative], layout);
-
-</script>
-
+            bamReader.readAlignments(chr, start, end, (alignmentContainer) => {
+                alignmentContainer.alignments.forEach(alignment => {
+                    console.log(alignment.seq);
+                });
+            });
+        });
+    </script>
 </body>
 </html>
