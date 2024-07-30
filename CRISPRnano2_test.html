@@ -49,7 +49,7 @@
 .text-right {
             text-align: right;
         }
-
+        
 /* The actual popup */
 .popup .popuptext {
   visibility: hidden;
@@ -200,8 +200,8 @@
                     <br>
 
 
-                        <h5><a href="https://github.com/pinellolab/CRISPResso2">Manual</a></h5>
-                        <h5><a href="https://github.com/pinellolab/CRISPResso2" target="_top">Source code on Github</a></h5>
+                        <h5><a href="https://github.com/thachnguyen/CRISPRnano">Manual</a></h5>
+                        <h5><a href="https://github.com/thachnguyen/CRISPRnano" target="_top">Source code on Github</a></h5>
                         
                             <h3 id='optional_para'>Optional parameters</h3>
                             <small class="text-muted">Click to expand</small>
@@ -316,12 +316,9 @@
                 <br>                    <br>
                 <br>                    <br>
                 <br>                    <br>
-                <br>
-                <br>
-                                <br>                    <br>
-
                 <br>                    <br>
-
+                <br>
+                
                 <a style="font-style: italic;">
                     CRISPRnano website is free and open to all users and there is no login required.<br>
                     To use CRISPRnano, you must enable JavaScript on your web browser.<br>
@@ -549,25 +546,24 @@
                         <small class="text-muted">sgRNA gene 4</small>
                         <input type="text" class="input_form" size="40" name="sgRNA4" id="sgRNA4" value=""><br>
                         <br>
-                    </div>
                         <input type="submit" name="submit" value="START OFFTARGET ANALYZER " class="btn btn-primary btn-sm" id="submit" onclick="Start2();">
                         <br>
                         <br>
                         <h4>Save data</h4> 
-                        <button class="btn btn-secondary btn-sm" style="position:absolute; right:10%" onclick="SaveReport();">Indel report Excel .XLSX</button>
+                        <button class="btn btn-secondary btn-sm" onclick="SaveReport();">Indel report Excel .XLSX</button>
                         <br>
                         <br>
-                        <button class="btn btn-secondary btn-sm" style="position:absolute; right:10%" onclick="SaveReportcsv();">Indel report CSV .csv</button>
+                        <button class="btn btn-secondary btn-sm" onclick="SaveReportcsv();">Indel report CSV .csv</button>
                         <br> 
                         <br>
-                        <button class="btn btn-secondary btn-sm" style="position:absolute; right:10%" onclick="SaveSVGAlignment();">Save alignment (.svg)</button> 
+                        <button class="btn btn-secondary btn-sm" onclick="SaveSVGAlignment();">Save alignment (.svg)</button> 
                         <br>
                         <br>
-                        <button class="btn btn-secondary btn-sm" style="position:absolute; right:10%" onclick="PrintSVG();">Print pie charts (.pdf)</button> 
+                        <button class="btn btn-secondary btn-sm" onclick="PrintSVG();">Print pie charts (.pdf)</button> 
                         <div id="progress1" style="display:none; padding: 10px; border: 10px solid #CCC; background: #EEE; width:80%; position:absolute; top:40%;left:0%">
                         </div>
                             <br>
-                    
+                    </div>
 
                 <div style="position:absolute; right:10%; top:0%" id="restart" align="right">
                     <!-- <br><button onclick="PrintSVG();">Print pie charts (.pdf)</button>
@@ -3160,10 +3156,10 @@ function PlotAlignment(barcode, locus){
 
     for (let key in aln_dict_fil[barcode]){
         //aggregate WT
-        var micro_homology_data = Check_micro_homology(key)
+        var micro_homology_data = Check_RIMA(key)
         var duplication1 = Check_duplication(key)
-        if (micro_homology_data !=''&&micro_homology_data[0].length >=2){
-            var rima_class = 'classical MMEJ (c-MMEJ)'
+        if (micro_homology_data !=''){
+            var rima_class = 'MH-del'
         }
         else if (micro_homology_data !=''&&micro_homology_data[0].length<2){
             var rima_class = 'Other-EJ (NHEJ, SD-MMEJ, TMEJ, etc)'
@@ -4564,7 +4560,7 @@ function PrintSVGAlignment(){
 // Check micro homology for given sequence 
 // input: our alignment dictionary element does not contain insertion track
 
-function Check_micro_homology(sequence_seq){
+function Check_RIMA(sequence_seq){
     var micro_homology = ''
     const startIndex = sequence_seq.indexOf('-');
     const endIndex = sequence_seq.lastIndexOf('-') + 1;

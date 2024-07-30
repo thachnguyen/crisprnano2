@@ -3156,10 +3156,10 @@ function PlotAlignment(barcode, locus){
 
     for (let key in aln_dict_fil[barcode]){
         //aggregate WT
-        var micro_homology_data = Check_micro_homology(key)
+        var micro_homology_data = Check_RIMA(key)
         var duplication1 = Check_duplication(key)
-        if (micro_homology_data !=''&&micro_homology_data[0].length >=2){
-            var rima_class = 'classical MMEJ (c-MMEJ)'
+        if (micro_homology_data !=''){
+            var rima_class = 'MH-del'
         }
         else if (micro_homology_data !=''&&micro_homology_data[0].length<2){
             var rima_class = 'Other-EJ (NHEJ, SD-MMEJ, TMEJ, etc)'
@@ -4560,7 +4560,7 @@ function PrintSVGAlignment(){
 // Check micro homology for given sequence 
 // input: our alignment dictionary element does not contain insertion track
 
-function Check_micro_homology(sequence_seq){
+function Check_RIMA(sequence_seq){
     var micro_homology = ''
     const startIndex = sequence_seq.indexOf('-');
     const endIndex = sequence_seq.lastIndexOf('-') + 1;
