@@ -3158,11 +3158,15 @@ function PlotAlignment(barcode, locus){
         //aggregate WT
         var micro_homology_data = Check_RIMA(key)
         var duplication1 = Check_duplication(key)
-        if (micro_homology_data !=''){
-            var rima_class = 'MH-del'
+        var rima_class = 'other EJ'
+        if (micro_homology_data[0]!=''){
+            rima_class = 'MH-del'
         }
-        else if (micro_homology_data !=''&&micro_homology_data[0].length<2){
-            var rima_class = 'Other-EJ (NHEJ, SD-MMEJ, TMEJ, etc)'
+        else if ((micro_homology_data[3]==1)||((micro_homology_data[1]!=-1)&&(micro_homology_data[2]-micro_homology_data[1]==1))){
+            var rima_class = 'NHEJ'
+        }
+        else {
+            rima_class = 'other EJ'
         }
          
         if (micro_homology_data[0]==''){
@@ -3181,6 +3185,7 @@ function PlotAlignment(barcode, locus){
                     }  
                 }
             }
+            //Micro homology plot
         else { 
             for (let x=xfrom-10; x<xto-10; x++){
                 if (((x >= micro_homology_data[1]-xfrom+10)&&(x < micro_homology_data[1]-xfrom+10 + micro_homology_data[0].length))||((x >= micro_homology_data[2]-xfrom+10)&&(x < micro_homology_data[2]-xfrom+10 + micro_homology_data[0].length))){
@@ -3396,7 +3401,7 @@ function PlotAlignment(barcode, locus){
                     svg.appendChild(imageElement);
                     image_loc =1;
                 }
-                if (duplication1){
+                if (duplication1[0]){
                     SVGObj.setAttribute("fill", "rgb(255,255,0");
                 }
                 else{
@@ -3445,9 +3450,16 @@ function PlotAlignment(barcode, locus){
         SVGObj.setAttribute("x", 10+ 120+24*(30)+2 );
         SVGObj.setAttribute("y", ysize+delypos+13);
         SVGObj.setAttribute("font-size", "14");
-        if (rima_class == 'classical MMEJ (c-MMEJ)'){
+        if (rima_class == 'NHEJ'){
+            SVGObj.setAttribute("fill", "rgb(17, 94, 94)");
+        }
+        else if (rima_class == 'other EJ'){
+            SVGObj.setAttribute("fill", "rgb(153, 151, 151)");
+        }
+        else if (rima_class == 'MH-del'){
             SVGObj.setAttribute("fill", "rgb(84, 199, 199)");
         }
+
         SVGObj.textContent +="RIMA classified as: "+ rima_class;
         svg.appendChild(SVGObj);
 
@@ -4564,6 +4576,7 @@ function Check_RIMA(sequence_seq){
     var micro_homology = ''
     const startIndex = sequence_seq.indexOf('-');
     const endIndex = sequence_seq.lastIndexOf('-') + 1;
+    const insert_size = sequence_seq.split('\n')[1].trim().length
     var ref_seq = locus.substring(10, sequence_seq.length + 10)
     if (startIndex !=0){
         for (let i = startIndex; i < endIndex; i++) {
@@ -4575,7 +4588,7 @@ function Check_RIMA(sequence_seq){
             }
         }
     }
-    return [micro_homology, startIndex, endIndex];   
+    return [micro_homology, startIndex, endIndex, insert_size];   
 }
 
 
@@ -4586,11 +4599,12 @@ function Check_duplication(sequence_seq){
     const main_track = sequence_seq.split('\n')[0]
     const insertion = sequence_seq.split('\n')[1]
     const insertion_trim = insertion.trim()
+    var index_in = 0
     if (insertion_trim !=''){
-        const index_in = insertion.indexOf(insertion_trim)
+        index_in = insertion.indexOf(insertion_trim)
         duplicate = (main_track.substring(index_in, index_in+insertion_trim.length)==insertion.substring(index_in, index_in+insertion_trim.length)||main_track.substring(index_in-insertion_trim.length, index_in)==insertion.substring(index_in, index_in+insertion_trim.length))
     }
-    return duplicate;   
+    return [duplicate, index_in, insertion_trim.length];   
 }
 
 
