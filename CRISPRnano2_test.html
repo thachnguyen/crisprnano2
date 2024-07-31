@@ -2855,16 +2855,21 @@ function PlotAlignment(barcode, locus){
 
     for (let key in aln_dict[id]){
         switch (aln_type_dict[key]){
-                case 1:
-                    sum+=aln_dict[id]
-                case 2:
-                    sum+=aln_dict[id]
-                case 3: 
-                    sum+=aln_dict[id]  
-                case 7: 
-                    sum+=aln_dict[id]
-                case 8: 
-                    read_ambigous++;
+            case 1:
+                sum+=aln_dict[id]
+                break;
+            case 2:
+                sum+=aln_dict[id]
+                break;
+            case 3: 
+                sum+=aln_dict[id]
+                break;  
+            case 7: 
+                sum+=aln_dict[id]
+                break;
+            case 8: 
+                read_ambigous++;
+                break;
             }
     }
 
@@ -2937,7 +2942,6 @@ function PlotAlignment(barcode, locus){
     }
     else {
         summary_track_select[id+1] =  [GetWellPos(id), targetingOligo, no_indel, inf_indel, out_indel, summary_track[id][7]]
-
     }
 
     // check genotype
@@ -3089,7 +3093,6 @@ function PlotAlignment(barcode, locus){
     SVGObj.setAttribute("x", 120+6*120+30);
     svg.appendChild(SVGObj);
 
-
     var xfrom = BreakPoint-30 +Math.floor(AlignmentStartPos);
     var xto = xfrom +60;
     //wt: REFERENCES SEQ
@@ -3169,25 +3172,8 @@ function PlotAlignment(barcode, locus){
             rima_class = 'other EJ'
         }
          
-        if (micro_homology_data[0]==''){
-            for (let x=xfrom-10; x<xto-10; x++){
-            //draw main track:
-                if ((key[x]==locus[BreakPoint-region_analyse+x])||(key[x]=='N')||(key[x]=='-')||(typeof(key[x])=='undefined')){
-                    // SVGObj= document.createElementNS(svgns, "rect");
-                    // SVGObj.setAttribute("x", 120+12*(x)-5);
-                    // SVGObj.setAttribute("y", ysize+delypos-10);
-                    // SVGObj.setAttribute("width", "11");
-                    // SVGObj.setAttribute("height", "11");
-                    // SVGObj.setAttribute("fill", "rgb(255,255,255");
-                    // SVGObj.setAttribute("text-anchor", "middle");
-                    // SVGObj.setAttribute("pointer-events","none");
-                    // svg.appendChild(SVGObj);
-                    }  
-                }
-            }
-            //Micro homology plot
-        else { 
-            for (let x=xfrom-10; x<xto-10; x++){
+        if (rima_class=='MH-del') { 
+            for (let x=xfrom-30; x<xto+10; x++){
                 if (((x >= micro_homology_data[1]-xfrom+10)&&(x < micro_homology_data[1]-xfrom+10 + micro_homology_data[0].length))||((x >= micro_homology_data[2]-xfrom+10)&&(x < micro_homology_data[2]-xfrom+10 + micro_homology_data[0].length))){
                     SVGObj= document.createElementNS(svgns, "rect");
                     SVGObj.setAttribute("x", 120+12*(x)-5);
@@ -3199,66 +3185,39 @@ function PlotAlignment(barcode, locus){
                     SVGObj.setAttribute("pointer-events","none");
                     svg.appendChild(SVGObj);
                 }
-                else{
-                    if ((key[x]==locus[BreakPoint-region_analyse+x])||(key[x]=='N')||(key[x]=='-')||(typeof(key[x])=='undefined')){
-                    // SVGObj= document.createElementNS(svgns, "rect");
-                    // SVGObj.setAttribute("x", 120+12*(x)-5);
-                    // SVGObj.setAttribute("y", ysize+delypos-10);
-                    // SVGObj.setAttribute("width", "11");
-                    // SVGObj.setAttribute("height", "11");
-                    // SVGObj.setAttribute("fill", "rgb(255,255,255");
-                    // SVGObj.setAttribute("text-anchor", "middle");
-                    // SVGObj.setAttribute("pointer-events","none");
-                    // svg.appendChild(SVGObj);
-                    }  
-                }
-                }
             }
+        }
         
         if (aln_type_dict[id][key]==1 && (Object.keys(no_indel_arr).length ==2)){
             for (let x=xfrom-10; x<xto-10; x++){
             //draw main track:
             if (Object.keys(no_indel_arr)[0][x]==Object.keys(no_indel_arr)[1][x]){
-                if ((Object.keys(no_indel_arr)[0][x]==locus[BreakPoint-region_analyse+x])||(key[x]=='N')||(key[x]=='-')||(typeof(key[x])=='undefined')){
+                SVGObj= document.createElementNS(NS, "text");
+                SVGObj.setAttribute("y", ysize+delypos);
+                SVGObj.setAttribute("font-size", "13");
+                SVGObj.setAttribute("font-weight", "400");
+                if (key[x]=="T"){SVGObj.textContent = key[x];
+                    SVGObj.setAttribute("fill", T_cl);
                 }
-                else {
-                    // SVGObj= document.createElementNS(svgns, "rect");
-                    // SVGObj.style.stroke=N_cl;
-                    // SVGObj.setAttribute("x", 115+12*(x-xfrom+10));
-                    // SVGObj.setAttribute("y", ysize+delypos-10);
-                    // SVGObj.setAttribute("width", "11");
-                    // SVGObj.setAttribute("height", "11");
-                    // SVGObj.setAttribute("fill", "rgb(255,255,255");
-                    // SVGObj.setAttribute("text-anchor", "middle");
-                    // SVGObj.setAttribute("pointer-events","none");
-                    // svg.appendChild(SVGObj);
+                else if (key[x]=="A"){SVGObj.textContent = key[x];
+                    SVGObj.setAttribute("fill", A_cl);
                 }
-                    SVGObj= document.createElementNS(NS, "text");
-                    SVGObj.setAttribute("y", ysize+delypos);
-                    SVGObj.setAttribute("font-size", "13");
-                    SVGObj.setAttribute("font-weight", "400");
-                    if (key[x]=="T"){SVGObj.textContent = key[x];
-                        SVGObj.setAttribute("fill", T_cl);
-                    }
-                    else if (key[x]=="A"){SVGObj.textContent = key[x];
-                        SVGObj.setAttribute("fill", A_cl);
-                    }
-                    else if (key[x]=="C"){SVGObj.textContent = key[x];
-                        SVGObj.setAttribute("fill", C_cl);
-                    }
-                    else if (key[x]=="G"){SVGObj.textContent = key[x];
-                        SVGObj.setAttribute("fill", G_cl);
-                    }
-                    else if (key[x]=="N"){SVGObj.textContent = key[x];
-                        SVGObj.setAttribute("fill", N_cl);
-                    }
-                    else if (key[x]=="-"){SVGObj.textContent = key[x];
-                        SVGObj.setAttribute("fill", "rgb(0,0,0");
-                    }
-                    SVGObj.setAttribute("x", 120+12*(x-xfrom+10));
-                    SVGObj.setAttribute("text-anchor", "middle");
-                    SVGObj.setAttribute("pointer-events","none");
-                    svg.appendChild(SVGObj);
+                else if (key[x]=="C"){SVGObj.textContent = key[x];
+                    SVGObj.setAttribute("fill", C_cl);
+                }
+                else if (key[x]=="G"){SVGObj.textContent = key[x];
+                    SVGObj.setAttribute("fill", G_cl);
+                }
+                else if (key[x]=="N"){SVGObj.textContent = key[x];
+                    SVGObj.setAttribute("fill", N_cl);
+                }
+                else if (key[x]=="-"){SVGObj.textContent = key[x];
+                    SVGObj.setAttribute("fill", "rgb(0,0,0");
+                }
+                SVGObj.setAttribute("x", 120+12*(x-xfrom+10));
+                SVGObj.setAttribute("text-anchor", "middle");
+                SVGObj.setAttribute("pointer-events","none");
+                svg.appendChild(SVGObj);
             }
             else {
                 var fontsize1 = 2+ Math.floor(13*no_indel_arr[Object.keys(no_indel_arr)[0]]/(no_indel_arr[Object.keys(no_indel_arr)[0]]+no_indel_arr[Object.keys(no_indel_arr)[1]]))
@@ -3352,7 +3311,6 @@ function PlotAlignment(barcode, locus){
                 svg.appendChild(SVGObj);
                 SVGObj= document.createElementNS(NS, "text");
                 SVGObj.setAttribute("font-weight", "600");
-
             }
             
             SVGObj.setAttribute("y", ysize+delypos);
@@ -3374,7 +3332,7 @@ function PlotAlignment(barcode, locus){
                 SVGObj.setAttribute("fill", N_cl);
             }
             else if (key[x]=="-"){SVGObj.textContent = key[x];
-                SVGObj.setAttribute("fill", "rgb(0,0,0");
+                SVGObj.setAttribute("fill", N_cl);
             }
             SVGObj.setAttribute("x", 120+12*(x-xfrom+10));
             SVGObj.setAttribute("text-anchor", "middle");
@@ -3393,7 +3351,7 @@ function PlotAlignment(barcode, locus){
                 if (image_loc == 0){
                     var imageElement = document.createElementNS(NS, "image");
                     imageElement.setAttribute("x", 120+12*(x-xfrom+10)-16); // Set the x-coordinate of the image
-                        
+
                     imageElement.setAttribute("y", ysize+delypos+4); // Set the y-coordinate of the image
                     imageElement.setAttribute("width", 12); // Set the width of the image
                     imageElement.setAttribute("height", 12); // Set the height of the image
@@ -3486,15 +3444,20 @@ function PlotAlignment_bulk(barcode, locus, bulk_threshold){
         switch (aln_type_dict[key]){
                 case 1:
                     sum+=aln_dict[id]
+                    break;
                 case 2:
                     sum+=aln_dict[id]
+                    break;
                 case 3: 
-                    sum+=aln_dict[id]  
+                    sum+=aln_dict[id]
+                    break;  
                 case 7: 
                     sum+=aln_dict[id]
+                    break;
                 case 8: 
                     read_ambigous++;
-            }
+                    break;
+                }
     }
 
     summary_track[id][0] = sum + read_ambigous;
