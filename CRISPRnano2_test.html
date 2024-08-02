@@ -3173,7 +3173,7 @@ function PlotAlignment(barcode, locus){
         }
          
         if (rima_class=='MH-del') { 
-            for (let x=xfrom-30; x<xto+10; x++){
+            for (let x=xfrom-70; x<xto+10; x++){
                 if (((x >= micro_homology_data[1]-xfrom+10)&&(x < micro_homology_data[1]-xfrom+10 + micro_homology_data[0].length))||((x >= micro_homology_data[2]-xfrom+10)&&(x < micro_homology_data[2]-xfrom+10 + micro_homology_data[0].length))){
                     SVGObj= document.createElementNS(svgns, "rect");
                     SVGObj.setAttribute("x", 120+12*(x)-5);
@@ -3295,6 +3295,18 @@ function PlotAlignment(barcode, locus){
             for (let x=xfrom-10; x<xto-10; x++){
             //draw main track:
             if ((key[x]==locus[BreakPoint-region_analyse+x])||(key[x]=='N')||(key[x]=='-')||(typeof(key[x])=='undefined')){
+                if ((duplication1[0])&&(x>=duplication1[1])&&(x<(duplication1[1]+duplication1[2]))){
+                    SVGObj= document.createElementNS(svgns, "rect");
+                    SVGObj.setAttribute("fill", "rgb(255,255,0");
+                    SVGObj.style.stroke=T_cl;
+                    SVGObj.setAttribute("x", 120+12*(x-xfrom+10)-5);
+                    SVGObj.setAttribute("y", ysize+delypos-10);
+                    SVGObj.setAttribute("width", "12");
+                    SVGObj.setAttribute("height", "12");
+                    SVGObj.setAttribute("text-anchor", "middle");
+                    SVGObj.setAttribute("pointer-events","none");
+                    svg.appendChild(SVGObj);
+                    }
                 SVGObj= document.createElementNS(NS, "text");
                 SVGObj.setAttribute("font-weight", "400");
             }
