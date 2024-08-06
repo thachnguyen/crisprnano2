@@ -240,6 +240,18 @@
                                     <span class="popuptext" id="help10">The Quality threshold determine the minimum filter base, For Illumina it should be >20, For ONT it should be >10, Click again to close.</span>
                                 </div> 
                                 <br><input type="text" size="30" class="input_form" id = "phredthreshold" name="Phred" value="20" onchange="checkValue();"><br>
+                                <br>dsDNA without Homology Arm 
+                                <div class="popup" onclick="myFunction10()">(? Click here!)
+                                    <span class="popuptext" id="help10">The Quality threshold determine the minimum filter base, For Illumina it should be >20, For ONT it should be >10, Click again to close.</span>
+                                </div> 
+                                <br><input type="text" size="30" class="input_form" id = "dsDNA_KI" name="dsDNA_KI" ><br>
+
+                                <br>ssDNA with Homology Arm 
+                                <div class="popup" onclick="myFunction10()">(? Click here!)
+                                    <span class="popuptext" id="help10">The Quality threshold determine the minimum filter base, For Illumina it should be >20, For ONT it should be >10, Click again to close.</span>
+                                </div> 
+                                <br><input type="text" size="30" class="input_form" id = "ssDNA_KI" name="dsDNA_KI" ><br>
+
                             </div>
                             <p></p>
         
@@ -259,7 +271,7 @@
                 </div>
                     <br><input type="file" id="files" class="input_form" name="files[]" multiple=""><br>
                     <br>
-                    <label for="cars">Data type:</label>
+                    <label>Data type:</label>
                     <select id="mySelect" onchange="setValue()">
                         <option value="illu">Illumina</option>
                         <option value="ont">Nanopore</option>
@@ -272,8 +284,6 @@
                     <div class="popup" onclick="myFunction8()">(? Click here!)
                         <span class="popuptext" id="help8">Name of the study gene (Human only). Click to close.</span>
                     </div>
-        
-                    <!-- <input type="submit" name="submit" value="Click here to get your fasta" class="btn btn-secondary btn-sm" id="get_fasta" onclick="getFastaSequence();"> -->
                     <br>
                     <input type="text" class="input_form" size="40" name="GeneName" value="" onchange="getFastaSequence()"><br>
                     <small class="text-muted">Gene names are from <a href="https://crisprnano.de/genename.txt">this list</a></small><br>
@@ -289,7 +299,7 @@
                     <br><input type="text" class="input_form" size="40" name="TargetingOligo" value=""><br>
                     <div class="form-check">
                         <input class="form-check-input" type="checkbox" value="" id="prime_editing">
-                        <label class="form-check-label" for="flexCheckDefault">
+                        <label class="form-check-label">
                           Prime Editing/Knockin-only mode (exclude INDEL)
                         </label>
                       </div>
@@ -300,8 +310,6 @@
                     <br>
                 </div>
                 
-
-
                 <!-- <a href="https://iufduesseldorf-my.sharepoint.com/:u:/g/personal/thach_nguyen_iuf-duesseldorf_de/ER4kM3RQaRJLiltUCpcT2iMBiEvGvs3u2NiDTdtSPBLE1Q?e=8FEAJc">(Our test sample)</a><br> -->
  
                 <br>
@@ -3163,7 +3171,10 @@ function PlotAlignment(barcode, locus){
         var duplication1 = Check_duplication(key)
         var rima_class = 'other EJ'
         if (micro_homology_data[0]!=''){
-            rima_class = 'MH-del'
+            rima_class = 'other EJ (MH-del 1bp)'
+            if (micro_homology_data[0].length>=2){
+                rima_class = 'MH-del'
+            }
         }
         else if ((micro_homology_data[3]==1)||((micro_homology_data[1]!=-1)&&(micro_homology_data[2]-micro_homology_data[1]==1))){
             var rima_class = 'NHEJ'
@@ -3172,7 +3183,7 @@ function PlotAlignment(barcode, locus){
             rima_class = 'other EJ'
         }
          
-        if (rima_class=='MH-del') { 
+        if (rima_class=='MH-del'||rima_class=='other EJ (MH-del 1bp)') { 
             for (let x=xfrom-70; x<xto+10; x++){
                 if (((x >= micro_homology_data[1]-xfrom+10)&&(x < micro_homology_data[1]-xfrom+10 + micro_homology_data[0].length))||((x >= micro_homology_data[2]-xfrom+10)&&(x < micro_homology_data[2]-xfrom+10 + micro_homology_data[0].length))){
                     SVGObj= document.createElementNS(svgns, "rect");
