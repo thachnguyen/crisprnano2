@@ -178,19 +178,18 @@
             <div class="col-md-11" style="float:none;margin:auto;">
                 <div class="card">
                     <br>
-        <div id="DIV_topmenu">
-            <div class="text-center">
-                <div class="btn-group btn-group-lg mr-3" role="group" id="aBtnGroup" aria-label="Basic example">
-                    <button type="button"  name="setup" class="btn btn-info" onclick="TabClicked(0);">ANALYZER SETTING</button>
-                    <div id="save" style="display:none">test</div>
-
-                    <button type="button"  name="result" class="btn btn-info" onclick="TabClicked(1);">RESULTS</button>
-                    <button type="button"  name="bulkview_result" class="btn btn-info" onclick="TabClicked(4);">BULK/SINGLE CLONE VIEWER</button>
-                    <button type="button"  name="offtarget_result" class="btn btn-info" onclick="TabClicked(5);">OFF-TARGET ANALYSIS</button>
-                    <button type="button"  name="result" class="btn btn-info" onclick="TabClicked(6);">TEST DATA</button>
-                </div>
-            </div>
-        </div>
+                    <div id="DIV_topmenu">
+                        <div class="text-center">
+                            <div class="btn-group btn-group-lg mr-3" role="group" id="aBtnGroup" aria-label="Basic example">
+                                <button type="button"  name="setup" class="btn btn-info" onclick="TabClicked(0);">ANALYZER SETTING</button>
+                                <div id="save" style="display:none">test</div>
+                                <button type="button"  name="result" class="btn btn-info" onclick="TabClicked(1);">RESULTS</button>
+                                <button type="button"  name="bulkview_result" class="btn btn-info" onclick="TabClicked(4);">BULK/SINGLE CLONE VIEWER</button>
+                                <button type="button"  name="offtarget_result" class="btn btn-info" onclick="TabClicked(5);">OFF-TARGET ANALYSIS</button>
+                                <button type="button"  name="result" class="btn btn-info" onclick="TabClicked(6);">TEST DATA</button>
+                            </div>
+                        </div>
+                    </div>
         <br>
         <div id="setup" style="position:absolute; left:20px; top:80px">
 
@@ -524,7 +523,7 @@
                         <input class="form-check-input" type="checkbox" id="bulkview">
                         <label class="form-check-label" for="bulkview">SWITCH TO BULK/SINGLE CLONE VIEW </label>
                       </div>
-                      <small class="text-muted">NOTE: Click to the sample after selecting above option. Bulk view use lower percentage threshold</small>
+                      <small class="text-muted">NOTE: Click to the sample after selecting above option. Bulk view uses a lower percentage threshold</small>
                       <br>
                       <br>
                     <h4>OFF TARGET Analysis (optional)</h4>    
@@ -590,7 +589,8 @@
                     <div class="box">
                         <svg id="SVGpie_bulk" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="400" height="300"></svg>
                     </div>
-                    <div id="Indel_plot" class = "box" style="width: 400px; height: 300px;"></div>
+                    <div id="Indel_plot" class = "box" style="width: 400px; height: 300px;">
+                    </div>
                     </div>
                     <div>
                     <div id="QC_plot" class = "box" style="width: 400px; height: 300px;"></div>
@@ -599,14 +599,6 @@
                     </div>
                 </div>
 
-                <!-- <div class="slidecontainer">
-                    <input type="range" min="0" max="50" value="0" class="slider" id="myRange" oninput="this.nextElementSibling.value = this.value">
-                    <p>Indel threshold (%): <span id="threshold_bulk"></span> 
-                    </p>
-                    <br> <br><br>
-                  </div> -->
-               
-                
                 <div id="DIV_alignment_bulk" >
                     <svg id="SVGmut_bulk" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="1600" height="5000">
                     </svg>
