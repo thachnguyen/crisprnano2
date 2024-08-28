@@ -194,114 +194,123 @@
         </div>
         <br>
         <div id="setup" style="position:absolute; left:20px; top:80px">
-                <br>
-                <br>
+
+
                 <div class="column">
-                    <div class = "card">
-                    <div class='card-body'>
-                        <h5><a href="https://github.com/pinellolab/CRISPResso2">Manual</a></h5>
-                        <h5><a href="https://github.com/pinellolab/CRISPResso2" target="_top">Source code on Github</a></h5>
-                    </div>
-                    </div>
+                    <br>
+                    <br>
+
+
+                        <h5><a href="https://github.com/thachnguyen/CRISPRnano">Manual</a></h5>
+                        <h5><a href="https://github.com/thachnguyen/CRISPRnano" target="_top">Source code on Github</a></h5>
+                        
+                            <h3 id='optional_para'>Optional parameters</h3>
+                            <small class="text-muted">Click to expand</small>
+                            <div id = "optional_para_Container" class="hidden">
+                            Sequence (if genename given, leave it blank):                 
+                            <div class="popup" onclick="myFunction3()">(? Click here!)
+                                <span class="popuptext" id="help3">Reference amplicon length should be in the range of 200-300 bases with the nuclease target site located roughly in the middle. You can get the reference from Ensembl link below. Click again to close</span>
+                            </div>
+                            <br><input type="text" class="input_form" size="30" id="locus" name="Locus" value=""> 
+                            <br>
+                            <br>             
+                            <!-- <a href="http://ftp.ensembl.org/pub/release-105/fasta/homo_sapiens/dna/">(Ensembl reference)</a><br> -->
+                            <!-- Sequencing method:                 
+                            <div class="popup" onclick="myFunction3()">(? Click here!)
+                                <span class="popuptext" id="help3">Reference amplicon length should be in the range of 200-300 bases with the nuclease target site located roughly in the middle. You can get the reference from Ensembl link below. Click again to close</span>
+                            </div>
+                            <select id="seq_method" name="seq_method">
+                                <option value="ONT">Nanopore</option>
+                                <option value="Il_pac">Illumina or PacBio</option>
+                              </select> -->
+                            <!-- <br>  <br>  -->
+                            
+                                Interested region (optional) +/- bp: 
+                                <div class="popup" onclick="myFunction5()">(? Click here!)
+                                    <span class="popuptext" id="help5"> For ONT reads, it is recommended to use -/+15 bases around the predicted DNA lesion. Larger regions are prone to false positive indels. Larger regions (total of 200-250 bp) can be safely used with Illumina reads. You can drag and drop the central point of the predicted double strand break in the genomic sequence to the left or to the right. Default value 0 is double strand breaking point- Crisprnano will use the first index of sgRNA mapped on reference. Click again to close</span>
+                                </div>
+                                <br><input type="text" size="30" name="region_analyse" value="45" class="input_form" onchange="checkValue();"><br>
+        
+                                <br>Indel Threshold [%]: 
+                                <div class="popup" onclick="myFunction9()">(? Click here!)
+                                    <span class="popuptext" id="help9">The Indel Threshold determines at what relative occurrence an individual indel mutation is considered as a unique allele of the respective clone analyzed, and is thus displayed in the alignment list. Low threshold values can result in false positive allele calling due to sequencing errors, whereas high threshold values result in false negative allele calling. Values in between 0 - 100 % can be entered. We recommend to use 5% for ONT reads and 2% for Illumina reads (default is set to 5%). Click again to close.</span>
+                                </div> 
+                                <br><input type="text" size="30" class="input_form" id= "allelethreshold" name="MutationThreshold" value="2" onchange="checkValue();"><br>
+                                <br>PHred Threshold: 
+                                <div class="popup" onclick="myFunction10()">(? Click here!)
+                                    <span class="popuptext" id="help10">The Quality threshold determine the minimum filter base, For Illumina it should be >20, For ONT it should be >10, Click again to close.</span>
+                                </div> 
+                                <br><input type="text" size="30" class="input_form" id = "phredthreshold" name="Phred" value="20" onchange="checkValue();"><br>
+                                <br>dsDNA without Homology Arm 
+                                <div class="popup" onclick="myFunction10()">(? Click here!)
+                                    <span class="popuptext" id="help10">The Quality threshold determine the minimum filter base, For Illumina it should be >20, For ONT it should be >10, Click again to close.</span>
+                                </div> 
+                                <br><input type="text" size="30" class="input_form" id = "dsDNA_KI" name="dsDNA_KI" ><br>
+
+                                <br>ssDNA with Homology Arm 
+                                <div class="popup" onclick="myFunction10()">(? Click here!)
+                                    <span class="popuptext" id="help10">The Quality threshold determine the minimum filter base, For Illumina it should be >20, For ONT it should be >10, Click again to close.</span>
+                                </div> 
+                                <br><input type="text" size="30" class="input_form" id = "ssDNA_KI" name="dsDNA_KI" ><br>
+
+                            </div>
+                            <p></p>
+        
+                            <br> <br><br>                <br>
+                            <br>
+                            <br>
+                          
+
+
                 </div>
-
-                <div class="column" width="25%">
-                    <h3>Input data</h3>   
-                    FASTQ Files (*): 
-                    <div class="popup" onclick="myFunction1()">(? Click here!)
-                        <span class="popuptext" id="help1">FASTQ output files from Illumina or ONT. We recommend file's size smaller than 200MB. Make sure that the correct ordering is applied in the file browser. The file allocation to individual pie charts can be verified by the numbers given at alignment track. Click again to close.</span>
-                    </div>
-                        <br><input type="file" id="files" class="input_form" name="files[]" multiple=""><br>
-                        <br>
-                        <label for="cars">Data type:</label>
-                        <select id="mySelect" onchange="setValue()">
-                            <option value="illu">Illumina</option>
-                            <option value="ont">Nanopore</option>
-                            <option value="pacbio">PacBio or Nanopore Duplex</option>
-                        </select>
-                        <br>
-                        <small class="text-muted">Window size & indel rate will automatically adjusted</small>
-                        <br>
-                        <br>Gene Name (**):
-                        <div class="popup" onclick="myFunction8()">(? Click here!)
-                            <span class="popuptext" id="help8">Name of the study gene (Human only). Click to close.</span>
-                        </div>
-            
-                        <!-- <input type="submit" name="submit" value="Click here to get your fasta" class="btn btn-secondary btn-sm" id="get_fasta" onclick="getFastaSequence();"> -->
-                        <br>
-                        <input type="text" class="input_form" size="40" id= "GeneName" name="GeneName" value="" onchange="getFastaSequence()"><br>
-                        <small class="text-muted">Gene names are from <a href="https://crisprnano.de/genename.txt">this list</a></small><br>
-                        <br>Nuclease Target Site (*): 
-                        <div class="popup" onclick="myFunction4()">(? Click here!)
-                            <span class="popuptext" id="help4">In this field the nuclease target site is entered. The sequence has to be in the same orientation as the reference sequence above. Click again to close</span>
-                        </div>
-                        <br><input type="text" class="input_form" size="40" id="RightBS" name="RightBS" value="CATTTGCTGGAGGTCACCCA"><br>
-                        <br>Targeting mutagenesis oligonucleotide (Knock-in): 
-                        <div class="popup" onclick="myFunction7()">(? Click here!)
-                            <span class="popuptext" id="help7">Donor oligonucleotide sequence used to introduce a site specific genomic modification. The sequence entered should be in the same orientation as the amplicon sequence. Click again to close.</span>
-                        </div>
-                        <br><input type="text" class="input_form" size="40" id="targetingoligo" name="TargetingOligo" value=""><br>
-                        <div class="form-check">
-                            <input class="form-check-input" type="checkbox" value="" id="prime_editing">
-                            <label class="form-check-label" for="flexCheckDefault">
-                              Prime Editing/Knockin-only mode (exclude INDEL)
-                            </label>
-                          </div>
-                          <small class="text-muted">NOTE: This Prime editing mode run faster than the Indel</small>
-                        <br>
-                        <input type="submit" name="submit" value="SUBMIT  " class="btn btn-primary btn-lg" id="submit" onclick="Start();">
-                        <div id="progress" style="display:none; padding: 10px; border: 10px solid #CCC; background: #EEE; width:60%; position:absolute; top:50%;left:40%">
-                        </div>
-                        <br>
-                    </div>
-    
-
+                <br>
                 <div class="column">
-                    <h3 id='optional_para'>Optional parameters</h3>
-                    <small class="text-muted">Click to expand</small>
-
-                    <div id = "optional_para_Container" class="hidden">
-                    Sequence (if genename given, leave it blank):                 
-                    <div class="popup" onclick="myFunction3()">(? Click here!)
-                        <span class="popuptext" id="help3">Reference amplicon length should be in the range of 200-300 bases with the nuclease target site located roughly in the middle. You can get the reference from Ensembl link below. Click again to close</span>
-                    </div>
-                    <br><input type="text" class="input_form" size="30" id="locus" name="Locus" value=""> 
+                <h3>Input data</h3>    
+                FASTQ Files (*): 
+                <div class="popup" onclick="myFunction1()">(? Click here!)
+                    <span class="popuptext" id="help1">FASTQ output files from Illumina or ONT. We recommend file's size smaller than 200MB. Make sure that the correct ordering is applied in the file browser. The file allocation to individual pie charts can be verified by the numbers given at alignment track. Click again to close.</span>
+                </div>
+                    <br><input type="file" id="files" class="input_form" name="files[]" multiple=""><br>
                     <br>
-                    <br>             
-                    <!-- <a href="http://ftp.ensembl.org/pub/release-105/fasta/homo_sapiens/dna/">(Ensembl reference)</a><br> -->
-                    <!-- Sequencing method:                 
-                    <div class="popup" onclick="myFunction3()">(? Click here!)
-                        <span class="popuptext" id="help3">Reference amplicon length should be in the range of 200-300 bases with the nuclease target site located roughly in the middle. You can get the reference from Ensembl link below. Click again to close</span>
-                    </div>
-                    <select id="seq_method" name="seq_method">
-                        <option value="ONT">Nanopore</option>
-                        <option value="Il_pac">Illumina or PacBio</option>
-                      </select> -->
-                    <!-- <br>  <br>  -->
-                    
-                        Interested region (optional) +/- bp: 
-                        <div class="popup" onclick="myFunction5()">(? Click here!)
-                            <span class="popuptext" id="help5"> For ONT reads, it is recommended to use -/+15 bases around the predicted DNA lesion. Larger regions are prone to false positive indels. Larger regions (total of 200-250 bp) can be safely used with Illumina reads. You can drag and drop the central point of the predicted double strand break in the genomic sequence to the left or to the right. Default value 0 is double strand breaking point- Crisprnano will use the first index of sgRNA mapped on reference. Click again to close</span>
-                        </div>
-                        <br><input type="text" size="30" name="region_analyse" value="45" class="input_form" onchange="checkValue();"><br>
-
-                        <br>Indel Threshold [%]: 
-                        <div class="popup" onclick="myFunction9()">(? Click here!)
-                            <span class="popuptext" id="help9">The Indel Threshold determines at what relative occurrence an individual indel mutation is considered as a unique allele of the respective clone analyzed, and is thus displayed in the alignment list. Low threshold values can result in false positive allele calling due to sequencing errors, whereas high threshold values result in false negative allele calling. Values in between 0 - 100 % can be entered. We recommend to use 5% for ONT reads and 2% for Illumina reads (default is set to 5%). Click again to close.</span>
-                        </div> 
-                        <br><input type="text" size="30" class="input_form" id= "allelethreshold" name="MutationThreshold" value="2" onchange="checkValue();"><br>
-                        <br>PHred Threshold: 
-                        <div class="popup" onclick="myFunction10()">(? Click here!)
-                            <span class="popuptext" id="help10">The Quality threshold determine the minimum filter base, For Illumina it should be >20, For ONT it should be >10, Click again to close.</span>
-                        </div> 
-                        <br><input type="text" size="30" class="input_form" id = "phredthreshold" name="Phred" value="20" onchange="checkValue();"><br>
-                    </div>
-                    <p></p>
-
-                    <br> <br><br>                <br>
+                    <label>Data type:</label>
+                    <select id="mySelect" onchange="setValue()">
+                        <option value="illu">Illumina</option>
+                        <option value="ont">Nanopore</option>
+                        <option value="pacbio">PacBio or Nanopore Duplex</option>
+                    </select>
                     <br>
+                    <small class="text-muted">Window size & indel rate will automatically adjusted</small>
                     <br>
-                  </div>
+                    <br>Gene Name (**):
+                    <div class="popup" onclick="myFunction8()">(? Click here!)
+                        <span class="popuptext" id="help8">Name of the study gene (Human only). Click to close.</span>
+                    </div>
+                    <br>
+                    <input type="text" class="input_form" size="40" name="GeneName" value="" onchange="getFastaSequence()"><br>
+                    <small class="text-muted">Gene names are from <a href="https://crisprnano.de/genename.txt">this list</a></small><br>
+                    <br>Nuclease Target Site (*): 
+                    <div class="popup" onclick="myFunction4()">(? Click here!)
+                        <span class="popuptext" id="help4">In this field the nuclease target site is entered. The sequence has to be in the same orientation as the reference sequence above. Click again to close</span>
+                    </div>
+                    <br><input type="text" class="input_form" size="40" name="RightBS" value="CATTTGCTGGAGGTCACCCA"><br>
+                    <br>Targeting mutagenesis oligonucleotide (Knock-in): 
+                    <div class="popup" onclick="myFunction7()">(? Click here!)
+                        <span class="popuptext" id="help7">Donor oligonucleotide sequence used to introduce a site specific genomic modification. The sequence entered should be in the same orientation as the amplicon sequence. Click again to close.</span>
+                    </div>
+                    <br><input type="text" class="input_form" size="40" name="TargetingOligo" value=""><br>
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" value="" id="prime_editing">
+                        <label class="form-check-label">
+                          Prime Editing/Knockin-only mode (exclude INDEL)
+                        </label>
+                      </div>
+                    <br>
+                    <input type="submit" name="submit" value="SUBMIT  " class="btn btn-primary btn-lg" id="submit" onclick="Start();">
+                    <div id="progress" style="display:none; padding: 10px; border: 10px solid #CCC; background: #EEE; width:60%; position:absolute; top:50%;left:40%">
+                    </div>
+                    <br>
+                </div>
+                
                 <!-- <a href="https://iufduesseldorf-my.sharepoint.com/:u:/g/personal/thach_nguyen_iuf-duesseldorf_de/ER4kM3RQaRJLiltUCpcT2iMBiEvGvs3u2NiDTdtSPBLE1Q?e=8FEAJc">(Our test sample)</a><br> -->
  
                 <br>
@@ -319,10 +328,10 @@
                 <br>                    <br>
                 <br>
                 
-                <small class="text-muted" style="font-style: italic;">
+                <a style="font-style: italic;">
                     CRISPRnano website is free and open to all users and there is no login required.<br>
                     To use CRISPRnano, you must enable JavaScript on your web browser.<br>
-                    If you want to use CRISPRnano offline, please download </a><a href="https://iufduesseldorf-my.sharepoint.com/:u:/g/personal/thach_nguyen_iuf-duesseldorf_de/EeZRZlyFP31Gu-s-w57wlfEB42anCiwxbXRms_U_GAekpQ?e=YxlI2v"> the offline html file here.</small> <br>
+                    If you want to use CRISPRnano offline, please download </a><a href="https://iufduesseldorf-my.sharepoint.com/:u:/g/personal/thach_nguyen_iuf-duesseldorf_de/EeZRZlyFP31Gu-s-w57wlfEB42anCiwxbXRms_U_GAekpQ?e=YxlI2v"> the offline html file here.</a> <br>
                     <br>
                 <a style="font-style: italic;"> (*) Mandatory field 
                 <br>
@@ -332,6 +341,7 @@
                 <br>
                 Reference: <br>
                 Nguyen, T., Ramachandran, H., Martins, S., Krutmann, J. and Rossi, A., 2022. Identification of genome edited cells using CRISPRnano. Nucleic Acids Research.<br></a>
+                <br><br>
                 <br>
                 Question: thach.nguyen**(replace with email symbol)**iuf-duesseldorf.de
             </div>
@@ -687,12 +697,11 @@ function AlignmentMouseMove(evt)
     {
         var x = evt.clientX;
         var y = evt.clientY;
-
         //alert(x-AlignmentLastX);
         var shift = (x-AlignmentLastX)/12;
         AlignmentStartPos -= shift;
-        if (AlignmentStartPos < -region_analyse) AlignmentStartPos = -region_analyse;
-        if (AlignmentStartPos > region_analyse+10) AlignmentStartPos = region_analyse+10;
+        if (AlignmentStartPos < -2*region_analyse) AlignmentStartPos = -2*region_analyse;
+        if (AlignmentStartPos > 2*region_analyse) AlignmentStartPos = 2*region_analyse;
         PlotAlignment(CurrentAlignment, locus);
 
         AlignmentLastX = x;
@@ -755,8 +764,9 @@ function AlignmentMouseUp(evt) {
 // get fasta from our database
 
 function bsg_enc_seq(seq, table){
-    if (!table) return null;
-    var s = new Uint8Array(seq.length);
+    if (table == null) return null;
+    var s = [];
+    s.length = seq.length;
     for (var i = 0; i < seq.length; ++i)
         s[i] = table[seq.charCodeAt(i)];
     return s;
@@ -828,6 +838,7 @@ function bsa_gen_query_profile(_s, _m, table){
     */
 function bsa_align(target, query, matrix, gapsc){
     // convert bases to integers
+    var is_local = true
     var t = bsg_enc_seq(target, bst_nt5);
     var qp = bsa_gen_query_profile(query, matrix, bst_nt5);
     var qlen = qp[0].length;
@@ -843,8 +854,13 @@ function bsa_align(target, query, matrix, gapsc){
     else gapo = gapsc[0] > 0? gapsc[0] : -gapsc[0], gape = gapsc[1] > 0? gapsc[1] : -gapsc[1];
     var gapoe = gapo + gape; // penalty for opening the first gap
 
+    // initial values
+    var NEG_INF = -0x40000000;
+    
     var H = [], E = [], z = [], score, max = 0, end_i = -1, end_j = -1;
-    for (var j = 0; j <= qlen; ++j) H[j] = E[j] = 0;
+    if (is_local) {
+        for (var j = 0; j <= qlen; ++j) H[j] = E[j] = 0;
+    } 
 
     // the DP loop
     for (var i = 0; i < t.length; ++i) {
@@ -864,12 +880,12 @@ function bsa_align(target, query, matrix, gapsc){
             h = h >= e? h : e;
             d = h >= f? d : 2;
             h = h >= f? h : f;    // h = H(i,j) = max{H(i-1,j-1)+S(i,j), E(i,j), F(i,j)}
-            d = false || h > 0? d : 1<<6;
+            d = !is_local || h > 0? d : 1<<6;
             h1 = h;              // save H(i,j) to h1 for the next column
             mj = m > h? mj : j;
             m = Math.max(m, h);    // update the max score in this row
             h -= gapoe;
-            h = false || h > 0? h : 0;
+            h = !is_local || h > 0? h : 0;
             e -= gape;
             d |= e > h? 1<<2 : 0;
             e = e > h? e : h;    // e = E(i+1,j)
@@ -879,11 +895,11 @@ function bsa_align(target, query, matrix, gapsc){
             f = f > h? f : h;    // f = F(i,j+1)
             zi[j] = d;           // z[i,j] keeps h for the current cell and e/f for the next cell
         }
-        H[end] = h1, E[end] = 0;
+        H[end] = h1, E[end] = is_local? 0 : NEG_INF;
         if (m > max) max = m, end_i = i, end_j = mj;
     }
-    if (max == 0) return null;
-    score = max;
+    if (is_local && max == 0) return null;
+    score = is_local? max : H[qlen];
 
     // backtrack to recover the alignment/cigar
     function push_cigar(ci, op, len) {
@@ -892,11 +908,11 @@ function bsa_align(target, query, matrix, gapsc){
         else ci[ci.length-1] += len<<4;
     }
     var cigar = [], tmp, which = 0, i, k, start_i = 0;
-
-    i = end_i, k = end_j;
-    if (end_j != qlen - 1) // then add soft cliping
-        push_cigar(cigar, 4, qlen - 1 - end_j);
-
+    if (is_local) {
+        i = end_i, k = end_j;
+        if (end_j != qlen - 1) // then add soft cliping
+            push_cigar(cigar, 4, qlen - 1 - end_j);
+    } else i = t.length - 1, k = (i + w + 1 < qlen? i + w + 1 : qlen) - 1; // (i,k) points to the last cell
     while (i >= 0 && k >= 0) {
         tmp = z[i][k - (i > w? i - w : 0)];
         which = tmp >> (which << 1) & 3;
@@ -906,15 +922,14 @@ function bsa_align(target, query, matrix, gapsc){
         else if (which == 1) { push_cigar(cigar, 2, 1); --i; } // deletion
         else                 { push_cigar(cigar, 1, 1), --k; } // insertion
     }
-
-    if (k >= 0) push_cigar(cigar, 4, k + 1); // add soft clipping
-    start_i = i + 1;
-    
+    if (is_local) {
+        if (k >= 0) push_cigar(cigar, 4, k + 1); // add soft clipping
+        start_i = i + 1;
+    } 
     for (var i = 0; i < cigar.length>>1; ++i) // reverse CIGAR
         tmp = cigar[i], cigar[i] = cigar[cigar.length-1-i], cigar[cigar.length-1-i] = tmp;
     return [score, start_i, cigar];
 }
-
 
 // generate cigar to gap in breakpoint windows, bkp11, bkp22 is offset interest region of ref wrt gap add-in ref 
 function bsa_cigar2gaps_breakpoint(target, query, start, cigar, bkp1, bkp2){
@@ -1167,7 +1182,7 @@ function FileReceived() {
     var gape = -1  // gap extent score
     var id = CurrentFileId;
     var target = locus;
-    targetingOligo = document.getElementsByName("TargetingOligo")[0].value.replace(/[\s\n]+/g, '').toUpperCase(); //TargetingOligo
+    var targetingOligo = document.getElementsByName("TargetingOligo")[0].value.replace(/[\s\n]+/g, '').toUpperCase(); //TargetingOligo
     PhredThreshold = 1*document.getElementsByName("Phred")[0].value;
     var checkbox = document.getElementById('prime_editing');
     var prime_mode = document.getElementById('prime_editing').checked;
@@ -1175,9 +1190,6 @@ function FileReceived() {
 
     //check target oligo in reference or reverse ref
     if (targetingOligo !=""){
-            if (targetingOligo.length > 40){
-                targetingOligo = targetingOligo.substring(Math.floor(targetingOligo.length/2)-20, Math.floor(targetingOligo.length/2)+20)
-            }
             var score_oligo_ref_fw = bsa_align(locus.substring(BreakPoint-region_analyse*1, BreakPoint + region_analyse*1), targetingOligo, [ms, mms], [gapo, gape]); 
             var score_oligo_ref_rv = bsa_align(locus.substring(BreakPoint-region_analyse*1, BreakPoint + region_analyse*1), ReverseComplement(targetingOligo), [ms, mms], [gapo, gape]);
             var oligo_index = score_oligo_ref_fw[0]>=score_oligo_ref_rv[0] ? score_oligo_ref_fw[1] : score_oligo_ref_rv[1]
@@ -1220,7 +1232,6 @@ function FileReceived() {
                 if (index_oli_read!=-1){
                     aln_type = 7;
                     // remove this part in knockin, speed up the program
-                    hits[id].push(aln_type)
                     var str1 = ''
                     str1 += read.substring(index_oli_read- oligo_index, index_oli_read- oligo_index + region_analyse*2)+ '\n'+ '\n';
                     if (aln_dict[id].hasOwnProperty(str1)){
@@ -1230,7 +1241,6 @@ function FileReceived() {
                         aln_dict[id][str1] = 1
                         aln_type_dict[id][str1] = aln_type
                     }
-                    hits[id].push(aln_type)
                     }
                 else {
                     index_oli_read = ReverseComplement(read).search(targetingOligo);
@@ -1238,10 +1248,8 @@ function FileReceived() {
                         read = ReverseComplement(read)
                         aln_type = 7;
                     // remove this part in knockin, speed up the program
-                        hits[id].push(aln_type)
                         var str1 = ''
                         str1 += read.substring(index_oli_read- oligo_index, index_oli_read- oligo_index + region_analyse*2)+ '\n'+ '\n';
-                    
                         if (aln_dict[id].hasOwnProperty(str1)){
                             aln_dict[id][str1]+=1
                         }
@@ -1249,14 +1257,12 @@ function FileReceived() {
                             aln_dict[id][str1] = 1
                             aln_type_dict[id][str1] = aln_type
                         }
-                        hits[id].push(aln_type)
                     }
 
                     //Check WT manually, speed up
                     else if (read.includes(locus.substring(BreakPoint-region_analyse*1, BreakPoint + region_analyse*1))){
                         aln_type = 1;
                     // remove this part in knockin, speed up the program
-                        hits[id].push(aln_type)
                         var str1 = ''
                         str1 += locus.substring(BreakPoint-region_analyse*1, BreakPoint + region_analyse*1)+ '\n'+ '\n';
                         if (aln_dict[id].hasOwnProperty(str1)){
@@ -1266,11 +1272,9 @@ function FileReceived() {
                             aln_dict[id][str1] = 1
                             aln_type_dict[id][str1] = aln_type
                         }
-                        hits[id].push(aln_type)
                     }
                     else if (read.includes(ReverseComplement(locus.substring(BreakPoint-region_analyse*1, BreakPoint + region_analyse*1)))){
                         aln_type = 1;
-                        hits[id].push(aln_type)
                         var str1 = ''
                         str1 += locus.substring(BreakPoint-region_analyse*1, BreakPoint + region_analyse*1)+ '\n'+ '\n';
                         if (aln_dict[id].hasOwnProperty(str1)){
@@ -1280,7 +1284,6 @@ function FileReceived() {
                             aln_dict[id][str1] = 1
                             aln_type_dict[id][str1] = aln_type
                         }
-                        hits[id].push(aln_type)
                     }
                     
                     else if (!prime_mode){
@@ -1303,23 +1306,16 @@ function FileReceived() {
                             str1 += fmt[1] + '\n';
                             //aggregate aln track into dictionary
                             // if (containsAny(locus, str2_arr)||containsAny(ReverseComplement(locus), str2_arr)){
-                            var distance_del = Math.abs(fmt[0].indexOf('-') - BreakPoint)
-                            var distance_ins = getFirstNucleotideIndex(fmt[1]) == -1 ? 0:Math.abs(getFirstNucleotideIndex(fmt[1]) - BreakPoint)
-
-                            // narrow down windows -20
-                            if ((distance_del< final_filter_size +10)&&distance_ins < final_filter_size +10){
-                                if (aln_type !=0){
-                                    if (aln_dict[id].hasOwnProperty(str1)){
-                                        aln_dict[id][str1]+=1
-                                    }
-                                    else {
-                                        aln_dict[id][str1] = 1
-                                        aln_type_dict[id][str1] = aln_type
-                                    }
+                            if (aln_type !=0){
+                                if (aln_dict[id].hasOwnProperty(str1)){
+                                    aln_dict[id][str1]+=1
                                 }
-                                if (str1.trim().length>(region_analyse*2-2)){
-                                    hits[id].push(aln_type);
+                                else {
+                                    aln_dict[id][str1] = 1
+                                    aln_type_dict[id][str1] = aln_type
                                 }
+                            }
+                            if (str1.trim().length>(region_analyse*2-2)){
                             }
                         }           
                     }
@@ -1343,27 +1339,20 @@ function FileReceived() {
                     // var str2_arr = fmt[0].split('-')
                     str1 += fmt[0] + '\n';
                     str1 += fmt[1] + '\n';
-                    var distance_del = Math.abs(fmt[0].indexOf('-') - BreakPoint)
-                    var distance_ins = getFirstNucleotideIndex(fmt[1]) == -1 ? 0:Math.abs(getFirstNucleotideIndex(fmt[1]) - BreakPoint)
-
-                            // narrow down windows -20
-                    if ((distance_del< final_filter_size+2)&&distance_ins < final_filter_size+2){
-                        //aggregate aln track into dictionary
-                        // if (containsAny(locus, str2_arr)||containsAny(ReverseComplement(locus), str2_arr)){
-                        if (aln_type !=0){
-                            if (aln_dict[id].hasOwnProperty(str1)){
-                                aln_dict[id][str1]+=1
-                            }
-                            else {
-                                aln_dict[id][str1] = 1
-                                aln_type_dict[id][str1] = aln_type
-                            }
+                    //aggregate aln track into dictionary
+                    // if (containsAny(locus, str2_arr)||containsAny(ReverseComplement(locus), str2_arr)){
+                    if (aln_type !=0){
+                        if (aln_dict[id].hasOwnProperty(str1)){
+                            aln_dict[id][str1]+=1
                         }
-                        if (str1.trim().length>(region_analyse*2-2)){
-                            hits[id].push(aln_type);
+                        else {
+                            aln_dict[id][str1] = 1
+                            aln_type_dict[id][str1] = aln_type
                         }
-                }
-            }           
+                    }
+                    if (str1.trim().length>(region_analyse*2-2)){
+                    }
+                }           
             }
         }
     }
@@ -1374,7 +1363,6 @@ function FileReceived() {
 
     if ((CurrentFileChunk)*chunksize >= files[CurrentFileId].size) //end of file -> next file
         {
-            // ConsolidateData(id, hits[id], files[id].name);
             PlotAlignment(id, locus)
             CurrentFileId++;
             CurrentFileChunk = 0;
@@ -1413,7 +1401,7 @@ function FileReceived_off() {
         var readlen = read.length;
         var aln_type;
         var target = locus_list[gene_id];
-        targetingOligo = document.getElementsByName("TargetingOligo")[0].value.replace(/[\s\n]+/g, '').toUpperCase(); //TargetingOligo
+        var targetingOligo = document.getElementsByName("TargetingOligo")[0].value.replace(/[\s\n]+/g, '').toUpperCase(); //TargetingOligo
         var mean_phred = 0;
         for (let pos = 0; pos < readlen; pos++) {
             mean_phred = mean_phred + phred.charCodeAt(pos);
@@ -1495,7 +1483,7 @@ function FileReceived_off() {
     var out_indel = 0;
     var sum = 0;
     var read_ambigous =0;
-    var targetingOligo_num = 0;
+    var targetingOligo = 0;
     for (let ii=0; ii<hits_off[gene_id].length; ii++){
         if (hits_off[gene_id][ii]>=0){
             switch (hits_off[gene_id][ii]){
@@ -1515,7 +1503,7 @@ function FileReceived_off() {
                     sum++
                     break;
                 case 7: 
-                    targetingOligo_num++;
+                    targetingOligo++;
                     sum++
                     break;
                 case 8: 
@@ -1524,7 +1512,7 @@ function FileReceived_off() {
         }
     }
     // summary_track_off[gene_id][0] = total_read;
-    summary_track_off[gene_id][1] = targetingOligo_num;
+    summary_track_off[gene_id][1] = targetingOligo;
     summary_track_off[gene_id][2] = no_indel;
     summary_track_off[gene_id][3] = inf_indel;
     summary_track_off[gene_id][4] = out_indel;
@@ -1995,7 +1983,6 @@ function DrawPie_bulk()
         out_indel1[i] = 0;
     }
 
-
     for (let key in aln_dict_bulk){
         if (aln_type_dict[barcode][key] == 2){
             for (let i=0; i <6; i++){
@@ -2457,288 +2444,283 @@ function DrawPie_off()
         var midx = (barcode%12)*180 + 300;
         var midy = Math.floor(barcode/12) * 65 + 100;
 
-        //wt:
-        var angle = -3.1415/2;
-        var lastangle = angle;
-        angle+=2*3.1415*0.995*summary_track_off[barcode][2]/summary_track_off[barcode][7];
+        if (summary_track_off[barcode][7] > 0) {
+            //wt:
+            var angle = -3.1415/2;
+            var lastangle = angle;
+            angle+=2*3.1415*0.995*summary_track_off[barcode][2]/summary_track_off[barcode][7];
+
+            //SVG:
+            var startx = size*Math.cos(lastangle);
+            var starty = size*Math.sin(lastangle);
+            var plusx = size*(Math.cos(angle)-Math.cos(lastangle));
+            var plusy = size*(Math.sin(angle)-Math.sin(lastangle));
+            var largearc = 0;
+            if (angle-lastangle > 3.1415) largearc = 1;
+            var SVGObj= document.createElementNS(NS,"path");
+            SVGObj.setAttributeNS(null, "d", "M "+midx+","+midy+" l "+startx+","+starty+" a "+size+" "+size+" 0 "+largearc+" 1 "+plusx+" "+plusy+" z");
+            SVGObj.style.fill="rgb(200,200,200)";
+
+            SVGObj.setAttribute("pointer-events","none");
+            svg.appendChild(SVGObj);
+
+            // inframe indel1
+            var lastangle = angle;
+            angle+=2*3.1415*0.995*inf_indel1[0]/summary_track_off[barcode][7];
+
+            var startx = size*Math.cos(lastangle);
+            var starty = size*Math.sin(lastangle);
+            var plusx = size*(Math.cos(angle)-Math.cos(lastangle));
+            var plusy = size*(Math.sin(angle)-Math.sin(lastangle));
+            var largearc = 0;
+            if (angle-lastangle > 3.1415) largearc = 1;
+            var SVGObj= document.createElementNS(NS,"path");
+            SVGObj.setAttributeNS(null, "d", "M "+midx+","+midy+" l "+startx+","+starty+" a "+size+" "+size+" 0 "+largearc+" 1 "+plusx+" "+plusy+" z");
+            SVGObj.style.fill=BLAU[0];
+            SVGObj.setAttribute("pointer-events","none");
+            svg.appendChild(SVGObj);
+
+            // inframe indel2
+            var lastangle = angle;
+            angle+=2*3.1415*0.995*inf_indel1[1]/summary_track_off[barcode][7];
+
+            var startx = size*Math.cos(lastangle);
+            var starty = size*Math.sin(lastangle);
+            var plusx = size*(Math.cos(angle)-Math.cos(lastangle));
+            var plusy = size*(Math.sin(angle)-Math.sin(lastangle));
+            var largearc = 0;
+            if (angle-lastangle > 3.1415) largearc = 1;
+            SVGObj= document.createElementNS(NS,"path");
+            SVGObj.setAttributeNS(null, "d", "M "+midx+","+midy+" l "+startx+","+starty+" a "+size+" "+size+" 0 "+largearc+" 1 "+plusx+" "+plusy+" z");
+            SVGObj.style.fill=BLAU[1];
+
+            SVGObj.setAttribute("pointer-events","none");
+            svg.appendChild(SVGObj);
+
+            // inframe indel3
+            var lastangle = angle;
+            angle+=2*3.1415*0.995*inf_indel1[2]/summary_track_off[barcode][7];
+
+            var startx = size*Math.cos(lastangle);
+            var starty = size*Math.sin(lastangle);
+            var plusx = size*(Math.cos(angle)-Math.cos(lastangle));
+            var plusy = size*(Math.sin(angle)-Math.sin(lastangle));
+            var largearc = 0;
+            if (angle-lastangle > 3.1415) largearc = 1;
+            var SVGObj= document.createElementNS(NS,"path");
+            SVGObj.setAttributeNS(null, "d", "M "+midx+","+midy+" l "+startx+","+starty+" a "+size+" "+size+" 0 "+largearc+" 1 "+plusx+" "+plusy+" z");
+            SVGObj.style.fill=BLAU[2];
+            SVGObj.setAttribute("pointer-events","none");
+            svg.appendChild(SVGObj);
+
+            // inframe indel4
+            var lastangle = angle;
+            angle+=2*3.1415*0.995*inf_indel1[3]/summary_track_off[barcode][7];
+
+            var startx = size*Math.cos(lastangle);
+            var starty = size*Math.sin(lastangle);
+            var plusx = size*(Math.cos(angle)-Math.cos(lastangle));
+            var plusy = size*(Math.sin(angle)-Math.sin(lastangle));
+            var largearc = 0;
+            if (angle-lastangle > 3.1415) largearc = 1;
+            var SVGObj= document.createElementNS(NS,"path");
+            SVGObj.setAttributeNS(null, "d", "M "+midx+","+midy+" l "+startx+","+starty+" a "+size+" "+size+" 0 "+largearc+" 1 "+plusx+" "+plusy+" z");
+            SVGObj.style.fill=BLAU[0];
+            SVGObj.setAttribute("pointer-events","none");
+            svg.appendChild(SVGObj);
+
+            // inframe indel5
+            var lastangle = angle;
+            angle+=2*3.1415*0.995*inf_indel1[4]/summary_track_off[barcode][7];
+
+            var startx = size*Math.cos(lastangle);
+            var starty = size*Math.sin(lastangle);
+            var plusx = size*(Math.cos(angle)-Math.cos(lastangle));
+            var plusy = size*(Math.sin(angle)-Math.sin(lastangle));
+            var largearc = 0;
+            if (angle-lastangle > 3.1415) largearc = 1;
+            var SVGObj= document.createElementNS(NS,"path");
+            SVGObj.setAttributeNS(null, "d", "M "+midx+","+midy+" l "+startx+","+starty+" a "+size+" "+size+" 0 "+largearc+" 1 "+plusx+" "+plusy+" z");
+            SVGObj.style.fill=BLAU[1];
+
+            SVGObj.setAttribute("pointer-events","none");
+            svg.appendChild(SVGObj);
+
+            // inframe indel6
+            var lastangle = angle;
+            angle+=2*3.1415*0.995*inf_indel1[5]/summary_track_off[barcode][7];
+
+            var startx = size*Math.cos(lastangle);
+            var starty = size*Math.sin(lastangle);
+            var plusx = size*(Math.cos(angle)-Math.cos(lastangle));
+            var plusy = size*(Math.sin(angle)-Math.sin(lastangle));
+            var largearc = 0;
+            if (angle-lastangle > 3.1415) largearc = 1;
+            var SVGObj= document.createElementNS(NS,"path");
+            SVGObj.setAttributeNS(null, "d", "M "+midx+","+midy+" l "+startx+","+starty+" a "+size+" "+size+" 0 "+largearc+" 1 "+plusx+" "+plusy+" z");
+            SVGObj.style.fill=BLAU[2];
+            SVGObj.setAttribute("pointer-events","none");
+            svg.appendChild(SVGObj);
+            
+            // outframe indel1
+            var lastangle = angle;
+            angle+=2*3.1415*0.995*out_indel1[0]/summary_track_off[barcode][7];
+            var startx = size*Math.cos(lastangle);
+            var starty = size*Math.sin(lastangle);
+            var plusx = size*(Math.cos(angle)-Math.cos(lastangle));
+            var plusy = size*(Math.sin(angle)-Math.sin(lastangle));
+            var largearc = 0;
+            if (angle-lastangle > 3.1415) largearc = 1;
+            var SVGObj= document.createElementNS(NS,"path");
+            SVGObj.setAttributeNS(null, "d", "M "+midx+","+midy+" l "+startx+","+starty+" a "+size+" "+size+" 0 "+largearc+" 1 "+plusx+" "+plusy+" z");
+            SVGObj.style.fill=ROT[0];
+            SVGObj.setAttribute("pointer-events","none");
+            svg.appendChild(SVGObj);
+
+            // outframe indel2
+            var lastangle = angle;
+            angle+=2*3.1415*0.995*out_indel1[1]/summary_track_off[barcode][7];
+
+            var startx = size*Math.cos(lastangle);
+            var starty = size*Math.sin(lastangle);
+            var plusx = size*(Math.cos(angle)-Math.cos(lastangle));
+            var plusy = size*(Math.sin(angle)-Math.sin(lastangle));
+            var largearc = 0;
+            if (angle-lastangle > 3.1415) largearc = 1;
+            var SVGObj= document.createElementNS(NS,"path");
+            SVGObj.setAttributeNS(null, "d", "M "+midx+","+midy+" l "+startx+","+starty+" a "+size+" "+size+" 0 "+largearc+" 1 "+plusx+" "+plusy+" z");
+            SVGObj.style.fill=ROT[1];
+            SVGObj.setAttribute("pointer-events","none");
+            svg.appendChild(SVGObj);
+
+            // outframe indel3
+            var lastangle = angle;
+            angle+=2*3.1415*0.995*out_indel1[2]/summary_track_off[barcode][7];
+
+            var startx = size*Math.cos(lastangle);
+            var starty = size*Math.sin(lastangle);
+            var plusx = size*(Math.cos(angle)-Math.cos(lastangle));
+            var plusy = size*(Math.sin(angle)-Math.sin(lastangle));
+            var largearc = 0;
+            if (angle-lastangle > 3.1415) largearc = 1;
+            var SVGObj= document.createElementNS(NS,"path");
+            SVGObj.setAttributeNS(null, "d", "M "+midx+","+midy+" l "+startx+","+starty+" a "+size+" "+size+" 0 "+largearc+" 1 "+plusx+" "+plusy+" z");
+            SVGObj.style.fill=ROT[2];
+            SVGObj.setAttribute("pointer-events","none");
+            svg.appendChild(SVGObj);
+
+            // outframe indel4
+            var lastangle = angle;
+            angle+=2*3.1415*0.995*out_indel1[3]/summary_track_off[barcode][7];
+
+            var startx = size*Math.cos(lastangle);
+            var starty = size*Math.sin(lastangle);
+            var plusx = size*(Math.cos(angle)-Math.cos(lastangle));
+            var plusy = size*(Math.sin(angle)-Math.sin(lastangle));
+            var largearc = 0;
+            if (angle-lastangle > 3.1415) largearc = 1;
+            var SVGObj= document.createElementNS(NS,"path");
+            SVGObj.setAttributeNS(null, "d", "M "+midx+","+midy+" l "+startx+","+starty+" a "+size+" "+size+" 0 "+largearc+" 1 "+plusx+" "+plusy+" z");
+            SVGObj.style.fill=ROT[0];
+            SVGObj.setAttribute("pointer-events","none");
+            svg.appendChild(SVGObj);
+
+            // outframe indel5
+            var lastangle = angle;
+            angle+=2*3.1415*0.995*out_indel1[4]/summary_track_off[barcode][7];
+
+            var startx = size*Math.cos(lastangle);
+            var starty = size*Math.sin(lastangle);
+            var plusx = size*(Math.cos(angle)-Math.cos(lastangle));
+            var plusy = size*(Math.sin(angle)-Math.sin(lastangle));
+            var largearc = 0;
+            if (angle-lastangle > 3.1415) largearc = 1;
+            var SVGObj= document.createElementNS(NS,"path");
+            SVGObj.setAttributeNS(null, "d", "M "+midx+","+midy+" l "+startx+","+starty+" a "+size+" "+size+" 0 "+largearc+" 1 "+plusx+" "+plusy+" z");
+            SVGObj.style.fill=ROT[1];
+            SVGObj.setAttribute("pointer-events","none");
+            svg.appendChild(SVGObj);
+
+            // outframe indel6
+            var lastangle = angle;
+            angle+=2*3.1415*0.995*out_indel1[5]/summary_track_off[barcode][7];
+
+            var startx = size*Math.cos(lastangle);
+            var starty = size*Math.sin(lastangle);
+            var plusx = size*(Math.cos(angle)-Math.cos(lastangle));
+            var plusy = size*(Math.sin(angle)-Math.sin(lastangle));
+            var largearc = 0;
+            if (angle-lastangle > 3.1415) largearc = 1;
+            var SVGObj= document.createElementNS(NS,"path");
+            SVGObj.setAttributeNS(null, "d", "M "+midx+","+midy+" l "+startx+","+starty+" a "+size+" "+size+" 0 "+largearc+" 1 "+plusx+" "+plusy+" z");
+            SVGObj.style.fill=ROT[2];
+            SVGObj.setAttribute("pointer-events","none");
+            svg.appendChild(SVGObj);
+            // read_ambigous, remove in v2.0
+        }
 
         //SVG:
-        var startx = size*Math.cos(lastangle);
-        var starty = size*Math.sin(lastangle);
-        var plusx = size*(Math.cos(angle)-Math.cos(lastangle));
-        var plusy = size*(Math.sin(angle)-Math.sin(lastangle));
-        var largearc = 0;
-        if (angle-lastangle > 3.1415) largearc = 1;
-        var SVGObj= document.createElementNS(NS,"path");
-        SVGObj.setAttributeNS(null, "d", "M "+midx+","+midy+" l "+startx+","+starty+" a "+size+" "+size+" 0 "+largearc+" 1 "+plusx+" "+plusy+" z");
-        SVGObj.style.fill="rgb(200,200,200)";
-
+        var SVGObj= document.createElementNS(NS,"text");
+        SVGObj.setAttribute("font-family", "sans-serif");
+        SVGObj.setAttribute("font-weight", "200");
+        SVGObj.setAttribute("x", midx);
+        SVGObj.setAttribute("y", midy+120);
+        SVGObj.setAttribute("font-size", "14");
+        SVGObj.setAttribute("text-anchor", "middle");
+        SVGObj.setAttribute("font-weight", "600");
         SVGObj.setAttribute("pointer-events","none");
+        SVGObj.textContent = gene_list[barcode];
         svg.appendChild(SVGObj);
 
-        // inframe indel1
-        var lastangle = angle;
-        angle+=2*3.1415*0.995*inf_indel1[0]/summary_track_off[barcode][7];
-
-        var startx = size*Math.cos(lastangle);
-        var starty = size*Math.sin(lastangle);
-        var plusx = size*(Math.cos(angle)-Math.cos(lastangle));
-        var plusy = size*(Math.sin(angle)-Math.sin(lastangle));
-        var largearc = 0;
-        if (angle-lastangle > 3.1415) largearc = 1;
-        var SVGObj= document.createElementNS(NS,"path");
-        SVGObj.setAttributeNS(null, "d", "M "+midx+","+midy+" l "+startx+","+starty+" a "+size+" "+size+" 0 "+largearc+" 1 "+plusx+" "+plusy+" z");
-        SVGObj.style.fill=BLAU[0];
-        SVGObj.setAttribute("pointer-events","none");
+        SVGObj= document.createElementNS(NS,"text");
+        SVGObj.setAttribute("x", midx);
+        SVGObj.setAttribute("y", midy+150);
+        SVGObj.setAttribute("font-size", "14");
+        SVGObj.setAttribute("text-anchor", "middle");
+        SVGObj.textContent = summary_track_off[gene_i][7]
         svg.appendChild(SVGObj);
 
-        // inframe indel2
-        var lastangle = angle;
-        angle+=2*3.1415*0.995*inf_indel1[1]/summary_track_off[barcode][7];
-
-        var startx = size*Math.cos(lastangle);
-        var starty = size*Math.sin(lastangle);
-        var plusx = size*(Math.cos(angle)-Math.cos(lastangle));
-        var plusy = size*(Math.sin(angle)-Math.sin(lastangle));
-        var largearc = 0;
-        if (angle-lastangle > 3.1415) largearc = 1;
-        SVGObj= document.createElementNS(NS,"path");
-        SVGObj.setAttributeNS(null, "d", "M "+midx+","+midy+" l "+startx+","+starty+" a "+size+" "+size+" 0 "+largearc+" 1 "+plusx+" "+plusy+" z");
-        SVGObj.style.fill=BLAU[1];
-
-        SVGObj.setAttribute("pointer-events","none");
+        SVGObj= document.createElementNS(NS,"text");
+        SVGObj.setAttribute("x", midx);
+        SVGObj.setAttribute("y", midy+170);
+        SVGObj.setAttribute("font-size", "14");
+        SVGObj.setAttribute("text-anchor", "middle");
+        SVGObj.textContent = summary_track_off[gene_i][3]+ " Reads, (" +divide_zero(summary_track_off[gene_i][3]*100, summary_track_off[gene_i][7]).toFixed(2)+"%)";
         svg.appendChild(SVGObj);
 
-        // inframe indel3
-        var lastangle = angle;
-        angle+=2*3.1415*0.995*inf_indel1[2]/summary_track_off[barcode][7];
-
-        var startx = size*Math.cos(lastangle);
-        var starty = size*Math.sin(lastangle);
-        var plusx = size*(Math.cos(angle)-Math.cos(lastangle));
-        var plusy = size*(Math.sin(angle)-Math.sin(lastangle));
-        var largearc = 0;
-        if (angle-lastangle > 3.1415) largearc = 1;
-        var SVGObj= document.createElementNS(NS,"path");
-        SVGObj.setAttributeNS(null, "d", "M "+midx+","+midy+" l "+startx+","+starty+" a "+size+" "+size+" 0 "+largearc+" 1 "+plusx+" "+plusy+" z");
-        SVGObj.style.fill=BLAU[2];
-        SVGObj.setAttribute("pointer-events","none");
+        SVGObj= document.createElementNS(NS,"text");
+        SVGObj.setAttribute("x", midx);
+        SVGObj.setAttribute("y", midy+190);
+        SVGObj.setAttribute("font-size", "14");
+        SVGObj.setAttribute("text-anchor", "middle");
+        SVGObj.textContent = summary_track_off[gene_i][4]+ " Reads, (" +divide_zero(summary_track_off[gene_i][4]*100,summary_track_off[gene_i][7]).toFixed(2)+"%)" 
         svg.appendChild(SVGObj);
 
-        // inframe indel4
-        var lastangle = angle;
-        angle+=2*3.1415*0.995*inf_indel1[3]/summary_track_off[barcode][7];
-
-        var startx = size*Math.cos(lastangle);
-        var starty = size*Math.sin(lastangle);
-        var plusx = size*(Math.cos(angle)-Math.cos(lastangle));
-        var plusy = size*(Math.sin(angle)-Math.sin(lastangle));
-        var largearc = 0;
-        if (angle-lastangle > 3.1415) largearc = 1;
-        var SVGObj= document.createElementNS(NS,"path");
-        SVGObj.setAttributeNS(null, "d", "M "+midx+","+midy+" l "+startx+","+starty+" a "+size+" "+size+" 0 "+largearc+" 1 "+plusx+" "+plusy+" z");
-        SVGObj.style.fill=BLAU[0];
-        SVGObj.setAttribute("pointer-events","none");
+        SVGObj= document.createElementNS(NS,"text");
+        SVGObj.setAttribute("x", midx);
+        SVGObj.setAttribute("y", midy+210);
+        SVGObj.setAttribute("font-size", "14");
+        SVGObj.setAttribute("text-anchor", "middle");
+        SVGObj.textContent = summary_track_off[gene_i][2] +" Reads, (" +divide_zero(summary_track_off[gene_i][2]*100,summary_track_off[gene_i][7]).toFixed(2) +"%)" 
         svg.appendChild(SVGObj);
 
-        // inframe indel5
-        var lastangle = angle;
-        angle+=2*3.1415*0.995*inf_indel1[4]/summary_track_off[barcode][7];
-
-        var startx = size*Math.cos(lastangle);
-        var starty = size*Math.sin(lastangle);
-        var plusx = size*(Math.cos(angle)-Math.cos(lastangle));
-        var plusy = size*(Math.sin(angle)-Math.sin(lastangle));
-        var largearc = 0;
-        if (angle-lastangle > 3.1415) largearc = 1;
-        var SVGObj= document.createElementNS(NS,"path");
-        SVGObj.setAttributeNS(null, "d", "M "+midx+","+midy+" l "+startx+","+starty+" a "+size+" "+size+" 0 "+largearc+" 1 "+plusx+" "+plusy+" z");
-        SVGObj.style.fill=BLAU[1];
-
-        SVGObj.setAttribute("pointer-events","none");
-        svg.appendChild(SVGObj);
-
-        // inframe indel6
-        var lastangle = angle;
-        angle+=2*3.1415*0.995*inf_indel1[5]/summary_track_off[barcode][7];
-
-        var startx = size*Math.cos(lastangle);
-        var starty = size*Math.sin(lastangle);
-        var plusx = size*(Math.cos(angle)-Math.cos(lastangle));
-        var plusy = size*(Math.sin(angle)-Math.sin(lastangle));
-        var largearc = 0;
-        if (angle-lastangle > 3.1415) largearc = 1;
-        var SVGObj= document.createElementNS(NS,"path");
-        SVGObj.setAttributeNS(null, "d", "M "+midx+","+midy+" l "+startx+","+starty+" a "+size+" "+size+" 0 "+largearc+" 1 "+plusx+" "+plusy+" z");
-        SVGObj.style.fill=BLAU[2];
-        SVGObj.setAttribute("pointer-events","none");
-        svg.appendChild(SVGObj);
-        
-        // outframe indel1
-        var lastangle = angle;
-        angle+=2*3.1415*0.995*out_indel1[0]/summary_track_off[barcode][7];
-        var startx = size*Math.cos(lastangle);
-        var starty = size*Math.sin(lastangle);
-        var plusx = size*(Math.cos(angle)-Math.cos(lastangle));
-        var plusy = size*(Math.sin(angle)-Math.sin(lastangle));
-        var largearc = 0;
-        if (angle-lastangle > 3.1415) largearc = 1;
-        var SVGObj= document.createElementNS(NS,"path");
-        SVGObj.setAttributeNS(null, "d", "M "+midx+","+midy+" l "+startx+","+starty+" a "+size+" "+size+" 0 "+largearc+" 1 "+plusx+" "+plusy+" z");
-        SVGObj.style.fill=ROT[0];
-        SVGObj.setAttribute("pointer-events","none");
-        svg.appendChild(SVGObj);
-
-        // outframe indel2
-        var lastangle = angle;
-        angle+=2*3.1415*0.995*out_indel1[1]/summary_track_off[barcode][7];
-
-        var startx = size*Math.cos(lastangle);
-        var starty = size*Math.sin(lastangle);
-        var plusx = size*(Math.cos(angle)-Math.cos(lastangle));
-        var plusy = size*(Math.sin(angle)-Math.sin(lastangle));
-        var largearc = 0;
-        if (angle-lastangle > 3.1415) largearc = 1;
-        var SVGObj= document.createElementNS(NS,"path");
-        SVGObj.setAttributeNS(null, "d", "M "+midx+","+midy+" l "+startx+","+starty+" a "+size+" "+size+" 0 "+largearc+" 1 "+plusx+" "+plusy+" z");
-        SVGObj.style.fill=ROT[1];
-        SVGObj.setAttribute("pointer-events","none");
-        svg.appendChild(SVGObj);
-
-        // outframe indel3
-        var lastangle = angle;
-        angle+=2*3.1415*0.995*out_indel1[2]/summary_track_off[barcode][7];
-
-        var startx = size*Math.cos(lastangle);
-        var starty = size*Math.sin(lastangle);
-        var plusx = size*(Math.cos(angle)-Math.cos(lastangle));
-        var plusy = size*(Math.sin(angle)-Math.sin(lastangle));
-        var largearc = 0;
-        if (angle-lastangle > 3.1415) largearc = 1;
-        var SVGObj= document.createElementNS(NS,"path");
-        SVGObj.setAttributeNS(null, "d", "M "+midx+","+midy+" l "+startx+","+starty+" a "+size+" "+size+" 0 "+largearc+" 1 "+plusx+" "+plusy+" z");
-        SVGObj.style.fill=ROT[2];
-        SVGObj.setAttribute("pointer-events","none");
-        svg.appendChild(SVGObj);
-
-        // outframe indel4
-        var lastangle = angle;
-        angle+=2*3.1415*0.995*out_indel1[3]/summary_track_off[barcode][7];
-
-        var startx = size*Math.cos(lastangle);
-        var starty = size*Math.sin(lastangle);
-        var plusx = size*(Math.cos(angle)-Math.cos(lastangle));
-        var plusy = size*(Math.sin(angle)-Math.sin(lastangle));
-        var largearc = 0;
-        if (angle-lastangle > 3.1415) largearc = 1;
-        var SVGObj= document.createElementNS(NS,"path");
-        SVGObj.setAttributeNS(null, "d", "M "+midx+","+midy+" l "+startx+","+starty+" a "+size+" "+size+" 0 "+largearc+" 1 "+plusx+" "+plusy+" z");
-        SVGObj.style.fill=ROT[0];
-        SVGObj.setAttribute("pointer-events","none");
-        svg.appendChild(SVGObj);
-
-        // outframe indel5
-        var lastangle = angle;
-        angle+=2*3.1415*0.995*out_indel1[4]/summary_track_off[barcode][7];
-
-        var startx = size*Math.cos(lastangle);
-        var starty = size*Math.sin(lastangle);
-        var plusx = size*(Math.cos(angle)-Math.cos(lastangle));
-        var plusy = size*(Math.sin(angle)-Math.sin(lastangle));
-        var largearc = 0;
-        if (angle-lastangle > 3.1415) largearc = 1;
-        var SVGObj= document.createElementNS(NS,"path");
-        SVGObj.setAttributeNS(null, "d", "M "+midx+","+midy+" l "+startx+","+starty+" a "+size+" "+size+" 0 "+largearc+" 1 "+plusx+" "+plusy+" z");
-        SVGObj.style.fill=ROT[1];
-        SVGObj.setAttribute("pointer-events","none");
-        svg.appendChild(SVGObj);
-
-        // outframe indel6
-        var lastangle = angle;
-        angle+=2*3.1415*0.995*out_indel1[5]/summary_track_off[barcode][7];
-
-        var startx = size*Math.cos(lastangle);
-        var starty = size*Math.sin(lastangle);
-        var plusx = size*(Math.cos(angle)-Math.cos(lastangle));
-        var plusy = size*(Math.sin(angle)-Math.sin(lastangle));
-        var largearc = 0;
-        if (angle-lastangle > 3.1415) largearc = 1;
-        var SVGObj= document.createElementNS(NS,"path");
-        SVGObj.setAttributeNS(null, "d", "M "+midx+","+midy+" l "+startx+","+starty+" a "+size+" "+size+" 0 "+largearc+" 1 "+plusx+" "+plusy+" z");
-        SVGObj.style.fill=ROT[2];
-        SVGObj.setAttribute("pointer-events","none");
-        svg.appendChild(SVGObj);
-        // read_ambigous, remove in v2.0
-    
-
-    //SVG:
-    var SVGObj= document.createElementNS(NS,"text");
-    SVGObj.setAttribute("font-family", "sans-serif");
-    SVGObj.setAttribute("font-weight", "200");
-    SVGObj.setAttribute("x", midx);
-    SVGObj.setAttribute("y", midy+120);
-    SVGObj.setAttribute("font-size", "14");
-    SVGObj.setAttribute("text-anchor", "middle");
-    SVGObj.setAttribute("font-weight", "600");
-    SVGObj.setAttribute("pointer-events","none");
-    SVGObj.textContent = gene_list[barcode];
-    svg.appendChild(SVGObj);
-
-    SVGObj= document.createElementNS(NS,"text");
-    SVGObj.setAttribute("x", midx);
-    SVGObj.setAttribute("y", midy+150);
-    SVGObj.setAttribute("font-size", "14");
-    SVGObj.setAttribute("text-anchor", "middle");
-    SVGObj.textContent = summary_track_off[gene_i][7]
-    svg.appendChild(SVGObj);
-
-    SVGObj= document.createElementNS(NS,"text");
-    SVGObj.setAttribute("x", midx);
-    SVGObj.setAttribute("y", midy+170);
-    SVGObj.setAttribute("font-size", "14");
-    SVGObj.setAttribute("text-anchor", "middle");
-    SVGObj.textContent = summary_track_off[gene_i][3]+ " Reads, (" +divide_zero(summary_track_off[gene_i][3]*100, summary_track_off[gene_i][7]).toFixed(2)+"%)";
-    svg.appendChild(SVGObj);
-
-    SVGObj= document.createElementNS(NS,"text");
-    SVGObj.setAttribute("x", midx);
-    SVGObj.setAttribute("y", midy+190);
-    SVGObj.setAttribute("font-size", "14");
-    SVGObj.setAttribute("text-anchor", "middle");
-    SVGObj.textContent = summary_track_off[gene_i][4]+ " Reads, (" +divide_zero(summary_track_off[gene_i][4]*100,summary_track_off[gene_i][7]).toFixed(2)+"%)" 
-    svg.appendChild(SVGObj);
-
-    SVGObj= document.createElementNS(NS,"text");
-    SVGObj.setAttribute("x", midx);
-    SVGObj.setAttribute("y", midy+210);
-    SVGObj.setAttribute("font-size", "14");
-    SVGObj.setAttribute("text-anchor", "middle");
-    SVGObj.textContent = summary_track_off[gene_i][2] +" Reads, (" +divide_zero(summary_track_off[gene_i][2]*100,summary_track_off[gene_i][7]).toFixed(2) +"%)" 
-    svg.appendChild(SVGObj);
-
-    var imageElement = document.createElementNS(NS, "image");
-    imageElement.setAttribute("x", midx-15);
-    imageElement.setAttribute("y", midy+250);
-
-    if (summary_track_off[gene_i][7] <5){
-    imageElement.setAttribute("href", "./crisprnano2/question.svg");
-    imageElement.setAttribute("width", 40); // Set the width of the image
-    imageElement.setAttribute("height", 40); // Set the height of the image 
+        var imageElement = document.createElementNS(NS, "image");
+        imageElement.setAttribute("x", midx-15);
+        imageElement.setAttribute("y", midy+250);
+        if (summary_track_off[gene_i][7] <5 || divide_zero(summary_track_off[gene_i][4]*100,summary_track_off[gene_i][7])< 2){
+        imageElement.setAttribute("href", "crisprnano2/OK.ico");
+        imageElement.setAttribute("width", 40); // Set the width of the image
+        imageElement.setAttribute("height", 40); // Set the height of the image 
+        }
+        else {
+            imageElement.setAttribute("href", "crisprnano2/warning.png"); // Set the path to your image file
+            imageElement.setAttribute("width", 80); // Set the width of the image
+            imageElement.setAttribute("height", 80); // Set the height of the image
+            imageElement.setAttribute("x", midx-30);
+            imageElement.setAttribute("y", midy+230);
+        }
+        svg.appendChild(imageElement);
     }
-    else if (divide_zero(summary_track_off[gene_i][4]*100,summary_track_off[gene_i][7])< 2){
-    imageElement.setAttribute("href", "./crisprnano2/OK.ico");
-    imageElement.setAttribute("width", 40); // Set the width of the image
-    imageElement.setAttribute("height", 40); // Set the height of the image 
-    }
-    else {
-        imageElement.setAttribute("href", "./crisprnano2/warning.png"); // Set the path to your image file
-        imageElement.setAttribute("width", 80); // Set the width of the image
-        imageElement.setAttribute("height", 80); // Set the height of the image
-        imageElement.setAttribute("x", midx-30);
-        imageElement.setAttribute("y", midy+230);
-    }
-    svg.appendChild(imageElement);
-
 
         //legende:
     midx = 25;
@@ -2802,12 +2784,11 @@ function DrawPie_off()
     SVGObj.setAttribute("font-size", "12");
     SVGObj.textContent = "no indel: "
     svg.appendChild(SVGObj);
-    }
  
     document.title = "Off-target Result for "+document.getElementsByName("GeneName")[0].value+" ("+files.length+" barcodes read)";
 }
 
-function PieClick(evt) {
+function PieClick(evt){
     var top = document.getElementById("SVGpie").getBoundingClientRect().top;
     var left = document.getElementById("SVGpie").getBoundingClientRect().left;
     var x = evt.clientX-left;
@@ -2859,12 +2840,13 @@ function SelectClone_off(barcode) {
     else alert("No data available for the selected barcode.");
 }
 
-function GetWellPos(i) {
+function GetWellPos(i)
+{
     var ABC = "ABCDEFGHIJKL";
     return ABC[Math.floor(i/12)] + ((i%12)+1);
 }
 
-//Alignment summary plot:
+//Alignment summary plot static:
 function PlotAlignment(barcode, locus){
     //compute number of aligned read
     // check genotype
@@ -2873,35 +2855,28 @@ function PlotAlignment(barcode, locus){
     for (let key in aln_dict[id]){
         sum_track[id] += aln_dict[id][key];
     }
- 
     var sum = 0;
     var read_ambigous =0;
-    // var targetingOligo = 0;
-    for (var i=0; i<hits[id].length; i++){
-        if (hits[id][i]>=0){
-            switch (hits[id][i]){
-                case 1:
-                    // no_indel++;
-                    sum++
-                    break;
-                case 2:
-                    // inf_indel++;
-                    sum++
-                    break;
-                case 3: 
-                    // out_indel++;
-                    sum++
-                    break;
-                case 7: 
-                    // targetingOligo++;
-                    sum++
-                    break;
-                case 8: 
-                    read_ambigous++;
+
+    for (let key in aln_dict[id]){
+        switch (aln_type_dict[key]){
+            case 1:
+                sum+=aln_dict[id]
+                break;
+            case 2:
+                sum+=aln_dict[id]
+                break;
+            case 3: 
+                sum+=aln_dict[id]
+                break;  
+            case 7: 
+                sum+=aln_dict[id]
+                break;
+            case 8: 
+                read_ambigous++;
+                break;
             }
-        }
     }
-    hits1= hits
 
     summary_track[id][0] = sum + read_ambigous;
     summary_track[id][5] = read_ambigous;
@@ -2913,14 +2888,14 @@ function PlotAlignment(barcode, locus){
             aln_dict_fil[id][key] = aln_dict[id][key];
         }
     }
-
+    
     var no_indel = 0; 
     var no_indel_arr = []
     var inf_indel =  0;
     var out_indel = 0;
     var out_indel_arr = []
     var sum = 0;
-    var targetingOligo_num = 0;
+    var targetingOligo = 0;
     var targetingOligo_arr = [];
 
     for (let key in aln_dict_fil[id]){
@@ -2937,7 +2912,7 @@ function PlotAlignment(barcode, locus){
                 out_indel_arr.push(aln_dict_fil[id][key])
                 break;
             case 7: 
-                targetingOligo_num+=aln_dict_fil[id][key];
+                targetingOligo+=aln_dict_fil[id][key];
                 targetingOligo_arr.push(aln_dict_fil[id][key])
                 break;
         }
@@ -2962,20 +2937,21 @@ function PlotAlignment(barcode, locus){
     }
 
     // For saving csv
-    summary_track[id][1] = targetingOligo_num;
+    summary_track[id][1] = targetingOligo;
     summary_track[id][2] = no_indel;
     summary_track[id][3] = inf_indel;
     summary_track[id][4] = out_indel;
-    summary_track[id][7] = no_indel+inf_indel+out_indel+targetingOligo_num;
+    summary_track[id][7] = no_indel+inf_indel+out_indel+targetingOligo;
     if (summary_track[id][7]>0) {
-        summary_track_select[id+1] =  [GetWellPos(id), (targetingOligo_num/summary_track[id][7]*100).toFixed(2), (no_indel/summary_track[id][7]*100).toFixed(2), (inf_indel/summary_track[id][7]*100).toFixed(2), (out_indel/summary_track[id][7]*100).toFixed(2), summary_track[id][7]]
+        summary_track_select[id+1] =  [GetWellPos(id), (targetingOligo/summary_track[id][7]*100).toFixed(2), (no_indel/summary_track[id][7]*100).toFixed(2), (inf_indel/summary_track[id][7]*100).toFixed(2), (out_indel/summary_track[id][7]*100).toFixed(2), summary_track[id][7]]
     }
     else {
-        summary_track_select[id+1] =  [GetWellPos(id), targetingOligo_num, no_indel, inf_indel, out_indel, summary_track[id][7]]
+        summary_track_select[id+1] =  [GetWellPos(id), targetingOligo, no_indel, inf_indel, out_indel, summary_track[id][7]]
     }
+
     // check genotype
     if (summary_track[id][7] > 50) {
-        if (targetingOligo_num/summary_track[id][7] > 0.95) {
+        if (targetingOligo/summary_track[id][7] > 0.95) {
             if (targetingOligo_arr.length==2) {
                 if (targetingOligo_arr[0]/(targetingOligo_arr[0]+targetingOligo_arr[1])>0.3 ||targetingOligo_arr[0]/(targetingOligo_arr[0]+targetingOligo_arr[1])<0.7){
                     genotype[id] = 'KI/KI'
@@ -2989,7 +2965,7 @@ function PlotAlignment(barcode, locus){
                 }
         }
         else if (Object.keys(aln_dict_fil[id]).length ==2) {
-            if ((out_indel/summary_track[id][7] < 0.7)&& (inf_indel/summary_track[id][7] < 0.7) && (targetingOligo_num/summary_track[id][7]<0.7)) {
+            if ((out_indel/summary_track[id][7] < 0.7)&& (inf_indel/summary_track[id][7] < 0.7) && (targetingOligo/summary_track[id][7]<0.7)) {
             genotype[id] = 'HET'
             }
             else if ((out_indel/summary_track[id][7] >0.95)&& (out_indel_arr.length ==2)&& (out_indel_arr[0]/summary_track[id][7] > 0.35)&& (out_indel_arr[0]/summary_track[id][7] < 0.65)) {
@@ -3011,6 +2987,7 @@ function PlotAlignment(barcode, locus){
     });
     aln_dict_fil[id] = Object.fromEntries(items.map(([v, k]) => [v, k]));
 
+    
     //aggregate aln_track
     //Find top 3:
     var aln_type = ["Not align","No indel", "Inframe Indel", "Outframe indel", "", "","", "targetingOligo", "Ambigious"]
@@ -3059,37 +3036,78 @@ function PlotAlignment(barcode, locus){
 
     delypos+=delyshift;
 
+  // Legend RIMA2
+    SVGObj= document.createElementNS(NS,"text");
+    SVGObj.setAttribute("y", ysize+delypos-70);
+    SVGObj.setAttribute("font-size", "24");
+    SVGObj.setAttribute("fill", N_cl);
+    SVGObj.textContent = 'ANNOTATION';
+    SVGObj.setAttribute("x", 120+6*(120));
+    svg.appendChild(SVGObj);
+
+    SVGObj= document.createElementNS(svgns, "rect");
+    SVGObj.setAttribute("x", 120+6*(120));
+    SVGObj.setAttribute("y", ysize+delypos-60);
+    SVGObj.setAttribute("width", "11");
+    SVGObj.setAttribute("height", "11");
+    SVGObj.setAttribute("fill", "rgb(255,255,0");
+    SVGObj.style.stroke=T_cl;
+    SVGObj.setAttribute("pointer-events","none");
+    svg.appendChild(SVGObj);
+    SVGObj= document.createElementNS(NS,"text");
+    SVGObj.setAttribute("y", ysize+delypos-50);
+    SVGObj.setAttribute("font-size", "14");
+    SVGObj.setAttribute("fill", N_cl);
+    SVGObj.textContent = 'DUPLICATED INSERTION';
+    SVGObj.setAttribute("x", 120+6*120+30);
+    svg.appendChild(SVGObj);
+
+    SVGObj= document.createElementNS(svgns, "rect");
+    SVGObj.setAttribute("x", 120+6*(120));
+    SVGObj.setAttribute("y", ysize+delypos-40);
+    SVGObj.setAttribute("width", "11");
+    SVGObj.setAttribute("height", "11");
+    SVGObj.setAttribute("fill", "rgb(0,255,255");
+    SVGObj.setAttribute("text-anchor", "middle");
+    SVGObj.setAttribute("pointer-events","none");
+    svg.appendChild(SVGObj);
+    SVGObj= document.createElementNS(NS,"text");
+    SVGObj.setAttribute("y", ysize+delypos-30);
+    SVGObj.setAttribute("font-size", "14");
+    SVGObj.setAttribute("fill", N_cl);
+    SVGObj.textContent = 'MICRO HOMOLOGY';
+    SVGObj.setAttribute("x", 120+6*120+30);
+    svg.appendChild(SVGObj);
+
+    SVGObj= document.createElementNS(svgns, "rect");
+    SVGObj.setAttribute("x", 120+6*(120));
+    SVGObj.setAttribute("y", ysize+delypos-20);
+    SVGObj.setAttribute("width", "11");
+    SVGObj.setAttribute("height", "11");
+    SVGObj.setAttribute("fill", "rgb(255,255,255");
+    SVGObj.setAttribute("text-anchor", "middle");
+    SVGObj.style.stroke=T_cl;
+    SVGObj.setAttribute("pointer-events","none");
+    svg.appendChild(SVGObj);
+
+    SVGObj= document.createElementNS(NS,"text");
+    SVGObj.setAttribute("y", ysize+delypos-10);
+    SVGObj.setAttribute("font-size", "14");
+    SVGObj.setAttribute("fill", N_cl);
+    SVGObj.textContent = 'NORMAL SNP/INSERTION';
+    SVGObj.setAttribute("x", 120+6*120+30);
+    svg.appendChild(SVGObj);
+
     var xfrom = BreakPoint-30 +Math.floor(AlignmentStartPos);
     var xto = xfrom +60;
     //wt: REFERENCES SEQ
     for (let x=xfrom; x<xto; x++){
         //draw base:
-        SVGObj= document.createElementNS(svgns, "rect");
-        SVGObj.setAttribute("x", 115+12*(x-xfrom));
-        SVGObj.setAttribute("y", ysize+delypos+10);
-        SVGObj.setAttribute("width", "12");
-        SVGObj.setAttribute("height", "12");
-        if (locus[x]=="T") { SVGObj.setAttribute("fill", bg_T);
-            }
-        else if (locus[x]=="A"){
-            SVGObj.setAttribute("fill", bg_A);
-        }
-        else if (locus[x]=="C"){
-            SVGObj.setAttribute("fill", bg_C);
-        }
-        else if (locus[x]=="G"){
-            SVGObj.setAttribute("fill", bg_G);
-        }
-        else {
-            SVGObj.setAttribute("fill", bg_indel);
-        }
-        svg.appendChild(SVGObj);
-
         SVGObj= document.createElementNS(NS,"text");
         SVGObj.setAttribute("y", ysize+delypos+20);
         SVGObj.setAttribute("font-size", "14");
         if (x>=RightBsPos && x<RightBsPos+rightbs.length) SVGObj.setAttribute("fill", "rgb(0,0,250)");
-        else SVGObj.setAttribute("fill", "rgb(0,0,0)");
+        else SVGObj.setAttribute("fill", N_cl);
         SVGObj.textContent = locus[x];
         SVGObj.setAttribute("x", 120+12*(x-xfrom));
         SVGObj.setAttribute("text-anchor", "middle");
@@ -3108,7 +3126,7 @@ function PlotAlignment(barcode, locus){
         SVGObj= document.createElementNS(NS,"text");
         SVGObj.setAttribute("y", ysize+delypos);
         SVGObj.setAttribute("font-size", "14");
-        SVGObj.setAttribute("fill", "rgb(0,0,0)");
+        SVGObj.setAttribute("fill", N_cl);
         SVGObj.textContent = locus2[x];
         SVGObj.setAttribute("x", 120+12*(x-xfrom));
         SVGObj.setAttribute("text-anchor", "middle");
@@ -3125,7 +3143,7 @@ function PlotAlignment(barcode, locus){
     imageElement.setAttribute("y", ysize + delypos -20); // Set the y-coordinate of the image
     imageElement.setAttribute("width", 20); // Set the width of the image
     imageElement.setAttribute("height", 20); // Set the height of the image
-    imageElement.setAttribute("href", "https://crisprnano.de/crisprnano2/scissors.svg"); // Set the path to your image file
+    imageElement.setAttribute("href", "crisprnano2/scissors.svg"); // Set the path to your image file
     svg.appendChild(imageElement);
 
     //reference:
@@ -3138,7 +3156,7 @@ function PlotAlignment(barcode, locus){
     //line:
     SVGObj= document.createElementNS(NS,"path");
     SVGObj.setAttributeNS(null, "d", "M 5,"+(ysize+delypos+5.5)+" L 1200,"+(ysize+delypos+5.5));
-    SVGObj.style.stroke="rgb(0,0,0)";
+    SVGObj.style.stroke=N_cl;
     SVGObj.setAttributeNS(null, "stroke-width", 1);
     svg.appendChild(SVGObj);
     delypos+=delyshift;
@@ -3146,82 +3164,68 @@ function PlotAlignment(barcode, locus){
 
     for (let key in aln_dict_fil[barcode]){
         //aggregate WT
-        for (let x=0; x<30*2; x++){
-            //draw main track:
-            if ((key[x]==locus[BreakPoint-region_analyse+x])||(key[x]=='N')||(key[x]=='-')||(typeof(key[x])=='undefined')){
-                SVGObj= document.createElementNS(svgns, "rect");
-                SVGObj.setAttribute("x", 120+12*(x)-5);
-                SVGObj.setAttribute("y", ysize+delypos-10);
-                SVGObj.setAttribute("width", "11");
-                SVGObj.setAttribute("height", "11");
-                if (key[x]=="T") { SVGObj.setAttribute("fill", bg_T);
-                    }
-                else if (key[x]=="A"){
-                    SVGObj.setAttribute("fill", bg_A);
-                }
-                else if (key[x]=="C"){
-                    SVGObj.setAttribute("fill", bg_C);
-                }
-                else if (key[x]=="G"){
-                    SVGObj.setAttribute("fill", bg_G);
-                }
-                else {
-                    SVGObj.setAttribute("fill", bg_indel);
-                }
-
-                SVGObj.setAttribute("text-anchor", "middle");
-                SVGObj.setAttribute("pointer-events","none");
-                svg.appendChild(SVGObj);
+        var micro_homology_data = Check_RIMA(key)
+        var duplication1 = Check_duplication(key)
+        var rima_class = 'other EJ'
+        if (micro_homology_data[0]!=''){
+            rima_class = 'other EJ (MH-del 1bp)'
+            if (micro_homology_data[0].length>=2){
+                rima_class = 'MH-del'
+            }
+        }
+        else if ((micro_homology_data[3]==1)||((micro_homology_data[1]!=-1)&&(micro_homology_data[2]-micro_homology_data[1]==1))){
+            var rima_class = 'NHEJ'
+        }
+        else {
+            rima_class = 'other EJ'
+        }
+         
+        if (rima_class=='MH-del'||rima_class=='other EJ (MH-del 1bp)') { 
+            for (let x=xfrom-70; x<xto+10; x++){
+                if (((x >= micro_homology_data[1]-xfrom+10)&&(x < micro_homology_data[1]-xfrom+10 + micro_homology_data[0].length))||((x >= micro_homology_data[2]-xfrom+10)&&(x < micro_homology_data[2]-xfrom+10 + micro_homology_data[0].length))){
+                    SVGObj= document.createElementNS(svgns, "rect");
+                    SVGObj.setAttribute("x", 120+12*(x)-5);
+                    SVGObj.setAttribute("y", ysize+delypos-10);
+                    SVGObj.setAttribute("width", "11");
+                    SVGObj.setAttribute("height", "11");
+                    SVGObj.setAttribute("fill", "rgb(0,255,255");
+                    SVGObj.setAttribute("text-anchor", "middle");
+                    SVGObj.setAttribute("pointer-events","none");
+                    svg.appendChild(SVGObj);
                 }
             }
-
+        }
+        
         if (aln_type_dict[id][key]==1 && (Object.keys(no_indel_arr).length ==2)){
             for (let x=xfrom-10; x<xto-10; x++){
             //draw main track:
             if (Object.keys(no_indel_arr)[0][x]==Object.keys(no_indel_arr)[1][x]){
-                if ((Object.keys(no_indel_arr)[0][x]==locus[BreakPoint-region_analyse+x])||(key[x]=='N')||(key[x]=='-')||(typeof(key[x])=='undefined')){
-                }
-                else {
-                    SVGObj= document.createElementNS(svgns, "rect");
-                    SVGObj.style.stroke="rgb(0,0,0)";
-                    SVGObj.setAttribute("x", 115+12*(x-xfrom+10));
-                    SVGObj.setAttribute("y", ysize+delypos-10);
-                    SVGObj.setAttribute("width", "11");
-                    SVGObj.setAttribute("height", "11");
-                    if (key[x]=="T") { 
-                        SVGObj.setAttribute("fill", bg_T);
-                    }
-                    else if (key[x]=="A"){
-                        SVGObj.setAttribute("fill", bg_A);
-                    }
-                    else if (key[x]=="C"){
-                        SVGObj.setAttribute("fill", bg_C);
-                    }
-                    else if (key[x]=="G"){
-                        SVGObj.setAttribute("fill", bg_G);
-                    }
-                    else if (key[x]=="N"){
-                        SVGObj.setAttribute("fill", bg_indel);
-                    }
-                    else if (key[x]=="-"){
-                        SVGObj.setAttribute("fill", bg_indel);
-                    }
-
-                    SVGObj.setAttribute("text-anchor", "middle");
-                    SVGObj.setAttribute("pointer-events","none");
-                    svg.appendChild(SVGObj);
-
-                }
                 SVGObj= document.createElementNS(NS, "text");
-                    SVGObj.setAttribute("y", ysize+delypos);
-                    SVGObj.setAttribute("font-size", "13");
-                    SVGObj.setAttribute("font-weight", "400");
-                    SVGObj.textContent = key[x];
-                    SVGObj.setAttribute("fill", txt_color);
-                    SVGObj.setAttribute("x", 120+12*(x-xfrom+10));
-                    SVGObj.setAttribute("text-anchor", "middle");
-                    SVGObj.setAttribute("pointer-events","none");
-                    svg.appendChild(SVGObj);
+                SVGObj.setAttribute("y", ysize+delypos);
+                SVGObj.setAttribute("font-size", "13");
+                SVGObj.setAttribute("font-weight", "400");
+                if (key[x]=="T"){SVGObj.textContent = key[x];
+                    SVGObj.setAttribute("fill", T_cl);
+                }
+                else if (key[x]=="A"){SVGObj.textContent = key[x];
+                    SVGObj.setAttribute("fill", A_cl);
+                }
+                else if (key[x]=="C"){SVGObj.textContent = key[x];
+                    SVGObj.setAttribute("fill", C_cl);
+                }
+                else if (key[x]=="G"){SVGObj.textContent = key[x];
+                    SVGObj.setAttribute("fill", G_cl);
+                }
+                else if (key[x]=="N"){SVGObj.textContent = key[x];
+                    SVGObj.setAttribute("fill", N_cl);
+                }
+                else if (key[x]=="-"){SVGObj.textContent = key[x];
+                    SVGObj.setAttribute("fill", "rgb(0,0,0");
+                }
+                SVGObj.setAttribute("x", 120+12*(x-xfrom+10));
+                SVGObj.setAttribute("text-anchor", "middle");
+                SVGObj.setAttribute("pointer-events","none");
+                svg.appendChild(SVGObj);
             }
             else {
                 var fontsize1 = 2+ Math.floor(13*no_indel_arr[Object.keys(no_indel_arr)[0]]/(no_indel_arr[Object.keys(no_indel_arr)[0]]+no_indel_arr[Object.keys(no_indel_arr)[1]]))
@@ -3232,17 +3236,17 @@ function PlotAlignment(barcode, locus){
                 SVGObj.setAttribute("font-size", fontsize1);
                 SVGObj.setAttribute("font-weight", "600");
 
-                if (Object.keys(no_indel_arr)[0][x]=="T"){SVGObj.setAttribute("fill", "rgb(255,0,0");
+                if (Object.keys(no_indel_arr)[0][x]=="T"){SVGObj.setAttribute("fill", T_cl);
                 }
-                else if (Object.keys(no_indel_arr)[0][x]=="A"){SVGObj.setAttribute("fill", "rgb(0,150,0");
+                else if (Object.keys(no_indel_arr)[0][x]=="A"){SVGObj.setAttribute("fill", A_cl);
                 }
-                else if (Object.keys(no_indel_arr)[0][x]=="C"){SVGObj.setAttribute("fill", "rgb(0,0,255");
+                else if (Object.keys(no_indel_arr)[0][x]=="C"){SVGObj.setAttribute("fill", C_cl);
                 }
-                else if (Object.keys(no_indel_arr)[0][x]=="G"){SVGObj.setAttribute("fill", "rgb(200, 100, 0");
+                else if (Object.keys(no_indel_arr)[0][x]=="G"){SVGObj.setAttribute("fill", G_cl);
                 }
-                else if (Object.keys(no_indel_arr)[0][x]=="N"){SVGObj.setAttribute("fill", "rgb(0, 0, 0");
+                else if (Object.keys(no_indel_arr)[0][x]=="N"){SVGObj.setAttribute("fill", N_cl);
                 }
-                else if (Object.keys(no_indel_arr)[0][x]=="-"){SVGObj.setAttribute("fill", "rgb(0,0,0");
+                else if (Object.keys(no_indel_arr)[0][x]=="-"){SVGObj.setAttribute("fill", N_cl);
                 }
                 SVGObj.textContent = Object.keys(no_indel_arr)[0][x];
                 SVGObj.setAttribute("x", 120+12*(x-xfrom+10));
@@ -3275,15 +3279,15 @@ function PlotAlignment(barcode, locus){
                 SVGObj.setAttribute("font-size", fontsize2);
                 SVGObj.setAttribute("font-weight", "600");
 
-                if (Object.keys(no_indel_arr)[1][x]=="T"){SVGObj.setAttribute("fill", "rgb(255,0,0");
+                if (Object.keys(no_indel_arr)[1][x]=="T"){SVGObj.setAttribute("fill", T_cl);
                 }
-                else if (Object.keys(no_indel_arr)[1][x]=="A"){SVGObj.setAttribute("fill", "rgb(0,150,0");
+                else if (Object.keys(no_indel_arr)[1][x]=="A"){SVGObj.setAttribute("fill", A_cl);
                 }
-                else if (Object.keys(no_indel_arr)[1][x]=="C"){SVGObj.setAttribute("fill", "rgb(0,0,255");
+                else if (Object.keys(no_indel_arr)[1][x]=="C"){SVGObj.setAttribute("fill", C_cl);
                 }
-                else if (Object.keys(no_indel_arr)[1][x]=="G"){SVGObj.setAttribute("fill", "rgb(200, 100, 0");
+                else if (Object.keys(no_indel_arr)[1][x]=="G"){SVGObj.setAttribute("fill", G_cl);
                 }
-                else if (Object.keys(no_indel_arr)[1][x]=="N"){SVGObj.setAttribute("fill", "rgb(0, 0, 0");
+                else if (Object.keys(no_indel_arr)[1][x]=="N"){SVGObj.setAttribute("fill", N_cl);
                 }
                 else if (Object.keys(no_indel_arr)[1][x]=="-"){SVGObj.setAttribute("fill", "rgb(0,0,0");
                 }
@@ -3299,66 +3303,57 @@ function PlotAlignment(barcode, locus){
             for (let x=xfrom-10; x<xto-10; x++){
             //draw main track:
             if ((key[x]==locus[BreakPoint-region_analyse+x])||(key[x]=='N')||(key[x]=='-')||(typeof(key[x])=='undefined')){
-                SVGObj= document.createElementNS(svgns, "rect");
-                SVGObj.setAttribute("x", 115+12*(x-xfrom+10));
-                SVGObj.setAttribute("y", ysize+delypos-10);
-                SVGObj.setAttribute("width", "11");
-                SVGObj.setAttribute("height", "11");
-                if (key[x]=="T") { SVGObj.setAttribute("fill", bg_T);
+                if ((duplication1[0])&&(x>=duplication1[1])&&(x<(duplication1[1]+duplication1[2]))){
+                    SVGObj= document.createElementNS(svgns, "rect");
+                    SVGObj.setAttribute("fill", "rgb(255,255,0");
+                    SVGObj.style.stroke=T_cl;
+                    SVGObj.setAttribute("x", 120+12*(x-xfrom+10)-5);
+                    SVGObj.setAttribute("y", ysize+delypos-10);
+                    SVGObj.setAttribute("width", "12");
+                    SVGObj.setAttribute("height", "12");
+                    SVGObj.setAttribute("text-anchor", "middle");
+                    SVGObj.setAttribute("pointer-events","none");
+                    svg.appendChild(SVGObj);
                     }
-                    else if (key[x]=="A"){
-                        SVGObj.setAttribute("fill", bg_A);
-                    }
-                    else if (key[x]=="C"){
-                        SVGObj.setAttribute("fill", bg_C);
-                    }
-                    else if (key[x]=="G"){
-                        SVGObj.setAttribute("fill", bg_G);
-                    }
-                    else {
-                        SVGObj.setAttribute("fill", bg_indel);
-                    } 
-                SVGObj.setAttribute("text-anchor", "middle");
-                SVGObj.setAttribute("pointer-events","none");
-                svg.appendChild(SVGObj);
                 SVGObj= document.createElementNS(NS, "text");
                 SVGObj.setAttribute("font-weight", "400");
             }
             else {
                 SVGObj= document.createElementNS(svgns, "rect");
-                if ('ACTGN'.includes(key[x])){
-                    SVGObj.style.stroke="rgb(250,0,0)";
-                }
+                SVGObj.style.stroke=N_cl;
                 SVGObj.setAttribute("x", 115+12*(x-xfrom+10));
                 SVGObj.setAttribute("y", ysize+delypos-10);
                 SVGObj.setAttribute("width", "11");
                 SVGObj.setAttribute("height", "11");
-                if (key[x]=="T") { SVGObj.setAttribute("fill", bg_T);
-                    }
-                    else if (key[x]=="A"){
-                        SVGObj.setAttribute("fill", bg_A);
-                    }
-                    else if (key[x]=="C"){
-                        SVGObj.setAttribute("fill", bg_C);
-                    }
-                    else if (key[x]=="G"){
-                        SVGObj.setAttribute("fill", bg_G);
-                    }
-                    else {
-                        SVGObj.setAttribute("fill", bg_indel);
-                    } 
+                SVGObj.setAttribute("fill", "rgb(255,255,255");
                 SVGObj.setAttribute("text-anchor", "middle");
                 SVGObj.setAttribute("pointer-events","none");
                 svg.appendChild(SVGObj);
                 SVGObj= document.createElementNS(NS, "text");
                 SVGObj.setAttribute("font-weight", "600");
-
             }
             
             SVGObj.setAttribute("y", ysize+delypos);
             SVGObj.setAttribute("font-size", "13");
-            SVGObj.textContent = key[x]
-            SVGObj.setAttribute("fill", txt_color);
+
+            if (key[x]=="T"){SVGObj.textContent = key[x];
+                SVGObj.setAttribute("fill", T_cl);
+            }
+            else if (key[x]=="A"){SVGObj.textContent = key[x];
+                SVGObj.setAttribute("fill", A_cl);
+            }
+            else if (key[x]=="C"){SVGObj.textContent = key[x];
+                SVGObj.setAttribute("fill", C_cl);
+            }
+            else if (key[x]=="G"){SVGObj.textContent = key[x];
+                SVGObj.setAttribute("fill", G_cl);
+            }
+            else if (key[x]=="N"){SVGObj.textContent = key[x];
+                SVGObj.setAttribute("fill", N_cl);
+            }
+            else if (key[x]=="-"){SVGObj.textContent = key[x];
+                SVGObj.setAttribute("fill", N_cl);
+            }
             SVGObj.setAttribute("x", 120+12*(x-xfrom+10));
             SVGObj.setAttribute("text-anchor", "middle");
             SVGObj.setAttribute("pointer-events","none");
@@ -3376,20 +3371,25 @@ function PlotAlignment(barcode, locus){
                 if (image_loc == 0){
                     var imageElement = document.createElementNS(NS, "image");
                     imageElement.setAttribute("x", 120+12*(x-xfrom+10)-16); // Set the x-coordinate of the image
-                        
+
                     imageElement.setAttribute("y", ysize+delypos+4); // Set the y-coordinate of the image
                     imageElement.setAttribute("width", 12); // Set the width of the image
                     imageElement.setAttribute("height", 12); // Set the height of the image
-                    imageElement.setAttribute("href", "https://crisprnano.de/crisprnano2/insert.svg"); // Set the path to your image file
+                    imageElement.setAttribute("href", "crisprnano2/insert.svg"); // Set the path to your image file
                     svg.appendChild(imageElement);
                     image_loc =1;
                 }
-                SVGObj.style.stroke="rgb(255,0,0)";
+                if (duplication1[0]){
+                    SVGObj.setAttribute("fill", "rgb(255,255,0");
+                }
+                else{
+                    SVGObj.setAttribute("fill", "rgb(255,255,255");
+                }
+                SVGObj.style.stroke=T_cl;
                 SVGObj.setAttribute("x", 120+12*(x-xfrom+10));
                 SVGObj.setAttribute("y", ysize+delypos+4);
                 SVGObj.setAttribute("width", "12");
                 SVGObj.setAttribute("height", "12");
-                SVGObj.setAttribute("fill", "rgb(255,255,255");
                 SVGObj.setAttribute("text-anchor", "middle");
                 SVGObj.setAttribute("pointer-events","none");
                 svg.appendChild(SVGObj);
@@ -3399,7 +3399,7 @@ function PlotAlignment(barcode, locus){
             SVGObj.setAttribute("x", 120+12*(x-xfrom+10)+5);
             SVGObj.setAttribute("y", ysize+delypos+15);
             SVGObj.setAttribute("font-size", "13");
-            SVGObj.setAttribute("fill", txt_color);
+            SVGObj.setAttribute("fill", N_cl);
             SVGObj.textContent = key[x+region_analyse*2];
             SVGObj.setAttribute("text-anchor", "middle");
             SVGObj.setAttribute("pointer-events","none");
@@ -3423,6 +3423,24 @@ function PlotAlignment(barcode, locus){
 
         SVGObj.textContent +="TYPE: "+ aln_type[aln_type_dict[barcode][key]] + ", (" + gap_len1 + " bp)" +" | " +aln_dict_fil[barcode][key] +"  Reads, " + (aln_dict_fil[barcode][key]/summary_track[barcode][7]*100).toFixed(2) + " %";
         svg.appendChild(SVGObj);
+
+        SVGObj= document.createElementNS(NS,"text");
+        SVGObj.setAttribute("x", 10+ 120+24*(30)+2 );
+        SVGObj.setAttribute("y", ysize+delypos+13);
+        SVGObj.setAttribute("font-size", "14");
+        if (rima_class == 'NHEJ'){
+            SVGObj.setAttribute("fill", "rgb(17, 94, 94)");
+        }
+        else if (rima_class == 'other EJ'){
+            SVGObj.setAttribute("fill", "rgb(153, 151, 151)");
+        }
+        else if (rima_class == 'MH-del'){
+            SVGObj.setAttribute("fill", "rgb(84, 199, 199)");
+        }
+
+        SVGObj.textContent +="RIMA classified as: "+ rima_class;
+        svg.appendChild(SVGObj);
+
         id1+=1;
         delypos+=delyshift;
     }
@@ -3441,34 +3459,27 @@ function PlotAlignment_bulk(barcode, locus, bulk_threshold){
  
     var sum = 0;
     var read_ambigous =0;
-    // var targetingOligo = 0;
-    for (var i=0; i<hits[id].length; i++){
-        if (hits[id][i]>=0){
-            switch (hits[id][i]){
-                // case 0:
-                //     not_align++;
-                //     break;
+    
+    for (let key in aln_dict[id]){
+        switch (aln_type_dict[key]){
                 case 1:
-                    // no_indel++;
-                    sum++
+                    sum+=aln_dict[id]
                     break;
                 case 2:
-                    // inf_indel++;
-                    sum++
+                    sum+=aln_dict[id]
                     break;
                 case 3: 
-                    // out_indel++;
-                    sum++
-                    break;
+                    sum+=aln_dict[id]
+                    break;  
                 case 7: 
-                    // targetingOligo++;
-                    sum++
+                    sum+=aln_dict[id]
                     break;
                 case 8: 
                     read_ambigous++;
+                    break;
             }
         }
-    }
+    
 
     summary_track[id][0] = sum + read_ambigous;
     summary_track[id][5] = read_ambigous;
@@ -3486,7 +3497,7 @@ function PlotAlignment_bulk(barcode, locus, bulk_threshold){
     var out_indel = 0;
     var out_indel_arr = []
     var sum = 0;
-    var targetingOligo_num = 0;
+    var targetingOligo = 0;
     var targetingOligo_arr = [];
 
     for (let key in aln_dict_bulk){
@@ -3503,7 +3514,7 @@ function PlotAlignment_bulk(barcode, locus, bulk_threshold){
                 out_indel_arr.push(aln_dict_bulk[key])
                 break;
             case 7: 
-                targetingOligo_num+=aln_dict_bulk[key];
+                targetingOligo+=aln_dict_bulk[key];
                 targetingOligo_arr.push(aln_dict_bulk[key])
                 break;
         }
@@ -3528,16 +3539,16 @@ function PlotAlignment_bulk(barcode, locus, bulk_threshold){
     }
 
     // For saving csv
-    summary_track[id][1] = targetingOligo_num;
+    summary_track[id][1] = targetingOligo;
     summary_track[id][2] = no_indel;
     summary_track[id][3] = inf_indel;
     summary_track[id][4] = out_indel;
-    summary_track[id][7] = no_indel+inf_indel+out_indel+targetingOligo_num;
+    summary_track[id][7] = no_indel+inf_indel+out_indel+targetingOligo;
     if (summary_track[id][7]>0) {
-        summary_track_select[id+1] =  [GetWellPos(id), (targetingOligo_num/summary_track[id][7]*100).toFixed(2), (no_indel/summary_track[id][7]*100).toFixed(2), (inf_indel/summary_track[id][7]*100).toFixed(2), (out_indel/summary_track[id][7]*100).toFixed(2), summary_track[id][7]]
+        summary_track_select[id+1] =  [GetWellPos(id), (targetingOligo/summary_track[id][7]*100).toFixed(2), (no_indel/summary_track[id][7]*100).toFixed(2), (inf_indel/summary_track[id][7]*100).toFixed(2), (out_indel/summary_track[id][7]*100).toFixed(2), summary_track[id][7]]
     }
     else {
-        summary_track_select[id+1] =  [GetWellPos(id), targetingOligo_num, no_indel, inf_indel, out_indel, summary_track[id][7]]
+        summary_track_select[id+1] =  [GetWellPos(id), targetingOligo, no_indel, inf_indel, out_indel, summary_track[id][7]]
 
     }
 
@@ -4028,10 +4039,7 @@ function PlotAlignment_bulk(barcode, locus, bulk_threshold){
 
     // Plot
     Plotly.newPlot('Indel_plot', [tracePositive, traceNegative], layout);
-
 }
-
-
 
 //Alignment summary plot:
 function PlotAlignment_off(gene_i)
@@ -4183,7 +4191,7 @@ function PlotAlignment_off(gene_i)
         SVGObj.setAttribute("y", ysize+delypos+20);
         SVGObj.setAttribute("font-size", "14");
         if (x>=RightBsPos && x<RightBsPos+rightbs.length) SVGObj.setAttribute("fill", "rgb(0,0,250)");
-        else SVGObj.setAttribute("fill", "rgb(0,0,0)");
+        else SVGObj.setAttribute("fill", N_cl);
         SVGObj.textContent = locus_list[gene_i][x];
         SVGObj.setAttribute("x", 120+12*(x-xfrom));
         SVGObj.setAttribute("text-anchor", "middle");
@@ -4202,7 +4210,7 @@ function PlotAlignment_off(gene_i)
         SVGObj= document.createElementNS(NS,"text");
         SVGObj.setAttribute("y", ysize+delypos);
         SVGObj.setAttribute("font-size", "14");
-        SVGObj.setAttribute("fill", "rgb(0,0,0)");
+        SVGObj.setAttribute("fill", N_cl);
         SVGObj.textContent = locus_list[barcode][x];
         SVGObj.setAttribute("x", 120+12*(x-xfrom));
         SVGObj.setAttribute("text-anchor", "middle");
@@ -4219,7 +4227,7 @@ function PlotAlignment_off(gene_i)
     imageElement.setAttribute("y", ysize + delypos -20); // Set the y-coordinate of the image
     imageElement.setAttribute("width", 20); // Set the width of the image
     imageElement.setAttribute("height", 20); // Set the height of the image
-    imageElement.setAttribute("href", "https://crisprnano.de/crisprnano2/scissors.svg"); // Set the path to your image file
+    imageElement.setAttribute("href", "crisprnano2/scissors.svg"); // Set the path to your image file
     svg.appendChild(imageElement);
 
     //reference:
@@ -4232,7 +4240,7 @@ function PlotAlignment_off(gene_i)
     //line:
     SVGObj= document.createElementNS(NS,"path");
     SVGObj.setAttributeNS(null, "d", "M 5,"+(ysize+delypos+5.5)+" L 1200,"+(ysize+delypos+5.5));
-    SVGObj.style.stroke="rgb(0,0,0)";
+    SVGObj.style.stroke=N_cl;
     SVGObj.setAttributeNS(null, "stroke-width", 1);
     svg.appendChild(SVGObj);
     delypos+=delyshift;
@@ -4243,15 +4251,15 @@ function PlotAlignment_off(gene_i)
         for (let x=0; x<30*2; x++){
             //draw main track:
             if ((key[x]==locus_list[barcode][BreakPoint-region_analyse+x])||(key[x]=='N')||(key[x]=='-')||(typeof(key[x])=='undefined')){
-                SVGObj= document.createElementNS(svgns, "rect");
-                SVGObj.setAttribute("x", 120+12*(x)-5);
-                SVGObj.setAttribute("y", ysize+delypos-10);
-                SVGObj.setAttribute("width", "11");
-                SVGObj.setAttribute("height", "11");
-                SVGObj.setAttribute("fill", "rgb(216,216,216");
-                SVGObj.setAttribute("text-anchor", "middle");
-                SVGObj.setAttribute("pointer-events","none");
-                svg.appendChild(SVGObj);
+                // SVGObj= document.createElementNS(svgns, "rect");
+                // SVGObj.setAttribute("x", 120+12*(x)-5);
+                // SVGObj.setAttribute("y", ysize+delypos-10);
+                // SVGObj.setAttribute("width", "11");
+                // SVGObj.setAttribute("height", "11");
+                // SVGObj.setAttribute("fill", "rgb(255,255,255");
+                // SVGObj.setAttribute("text-anchor", "middle");
+                // SVGObj.setAttribute("pointer-events","none");
+                // svg.appendChild(SVGObj);
                 }
             }
 
@@ -4263,12 +4271,12 @@ function PlotAlignment_off(gene_i)
                 }
                 else {
                     SVGObj= document.createElementNS(svgns, "rect");
-                    SVGObj.style.stroke="rgb(0,0,0)";
+                    SVGObj.style.stroke=N_cl;
                     SVGObj.setAttribute("x", 115+12*(x-xfrom+10));
                     SVGObj.setAttribute("y", ysize+delypos-10);
                     SVGObj.setAttribute("width", "11");
                     SVGObj.setAttribute("height", "11");
-                    SVGObj.setAttribute("fill", "rgb(216,216,216");
+                    SVGObj.setAttribute("fill", "rgb(255,255,255");
                     SVGObj.setAttribute("text-anchor", "middle");
                     SVGObj.setAttribute("pointer-events","none");
                     svg.appendChild(SVGObj);
@@ -4278,22 +4286,22 @@ function PlotAlignment_off(gene_i)
                     SVGObj.setAttribute("font-size", "13");
                     SVGObj.setAttribute("font-weight", "400");
                     if (key[x]=="T"){SVGObj.textContent = key[x];
-                        SVGObj.setAttribute("fill", "rgb(255,0,0");
+                        SVGObj.setAttribute("fill", T_cl);
                     }
                     else if (key[x]=="A"){SVGObj.textContent = key[x];
-                        SVGObj.setAttribute("fill", "rgb(0,150,0");
+                        SVGObj.setAttribute("fill", A_cl);
                     }
                     else if (key[x]=="C"){SVGObj.textContent = key[x];
-                        SVGObj.setAttribute("fill", "rgb(0,0,255");
+                        SVGObj.setAttribute("fill", C_cl);
                     }
                     else if (key[x]=="G"){SVGObj.textContent = key[x];
-                        SVGObj.setAttribute("fill", "rgb(200, 100, 0");
+                        SVGObj.setAttribute("fill", G_cl);
                     }
                     else if (key[x]=="N"){SVGObj.textContent = key[x];
-                        SVGObj.setAttribute("fill", "rgb(0, 0, 0");
+                        SVGObj.setAttribute("fill", N_cl);
                     }
                     else if (key[x]=="-"){SVGObj.textContent = key[x];
-                        SVGObj.setAttribute("fill", "rgb(0,0,0");
+                        SVGObj.setAttribute("fill", N_cl);
                     }
                     SVGObj.setAttribute("x", 120+12*(x-xfrom+10));
                     SVGObj.setAttribute("text-anchor", "middle");
@@ -4309,17 +4317,17 @@ function PlotAlignment_off(gene_i)
                 SVGObj.setAttribute("font-size", fontsize1);
                 SVGObj.setAttribute("font-weight", "600");
 
-                if (Object.keys(no_indel_arr)[0][x]=="T"){SVGObj.setAttribute("fill", "rgb(255,0,0");
+                if (Object.keys(no_indel_arr)[0][x]=="T"){SVGObj.setAttribute("fill", T_cl);
                 }
-                else if (Object.keys(no_indel_arr)[0][x]=="A"){SVGObj.setAttribute("fill", "rgb(0,150,0");
+                else if (Object.keys(no_indel_arr)[0][x]=="A"){SVGObj.setAttribute("fill", A_cl);
                 }
-                else if (Object.keys(no_indel_arr)[0][x]=="C"){SVGObj.setAttribute("fill", "rgb(0,0,255");
+                else if (Object.keys(no_indel_arr)[0][x]=="C"){SVGObj.setAttribute("fill", C_cl);
                 }
-                else if (Object.keys(no_indel_arr)[0][x]=="G"){SVGObj.setAttribute("fill", "rgb(200, 100, 0");
+                else if (Object.keys(no_indel_arr)[0][x]=="G"){SVGObj.setAttribute("fill", G_cl);
                 }
-                else if (Object.keys(no_indel_arr)[0][x]=="N"){SVGObj.setAttribute("fill", "rgb(0, 0, 0");
+                else if (Object.keys(no_indel_arr)[0][x]=="N"){SVGObj.setAttribute("fill", N_cl);
                 }
-                else if (Object.keys(no_indel_arr)[0][x]=="-"){SVGObj.setAttribute("fill", "rgb(0,0,0");
+                else if (Object.keys(no_indel_arr)[0][x]=="-"){SVGObj.setAttribute("fill", N_cl);
                 }
                 SVGObj.textContent = Object.keys(no_indel_arr)[0][x];
                 SVGObj.setAttribute("x", 120+12*(x-xfrom+10));
@@ -4352,17 +4360,17 @@ function PlotAlignment_off(gene_i)
                 SVGObj.setAttribute("font-size", fontsize2);
                 SVGObj.setAttribute("font-weight", "600");
 
-                if (Object.keys(no_indel_arr)[1][x]=="T"){SVGObj.setAttribute("fill", "rgb(255,0,0");
+                if (Object.keys(no_indel_arr)[1][x]=="T"){SVGObj.setAttribute("fill", T_cl);
                 }
-                else if (Object.keys(no_indel_arr)[1][x]=="A"){SVGObj.setAttribute("fill", "rgb(0,150,0");
+                else if (Object.keys(no_indel_arr)[1][x]=="A"){SVGObj.setAttribute("fill", A_cl);
                 }
-                else if (Object.keys(no_indel_arr)[1][x]=="C"){SVGObj.setAttribute("fill", "rgb(0,0,255");
+                else if (Object.keys(no_indel_arr)[1][x]=="C"){SVGObj.setAttribute("fill", C_cl);
                 }
-                else if (Object.keys(no_indel_arr)[1][x]=="G"){SVGObj.setAttribute("fill", "rgb(200, 100, 0");
+                else if (Object.keys(no_indel_arr)[1][x]=="G"){SVGObj.setAttribute("fill", G_cl);
                 }
-                else if (Object.keys(no_indel_arr)[1][x]=="N"){SVGObj.setAttribute("fill", "rgb(0, 0, 0");
+                else if (Object.keys(no_indel_arr)[1][x]=="N"){SVGObj.setAttribute("fill", N_cl);
                 }
-                else if (Object.keys(no_indel_arr)[1][x]=="-"){SVGObj.setAttribute("fill", "rgb(0,0,0");
+                else if (Object.keys(no_indel_arr)[1][x]=="-"){SVGObj.setAttribute("fill", N_cl);
                 }
                 SVGObj.textContent = Object.keys(no_indel_arr)[1][x];
                 SVGObj.setAttribute("x", 120+12*(x-xfrom+10));
@@ -4381,12 +4389,12 @@ function PlotAlignment_off(gene_i)
             }
             else {
                 SVGObj= document.createElementNS(svgns, "rect");
-                SVGObj.style.stroke="rgb(0,0,0)";
+                SVGObj.style.stroke=N_cl;
                 SVGObj.setAttribute("x", 115+12*(x-xfrom+10));
                 SVGObj.setAttribute("y", ysize+delypos-10);
                 SVGObj.setAttribute("width", "11");
                 SVGObj.setAttribute("height", "11");
-                SVGObj.setAttribute("fill", "rgb(216,216,216");
+                SVGObj.setAttribute("fill", "rgb(255,255,255");
                 SVGObj.setAttribute("text-anchor", "middle");
                 SVGObj.setAttribute("pointer-events","none");
                 svg.appendChild(SVGObj);
@@ -4399,22 +4407,22 @@ function PlotAlignment_off(gene_i)
             SVGObj.setAttribute("font-size", "13");
 
             if (key[x]=="T"){SVGObj.textContent = key[x];
-                SVGObj.setAttribute("fill", "rgb(255,0,0");
+                SVGObj.setAttribute("fill", T_cl);
             }
             else if (key[x]=="A"){SVGObj.textContent = key[x];
-                SVGObj.setAttribute("fill", "rgb(0,150,0");
+                SVGObj.setAttribute("fill", A_cl);
             }
             else if (key[x]=="C"){SVGObj.textContent = key[x];
-                SVGObj.setAttribute("fill", "rgb(0,0,255");
+                SVGObj.setAttribute("fill", C_cl);
             }
             else if (key[x]=="G"){SVGObj.textContent = key[x];
-                SVGObj.setAttribute("fill", "rgb(200, 100, 0");
+                SVGObj.setAttribute("fill", G_cl);
             }
             else if (key[x]=="N"){SVGObj.textContent = key[x];
-                SVGObj.setAttribute("fill", "rgb(0, 0, 0");
+                SVGObj.setAttribute("fill", N_cl);
             }
             else if (key[x]=="-"){SVGObj.textContent = key[x];
-                SVGObj.setAttribute("fill", "rgb(0,0,0");
+                SVGObj.setAttribute("fill", N_cl);
             }
             SVGObj.setAttribute("x", 120+12*(x-xfrom+10));
             SVGObj.setAttribute("text-anchor", "middle");
@@ -4437,11 +4445,11 @@ function PlotAlignment_off(gene_i)
                     imageElement.setAttribute("y", ysize+delypos+4); // Set the y-coordinate of the image
                     imageElement.setAttribute("width", 12); // Set the width of the image
                     imageElement.setAttribute("height", 12); // Set the height of the image
-                    imageElement.setAttribute("href", "https://crisprnano.de/crisprnano2/insert.svg"); // Set the path to your image file
+                    imageElement.setAttribute("href", "crisprnano2/insert.svg"); // Set the path to your image file
                     svg.appendChild(imageElement);
                     image_loc =1;
                 }
-                SVGObj.style.stroke="rgb(255,0,0)";
+                SVGObj.style.stroke=T_cl;
                 SVGObj.setAttribute("x", 120+12*(x-xfrom+10));
                 SVGObj.setAttribute("y", ysize+delypos+4);
                 SVGObj.setAttribute("width", "12");
@@ -4456,7 +4464,7 @@ function PlotAlignment_off(gene_i)
             SVGObj.setAttribute("x", 120+12*(x-xfrom+10)+5);
             SVGObj.setAttribute("y", ysize+delypos+15);
             SVGObj.setAttribute("font-size", "13");
-            SVGObj.setAttribute("fill", "rgb(0,0,0)");
+            SVGObj.setAttribute("fill", N_cl);
             SVGObj.textContent = key[x+region_analyse*2];
             SVGObj.setAttribute("text-anchor", "middle");
             SVGObj.setAttribute("pointer-events","none");
@@ -4554,143 +4562,44 @@ function PrintSVGAlignment(){
     printWindow.close();
 }
 
-// Offline saving
 
-function SaveProject() {
-    MutationThreshold = document.getElementsByName("MutationThreshold")[0].value;
-    var InitialVariables = new Uint32Array(16);
-    InitialVariables[0] = 1; //Version
-    numsamples = files.length
-    InitialVariables[1] = numsamples; //Sample Num
-    //string lengths:
-    InitialVariables[2] = document.getElementsByName("GeneName")[0].value.length;
-    InitialVariables[3] = locus.length;
-    InitialVariables[4] = targetingOligo.length;
-    //analysis parameters:
-    InitialVariables[5] = RightBsPos; //Target site
-    InitialVariables[6] = rightbs;
-    InitialVariables[7] = MutationThreshold*100;
-    InitialVariables[8] = PhredThreshold-33;
+// Check micro homology for given sequence 
+// input: our alignment dictionary element does not contain insertion track
 
-    var blob = new Blob([InitialVariables], {type: 'text/plain'});
-
-    //Add Text values:
-    blob = new Blob([blob, document.getElementsByName("GeneName")[0].value.toUpperCase], {type: 'text/plain'});
-    blob = new Blob([blob, locus], {type: 'text/plain'});
-    blob = new Blob([blob, targetingOligo], {type: 'text/plain'});
-
-
-    for (var id=0; id<numsamples; id++)
-    {
-        var SimpleValues = new Array(2);
-        SimpleValues[0] = hits[id];
-        SimpleValues[1] = aln_dict[id]
-
-        blob = new Blob([blob, SimpleValues], {type: 'text/plain'});
-
-        //Add Text values:
-        // blob = new Blob([blob, Sample[id].filename], {type: 'text/plain'});
-    }
-
-    //encode as base64 and embed into html file:
-    var reader = new window.FileReader();
-    reader.onloadend = function()
-    {
-        base64data = reader.result;
-        base64data = base64data.split(",")[1]; //remove header
-
-        var html = "<meta http-equiv='refresh' content='0; url=https://www.crisprnano.de/CRISPRnano2_test.html#"+base64data+"'>";
-        //alert(html);
-
-        //add SVG image as a preview:
-        html += "<html><body>"+document.getElementById("DIV_piecharts").innerHTML+"</body></html>";
-
-        var blob2 = new Blob([html], {type: 'text/plain'});
-        var a = document.createElement('a');
-        a.download = "PROJECT1.htm";
-        a.href = window.URL.createObjectURL(blob2);
-        a.textContent = 'Klick here to save';
-        a.dataset.downloadurl = ['text/plain', a.download, a.href].join(':');
-        document.getElementById("save").appendChild(a);
-        a.click();
-    }
-    reader.readAsDataURL(blob);
-}
-
-function LoadHash() {
-    // alert(window.location.hash.length);
-    if (window.location.hash) {
-        //alert(window.location.hash.substr(1));
-        var byteCharacters = atob(window.location.hash.substr(1));
-        var byteNumbers = new Array(byteCharacters.length);
-        for (var i = 0; i < byteCharacters.length; i++) byteNumbers[i] = byteCharacters.charCodeAt(i);
-        var byteArray = new Uint8Array(byteNumbers);
-        //alert(byteArray.length+" "+byteArray+" "+byteArray[0]);
-        var blob = new Blob([byteArray], {type: 'contentType'});
-        //alert(blob.size);
-
-        var reader = new window.FileReader();
-        reader.onloadend = function()
-        {
-            var arraybuffer = reader.result;
-            var pos = 0;
-            var InitialVariables = new Uint32Array(arraybuffer.slice(pos, pos+=16*4));
-            var version = InitialVariables[0];
-            numsamples = InitialVariables[1];
-            //string lengths:
-            var genelen = InitialVariables[2];
-            locuslen = InitialVariables[3];
-            var targetingoligolen = InitialVariables[4];
-            //analysis parameters:
-            RightBsPos = InitialVariables[5]; //Target site
-            RightBsLen = InitialVariables[6];
-            document.getElementsByName("MutationThreshold")[0].value = InitialVariables[7]/100;
-            PhredThreshold = InitialVariables[8];
-
-            //get text values:
-            var dummy = new Uint8Array(arraybuffer.slice(pos, pos+=genelen));
-            document.getElementById("GeneName").value = String.fromCharCode.apply(null, dummy);
-            var dummy = new Uint8Array(arraybuffer.slice(pos, pos+=locuslen));
-            locus = String.fromCharCode.apply(null, dummy);
-            var dummy = new Uint8Array(arraybuffer.slice(pos, pos+=targetingoligolen));
-            targetingOligo = String.fromCharCode.apply(null, dummy);
-
-            for (var id=0; id<numsamples; id++)
-            {
-                var SimpleValues = new Array(arraybuffer.slice(pos, pos+=2*4));
-                hits[id]  = SimpleValues[0];
-                aln_dict[id] = SimpleValues[1];
-
-                //get filename:
-                var filenamedummy = new Uint8Array(arraybuffer.slice(pos, pos+=filenamelen));
-                Sample[id].filename = String.fromCharCode.apply(null, filenamedummy);
+function Check_RIMA(sequence_seq){
+    var micro_homology = ''
+    const startIndex = sequence_seq.indexOf('-');
+    const endIndex = sequence_seq.lastIndexOf('-') + 1;
+    const insert_size = sequence_seq.split('\n')[1].trim().length
+    var ref_seq = locus.substring(10, sequence_seq.length + 10)
+    if (startIndex !=0){
+        for (let i = startIndex; i < endIndex; i++) {
+            if (ref_seq[i]==sequence_seq[i+endIndex-startIndex]){
+                micro_homology+=ref_seq[i]
             }
-
-            //test:
-            //files = new Array(10);
-
-            //Update GUI:
-            var MutationThreshold = document.getElementsByName("MutationThreshold")[0].value;
-            document.getElementById("locus").value = locus;
-            document.getElementById("RightBS").value = rightbs;
-            document.getElementById("allelethreshold").value = MutationThreshold;
-            document.getElementById("phredthreshold").value = PhredThreshold;
-            document.getElementById("targetingoligo").value = targetingOligo;
-
-            //Draw:
-            DrawPie();
-            CurrentAlignment = 0;
-            PieClick();
-
-            window.location.hash = "";
+            else{
+                break
+            }
         }
-        reader.readAsArrayBuffer(blob);
     }
+    return [micro_homology, startIndex, endIndex, insert_size];   
 }
-LoadHash();
 
 
-
+// Check duplication for insertion sequence 
+// input: our alignment dictionary element contains insertion track
+function Check_duplication(sequence_seq){
+    var duplicate = false
+    const main_track = sequence_seq.split('\n')[0]
+    const insertion = sequence_seq.split('\n')[1]
+    const insertion_trim = insertion.trim()
+    var index_in = 0
+    if (insertion_trim !=''){
+        index_in = insertion.indexOf(insertion_trim)
+        duplicate = (main_track.substring(index_in, index_in+insertion_trim.length)==insertion.substring(index_in, index_in+insertion_trim.length)||main_track.substring(index_in-insertion_trim.length, index_in)==insertion.substring(index_in, index_in+insertion_trim.length))
+    }
+    return [duplicate, index_in, insertion_trim.length];   
+}
 
 
 // For google site
@@ -4737,7 +4646,6 @@ function Start(){
     document.getElementById("progress").style.display = '';
     //Reset all variables
     for (var i=0; i<96; i++) {
-        hits[i] = []
         phred_array[i] = []
         length_array[i] = []
         aln_dict[i] = {}
@@ -4827,11 +4735,7 @@ function Start2(){
     gene_list = document.getElementsByName("GeneName_list")[0].value.split(',')
     rightbs = document.getElementsByName("RightBS")[0].value.replace(/[\s\n]+/g, '').toUpperCase(); // sgRNA seq
     region_analyse = document.getElementsByName("region_analyse")[0].value;
-    rightbs_off_1 = document.getElementsByName("sgRNA1")[0].value.replace(/[\s\n]+/g, '').toUpperCase(); // sgRNA seq  
-    rightbs_off_2 = document.getElementsByName("sgRNA2")[0].value.replace(/[\s\n]+/g, '').toUpperCase(); // sgRNA seq  
-    rightbs_off_3 = document.getElementsByName("sgRNA3")[0].value.replace(/[\s\n]+/g, '').toUpperCase(); // sgRNA seq  
-    rightbs_off_4 = document.getElementsByName("sgRNA4")[0].value.replace(/[\s\n]+/g, '').toUpperCase(); // sgRNA seq  
-    var rightbs_off = [rightbs_off_1, rightbs_off_2, rightbs_off_3, rightbs_off_4]
+
     //reset all varibles
     for (var i=0; i<4; i++){
         sum_track_off[i] = 0;
@@ -4858,13 +4762,7 @@ function Start2(){
     }
 
     for (let i = 0; i<locus_list.length; i++){
-        if (rightbs_off[i]==''){
-            var rst = bsa_align(locus_list[i], rightbs, [ms, mms], [gapo, gape]);
-        }
-        else {
-            var rst = bsa_align(locus_list[i], rightbs_off[i], [ms, mms], [gapo, gape]);
-        }
-        
+        var rst = bsa_align(locus_list[i], rightbs, [ms, mms], [gapo, gape]);
         if (rst[0]<(rightbs.length/2)){
             rst = bsa_align(ReverseComplement(locus_list[i]), rightbs, [ms, mms], [gapo, gape]);
             if (rst[0]<(rightbs.length/2)){
@@ -4950,23 +4848,10 @@ function divide_zero(a, b) {
     }
 }
 
-
-function getFirstNucleotideIndex(sequence) {
-    const nucleotides = ['A', 'T', 'C', 'G'];
-    for (let i = 0; i < sequence.length; i++) {
-        const char = sequence[i].toUpperCase(); // Convert to uppercase for case insensitivity
-        if (nucleotides.includes(char)) {
-            return i; // Return the index of the first nucleotide found
-        }
-    }
-    return -1; // Return -1 if no nucleotide is found in the sequence
-}
-
 var currenttab = 0;
 TabClicked(0);
 
 var RightBsPos=0;
-var hits = Array(96);
 //raw aligned dictionary
 var aln_dict = Array(96);
 //filtered aligned dictionary
@@ -4975,7 +4860,6 @@ var aln_type_dict = Array(96)
 
 var AlignmentPrecalc
 var locus = '';
-var targetingOligo = '';
 var locus_check = ''; //adaptive ref
 var files;
 var reader;
@@ -4984,10 +4868,6 @@ var CurrentFileId_off;
 var MutationThreshold = 0.1
 var BreakPoint;
 var rightbs;
-var rightbs_off_1;
-var rightbs_off_2;
-var rightbs_off_3;
-var rightbs_off_4;
 
 var PhredThreshold = 40; // 7 +33
 
@@ -5034,25 +4914,13 @@ var genotype = Array(96)
 var aln_dict_bulk 
 var gcContent = Array(96)
 var bulk_threshold = 0.1
-var indel_info_hist
-var final_filter_size =20
-var numsamples = 0;
-var hits1
-var bg_A = "rgb(196, 255, 181)"
-var bg_C = "rgb(254, 232, 199)"
-var bg_T = "rgb(245, 230, 255)"
-var bg_G ="rgb(249, 249, 187)"
-var bg_indel = "rgb(216, 216, 216)"
-var txt_color = "rgb(10,10,10)"
 
-// var slider = document.getElementById("myRange");
-// slider.onchange = PlotAlignment_bulk(CurrentAlignment, locus, bulk_threshold)
+const T_cl = "rgb(255,0,0)"
+const A_cl = "rgb(0,150,0)"
+const C_cl ="rgb(0,0,255)"
+const G_cl = "rgb(200, 100, 0)"
+const N_cl = "rgb(0, 0, 0)"
 
-// var output = document.getElementById("threshold_bulk");
-// output.innerHTML = slider.value;
-// slider.oninput = function() {
-//         output.innerHTML = this.value;
-//         }
 const toggleButton = document.getElementById('toggleButton');
 const sgRNAContainer = document.getElementById('sgRNAContainer');
 const optional_para = document.getElementById('optional_para');
@@ -5065,7 +4933,6 @@ toggleButton.addEventListener('click', function() {
 optional_para.addEventListener('click', function() {
     optional_para_Container.classList.toggle('hidden');
 });
-
 
 
 </script>
