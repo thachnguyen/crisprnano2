@@ -1235,11 +1235,12 @@ function FileReceived() {
                     var str1 = ''
                     str1 += read.substring(index_oli_read- oligo_index, index_oli_read- oligo_index + region_analyse*2)+ '\n'+ '\n';
                     if (aln_dict[id].hasOwnProperty(str1)){
-                        aln_dict[id][str1]+=1
+                        aln_dict[id][str1][0]+=1
                     }
                     else {
-                        aln_dict[id][str1] = 1
-                        aln_type_dict[id][str1] = aln_type
+                        aln_dict[id][str1] = Array(2)
+                        aln_dict[id][str1][0] = 1
+                        aln_dict[id][str1][1] = aln_type
                     }
                     }
                 else {
@@ -1251,11 +1252,12 @@ function FileReceived() {
                         var str1 = ''
                         str1 += read.substring(index_oli_read- oligo_index, index_oli_read- oligo_index + region_analyse*2)+ '\n'+ '\n';
                         if (aln_dict[id].hasOwnProperty(str1)){
-                            aln_dict[id][str1]+=1
+                            aln_dict[id][str1][0]+=1
                         }
                         else {
-                            aln_dict[id][str1] = 1
-                            aln_type_dict[id][str1] = aln_type
+                            aln_dict[id][str1] = Array(2)
+                            aln_dict[id][str1][0] = 1
+                            aln_dict[id][str1][1] = aln_type
                         }
                     }
 
@@ -1266,11 +1268,12 @@ function FileReceived() {
                         var str1 = ''
                         str1 += locus.substring(BreakPoint-region_analyse*1, BreakPoint + region_analyse*1)+ '\n'+ '\n';
                         if (aln_dict[id].hasOwnProperty(str1)){
-                            aln_dict[id][str1]+=1
+                            aln_dict[id][str1][0]+=1
                         }
                         else {
-                            aln_dict[id][str1] = 1
-                            aln_type_dict[id][str1] = aln_type
+                            aln_dict[id][str1] = Array(2)
+                            aln_dict[id][str1][0] = 1
+                            aln_dict[id][str1][1] = aln_type
                         }
                     }
                     else if (read.includes(ReverseComplement(locus.substring(BreakPoint-region_analyse*1, BreakPoint + region_analyse*1)))){
@@ -1278,11 +1281,12 @@ function FileReceived() {
                         var str1 = ''
                         str1 += locus.substring(BreakPoint-region_analyse*1, BreakPoint + region_analyse*1)+ '\n'+ '\n';
                         if (aln_dict[id].hasOwnProperty(str1)){
-                            aln_dict[id][str1]+=1
+                            aln_dict[id][str1][0]+=1
                         }
                         else {
-                            aln_dict[id][str1] = 1
-                            aln_type_dict[id][str1] = aln_type
+                            aln_dict[id][str1] = Array(2)
+                            aln_dict[id][str1][0] = 1
+                            aln_dict[id][str1][1] = aln_type
                         }
                     }
                     
@@ -1308,11 +1312,12 @@ function FileReceived() {
                             // if (containsAny(locus, str2_arr)||containsAny(ReverseComplement(locus), str2_arr)){
                             if (aln_type !=0){
                                 if (aln_dict[id].hasOwnProperty(str1)){
-                                    aln_dict[id][str1]+=1
+                                    aln_dict[id][str1][0]+=1
                                 }
                                 else {
-                                    aln_dict[id][str1] = 1
-                                    aln_type_dict[id][str1] = aln_type
+                                    aln_dict[id][str1] = Array(2)
+                                    aln_dict[id][str1][0] = 1
+                                    aln_dict[id][str1][1] = aln_type
                                 }
                             }
                             if (str1.trim().length>(region_analyse*2-2)){
@@ -1343,11 +1348,12 @@ function FileReceived() {
                     // if (containsAny(locus, str2_arr)||containsAny(ReverseComplement(locus), str2_arr)){
                     if (aln_type !=0){
                         if (aln_dict[id].hasOwnProperty(str1)){
-                            aln_dict[id][str1]+=1
+                            aln_dict[id][str1][0]+=1
                         }
                         else {
-                            aln_dict[id][str1] = 1
-                            aln_type_dict[id][str1] = aln_type
+                            aln_dict[id][str1] = Array(2)
+                            aln_dict[id][str1][0] = 1
+                            aln_dict[id][str1][1] = aln_type
                         }
                     }
                     if (str1.trim().length>(region_analyse*2-2)){
@@ -1597,7 +1603,7 @@ function DrawPie()
         }
         // classify indel into several subset
         for (let key in aln_dict_fil[barcode]){
-            if (aln_type_dict[barcode][key] == 2){
+            if (aln_dict[barcode][key][1] == 2){
                 for (let i=0; i <6; i++){
                     if (inf_indel1[i]==0){
                         inf_indel1[i]=aln_dict_fil[barcode][key];
@@ -1605,7 +1611,7 @@ function DrawPie()
                         break;
                     }
                 }
-            } else if (aln_type_dict[barcode][key] == 3){
+            } else if (aln_dict[barcode][key][1] == 3){
                 for (let i=0; i <6; i++){
                     if (out_indel1[i]==0){
                         out_indel1[i]=aln_dict_fil[barcode][key];
@@ -2849,35 +2855,21 @@ function GetWellPos(i)
     return ABC[Math.floor(i/12)] + ((i%12)+1);
 }
 
-//Alignment summary plot static:
+//Prepare Alignment function that summaries static variable for plot:
+
 function Pre_PlotAlignment(barcode, locus){
     //compute number of aligned read
     // check genotype
     var id = barcode;
 
     for (let key in aln_dict[id]){
-        sum_track[id] += aln_dict[id][key];
+        sum_track[id] += aln_dict[id][key][0];
     }
-    var sum = 0;
     var read_ambigous =0;
 
     for (let key in aln_dict[id]){
-        switch (aln_type_dict[key]){
-            case 1:
-                sum+=aln_dict[id]
-                break;
-            case 2:
-                sum+=aln_dict[id]
-                break;
-            case 3: 
-                sum+=aln_dict[id]
-                break;  
-            case 7: 
-                sum+=aln_dict[id]
-                break;
-            case 8: 
+        if (aln_dict[id][key][1]==8){
                 read_ambigous++;
-                break;
             }
     }
 
@@ -2885,10 +2877,10 @@ function Pre_PlotAlignment(barcode, locus){
     summary_track[id][5] = read_ambigous;
     // summary_track[id][6] = not_align;
     summary_track[id][7] = sum;
-
+    alert(summary_track[id][7])
     for (let key in aln_dict[id]){
-        if ((aln_type_dict[id][key]!=8)&&(aln_dict[id][key]>10)&&(aln_dict[id][key]>(1*MutationThreshold*summary_track[id][7]/100))&&(key.split('\n')[0].trim().length>region_analyse*2-4)){
-            aln_dict_fil[id][key] = aln_dict[id][key];
+        if ((aln_dict[id][key][1]!=8)&&(aln_dict[id][key][0]>10)&&(aln_dict[id][key][0]>(1*MutationThreshold*sum_track[id]/100))&&(key.split('\n')[0].trim().length>region_analyse*2-4)){
+            aln_dict_fil[id][key] = aln_dict[id][key][0];
         }
     }
     
@@ -2902,7 +2894,7 @@ function Pre_PlotAlignment(barcode, locus){
     targetingOligo_arr[barcode] = [];
 
     for (let key in aln_dict_fil[id]){
-        switch (aln_type_dict[id][key]){
+        switch (aln_dict[id][key][1]){
             case 1:
                 no_indel[barcode]+=aln_dict_fil[id][key];
                 no_indel_arr[barcode][key] = aln_dict_fil[id][key];
@@ -3205,7 +3197,7 @@ function PlotAlignment(barcode, locus){
             }
         }
         
-        if (aln_type_dict[id][key]==1 && (Object.keys(no_indel_arr[barcode]).length ==2)){
+        if (aln_dict[id][key][1]==1 && (Object.keys(no_indel_arr[barcode]).length ==2)){
             for (let x=xfrom-10; x<xto-10; x++){
             //draw main track:
             if (Object.keys(no_indel_arr[barcode])[0][x]==Object.keys(no_indel_arr[barcode])[1][x]){
@@ -3430,7 +3422,7 @@ function PlotAlignment(barcode, locus){
         // Count INDEL's length
         var gap_len1 = (key.substring(region_analyse*2 +1, region_analyse*4).split("G").length-1) +(key.substring(region_analyse*2 +1, region_analyse*4).split("A").length-1) +(key.substring(region_analyse*2 +1, region_analyse*4).split("T").length-1) +(key.substring(region_analyse*2 +1, region_analyse*4).split("C").length-1) - (key.split("-").length-1);
 
-        SVGObj.textContent +="TYPE: "+ aln_type[aln_type_dict[barcode][key]] + ", (" + gap_len1 + " bp)" +" | " +aln_dict_fil[barcode][key] +"  Reads, " + (aln_dict_fil[barcode][key]/summary_track[barcode][7]*100).toFixed(2) + " %";
+        SVGObj.textContent +="TYPE: "+ aln_type[aln_dict[barcode][key][1]] + ", (" + gap_len1 + " bp)" +" | " +aln_dict_fil[barcode][key] +"  Reads, " + (aln_dict_fil[barcode][key]/summary_track[barcode][7]*100).toFixed(2) + " %";
         svg.appendChild(SVGObj);
 
         SVGObj= document.createElementNS(NS,"text");
@@ -4657,7 +4649,6 @@ function Start(){
         length_array[i] = []
         aln_dict[i] = {}
         aln_dict_fil[i] = {}
-        aln_type_dict[i] = {}
         gcContent[i] = []
     }
     AlignmentPrecalc = new Array(96);
@@ -4863,7 +4854,6 @@ var RightBsPos=0;
 var aln_dict = Array(96);
 //filtered aligned dictionary
 var aln_dict_fil = Array(96)
-var aln_type_dict = Array(96)
 
 var AlignmentPrecalc
 var locus = '';
