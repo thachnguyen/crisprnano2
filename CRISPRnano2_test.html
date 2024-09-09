@@ -2832,7 +2832,6 @@ function SelectClone(barcode) {
             CurrentAlignment = barcode;
             AlignmentStartPos = 0;
             Pre_PlotAlignment(barcode, locus);
-
             PlotAlignment(barcode, locus);
             }
     else alert("No data available for the selected barcode.");
@@ -2872,10 +2871,10 @@ function Pre_PlotAlignment(barcode, locus){
                 read_ambigous++;
             }
     }
-    summary_track[id][0] = sum + read_ambigous;
+    summary_track[id][0] = sum_track[id] + read_ambigous;
     summary_track[id][5] = read_ambigous;
     // summary_track[id][6] = not_align;
-    summary_track[id][7] = sum;
+    // summary_track[id][7] = sum_track[id]
     alert(summary_track[id][7])
     for (let key in aln_dict[id]){
         if ((aln_dict[id][key][1]!=8)&&(aln_dict[id][key][0]>10)&&(aln_dict[id][key][0]>(1*MutationThreshold*sum_track[id]/100))&&(key.split('\n')[0].trim().length>region_analyse*2-4)){
@@ -2888,7 +2887,6 @@ function Pre_PlotAlignment(barcode, locus){
     inf_indel[barcode] =  0;
     out_indel[barcode] = 0;
     out_indel_arr[barcode] = []
-    sum[barcode]= 0;
     targetingOligo[barcode] = 0;
     targetingOligo_arr[barcode] = [];
 
@@ -4884,7 +4882,6 @@ var no_indel_arr = Array(96)
 var inf_indel =  Array(96)
 var out_indel = Array(96)
 var out_indel_arr = Array(96)
-var sum = Array(96)
 var targetingOligo = Array(96)
 var targetingOligo_arr = Array(96)
 
