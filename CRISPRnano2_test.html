@@ -2875,7 +2875,7 @@ function Pre_PlotAlignment(barcode, locus){
     summary_track[id][5] = read_ambigous;
     // summary_track[id][6] = not_align;
     // summary_track[id][7] = sum_track[id]
-    alert(summary_track[id][7])
+
     for (let key in aln_dict[id]){
         if ((aln_dict[id][key][1]!=8)&&(aln_dict[id][key][0]>10)&&(aln_dict[id][key][0]>(1*MutationThreshold*sum_track[id]/100))&&(key.split('\n')[0].trim().length>region_analyse*2-4)){
             aln_dict_fil[id][key] = aln_dict[id][key][0];
@@ -2935,10 +2935,10 @@ function Pre_PlotAlignment(barcode, locus){
     summary_track[id][4] = out_indel[barcode];
     summary_track[id][7] = no_indel[barcode]+inf_indel[barcode]+out_indel[barcode]+targetingOligo[barcode];
     if (summary_track[id][7]>0) {
-        summary_track_select[id+1] =  [GetWellPos(id), (targetingOligo[barcode]/summary_track[id][7]*100).toFixed(2), (no_indel[barcode]/summary_track[id][7]*100).toFixed(2), (inf_indel[barcode]/summary_track[id][7]*100).toFixed(2), (out_indel[barcode]/summary_track[id][7]*100).toFixed(2), summary_track[id][7]]
+        summary_track_select[id+1] =  [GetWellPos(id), (summary_track[id][1]/summary_track[id][7]*100).toFixed(2), (summary_track[id][2]/summary_track[id][7]*100).toFixed(2), (summary_track[id][3]/summary_track[id][7]*100).toFixed(2), (summary_track[id][4]/summary_track[id][7]*100).toFixed(2), summary_track[id][7]]
     }
     else {
-        summary_track_select[id+1] =  [GetWellPos(id), targetingOligo[barcode], no_indel[barcode], inf_indel[barcode], out_indel[barcode], summary_track[id][7]]
+        summary_track_select[id+1] =  [GetWellPos(id), summary_track[id][1],  summary_track[id][2], summary_track[id][3], summary_track[id][4], summary_track[id][7]]
     }
 
     // check genotype
@@ -2978,8 +2978,6 @@ function Pre_PlotAlignment(barcode, locus){
     return second[1] - first[1];
     });
     aln_dict_fil[id] = Object.fromEntries(items.map(([v, k]) => [v, k]));
-    
-
 }
 
 function PlotAlignment(barcode, locus){
@@ -3452,13 +3450,13 @@ function PlotAlignment_bulk(barcode, locus, bulk_threshold){
     aln_dict_bulk = {}
 
     for (let key in aln_dict[id]){
-        if ((aln_dict[id][key][1]!=8)&&(aln_dict[id][key]>10)&&(aln_dict[id][key]>(1*bulk_threshold*summary_track[id][0]/100))&&(key.split('\n')[0].trim().length>region_analyse*2-4)){
-            aln_dict_bulk[key] = aln_dict[id][key];
+        if ((aln_dict[id][key][1]!=8)&&(aln_dict[id][key][0]>10)&&(aln_dict[id][key][0]>(1*bulk_threshold*summary_track[id][0]/100))&&(key.split('\n')[0].trim().length>region_analyse*2-4)){
+            aln_dict_bulk[key] = aln_dict[id][key][0];
         }
     }
     
     var no_indel = 0; 
-    var no_indel_arr = []
+    var no_indel_arr = {}
     var inf_indel =  0;
     var out_indel = 0;
     var out_indel_arr = []
@@ -3469,19 +3467,19 @@ function PlotAlignment_bulk(barcode, locus, bulk_threshold){
     for (let key in aln_dict_bulk){
         switch (aln_dict[id][key][1]){
             case 1:
-                no_indel+=aln_dict_bulk[key];
-                no_indel_arr[key] = aln_dict_bulk[key];
+                no_indel+=aln_dict_bulk[key][0];
+                no_indel_arr[key] = aln_dict_bulk[key][0];
                 break;
             case 2:
-                inf_indel+=aln_dict_bulk[key];
+                inf_indel+=aln_dict_bulk[key][0];
                 break;
             case 3: 
-                out_indel+=aln_dict_bulk[key];
-                out_indel_arr.push(aln_dict_bulk[key])
+                out_indel+=aln_dict_bulk[key][0];
+                out_indel_arr.push(aln_dict_bulk[key][0])
                 break;
             case 7: 
-                targetingOligo+=aln_dict_bulk[key];
-                targetingOligo_arr.push(aln_dict_bulk[key])
+                targetingOligo+=aln_dict_bulk[key][0];
+                targetingOligo_arr.push(aln_dict_bulk[key][0])
                 break;
         }
     }
@@ -3505,11 +3503,11 @@ function PlotAlignment_bulk(barcode, locus, bulk_threshold){
     }
 
     // For saving csv
-    summary_track[id][1] = targetingOligo;
-    summary_track[id][2] = no_indel;
-    summary_track[id][3] = inf_indel;
-    summary_track[id][4] = out_indel;
-    summary_track[id][7] = no_indel+inf_indel+out_indel+targetingOligo;
+    // summary_track[id][1] = targetingOligo;
+    // summary_track[id][2] = no_indel;
+    // summary_track[id][3] = inf_indel;
+    // summary_track[id][4] = out_indel;
+    // summary_track[id][7] = no_indel+inf_indel+out_indel+targetingOligo;
     if (summary_track[id][7]>0) {
         summary_track_select[id+1] =  [GetWellPos(id), (targetingOligo/summary_track[id][7]*100).toFixed(2), (no_indel/summary_track[id][7]*100).toFixed(2), (inf_indel/summary_track[id][7]*100).toFixed(2), (out_indel/summary_track[id][7]*100).toFixed(2), summary_track[id][7]]
     }
@@ -3527,6 +3525,14 @@ function PlotAlignment_bulk(barcode, locus, bulk_threshold){
     return second[1] - first[1];
     });
     aln_dict_bulk = Object.fromEntries(items.map(([v, k]) => [v, k]));
+
+    for (let key in aln_dict_bulk){
+        if (key in aln_dict[0]) {
+        }
+        else{
+            delete aln_dict_bulk[key]
+        }
+    }
 
     //aggregate aln_track
     //Find top 3:
@@ -3646,6 +3652,7 @@ function PlotAlignment_bulk(barcode, locus, bulk_threshold){
     indel_info_hist = []
 
     for (let key in aln_dict_bulk){
+
         //aggregate WT
         for (let x=0; x<30*2; x++){
             //draw main track:
