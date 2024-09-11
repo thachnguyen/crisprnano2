@@ -1094,7 +1094,6 @@ function ReverseComplement(s)
 	return t;
 }
 
-
 function getFastaSequence() {
     var myFastaURL;
     if (document.URL.includes('www')){
@@ -2274,7 +2273,6 @@ function DrawPie_bulk()
         SVGObj.style.fill="rgb(0,200,0)";
         svg.appendChild(SVGObj);
     
-
     SVGObj= document.createElementNS(NS,"text");
     SVGObj.setAttribute("font-family", "sans-serif");
     SVGObj.setAttribute("font-weight", "100");
@@ -2307,6 +2305,56 @@ function DrawPie_bulk()
     SVGObj.setAttribute("font-size", "12");
     SVGObj.textContent = "targeted mutagenesis (KI): "+ summary_track_select[barcode+1][1]+ " %";
     svg.appendChild(SVGObj);
+
+
+    //Plot RIMA Pie
+    var svg = document.getElementById("RIMApie_bulk");
+    var angle = -3.1415/2;
+    var lastangle = angle;
+    angle+=2*3.1415*0.995*summary_track[barcode][2]/sum;
+    //SVG:
+    var startx = size*Math.cos(lastangle);
+    var starty = size*Math.sin(lastangle);
+    var plusx = size*(Math.cos(angle)-Math.cos(lastangle));
+    var plusy = size*(Math.sin(angle)-Math.sin(lastangle));
+    var largearc = 0;
+    if (angle-lastangle > 3.1415) largearc = 1;
+    var SVGObj= document.createElementNS(NS,"path");
+    SVGObj.setAttributeNS(null, "d", "M "+midx+","+midy+" l "+startx+","+starty+" a "+size+" "+size+" 0 "+largearc+" 1 "+plusx+" "+plusy+" z");
+    SVGObj.style.fill="rgb(200,200,200)";
+    SVGObj.setAttribute("pointer-events","none");
+    svg.appendChild(SVGObj);
+
+    // inframe indel1
+    lastangle = angle;
+    angle+=2*3.1415*0.995*inf_indel1[0]/sum;
+    startx = size*Math.cos(lastangle);
+    starty = size*Math.sin(lastangle);
+    plusx = size*(Math.cos(angle)-Math.cos(lastangle));
+    plusy = size*(Math.sin(angle)-Math.sin(lastangle));
+    largearc = 0;
+    if (angle-lastangle > 3.1415) largearc = 1;
+    SVGObj= document.createElementNS(NS,"path");
+    SVGObj.setAttributeNS(null, "d", "M "+midx+","+midy+" l "+startx+","+starty+" a "+size+" "+size+" 0 "+largearc+" 1 "+plusx+" "+plusy+" z");
+    SVGObj.style.fill=BLAU[0];
+    SVGObj.setAttribute("pointer-events","none");
+    svg.appendChild(SVGObj);
+
+    // inframe indel2
+    lastangle = angle;
+    angle+=2*3.1415*0.995*inf_indel1[1]/sum;
+    startx = size*Math.cos(lastangle);
+    starty = size*Math.sin(lastangle);
+    plusx = size*(Math.cos(angle)-Math.cos(lastangle));
+    plusy = size*(Math.sin(angle)-Math.sin(lastangle));
+    var largearc = 0;
+    if (angle-lastangle > 3.1415) largearc = 1;
+    SVGObj= document.createElementNS(NS,"path");
+    SVGObj.setAttributeNS(null, "d", "M "+midx+","+midy+" l "+startx+","+starty+" a "+size+" "+size+" 0 "+largearc+" 1 "+plusx+" "+plusy+" z");
+    SVGObj.style.fill=BLAU[1];
+    SVGObj.setAttribute("pointer-events","none");
+    svg.appendChild(SVGObj);
+
 
     // Parse FASTQ data and extract quality scores
 
@@ -3448,6 +3496,7 @@ function PlotAlignment_bulk(barcode, locus, bulk_threshold){
     // check genotype
     var id = barcode;
     aln_dict_bulk = {}
+    rima_hist = [0, 0, 0]
 
     for (let key in aln_dict[id]){
         if ((aln_dict[id][key][1]!=8)&&(aln_dict[id][key][0]>10)&&(aln_dict[id][key][0]>(1*bulk_threshold*summary_track[id][0]/100))&&(key.split('\n')[0].trim().length>region_analyse*2-4)){
@@ -3455,65 +3504,11 @@ function PlotAlignment_bulk(barcode, locus, bulk_threshold){
         }
     }
     
-    var no_indel = 0; 
-    var no_indel_arr = {}
-    var inf_indel =  0;
-    var out_indel = 0;
-    var out_indel_arr = []
-    var sum = 0;
-    var targetingOligo = 0;
-    var targetingOligo_arr = [];
-
-    for (let key in aln_dict_bulk){
-        switch (aln_dict[id][key][1]){
-            case 1:
-                no_indel+=aln_dict_bulk[key][0];
-                no_indel_arr[key] = aln_dict_bulk[key][0];
-                break;
-            case 2:
-                inf_indel+=aln_dict_bulk[key][0];
-                break;
-            case 3: 
-                out_indel+=aln_dict_bulk[key][0];
-                out_indel_arr.push(aln_dict_bulk[key][0])
-                break;
-            case 7: 
-                targetingOligo+=aln_dict_bulk[key][0];
-                targetingOligo_arr.push(aln_dict_bulk[key][0])
-                break;
-        }
-    }
-    
-    //update new WT candidate, keep maximum
-    if (Object.keys(no_indel_arr).length >1){
-        let maxValue = -Infinity;
-            var sum_wt = 0;
-            var candidate_wt;
-            for (const key1 in no_indel_arr) {
-                const value = no_indel_arr[key1];
-                if (value > maxValue) {
-                maxValue = value;
-                candidate_wt = key1;
-                }
-                sum_wt += value;
-                delete aln_dict_bulk[key1];
-            }
-            //update new candidate WT (max)
-            aln_dict_bulk[candidate_wt] = sum_wt;
-    }
-
-    // For saving csv
-    // summary_track[id][1] = targetingOligo;
-    // summary_track[id][2] = no_indel;
-    // summary_track[id][3] = inf_indel;
-    // summary_track[id][4] = out_indel;
-    // summary_track[id][7] = no_indel+inf_indel+out_indel+targetingOligo;
     if (summary_track[id][7]>0) {
-        summary_track_select[id+1] =  [GetWellPos(id), (targetingOligo/summary_track[id][7]*100).toFixed(2), (no_indel/summary_track[id][7]*100).toFixed(2), (inf_indel/summary_track[id][7]*100).toFixed(2), (out_indel/summary_track[id][7]*100).toFixed(2), summary_track[id][7]]
+        summary_track_select[id+1] =  [GetWellPos(id), (summary_track[id][1]/summary_track[id][7]*100).toFixed(2), (summary_track[id][2]/summary_track[id][7]*100).toFixed(2), (summary_track[id][3]/summary_track[id][7]*100).toFixed(2), (summary_track[id][4]/summary_track[id][7]*100).toFixed(2), summary_track[id][7]]
     }
     else {
-        summary_track_select[id+1] =  [GetWellPos(id), targetingOligo, no_indel, inf_indel, out_indel, summary_track[id][7]]
-
+        summary_track_select[id+1] =  [GetWellPos(id), summary_track[id][1], summary_track[id][2], summary_track[id][3], summary_track[id][4], summary_track[id][7]]
     }
 
     // sort aligment tract
@@ -3581,6 +3576,69 @@ function PlotAlignment_bulk(barcode, locus, bulk_threshold){
     svg.appendChild(SVGObj);
 
     delypos+=delyshift;
+
+      // Legend RIMA2
+    SVGObj= document.createElementNS(NS,"text");
+    SVGObj.setAttribute("y", ysize+delypos-70);
+    SVGObj.setAttribute("font-size", "24");
+    SVGObj.setAttribute("fill", N_cl);
+    SVGObj.textContent = 'ANNOTATION';
+    SVGObj.setAttribute("x", 120+6*(120));
+    svg.appendChild(SVGObj);
+
+    SVGObj= document.createElementNS(svgns, "rect");
+    SVGObj.setAttribute("x", 120+6*(120));
+    SVGObj.setAttribute("y", ysize+delypos-60);
+    SVGObj.setAttribute("width", "11");
+    SVGObj.setAttribute("height", "11");
+    SVGObj.setAttribute("fill", "rgb(255,255,0");
+    SVGObj.style.stroke=T_cl;
+    SVGObj.setAttribute("pointer-events","none");
+    svg.appendChild(SVGObj);
+    SVGObj= document.createElementNS(NS,"text");
+    SVGObj.setAttribute("y", ysize+delypos-50);
+    SVGObj.setAttribute("font-size", "14");
+    SVGObj.setAttribute("fill", N_cl);
+    SVGObj.textContent = 'DUPLICATED INSERTION';
+    SVGObj.setAttribute("x", 120+6*120+30);
+    svg.appendChild(SVGObj);
+
+    SVGObj= document.createElementNS(svgns, "rect");
+    SVGObj.setAttribute("x", 120+6*(120));
+    SVGObj.setAttribute("y", ysize+delypos-40);
+    SVGObj.setAttribute("width", "11");
+    SVGObj.setAttribute("height", "11");
+    SVGObj.setAttribute("fill", "rgb(0,255,255");
+    SVGObj.setAttribute("text-anchor", "middle");
+    SVGObj.setAttribute("pointer-events","none");
+    svg.appendChild(SVGObj);
+    SVGObj= document.createElementNS(NS,"text");
+    SVGObj.setAttribute("y", ysize+delypos-30);
+    SVGObj.setAttribute("font-size", "14");
+    SVGObj.setAttribute("fill", N_cl);
+    SVGObj.textContent = 'MICRO HOMOLOGY';
+    SVGObj.setAttribute("x", 120+6*120+30);
+    svg.appendChild(SVGObj);
+
+    SVGObj= document.createElementNS(svgns, "rect");
+    SVGObj.setAttribute("x", 120+6*(120));
+    SVGObj.setAttribute("y", ysize+delypos-20);
+    SVGObj.setAttribute("width", "11");
+    SVGObj.setAttribute("height", "11");
+    SVGObj.setAttribute("fill", "rgb(255,255,255");
+    SVGObj.setAttribute("text-anchor", "middle");
+    SVGObj.style.stroke=T_cl;
+    SVGObj.setAttribute("pointer-events","none");
+    svg.appendChild(SVGObj);
+
+    SVGObj= document.createElementNS(NS,"text");
+    SVGObj.setAttribute("y", ysize+delypos-10);
+    SVGObj.setAttribute("font-size", "14");
+    SVGObj.setAttribute("fill", N_cl);
+    SVGObj.textContent = 'NORMAL SNP/INSERTION';
+    SVGObj.setAttribute("x", 120+6*120+30);
+    svg.appendChild(SVGObj);
+
 
     var xfrom = BreakPoint-30 +Math.floor(AlignmentStartPos);
     var xto = xfrom +60;
@@ -3652,88 +3710,93 @@ function PlotAlignment_bulk(barcode, locus, bulk_threshold){
     indel_info_hist = []
 
     for (let key in aln_dict_bulk){
-
-        //aggregate WT
-        for (let x=0; x<30*2; x++){
-            //draw main track:
-            if ((key[x]==locus[BreakPoint-region_analyse+x])||(key[x]=='N')||(key[x]=='-')||(typeof(key[x])=='undefined')){
-                SVGObj= document.createElementNS(svgns, "rect");
-                SVGObj.setAttribute("x", 120+12*(x)-5);
-                SVGObj.setAttribute("y", ysize+delypos-10);
-                SVGObj.setAttribute("width", "11");
-                SVGObj.setAttribute("height", "11");
-                SVGObj.setAttribute("fill", "rgb(216,216,216");
-                SVGObj.setAttribute("text-anchor", "middle");
-                SVGObj.setAttribute("pointer-events","none");
-                svg.appendChild(SVGObj);
-                }
+                //aggregate WT
+        var micro_homology_data = Check_RIMA(key)
+        var duplication1 = Check_duplication(key)
+        var rima_class = 'other EJ'
+        if (micro_homology_data[0]!=''){
+            rima_class = 'other EJ (MH-del 1bp)'
+            if (micro_homology_data[0].length>=2){
+                rima_class = 'MH-del';
+                rima_hist[0] += aln_dict_bulk[key]
             }
-
-        if (aln_dict[id][key][1]==1 && (Object.keys(no_indel_arr).length ==2)){
-            for (let x=xfrom-10; x<xto-10; x++){
-            //draw main track:
-            if (Object.keys(no_indel_arr)[0][x]==Object.keys(no_indel_arr)[1][x]){
-                if ((Object.keys(no_indel_arr)[0][x]==locus[BreakPoint-region_analyse+x])||(key[x]=='N')||(key[x]=='-')||(typeof(key[x])=='undefined')){
-                }
-                else {
+        }
+        else if ((micro_homology_data[3]==1)||((micro_homology_data[1]!=-1)&&(micro_homology_data[2]-micro_homology_data[1]==1))){
+            var rima_class = 'NHEJ'
+            rima_hist[1] += aln_dict_bulk[key]
+        }
+        else {
+            rima_class = 'other EJ'
+            rima_hist[2] += aln_dict_bulk[key]
+        }
+         
+        if (rima_class=='MH-del'||rima_class=='other EJ (MH-del 1bp)') { 
+            for (let x=xfrom-70; x<xto+10; x++){
+                if (((x >= micro_homology_data[1]-xfrom+10)&&(x < micro_homology_data[1]-xfrom+10 + micro_homology_data[0].length))||((x >= micro_homology_data[2]-xfrom+10)&&(x < micro_homology_data[2]-xfrom+10 + micro_homology_data[0].length))){
                     SVGObj= document.createElementNS(svgns, "rect");
-                    SVGObj.style.stroke="rgb(0,0,0)";
-                    SVGObj.setAttribute("x", 115+12*(x-xfrom+10));
+                    SVGObj.setAttribute("x", 120+12*(x)-5);
                     SVGObj.setAttribute("y", ysize+delypos-10);
                     SVGObj.setAttribute("width", "11");
                     SVGObj.setAttribute("height", "11");
-                    SVGObj.setAttribute("fill", "rgb(216,216,216");
+                    SVGObj.setAttribute("fill", "rgb(0,255,255");
                     SVGObj.setAttribute("text-anchor", "middle");
                     SVGObj.setAttribute("pointer-events","none");
                     svg.appendChild(SVGObj);
                 }
+            }
+        }
+        
+        if (aln_dict[id][key][1]==1 && (Object.keys(no_indel_arr[barcode]).length ==2)){
+            for (let x=xfrom-10; x<xto-10; x++){
+            //draw main track:
+            if (Object.keys(no_indel_arr[barcode])[0][x]==Object.keys(no_indel_arr[barcode])[1][x]){
                 SVGObj= document.createElementNS(NS, "text");
-                    SVGObj.setAttribute("y", ysize+delypos);
-                    SVGObj.setAttribute("font-size", "13");
-                    SVGObj.setAttribute("font-weight", "400");
-                    if (key[x]=="T"){SVGObj.textContent = key[x];
-                        SVGObj.setAttribute("fill", "rgb(255,0,0");
-                    }
-                    else if (key[x]=="A"){SVGObj.textContent = key[x];
-                        SVGObj.setAttribute("fill", "rgb(0,150,0");
-                    }
-                    else if (key[x]=="C"){SVGObj.textContent = key[x];
-                        SVGObj.setAttribute("fill", "rgb(0,0,255");
-                    }
-                    else if (key[x]=="G"){SVGObj.textContent = key[x];
-                        SVGObj.setAttribute("fill", "rgb(200, 100, 0");
-                    }
-                    else if (key[x]=="N"){SVGObj.textContent = key[x];
-                        SVGObj.setAttribute("fill", "rgb(0, 0, 0");
-                    }
-                    else if (key[x]=="-"){SVGObj.textContent = key[x];
-                        SVGObj.setAttribute("fill", "rgb(0,0,0");
-                    }
-                    SVGObj.setAttribute("x", 120+12*(x-xfrom+10));
-                    SVGObj.setAttribute("text-anchor", "middle");
-                    SVGObj.setAttribute("pointer-events","none");
-                    svg.appendChild(SVGObj);
+                SVGObj.setAttribute("y", ysize+delypos);
+                SVGObj.setAttribute("font-size", "13");
+                SVGObj.setAttribute("font-weight", "400");
+                if (key[x]=="T"){SVGObj.textContent = key[x];
+                    SVGObj.setAttribute("fill", T_cl);
+                }
+                else if (key[x]=="A"){SVGObj.textContent = key[x];
+                    SVGObj.setAttribute("fill", A_cl);
+                }
+                else if (key[x]=="C"){SVGObj.textContent = key[x];
+                    SVGObj.setAttribute("fill", C_cl);
+                }
+                else if (key[x]=="G"){SVGObj.textContent = key[x];
+                    SVGObj.setAttribute("fill", G_cl);
+                }
+                else if (key[x]=="N"){SVGObj.textContent = key[x];
+                    SVGObj.setAttribute("fill", N_cl);
+                }
+                else if (key[x]=="-"){SVGObj.textContent = key[x];
+                    SVGObj.setAttribute("fill", "rgb(0,0,0");
+                }
+                SVGObj.setAttribute("x", 120+12*(x-xfrom+10));
+                SVGObj.setAttribute("text-anchor", "middle");
+                SVGObj.setAttribute("pointer-events","none");
+                svg.appendChild(SVGObj);
             }
             else {
-                var fontsize1 = 2+ Math.floor(13*no_indel_arr[Object.keys(no_indel_arr)[0]]/(no_indel_arr[Object.keys(no_indel_arr)[0]]+no_indel_arr[Object.keys(no_indel_arr)[1]]))
-                var fontsize2 = 2+ Math.floor(13*no_indel_arr[Object.keys(no_indel_arr)[1]]/(no_indel_arr[Object.keys(no_indel_arr)[0]]+no_indel_arr[Object.keys(no_indel_arr)[1]]))
+                var fontsize1 = 2+ Math.floor(13*no_indel_arr[barcode][Object.keys(no_indel_arr[barcode])[0]]/(no_indel_arr[barcode][Object.keys(no_indel_arr[barcode])[0]]+no_indel_arr[barcode][Object.keys(no_indel_arr[barcode])[1]]))
+                var fontsize2 = 2+ Math.floor(13*no_indel_arr[barcode][Object.keys(no_indel_arr[barcode])[1]]/(no_indel_arr[barcode][Object.keys(no_indel_arr[barcode])[0]]+no_indel_arr[barcode][Object.keys(no_indel_arr[barcode])[1]]))
 
                 SVGObj= document.createElementNS(NS, "text");
                 SVGObj.setAttribute("y", ysize+delypos+fontsize1-5);
                 SVGObj.setAttribute("font-size", fontsize1);
                 SVGObj.setAttribute("font-weight", "600");
 
-                if (Object.keys(no_indel_arr)[0][x]=="T"){SVGObj.setAttribute("fill", "rgb(255,0,0");
+                if (Object.keys(no_indel_arr[barcode])[0][x]=="T"){SVGObj.setAttribute("fill", T_cl);
                 }
-                else if (Object.keys(no_indel_arr)[0][x]=="A"){SVGObj.setAttribute("fill", "rgb(0,150,0");
+                else if (Object.keys(no_indel_arr[barcode])[0][x]=="A"){SVGObj.setAttribute("fill", A_cl);
                 }
-                else if (Object.keys(no_indel_arr)[0][x]=="C"){SVGObj.setAttribute("fill", "rgb(0,0,255");
+                else if (Object.keys(no_indel_arr[barcode])[0][x]=="C"){SVGObj.setAttribute("fill", C_cl);
                 }
-                else if (Object.keys(no_indel_arr)[0][x]=="G"){SVGObj.setAttribute("fill", "rgb(200, 100, 0");
+                else if (Object.keys(no_indel_arr[barcode])[0][x]=="G"){SVGObj.setAttribute("fill", G_cl);
                 }
-                else if (Object.keys(no_indel_arr)[0][x]=="N"){SVGObj.setAttribute("fill", "rgb(0, 0, 0");
+                else if (Object.keys(no_indel_arr[barcode])[0][x]=="N"){SVGObj.setAttribute("fill", N_cl);
                 }
-                else if (Object.keys(no_indel_arr)[0][x]=="-"){SVGObj.setAttribute("fill", "rgb(0,0,0");
+                else if (Object.keys(no_indel_arr[barcode])[0][x]=="-"){SVGObj.setAttribute("fill", N_cl);
                 }
                 SVGObj.textContent = Object.keys(no_indel_arr)[0][x];
                 SVGObj.setAttribute("x", 120+12*(x-xfrom+10));
@@ -3745,7 +3808,7 @@ function PlotAlignment_bulk(barcode, locus, bulk_threshold){
                 SVGObj.setAttribute("y", ysize+delypos+15);
                 SVGObj.setAttribute("font-size", 8);
                 SVGObj.setAttribute("font-weight", "400");
-                SVGObj.textContent = no_indel_arr[Object.keys(no_indel_arr)[1]] + " "+Object.keys(no_indel_arr)[1][x]
+                SVGObj.textContent = no_indel_arr[barcode][Object.keys(no_indel_arr[barcode])[1]] + " "+Object.keys(no_indel_arr[barcode])[1][x]
                 SVGObj.setAttribute("x", 120+12*(x-xfrom+10));
                 SVGObj.setAttribute("text-anchor", "middle");
                 SVGObj.setAttribute("pointer-events","none");
@@ -3755,7 +3818,7 @@ function PlotAlignment_bulk(barcode, locus, bulk_threshold){
                 SVGObj.setAttribute("y", ysize+delypos+25);
                 SVGObj.setAttribute("font-size", 8);
                 SVGObj.setAttribute("font-weight", "400");
-                SVGObj.textContent = no_indel_arr[Object.keys(no_indel_arr)[0]] + " " +Object.keys(no_indel_arr)[0][x]
+                SVGObj.textContent = no_indel_arr[barcode][Object.keys(no_indel_arr[barcode])[0]] + " " +Object.keys(no_indel_arr[barcode])[0][x]
                 SVGObj.setAttribute("x", 120+12*(x-xfrom+10));
                 SVGObj.setAttribute("text-anchor", "middle");
                 SVGObj.setAttribute("pointer-events","none");
@@ -3766,19 +3829,19 @@ function PlotAlignment_bulk(barcode, locus, bulk_threshold){
                 SVGObj.setAttribute("font-size", fontsize2);
                 SVGObj.setAttribute("font-weight", "600");
 
-                if (Object.keys(no_indel_arr)[1][x]=="T"){SVGObj.setAttribute("fill", "rgb(255,0,0");
+                if (Object.keys(no_indel_arr[barcode])[1][x]=="T"){SVGObj.setAttribute("fill", T_cl);
                 }
-                else if (Object.keys(no_indel_arr)[1][x]=="A"){SVGObj.setAttribute("fill", "rgb(0,150,0");
+                else if (Object.keys(no_indel_arr[barcode])[1][x]=="A"){SVGObj.setAttribute("fill", A_cl);
                 }
-                else if (Object.keys(no_indel_arr)[1][x]=="C"){SVGObj.setAttribute("fill", "rgb(0,0,255");
+                else if (Object.keys(no_indel_arr[barcode])[1][x]=="C"){SVGObj.setAttribute("fill", C_cl);
                 }
-                else if (Object.keys(no_indel_arr)[1][x]=="G"){SVGObj.setAttribute("fill", "rgb(200, 100, 0");
+                else if (Object.keys(no_indel_arr[barcode])[1][x]=="G"){SVGObj.setAttribute("fill", G_cl);
                 }
-                else if (Object.keys(no_indel_arr)[1][x]=="N"){SVGObj.setAttribute("fill", "rgb(0, 0, 0");
+                else if (Object.keys(no_indel_arr[barcode])[1][x]=="N"){SVGObj.setAttribute("fill", N_cl);
                 }
-                else if (Object.keys(no_indel_arr)[1][x]=="-"){SVGObj.setAttribute("fill", "rgb(0,0,0");
+                else if (Object.keys(no_indel_arr[barcode])[1][x]=="-"){SVGObj.setAttribute("fill", "rgb(0,0,0");
                 }
-                SVGObj.textContent = Object.keys(no_indel_arr)[1][x];
+                SVGObj.textContent = Object.keys(no_indel_arr[barcode])[1][x];
                 SVGObj.setAttribute("x", 120+12*(x-xfrom+10));
                 SVGObj.setAttribute("text-anchor", "middle");
                 SVGObj.setAttribute("pointer-events","none");
@@ -3790,45 +3853,56 @@ function PlotAlignment_bulk(barcode, locus, bulk_threshold){
             for (let x=xfrom-10; x<xto-10; x++){
             //draw main track:
             if ((key[x]==locus[BreakPoint-region_analyse+x])||(key[x]=='N')||(key[x]=='-')||(typeof(key[x])=='undefined')){
+                if ((duplication1[0])&&(x>=duplication1[1])&&(x<(duplication1[1]+duplication1[2]))){
+                    SVGObj= document.createElementNS(svgns, "rect");
+                    SVGObj.setAttribute("fill", "rgb(255,255,0");
+                    SVGObj.style.stroke=T_cl;
+                    SVGObj.setAttribute("x", 120+12*(x-xfrom+10)-5);
+                    SVGObj.setAttribute("y", ysize+delypos-10);
+                    SVGObj.setAttribute("width", "12");
+                    SVGObj.setAttribute("height", "12");
+                    SVGObj.setAttribute("text-anchor", "middle");
+                    SVGObj.setAttribute("pointer-events","none");
+                    svg.appendChild(SVGObj);
+                    }
                 SVGObj= document.createElementNS(NS, "text");
                 SVGObj.setAttribute("font-weight", "400");
             }
             else {
                 SVGObj= document.createElementNS(svgns, "rect");
-                SVGObj.style.stroke="rgb(0,0,0)";
+                SVGObj.style.stroke=N_cl;
                 SVGObj.setAttribute("x", 115+12*(x-xfrom+10));
                 SVGObj.setAttribute("y", ysize+delypos-10);
                 SVGObj.setAttribute("width", "11");
                 SVGObj.setAttribute("height", "11");
-                SVGObj.setAttribute("fill", "rgb(216,216,216");
+                SVGObj.setAttribute("fill", "rgb(255,255,255");
                 SVGObj.setAttribute("text-anchor", "middle");
                 SVGObj.setAttribute("pointer-events","none");
                 svg.appendChild(SVGObj);
                 SVGObj= document.createElementNS(NS, "text");
                 SVGObj.setAttribute("font-weight", "600");
-
             }
             
             SVGObj.setAttribute("y", ysize+delypos);
             SVGObj.setAttribute("font-size", "13");
 
             if (key[x]=="T"){SVGObj.textContent = key[x];
-                SVGObj.setAttribute("fill", "rgb(255,0,0");
+                SVGObj.setAttribute("fill", T_cl);
             }
             else if (key[x]=="A"){SVGObj.textContent = key[x];
-                SVGObj.setAttribute("fill", "rgb(0,150,0");
+                SVGObj.setAttribute("fill", A_cl);
             }
             else if (key[x]=="C"){SVGObj.textContent = key[x];
-                SVGObj.setAttribute("fill", "rgb(0,0,255");
+                SVGObj.setAttribute("fill", C_cl);
             }
             else if (key[x]=="G"){SVGObj.textContent = key[x];
-                SVGObj.setAttribute("fill", "rgb(200, 100, 0");
+                SVGObj.setAttribute("fill", G_cl);
             }
             else if (key[x]=="N"){SVGObj.textContent = key[x];
-                SVGObj.setAttribute("fill", "rgb(0, 0, 0");
+                SVGObj.setAttribute("fill", N_cl);
             }
             else if (key[x]=="-"){SVGObj.textContent = key[x];
-                SVGObj.setAttribute("fill", "rgb(0,0,0");
+                SVGObj.setAttribute("fill", N_cl);
             }
             SVGObj.setAttribute("x", 120+12*(x-xfrom+10));
             SVGObj.setAttribute("text-anchor", "middle");
@@ -3847,20 +3921,25 @@ function PlotAlignment_bulk(barcode, locus, bulk_threshold){
                 if (image_loc == 0){
                     var imageElement = document.createElementNS(NS, "image");
                     imageElement.setAttribute("x", 120+12*(x-xfrom+10)-16); // Set the x-coordinate of the image
-                        
+
                     imageElement.setAttribute("y", ysize+delypos+4); // Set the y-coordinate of the image
                     imageElement.setAttribute("width", 12); // Set the width of the image
                     imageElement.setAttribute("height", 12); // Set the height of the image
-                    imageElement.setAttribute("href", "https://crisprnano.de/crisprnano2/insert.svg"); // Set the path to your image file
+                    imageElement.setAttribute("href", "crisprnano2/insert.svg"); // Set the path to your image file
                     svg.appendChild(imageElement);
                     image_loc =1;
                 }
-                SVGObj.style.stroke="rgb(255,0,0)";
+                if (duplication1[0]){
+                    SVGObj.setAttribute("fill", "rgb(255,255,0");
+                }
+                else{
+                    SVGObj.setAttribute("fill", "rgb(255,255,255");
+                }
+                SVGObj.style.stroke=T_cl;
                 SVGObj.setAttribute("x", 120+12*(x-xfrom+10));
                 SVGObj.setAttribute("y", ysize+delypos+4);
                 SVGObj.setAttribute("width", "12");
                 SVGObj.setAttribute("height", "12");
-                SVGObj.setAttribute("fill", "rgb(255,255,255");
                 SVGObj.setAttribute("text-anchor", "middle");
                 SVGObj.setAttribute("pointer-events","none");
                 svg.appendChild(SVGObj);
@@ -3870,7 +3949,7 @@ function PlotAlignment_bulk(barcode, locus, bulk_threshold){
             SVGObj.setAttribute("x", 120+12*(x-xfrom+10)+5);
             SVGObj.setAttribute("y", ysize+delypos+15);
             SVGObj.setAttribute("font-size", "13");
-            SVGObj.setAttribute("fill", "rgb(0,0,0)");
+            SVGObj.setAttribute("fill", N_cl);
             SVGObj.textContent = key[x+region_analyse*2];
             SVGObj.setAttribute("text-anchor", "middle");
             SVGObj.setAttribute("pointer-events","none");
@@ -3893,19 +3972,13 @@ function PlotAlignment_bulk(barcode, locus, bulk_threshold){
         var gap_len1 = (key.substring(region_analyse*2 +1, region_analyse*4).split("G").length-1) +(key.substring(region_analyse*2 +1, region_analyse*4).split("A").length-1) +(key.substring(region_analyse*2 +1, region_analyse*4).split("T").length-1) +(key.substring(region_analyse*2 +1, region_analyse*4).split("C").length-1) - (key.split("-").length-1);
 
         SVGObj.textContent +="TYPE: "+ aln_type[aln_dict[barcode][key][1]] + ", (" + gap_len1 + " bp)" +" | " +aln_dict_bulk[key] +"  Reads, " + (aln_dict_bulk[key]/summary_track[barcode][7]*100).toFixed(2) + " %";
-        
         if (gap_len1*1<0){
-            loc_indel = key.search('-') - BreakPoint;
+            loc_indel = key.search('-') -BreakPoint;
             if (rightbs!=document.getElementsByName("RightBS")[0].value.replace(/[\s\n]+/g, '').toUpperCase()){
                 indel_info.push([gap_len1, loc_indel + rightbs.length])
-                indel_info_dist.push([aln_dict_bulk[key], loc_indel + rightbs.length])
-                indel_info_hist.push([gap_len1, loc_indel + rightbs.length, aln_dict_bulk[key]/summary_track[barcode][7]*100, aln_dict_bulk[key]])
-
             }
             else {
                 indel_info.push([gap_len1, loc_indel])
-                indel_info_dist.push([aln_dict_bulk[key], loc_indel])
-                indel_info_hist.push([gap_len1, loc_indel, aln_dict_bulk[key]/summary_track[barcode][7]*100, aln_dict_bulk[key]])
             }
         } 
         else if (gap_len1*1>0){
@@ -3917,20 +3990,35 @@ function PlotAlignment_bulk(barcode, locus, bulk_threshold){
                     tmp_ins = 1
                     if (rightbs!=document.getElementsByName("RightBS")[0].value.replace(/[\s\n]+/g, '').toUpperCase()){
                         indel_info.push([gap_len1, loc_indel + rightbs.length])
-                        indel_info_dist.push([aln_dict_bulk[key], loc_indel+ rightbs.length])
-                        indel_info_hist.push([gap_len1, loc_indel + rightbs.length, aln_dict_bulk[key]/summary_track[barcode][7]*100, aln_dict_bulk[key]])
                         }
                         else {
                             indel_info.push([gap_len1, loc_indel])
-                            indel_info_dist.push([aln_dict_bulk[key]])
-                            indel_info_hist.push([gap_len1, loc_indel, aln_dict_bulk[key]/summary_track[barcode][7]*100, aln_dict_bulk[key]])
                         }
                 }
             }
         }
         svg.appendChild(SVGObj);
+
+        SVGObj= document.createElementNS(NS,"text");
+        SVGObj.setAttribute("x", 10+ 120+24*(30)+2 );
+        SVGObj.setAttribute("y", ysize+delypos+13);
+        SVGObj.setAttribute("font-size", "14");
+        if (rima_class == 'NHEJ'){
+            SVGObj.setAttribute("fill", "rgb(17, 94, 94)");
+        }
+        else if (rima_class == 'other EJ'){
+            SVGObj.setAttribute("fill", "rgb(153, 151, 151)");
+        }
+        else if (rima_class == 'MH-del'){
+            SVGObj.setAttribute("fill", "rgb(84, 199, 199)");
+        }
+
+        SVGObj.textContent +="RIMA classified as: "+ rima_class;
+        svg.appendChild(SVGObj);
+
         id1+=1;
         delypos+=delyshift;
+
     }
     AlignmentPrecalc_bulk = document.getElementById("DIV_alignment_bulk").innerHTML;
 
@@ -4891,6 +4979,7 @@ var out_indel = Array(96)
 var out_indel_arr = Array(96)
 var targetingOligo = Array(96)
 var targetingOligo_arr = Array(96)
+var rima_hist
 
 const T_cl = "rgb(255,0,0)"
 const A_cl = "rgb(0,150,0)"
