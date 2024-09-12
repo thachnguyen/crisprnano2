@@ -595,6 +595,9 @@
                     <div class="box">
                         <svg id="SVGpie_bulk" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="400" height="300"></svg>
                     </div>
+                    <div class="box">
+                        <svg id="RIMApie_bulk" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="400" height="300"></svg>
+                    </div>
                     <div id="Indel_plot" class = "box" style="width: 400px; height: 300px;">
                     </div>
                     </div>
@@ -2311,7 +2314,7 @@ function DrawPie_bulk()
     var svg = document.getElementById("RIMApie_bulk");
     var angle = -3.1415/2;
     var lastangle = angle;
-    angle+=2*3.1415*0.995*summary_track[barcode][2]/sum;
+    angle+=2*3.1415*0.995*rima_hist[0]/(rima_hist[0]+rima_hist[1]+rima_hist[2]);
     //SVG:
     var startx = size*Math.cos(lastangle);
     var starty = size*Math.sin(lastangle);
@@ -2327,7 +2330,7 @@ function DrawPie_bulk()
 
     // inframe indel1
     lastangle = angle;
-    angle+=2*3.1415*0.995*inf_indel1[0]/sum;
+    angle+=2*3.1415*0.995*rima_hist[1]/(rima_hist[0]+rima_hist[1]+rima_hist[2]);
     startx = size*Math.cos(lastangle);
     starty = size*Math.sin(lastangle);
     plusx = size*(Math.cos(angle)-Math.cos(lastangle));
@@ -2342,7 +2345,7 @@ function DrawPie_bulk()
 
     // inframe indel2
     lastangle = angle;
-    angle+=2*3.1415*0.995*inf_indel1[1]/sum;
+    angle+=2*3.1415*0.995*rima_hist[2]/(rima_hist[0]+rima_hist[1]+rima_hist[2]);
     startx = size*Math.cos(lastangle);
     starty = size*Math.sin(lastangle);
     plusx = size*(Math.cos(angle)-Math.cos(lastangle));
