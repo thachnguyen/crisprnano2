@@ -105,10 +105,8 @@
             /* box-sizing: border-box; Include border and padding in width */
         }
     </style>
-
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.0/xlsx.full.min.js"></script>
     <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
-
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>CRISPRnano2</title>
@@ -139,7 +137,7 @@
         </head>
         <body data-new-gr-c-s-check-loaded="14.1130.0" data-gr-ext-installed="">
             <nav class="navbar sticky-top navbar-expand-sm navbar-light">
-                <a class="navbar-brand" href="https://www.crisprnano.de/CRISPRnano2.html"><img src="./crisprnano2/title_white.png" width="180"></a>
+                <!-- <a class="navbar-brand" href="https://www.crisprnano.de/CRISPRnano2.html"><img src="./crisprnano2/title_white.png" width="180"></a> -->
                 <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarToggler11" aria-controls="navbarToggler11" aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
@@ -173,7 +171,7 @@
                 </div>
             </nav>
             <div class="d-flex justify-content-center mt-3">
-                <img id="titleIndex" width="20%" src="./crisprnano2/titleBig.png">
+                <img id="titleIndex" width="60%" src="./crisprnano2/titleBig.png">
             </div>
         <hr>
         <div class="row">
@@ -183,8 +181,8 @@
         <div id="DIV_topmenu">
             <div class="text-center">
                 <div class="btn-group btn-group-lg mr-3" role="group" id="aBtnGroup" aria-label="Basic example">
-                    <button type="button"  name="setup" class="btn btn-info" onclick="TabClicked(0);">ANALYZER SETTING</button>
-                    <div id="save" style="display:none">test</div>
+                    <button type="button"  name="setup" class="btn btn-info" onclick="TabClicked(0);">GENERAL ANALYZER</button>
+                    <button type="button"  name="setup_pe" class="btn btn-info" onclick="TabClicked(7);">PRIME EDITING ANALYZER</button>
                     <button type="button"  name="result" class="btn btn-info" onclick="TabClicked(1);">RESULTS</button>
                     <button type="button"  name="bulkview_result" class="btn btn-info" onclick="TabClicked(4);">BULK/SINGLE CLONE VIEWER</button>
                     <button type="button"  name="offtarget_result" class="btn btn-info" onclick="TabClicked(5);">OFF-TARGET ANALYSIS</button>
@@ -194,13 +192,9 @@
         </div>
         <br>
         <div id="setup" style="position:absolute; left:20px; top:80px">
-
-
                 <div class="column">
                     <br>
                     <br>
-
-
                         <h5><a href="https://github.com/thachnguyen/CRISPRnano">Manual</a></h5>
                         <h5><a href="https://github.com/thachnguyen/CRISPRnano" target="_top">Source code on Github</a></h5>
                         
@@ -223,8 +217,7 @@
                                 <option value="ONT">Nanopore</option>
                                 <option value="Il_pac">Illumina or PacBio</option>
                               </select> -->
-                            <!-- <br>  <br>  -->
-                            
+                            <!-- <br>  <br>  -->y
                                 Interested region (optional) +/- bp: 
                                 <div class="popup" onclick="myFunction5()">(? Click here!)
                                     <span class="popuptext" id="help5"> For ONT reads, it is recommended to use -/+15 bases around the predicted DNA lesion. Larger regions are prone to false positive indels. Larger regions (total of 200-250 bp) can be safely used with Illumina reads. You can drag and drop the central point of the predicted double strand break in the genomic sequence to the left or to the right. Default value 0 is double strand breaking point- Crisprnano will use the first index of sgRNA mapped on reference. Click again to close</span>
@@ -241,7 +234,7 @@
                                     <span class="popuptext" id="help10">The Quality threshold determine the minimum filter base, For Illumina it should be >20, For ONT it should be >10, Click again to close.</span>
                                 </div> 
                                 <br><input type="text" size="30" class="input_form" id = "phredthreshold" name="Phred" value="20" onchange="checkValue();"><br>
-                                <br>dsDNA without Homology Arm 
+                                <br>pegRNA 
                                 <div class="popup" onclick="myFunction10()">(? Click here!)
                                     <span class="popuptext" id="help10">The Quality threshold determine the minimum filter base, For Illumina it should be >20, For ONT it should be >10, Click again to close.</span>
                                 </div> 
