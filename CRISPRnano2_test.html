@@ -4879,6 +4879,21 @@ function Check_duplication(sequence_seq){
     return [duplicate, index_in, insertion_trim.length];   
 }
 
+function Check_duplication_ins(sequence_seq, minseq = 2){
+    // This function will check the insertion track and compare it to the both site of insertion position, 
+    // if there is duplicate seq longer than 2bp, shift the cutting site and then mark them as micro homology
+    var duplicate = false
+    const main_track = sequence_seq.split('\n')[0]
+    const insertion = sequence_seq.split('\n')[1]
+    const insertion_trim = insertion.trim()
+    var index_in = 0
+    if (insertion_trim !=''){
+        index_in = insertion.indexOf(insertion_trim)
+        duplicate = (main_track.substring(index_in, index_in+insertion_trim.length)==insertion.substring(index_in, index_in+insertion_trim.length)||main_track.substring(index_in-insertion_trim.length, index_in)==insertion.substring(index_in, index_in+insertion_trim.length))
+    }
+    return [duplicate, index_in, insertion_trim.length];   
+}
+
 
 // For google site
 function myFunction1() {
