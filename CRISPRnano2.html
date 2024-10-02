@@ -3143,6 +3143,16 @@ function Pre_PlotAlignment(barcode, locus){
     // summary_track[id][6] = not_align;
     // summary_track[id][7] = sum_track[id]
 
+    // assign new dictionary base on the partly duplidation insertion 
+    var validate_dup 
+    for (let key in aln_dict[id]){
+        validate_dup = Check_duplication_ins(key)
+        if (validate_dup[0]){
+            aln_dict[id][validate_dup[4]]= aln_dict[id][key]
+            delete aln_dict[id][key]
+        }
+    }
+
     for (let key in aln_dict[id]){
         if ((aln_dict[id][key][1]!=8)&&(aln_dict[id][key][0]>10)&&(aln_dict[id][key][0]>(1*MutationThreshold*sum_track[id]/100))&&(key.split('\n')[0].trim().length>region_analyse*2-4)){
             aln_dict_fil[id][key] = aln_dict[id][key][0];
@@ -4877,6 +4887,37 @@ function Check_duplication(sequence_seq){
         duplicate = (main_track.substring(index_in, index_in+insertion_trim.length)==insertion.substring(index_in, index_in+insertion_trim.length)||main_track.substring(index_in-insertion_trim.length, index_in)==insertion.substring(index_in, index_in+insertion_trim.length))
     }
     return [duplicate, index_in, insertion_trim.length];   
+}
+
+function Check_duplication_ins(sequence_seq, minseq = 2){
+    // This function will check the insertion track and compare it to the both site of insertion position, 
+    // if there is duplicate seq longer than 2bp, shift the cutting site and then mark them as micro homology
+    // then shift the insertion start position according to size of duplication part
+    var duplicate = false
+    const main_track = sequence_seq.split('\n')[0]
+    const insertion = sequence_seq.split('\n')[1]
+    const insertion_trim = insertion.trim()
+    var index_in = 0
+    var m_homo = ''
+    var seq_new = sequence_seq
+    if (insertion_trim !=''){
+        index_in = insertion.indexOf(insertion_trim)
+        for (var i = 0; i < insertion_trim.length; i++){
+            if (main_track[index_in+i]==insertion_trim[i]){
+                m_homo += insertion_trim[i]
+            }
+            else{
+                break;
+            }
+        }
+    }
+    if (m_homo.length>=minseq& m_homo.length< insertion_trim.length){
+        //update the dictionary with new insertion position
+        duplicate = true
+        index_in = index_in + m_homo.length
+        seq_new = main_track +'\n'+ insertion.substr(0,index_in- m_homo.length) + ''.padStart(m_homo.length, ' ') + insertion_trim.substr(m_homo.length, insertion_trim.length) + m_homo + ''.padStart((insertion.length- index_in-insertion_trim.length), ' ') +'\n'
+    }
+    return [duplicate, index_in, insertion_trim.length, m_homo, seq_new];   
 }
 
 
