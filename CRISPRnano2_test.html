@@ -792,7 +792,6 @@ function checkValue() {
     // Define the target string to check occurrence
     const MutationThreshold1 = document.getElementsByName("MutationThreshold")[0].value;
     const phred = document.getElementsByName("Phred")[0].value;
-
     if (MutationThreshold1*1 > 100||MutationThreshold1*1<0) {
     alert('Please check the Mutation threshold again');
     document.getElementsByName("MutationThreshold")[0].value = '2';
@@ -810,7 +809,6 @@ function checkValue() {
 function setValue() {
     // Get the input value
     // Define the target string to check occurrence
-
     var mySelect = document.getElementById('mySelect');
     if (mySelect.value == 'ont'){
         document.getElementsByName('region_analyse')[0].value = "40";
@@ -835,6 +833,7 @@ function AlignmentMouseDown(evt)
     AlignmentDragging = true;
     return false;
 }
+
 function AlignmentMouseMove(evt)
 {
     if (AlignmentDragging)
@@ -847,7 +846,6 @@ function AlignmentMouseMove(evt)
         if (AlignmentStartPos < -2*region_analyse) AlignmentStartPos = -2*region_analyse;
         if (AlignmentStartPos > 2*region_analyse) AlignmentStartPos = 2*region_analyse;
         PlotAlignment(CurrentAlignment, locus);
-
         AlignmentLastX = x;
     }
     return false;
@@ -859,8 +857,6 @@ function AlignmentMouseMove_bulk(evt)
     {
         var x = evt.clientX;
         var y = evt.clientY;
-
-        //alert(x-AlignmentLastX);
         var shift = (x-AlignmentLastX)/12;
         AlignmentStartPos -= shift;
         if (AlignmentStartPos < -region_analyse) AlignmentStartPos = -region_analyse;
@@ -877,8 +873,6 @@ function AlignmentMouseMove_off(evt)
     {
         var x = evt.clientX;
         var y = evt.clientY;
-
-        //alert(x-AlignmentLastX);
         var shift = (x-AlignmentLastX)/12;
         AlignmentStartPos -= shift;
         if (AlignmentStartPos < -region_analyse) AlignmentStartPos = -region_analyse;
@@ -896,7 +890,7 @@ function AlignmentMouseUp(evt) {
 }
 
 // Alignment algorithms
-// modified version of Smith Watermann algorithm using adaptive aligning
+// modified version of Smith Watermann algorithm using adaptive aligning and dictionary based selector
 // This program use some API from implementation by Prof Heng Li at https://github.com/lh3/bioseq-js
 /**
  * Encode a sequence string with table
@@ -905,7 +899,6 @@ function AlignmentMouseUp(evt) {
  *
  * @return an integer array
  */
-// get fasta from our database
 
 function bsg_enc_seq(seq, table){
     if (table == null) return null;
@@ -967,8 +960,8 @@ function bsa_gen_query_profile(_s, _m, table){
 }
 
 /**
- * Local pairwise alignemnt
-
+ * Local and global pairwise alignemnt
+ * Global mode for RTT in PE, local for genaral purpose
     * @param target    target string
     * @param query     query string or query profile
     * @param matrix    square score matrix or [match,mismatch] array
