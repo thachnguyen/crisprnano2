@@ -208,16 +208,6 @@
                             <br><input type="text" class="input_form" size="30" id="locus" name="Locus" value=""> 
                             <br>
                             <br>             
-                            <!-- <a href="http://ftp.ensembl.org/pub/release-105/fasta/homo_sapiens/dna/">(Ensembl reference)</a><br> -->
-                            <!-- Sequencing method:                 
-                            <div class="popup" onclick="myFunction3()">(? Click here!)
-                                <span class="popuptext" id="help3">Reference amplicon length should be in the range of 200-300 bases with the nuclease target site located roughly in the middle. You can get the reference from Ensembl link below. Click again to close</span>
-                            </div>
-                            <select id="seq_method" name="seq_method">
-                                <option value="ONT">Nanopore</option>
-                                <option value="Il_pac">Illumina or PacBio</option>
-                              </select> -->
-                            <!-- <br>  <br>  -->y
                                 Interested region (optional) +/- bp: 
                                 <div class="popup" onclick="myFunction5()">(? Click here!)
                                     <span class="popuptext" id="help5"> For ONT reads, it is recommended to use -/+15 bases around the predicted DNA lesion. Larger regions are prone to false positive indels. Larger regions (total of 200-250 bp) can be safely used with Illumina reads. You can drag and drop the central point of the predicted double strand break in the genomic sequence to the left or to the right. Default value 0 is double strand breaking point- Crisprnano will use the first index of sgRNA mapped on reference. Click again to close</span>
@@ -234,17 +224,6 @@
                                     <span class="popuptext" id="help10">The Quality threshold determine the minimum filter base, For Illumina it should be >20, For ONT it should be >10, Click again to close.</span>
                                 </div> 
                                 <br><input type="text" size="30" class="input_form" id = "phredthreshold" name="Phred" value="20" onchange="checkValue();"><br>
-                                <br>pegRNA 
-                                <div class="popup" onclick="myFunction10()">(? Click here!)
-                                    <span class="popuptext" id="help10">The Quality threshold determine the minimum filter base, For Illumina it should be >20, For ONT it should be >10, Click again to close.</span>
-                                </div> 
-                                <br><input type="text" size="30" class="input_form" id = "dsDNA_KI" name="dsDNA_KI" ><br>
-
-                                <br>ssDNA with Homology Arm 
-                                <div class="popup" onclick="myFunction10()">(? Click here!)
-                                    <span class="popuptext" id="help10">The Quality threshold determine the minimum filter base, For Illumina it should be >20, For ONT it should be >10, Click again to close.</span>
-                                </div> 
-                                <br><input type="text" size="30" class="input_form" id = "ssDNA_KI" name="dsDNA_KI" ><br>
 
                             </div>
                             <p></p>
@@ -346,26 +325,17 @@
                         <h5><a href="https://github.com/thachnguyen/CRISPRnano">Manual</a></h5>
                         <h5><a href="https://github.com/thachnguyen/CRISPRnano" target="_top">Source code on Github</a></h5>
                         
-                            <h3 id='optional_para'>Optional parameters</h3>
+                            <h3 id='optional_para1'>Optional parameters</h3>
                             <small class="text-muted">Click to expand</small>
-                            <div id = "optional_para_Container" class="hidden">
-                            Sequence (if genename given, leave it blank):                 
+                            <div id = "optional_para_Container1" class="hidden">
+                            Sequence1 (if genename given, leave it blank):                 
                             <div class="popup" onclick="myFunction3()">(? Click here!)
                                 <span class="popuptext" id="help3">Reference amplicon length should be in the range of 200-300 bases with the nuclease target site located roughly in the middle. You can get the reference from Ensembl link below. Click again to close</span>
                             </div>
                             <br><input type="text" class="input_form" size="30" id="locus" name="Locus" value=""> 
                             <br>
                             <br>             
-                            <!-- <a href="http://ftp.ensembl.org/pub/release-105/fasta/homo_sapiens/dna/">(Ensembl reference)</a><br> -->
-                            <!-- Sequencing method:                 
-                            <div class="popup" onclick="myFunction3()">(? Click here!)
-                                <span class="popuptext" id="help3">Reference amplicon length should be in the range of 200-300 bases with the nuclease target site located roughly in the middle. You can get the reference from Ensembl link below. Click again to close</span>
-                            </div>
-                            <select id="seq_method" name="seq_method">
-                                <option value="ONT">Nanopore</option>
-                                <option value="Il_pac">Illumina or PacBio</option>
-                              </select> -->
-                            <!-- <br>  <br>  -->y
+
                                 Interested region (optional) +/- bp: 
                                 <div class="popup" onclick="myFunction5()">(? Click here!)
                                     <span class="popuptext" id="help5"> For ONT reads, it is recommended to use -/+15 bases around the predicted DNA lesion. Larger regions are prone to false positive indels. Larger regions (total of 200-250 bp) can be safely used with Illumina reads. You can drag and drop the central point of the predicted double strand break in the genomic sequence to the left or to the right. Default value 0 is double strand breaking point- Crisprnano will use the first index of sgRNA mapped on reference. Click again to close</span>
@@ -973,7 +943,7 @@ function bsa_gen_query_profile(_s, _m, table){
     * higher 28 bits keeps the length and lower 4 bits the operation in order of
     * "MIDNSH".
     */
-function bsa_align(target, query, matrix, gapsc){
+function bsa_align(target, query, matrix, gapsc,is_local =true){
     // convert bases to integers
     var is_local = true
     var t = bsg_enc_seq(target, bst_nt5);
@@ -1328,8 +1298,8 @@ function FileReceived() {
 
     //check target oligo in reference or reverse ref
     if (targetingOligo !=""){
-            var score_oligo_ref_fw = bsa_align(locus.substring(BreakPoint-region_analyse*1, BreakPoint + region_analyse*1), targetingOligo, [ms, mms], [gapo, gape]); 
-            var score_oligo_ref_rv = bsa_align(locus.substring(BreakPoint-region_analyse*1, BreakPoint + region_analyse*1), ReverseComplement(targetingOligo), [ms, mms], [gapo, gape]);
+            var score_oligo_ref_fw = bsa_align(locus.substring(BreakPoint-region_analyse*1, BreakPoint + region_analyse*1), targetingOligo, [ms, mms], [gapo, gape], is_local=true); 
+            var score_oligo_ref_rv = bsa_align(locus.substring(BreakPoint-region_analyse*1, BreakPoint + region_analyse*1), ReverseComplement(targetingOligo), [ms, mms], [gapo, gape], is_local=true);
             var oligo_index = score_oligo_ref_fw[0]>=score_oligo_ref_rv[0] ? score_oligo_ref_fw[1] : score_oligo_ref_rv[1]
             targetingOligo = score_oligo_ref_fw[0]>=score_oligo_ref_rv[0] ? targetingOligo: ReverseComplement(targetingOligo)
         }
@@ -1431,11 +1401,11 @@ function FileReceived() {
                     else if (!prime_mode){
                         // var check_roi = roi.some(roi1 => roi.includes(roi1));
                         if (read.includes(locus_check)||ReverseComplement(read).includes(locus_check)){// UPDATE v2.0 checking 4 posiblities of read, threshold score =region_analyse+10 
-                            var rst = bsa_align(target, read, [ms, mms], [gapo, gape]);
+                            var rst = bsa_align(target, read, [ms, mms], [gapo, gape], is_local=true);
                             if (rst[0] < (region_analyse*1)){
                                 try{
                                 read = ReverseComplement(read);
-                                rst = bsa_align(target, read, [ms, mms], [gapo, gape]);
+                                rst = bsa_align(target, read, [ms, mms], [gapo, gape], is_local=true);
                                 }
                                 catch (error){}
                             }
@@ -1467,11 +1437,11 @@ function FileReceived() {
             } 
             else {
                 if (read.includes(locus_check)||ReverseComplement(read).includes(locus_check)){// UPDATE v2.0 checking 4 posiblities of read, threshold score =region_analyse+10 
-                    var rst = bsa_align(target, read, [ms, mms], [gapo, gape]);
+                    var rst = bsa_align(target, read, [ms, mms], [gapo, gape], is_local=true);
                     if (rst[0] < (region_analyse*1)){
                         try{
                         read = ReverseComplement(read);
-                        rst = bsa_align(target, read, [ms, mms], [gapo, gape]);
+                        rst = bsa_align(target, read, [ms, mms], [gapo, gape], is_local=true);
                         }
                         catch (error){}
                     }
@@ -1558,7 +1528,7 @@ function FileReceived_off() {
                 aln_type = 7;
                 // remove this part in knockin, speed up the program
                 hits_off[i].push(aln_type)
-                var rst = bsa_align(target, read, [ms, mms], [gapo, gape]);
+                var rst = bsa_align(target, read, [ms, mms], [gapo, gape], is_local=true);
                 var str1 = ''
                 var fmt1 = bsa_cigar2gaps_breakpoint(target, read, rst[1], rst[2], BreakPoint-region_analyse*1, BreakPoint + region_analyse*1);
                 var fmt = fmt1[0]
@@ -1578,11 +1548,11 @@ function FileReceived_off() {
             else {
                 // UPDATE v2.0 checking 4 posiblities of read, threshold score =region_analyse+10
                 if (read.includes(locus_list1[gene_id])||read.includes(ReverseComplement(locus_list1[gene_id]))){ 
-                    var rst = bsa_align(target, read, [ms, mms], [gapo, gape]);
+                    var rst = bsa_align(target, read, [ms, mms], [gapo, gape], is_local=true);
                     if (rst[0] < (region_analyse*1+10)){
                         try{
                         read = ReverseComplement(read);
-                        rst = bsa_align(target, read, [ms, mms], [gapo, gape]);
+                        rst = bsa_align(target, read, [ms, mms], [gapo, gape], is_local=true);
                         }
                         catch (error){}
                     }
@@ -3274,7 +3244,7 @@ function PlotAlignment(barcode, locus){
         svg.removeChild(svg.lastChild);
     }
 
-    var delypos=20, delyshift=40;
+    var delypos=20, delyshift=60;
 
     //bc, readsum:
     var SVGObj= document.createElementNS(NS,"text");
@@ -3771,7 +3741,7 @@ function PlotAlignment_bulk(barcode, locus, bulk_threshold){
         svg.removeChild(svg.lastChild);
     }
 
-    var delypos=20, delyshift=40;
+    var delypos=20, delyshift=60;
 
     //bc, readsum:
     var SVGObj= document.createElementNS(NS,"text");
@@ -4448,7 +4418,7 @@ function PlotAlignment_off(gene_i)
         svg.removeChild(svg.lastChild);
     }
 
-    var delypos=20, delyshift=40;
+    var delypos=20, delyshift=60;
 
     //bc, readsum:
     var SVGObj= document.createElementNS(NS,"text");
@@ -5073,9 +5043,9 @@ function Start2(){
     }
 
     for (let i = 0; i<locus_list.length; i++){
-        var rst = bsa_align(locus_list[i], rightbs, [ms, mms], [gapo, gape]);
+        var rst = bsa_align(locus_list[i], rightbs, [ms, mms], [gapo, gape], is_local=true);
         if (rst[0]<(rightbs.length/2)){
-            rst = bsa_align(ReverseComplement(locus_list[i]), rightbs, [ms, mms], [gapo, gape]);
+            rst = bsa_align(ReverseComplement(locus_list[i]), rightbs, [ms, mms], [gapo, gape], is_local=true);
             if (rst[0]<(rightbs.length/2)){
                 alert("The target site was not found in the given OFF-TARGET reference gene ("+ gene_list[i] +"). Please enter a valid gene name");
             }
@@ -5091,9 +5061,9 @@ function Start2(){
             locus_list[i] = locus_list[i].substring(RightBsPos_off[i] -region_analyse*1, RightBsPos_off[i] + 20 +region_analyse*1)
         }
         //Update new index
-        var rst = bsa_align(locus_list[i], rightbs, [ms, mms], [gapo, gape]);
+        var rst = bsa_align(locus_list[i], rightbs, [ms, mms], [gapo, gape], is_local=true);
         if (rst[0]<(rightbs.length-3)){
-            rst = bsa_align(ReverseComplement(locus_list[i]), rightbs, [ms, mms], [gapo, gape]);
+            rst = bsa_align(ReverseComplement(locus_list[i]), rightbs, [ms, mms], [gapo, gape], is_local=true);
             if (rst[0]<(rightbs.length-3)){
                 RightBsPos_off[i] = rst[1];
             }
@@ -5251,6 +5221,14 @@ toggleButton.addEventListener('click', function() {
 
 optional_para.addEventListener('click', function() {
     optional_para_Container.classList.toggle('hidden');
+});
+
+// new field for Prime Editing mode
+const optional_para1 = document.getElementById('optional_para1');
+const optional_para_Container1 = document.getElementById('optional_para_Container1');
+
+optional_para1.addEventListener('click', function() {
+    optional_para_Container1.classList.toggle('hidden');
 });
 
 
