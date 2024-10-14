@@ -335,7 +335,6 @@
                             <br><input type="text" class="input_form" size="30" id="locus" name="Locus" value=""> 
                             <br>
                             <br>             
-
                                 Interested region (optional) +/- bp: 
                                 <div class="popup" onclick="myFunction5()">(? Click here!)
                                     <span class="popuptext" id="help5"> For ONT reads, it is recommended to use -/+15 bases around the predicted DNA lesion. Larger regions are prone to false positive indels. Larger regions (total of 200-250 bp) can be safely used with Illumina reads. You can drag and drop the central point of the predicted double strand break in the genomic sequence to the left or to the right. Default value 0 is double strand breaking point- Crisprnano will use the first index of sgRNA mapped on reference. Click again to close</span>
@@ -352,17 +351,17 @@
                                     <span class="popuptext" id="help10">The Quality threshold determine the minimum filter base, For Illumina it should be >20, For ONT it should be >10, Click again to close.</span>
                                 </div> 
                                 <br><input type="text" size="30" class="input_form" id = "phredthreshold" name="Phred" value="20" onchange="checkValue();"><br>
-                                <br>pegRNA 
+                                <br>Reverse Transcription Template (RTT)  
                                 <div class="popup" onclick="myFunction10()">(? Click here!)
                                     <span class="popuptext" id="help10">The Quality threshold determine the minimum filter base, For Illumina it should be >20, For ONT it should be >10, Click again to close.</span>
                                 </div> 
-                                <br><input type="text" size="30" class="input_form" id = "dsDNA_KI" name="dsDNA_KI" ><br>
+                                <br><input type="text" size="30" class="input_form" id = "RTT" name="RTT" ><br>
 
-                                <br>ssDNA with Homology Arm 
+                                <br>Scaffold 
                                 <div class="popup" onclick="myFunction10()">(? Click here!)
                                     <span class="popuptext" id="help10">The Quality threshold determine the minimum filter base, For Illumina it should be >20, For ONT it should be >10, Click again to close.</span>
                                 </div> 
-                                <br><input type="text" size="30" class="input_form" id = "ssDNA_KI" name="dsDNA_KI" ><br>
+                                <br><input type="text" size="30" class="input_form" id = "Scaffold" name="Scaffold" ><br>
 
                             </div>
                             <p></p>
@@ -937,105 +936,115 @@ function bsa_gen_query_profile(_s, _m, table){
     * @param matrix    square score matrix or [match,mismatch] array
     * @param gapsc     [gap_open,gap_ext] array; k-length gap costs gap_open+gap_ext*k
     * @param w         bandwidth, disabled by default
-    * @param table     encoding table. It defaults to bst_nt5.
-    *
     * @return [score,target_start,cigar]. cigar is encoded in the BAM way, where
     * higher 28 bits keeps the length and lower 4 bits the operation in order of
     * "MIDNSH".
     */
-function bsa_align(target, query, matrix, gapsc,is_local =true){
-    // convert bases to integers
-    var is_local = true
-    var t = bsg_enc_seq(target, bst_nt5);
-    var qp = bsa_gen_query_profile(query, matrix, bst_nt5);
-    var qlen = qp[0].length;
-    // adjust band width
-    var max_len = qlen > t.length? qlen : t.length;
+function bsa_align(target, query, matrix, gapsc, is_local)
+{
+	// convert bases to integers
+	var t = bsg_enc_seq(target, bst_nt5);
+	var qp = bsa_gen_query_profile(query, matrix, bst_nt5);
+	var qlen = qp[0].length;
+
+	// adjust band width
+	var max_len = qlen > t.length? qlen : t.length;
     var w = true;
     var len_diff = t.target > qlen? t.target - qlen : qlen - t.target;
     w = w > len_diff? w : len_diff;
-    
-    // set gap score
-    var gapo, gape; // these are penalties which should be non-negative
-    if (typeof gapsc == 'number') gapo = 0, gape = gapsc > 0? gapsc : -gapsc;
-    else gapo = gapsc[0] > 0? gapsc[0] : -gapsc[0], gape = gapsc[1] > 0? gapsc[1] : -gapsc[1];
-    var gapoe = gapo + gape; // penalty for opening the first gap
+	
+	// set gap score
+	var gapo, gape; // these are penalties which should be non-negative
+	if (typeof gapsc == 'number') gapo = 0, gape = gapsc > 0? gapsc : -gapsc;
+	else gapo = gapsc[0] > 0? gapsc[0] : -gapsc[0], gape = gapsc[1] > 0? gapsc[1] : -gapsc[1];
+	var gapoe = gapo + gape; // penalty for opening the first gap
 
-    // initial values
-    var NEG_INF = -0x40000000;
-    
-    var H = [], E = [], z = [], score, max = 0, end_i = -1, end_j = -1;
-    if (is_local) {
-        for (var j = 0; j <= qlen; ++j) H[j] = E[j] = 0;
-    } 
+	// initial values
+	var NEG_INF = -0x40000000;
+	var H = [], E = [], z = [], score, max = 0, end_i = -1, end_j = -1;
+	if (is_local) {
+		for (var j = 0; j <= qlen; ++j) H[j] = E[j] = 0;
+	} else {
+		H[0] = 0; E[0] = -gapoe - gapoe;
+		for (var j = 1; j <= qlen; ++j) {
+			if (j >= w) H[j] = E[j] = NEG_INF; // everything is -inf outside the band
+			else H[j] = -(gapoe + gape * (j - 1)), E[j] = -(gapoe + gapoe + gape * j);
+		}
+	}
 
-    // the DP loop
-    for (var i = 0; i < t.length; ++i) {
-        var h1 = 0, f = 0, m = 0, mj = -1;
-        var zi, qpi = qp[t[i]];
-        zi = z[i] = [];
-        var beg = i > w? i - w : 0;
-        var end = i + w + 1 < qlen? i + w + 1 : qlen; // only loop through [beg,end) of the query sequence
+	// the DP loop
+	for (var i = 0; i < t.length; ++i) {
+		var h1 = 0, f = 0, m = 0, mj = -1;
+		var zi, qpi = qp[t[i]];
+		zi = z[i] = [];
+		var beg = i > w? i - w : 0;
+		var end = i + w + 1 < qlen? i + w + 1 : qlen; // only loop through [beg,end) of the query sequence
+		if (!is_local) {
+			h1 = beg > 0? NEG_INF : -(gapoe + gape * i);
+			f  = beg > 0? NEG_INF : -(gapoe + gapoe + gape * i);
+		}
+		for (var j = beg; j < end; ++j) {
+			// At the beginning of the loop: h=H[j]=H(i-1,j-1), e=E[j]=E(i,j), f=F(i,j) and h1=H(i,j-1)
+			// If we only want to compute the max score, delete all lines involving direction "d".
+			var e = E[j], h = H[j], d;
+			H[j] = h1;           // set H(i,j-1) for the next row
+			h += qpi[j];         // h = H(i-1,j-1) + S(i,j)
+			d = h >= e? 0 : 1;
+			h = h >= e? h : e;
+			d = h >= f? d : 2;
+			h = h >= f? h : f;    // h = H(i,j) = max{H(i-1,j-1)+S(i,j), E(i,j), F(i,j)}
+			d = !is_local || h > 0? d : 1<<6;
+			h1 = h;              // save H(i,j) to h1 for the next column
+			mj = m > h? mj : j;
+			m = m > h? m : h;    // update the max score in this row
+			h -= gapoe;
+			h = !is_local || h > 0? h : 0;
+			e -= gape;
+			d |= e > h? 1<<2 : 0;
+			e = e > h? e : h;    // e = E(i+1,j)
+			E[j] = e;            // save E(i+1,j) for the next row
+			f -= gape;
+			d |= f > h? 2<<4 : 0;
+			f = f > h? f : h;    // f = F(i,j+1)
+			zi[j] = d;           // z[i,j] keeps h for the current cell and e/f for the next cell
+		}
+		H[end] = h1, E[end] = is_local? 0 : NEG_INF;
+		if (m > max) max = m, end_i = i, end_j = mj;
+	}
+	if (is_local && max == 0) return null;
+	score = is_local? max : H[qlen];
 
-        for (var j = beg; j < end; ++j) {
-            // At the beginning of the loop: h=H[j]=H(i-1,j-1), e=E[j]=E(i,j), f=F(i,j) and h1=H(i,j-1)
-            // If we only want to compute the max score, delete all lines involving direction "d".
-            var e = E[j], h = H[j], d;
-            H[j] = h1;           // set H(i,j-1) for the next row
-            h += qpi[j];         // h = H(i-1,j-1) + S(i,j)
-            d = h >= e? 0 : 1;
-            h = h >= e? h : e;
-            d = h >= f? d : 2;
-            h = h >= f? h : f;    // h = H(i,j) = max{H(i-1,j-1)+S(i,j), E(i,j), F(i,j)}
-            d = !is_local || h > 0? d : 1<<6;
-            h1 = h;              // save H(i,j) to h1 for the next column
-            mj = m > h? mj : j;
-            m = Math.max(m, h);    // update the max score in this row
-            h -= gapoe;
-            h = !is_local || h > 0? h : 0;
-            e -= gape;
-            d |= e > h? 1<<2 : 0;
-            e = e > h? e : h;    // e = E(i+1,j)
-            E[j] = e;            // save E(i+1,j) for the next row
-            f -= gape;
-            d |= f > h? 2<<4 : 0;
-            f = f > h? f : h;    // f = F(i,j+1)
-            zi[j] = d;           // z[i,j] keeps h for the current cell and e/f for the next cell
-        }
-        H[end] = h1, E[end] = is_local? 0 : NEG_INF;
-        if (m > max) max = m, end_i = i, end_j = mj;
-    }
-    if (is_local && max == 0) return null;
-    score = is_local? max : H[qlen];
-
-    // backtrack to recover the alignment/cigar
-    function push_cigar(ci, op, len) {
-        if (ci.length == 0 || op != (ci[ci.length-1]&0xf))
-            ci.push(len<<4|op);
-        else ci[ci.length-1] += len<<4;
-    }
-    var cigar = [], tmp, which = 0, i, k, start_i = 0;
-    if (is_local) {
-        i = end_i, k = end_j;
-        if (end_j != qlen - 1) // then add soft cliping
-            push_cigar(cigar, 4, qlen - 1 - end_j);
-    } else i = t.length - 1, k = (i + w + 1 < qlen? i + w + 1 : qlen) - 1; // (i,k) points to the last cell
-    while (i >= 0 && k >= 0) {
-        tmp = z[i][k - (i > w? i - w : 0)];
-        which = tmp >> (which << 1) & 3;
-        if (which == 0 && tmp>>6) break;
-        if (which == 0) which = tmp & 3;
-        if (which == 0)      { push_cigar(cigar, 0, 1); --i, --k; } // match
-        else if (which == 1) { push_cigar(cigar, 2, 1); --i; } // deletion
-        else                 { push_cigar(cigar, 1, 1), --k; } // insertion
-    }
-    if (is_local) {
-        if (k >= 0) push_cigar(cigar, 4, k + 1); // add soft clipping
-        start_i = i + 1;
-    } 
-    for (var i = 0; i < cigar.length>>1; ++i) // reverse CIGAR
-        tmp = cigar[i], cigar[i] = cigar[cigar.length-1-i], cigar[cigar.length-1-i] = tmp;
-    return [score, start_i, cigar];
+	// backtrack to recover the alignment/cigar
+	function push_cigar(ci, op, len) {
+		if (ci.length == 0 || op != (ci[ci.length-1]&0xf))
+			ci.push(len<<4|op);
+		else ci[ci.length-1] += len<<4;
+	}
+	var cigar = [], tmp, which = 0, i, k, start_i = 0;
+	if (is_local) {
+		i = end_i, k = end_j;
+		if (end_j != qlen - 1) // then add soft cliping
+			push_cigar(cigar, 4, qlen - 1 - end_j);
+	} else i = t.length - 1, k = (i + w + 1 < qlen? i + w + 1 : qlen) - 1; // (i,k) points to the last cell
+	while (i >= 0 && k >= 0) {
+		tmp = z[i][k - (i > w? i - w : 0)];
+		which = tmp >> (which << 1) & 3;
+		if (which == 0 && tmp>>6) break;
+		if (which == 0) which = tmp & 3;
+		if (which == 0)      { push_cigar(cigar, 0, 1); --i, --k; } // match
+		else if (which == 1) { push_cigar(cigar, 2, 1); --i; } // deletion
+		else                 { push_cigar(cigar, 1, 1), --k; } // insertion
+	}
+	if (is_local) {
+		if (k >= 0) push_cigar(cigar, 4, k + 1); // add soft clipping
+		start_i = i + 1;
+	} else { // add the first insertion or deletion
+		if (i >= 0) push_cigar(cigar, 2, i + 1);
+		if (k >= 0) push_cigar(cigar, 1, k + 1);
+	}
+	for (var i = 0; i < cigar.length>>1; ++i) // reverse CIGAR
+		tmp = cigar[i], cigar[i] = cigar[cigar.length-1-i], cigar[cigar.length-1-i] = tmp;
+	return [score, start_i, cigar];
 }
 
 // generate cigar to gap in breakpoint windows, bkp11, bkp22 is offset interest region of ref wrt gap add-in ref 
