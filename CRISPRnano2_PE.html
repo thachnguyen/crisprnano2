@@ -3004,14 +3004,16 @@ function Pre_PlotAlignment(barcode, locus){
     // summary_track[id][7] = sum_track[id]
 
     // assign new dictionary base on the RTT score
-    var validate_dup 
-    for (let key in aln_dict[id]){
-        validate_dup = Check_duplication_ins(key)
-        if (validate_dup[0]){
+    var validate_dup
+    if (rtt!=''){
+        for (let key in aln_dict[id]){
+        validate_ins = Check_ins_RTT(key)
+        if (validate_ins[0]){
             aln_dict[id][validate_dup[4]]= aln_dict[id][key]
             delete aln_dict[id][key]
         }
     }
+    }  
 
     for (let key in aln_dict[id]){
         if ((aln_dict[id][key][1]!=8)&&(aln_dict[id][key][0]>10)&&(aln_dict[id][key][0]>(1*MutationThreshold*sum_track[id]/100))&&(key.split('\n')[0].trim().length>region_analyse*2-4)){
@@ -4173,7 +4175,7 @@ function PlotAlignment_bulk(barcode, locus, bulk_threshold){
         const layout = {
         title: 'Indel Size and Location',
         xaxis: {
-        title: 'Indel Size and Location',
+        title: 'Indel Size and Location (Interactive)',
         range: [-80, 80]
         },
         yaxis: {
@@ -4749,27 +4751,29 @@ function Check_duplication(sequence_seq){
     return [duplicate, index_in, insertion_trim.length];   
 }
 
-function Check_ins_RTT(sequence_seq, minseq = 2){
+function Check_ins_RTT(sequence_seq, buff_size = 10){
     // This function will check the insertion track expand it to the both site of insertion position then use global alignment to RTT, 
     // if there is better matching, shift the cutting site to the maximum point
     // Update the new aligment entry to the alignment dictionary
-    var duplicate = false
+    var ms = 1 // match score
+    var mms = -2//mismatch score
+    var gapo = -2  // gap open score
+    var gape = -1  // gap extent score
+    var shifted = false
     const main_track = sequence_seq.split('\n')[0]
     const insertion = sequence_seq.split('\n')[1]
     const insertion_trim = insertion.trim()
-    var index_in = 0
+    var insertion_buff 
+    var index_in 
     var m_homo = ''
     var seq_new = sequence_seq
     if (insertion_trim !=''){
         index_in = insertion.indexOf(insertion_trim)
-        for (var i = 0; i < insertion_trim.length; i++){
-            if (main_track[index_in+i]==insertion_trim[i]){
-                m_homo += insertion_trim[i]
-            }
-            else{
-                break;
-            }
+        if (index_in >buff_size && index_in< (main_track.length -buff_size)){
+            insertion_buff =  main_track.slice(index_in-buff_size, index_in) + insertion_trim + main_track.slice(index_in, index_in +buff_size)
         }
+        var rst = bsa_align(insertion_buff, rtt, [ms, mms], [gapo, gape], is_local = true);
+
     }
     if (m_homo.length>=minseq& m_homo.length< insertion_trim.length){
         //update the dictionary with new insertion position
