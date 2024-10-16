@@ -225,9 +225,9 @@
                                 <br><input type="text" size="30" class="input_form" id = "phredthreshold" name="Phred" value="20" onchange="checkValue();"><br>
                                 <br>Reverse Transcription Template (RTT)  
                                 <br><input type="text" size="30" class="input_form" id = "RTT" name="RTT" ><br>
+                                <small class="text-muted">RTT (optional) is secondary guide for insertion track</small>
                                 <br>Scaffold 
                                 <br><input type="text" size="30" class="input_form" id = "Scaffold" name="Scaffold" ><br>
-
                             </div>
                             <p></p>
         
@@ -911,6 +911,34 @@ function bsa_align(target, query, matrix, gapsc, is_local)
 	return [score, start_i, cigar];
 }
 
+function bsa_cigar2gaps(target, query, start, cigar)
+{
+	var oq = '', ot = '', mid = '', lq = 0, lt = start;
+	for (var k = 0; k < cigar.length; ++k) {
+		var op = cigar[k]&0xf, len = cigar[k]>>4;
+		if (op == 0) { // match
+			oq += query.substr(lq, len);
+			ot += target.substr(lt, len);
+			lq += len, lt += len;
+		} else if (op == 1) { // insertion
+			oq += query.substr(lq, len);
+			ot += Array(len+1).join("-");
+			lq += len;
+		} else if (op == 2) { // deletion
+			oq += Array(len+1).join("-");
+			ot += target.substr(lt, len);
+			lt += len;
+		} else if (op == 4) { // soft clip
+			lq += len;
+		}
+	}
+	var ut = ot.toUpperCase();
+	var uq = oq.toUpperCase();
+	for (var k = 0; k < ut.length; ++k)
+		mid += ut.charAt(k) == uq.charAt(k)? '|' : ' ';
+	return [ot, oq, mid];
+}
+
 // generate cigar to gap in breakpoint windows, bkp11, bkp22 is offset interest region of ref wrt gap add-in ref 
 function bsa_cigar2gaps_breakpoint(target, query, start, cigar, bkp1, bkp2){
     var oq = '', ot = '', oq1 = '', lq = 0, lt = start;
@@ -1159,7 +1187,6 @@ function FileReceived() {
     var gapo = -4  // gap open score
     var gape = -1  // gap extent score
     var id = CurrentFileId;
-    var target = locus;
     var targetingOligo = document.getElementsByName("TargetingOligo")[0].value.replace(/[\s\n]+/g, '').toUpperCase(); //TargetingOligo
     PhredThreshold = 1*document.getElementsByName("Phred")[0].value;
     var checkbox = document.getElementById('prime_editing');
@@ -1271,16 +1298,16 @@ function FileReceived() {
                     else if (!prime_mode){
                         // var check_roi = roi.some(roi1 => roi.includes(roi1));
                         if (read.includes(locus_check)||ReverseComplement(read).includes(locus_check)){// UPDATE v2.0 checking 4 posiblities of read, threshold score =region_analyse+10 
-                            var rst = bsa_align(target, read, [ms, mms], [gapo, gape], is_local=true);
+                            var rst = bsa_align(locus, read, [ms, mms], [gapo, gape], is_local=true);
                             if (rst[0] < (region_analyse*1)){
                                 try{
                                 read = ReverseComplement(read);
-                                rst = bsa_align(target, read, [ms, mms], [gapo, gape], is_local=true);
+                                rst = bsa_align(locus, read, [ms, mms], [gapo, gape], is_local=true);
                                 }
                                 catch (error){}
                             }
                             var str1 = ''
-                            var fmt1 = bsa_cigar2gaps_breakpoint(target, read, rst[1], rst[2], BreakPoint-region_analyse*1, BreakPoint + region_analyse*1);
+                            var fmt1 = bsa_cigar2gaps_breakpoint(locus, read, rst[1], rst[2], BreakPoint-region_analyse*1, BreakPoint + region_analyse*1);
                             var fmt = fmt1[0]
                             aln_type = fmt1[1]
                             // var str2_arr = fmt[0].split('-')
@@ -1307,16 +1334,16 @@ function FileReceived() {
             } 
             else {
                 if (read.includes(locus_check)||ReverseComplement(read).includes(locus_check)){// UPDATE v2.0 checking 4 posiblities of read, threshold score =region_analyse+10 
-                    var rst = bsa_align(target, read, [ms, mms], [gapo, gape], is_local=true);
+                    var rst = bsa_align(locus, read, [ms, mms], [gapo, gape], is_local=true);
                     if (rst[0] < (region_analyse*1)){
                         try{
                         read = ReverseComplement(read);
-                        rst = bsa_align(target, read, [ms, mms], [gapo, gape], is_local=true);
+                        rst = bsa_align(locus, read, [ms, mms], [gapo, gape], is_local=true);
                         }
                         catch (error){}
                     }
                     var str1 = ''
-                    var fmt1 = bsa_cigar2gaps_breakpoint(target, read, rst[1], rst[2], BreakPoint-region_analyse*1, BreakPoint + region_analyse*1);
+                    var fmt1 = bsa_cigar2gaps_breakpoint(locus, read, rst[1], rst[2], BreakPoint-region_analyse*1, BreakPoint + region_analyse*1);
                     var fmt = fmt1[0]
                     aln_type = fmt1[1]
                     // var str2_arr = fmt[0].split('-')
@@ -2976,7 +3003,7 @@ function Pre_PlotAlignment(barcode, locus){
     // summary_track[id][6] = not_align;
     // summary_track[id][7] = sum_track[id]
 
-    // assign new dictionary base on the partly duplidation insertion 
+    // assign new dictionary base on the RTT score
     var validate_dup 
     for (let key in aln_dict[id]){
         validate_dup = Check_duplication_ins(key)
@@ -4722,10 +4749,10 @@ function Check_duplication(sequence_seq){
     return [duplicate, index_in, insertion_trim.length];   
 }
 
-function Check_duplication_ins(sequence_seq, minseq = 2){
-    // This function will check the insertion track and compare it to the both site of insertion position, 
-    // if there is duplicate seq longer than 2bp, shift the cutting site and then mark them as micro homology
-    // then shift the insertion start position according to size of duplication part
+function Check_ins_RTT(sequence_seq, minseq = 2){
+    // This function will check the insertion track expand it to the both site of insertion position then use global alignment to RTT, 
+    // if there is better matching, shift the cutting site to the maximum point
+    // Update the new aligment entry to the alignment dictionary
     var duplicate = false
     const main_track = sequence_seq.split('\n')[0]
     const insertion = sequence_seq.split('\n')[1]
@@ -4812,6 +4839,9 @@ function Start(){
 
     if (locus == ''){
         locus = document.getElementsByName("Locus")[0].value.replace(/[\s\n]+/g, '').toUpperCase(); //reference sequence
+    }
+    if (rtt == ''){
+        rtt = document.getElementsByName("RTT")[0].value.replace(/[\s\n]+/g, '').toUpperCase(); //reference sequence
     }
     rightbs = document.getElementsByName("RightBS")[0].value.replace(/[\s\n]+/g, '').toUpperCase(); // sgRNA seq  
     
@@ -5011,6 +5041,7 @@ var aln_dict_fil = Array(96)
 var AlignmentPrecalc
 var locus = '';
 var locus_check = ''; //adaptive ref
+var rtt = ''
 var files;
 var reader;
 var CurrentFileId;
