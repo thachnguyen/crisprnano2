@@ -206,6 +206,10 @@
                             </div>
                             <br><input type="text" class="input_form" size="30" id="locus" name="Locus" value=""> 
                             <br>
+                            <br>Reverse Transcription Template (RTT)  
+                            <br><input type="text" size="30" class="input_form" id = "RTT" name="RTT" ><br>
+                            <small class="text-muted">RTT (optional) is secondary guide for insertion track</small>
+                            <br>
                             <br>             
                                 Interested region (optional) +/- bp: 
                                 <div class="popup" onclick="myFunction5()">(? Click here!)
@@ -223,9 +227,6 @@
                                     <span class="popuptext" id="help10">The Quality threshold determine the minimum filter base, For Illumina it should be >20, For ONT it should be >10, Click again to close.</span>
                                 </div> 
                                 <br><input type="text" size="30" class="input_form" id = "phredthreshold" name="Phred" value="20" onchange="checkValue();"><br>
-                                <br>Reverse Transcription Template (RTT)  
-                                <br><input type="text" size="30" class="input_form" id = "RTT" name="RTT" ><br>
-                                <small class="text-muted">RTT (optional) is secondary guide for insertion track</small>
                                 <br>Scaffold 
                                 <br><input type="text" size="30" class="input_form" id = "Scaffold" name="Scaffold" ><br>
                             </div>
@@ -3003,23 +3004,28 @@ function Pre_PlotAlignment(barcode, locus){
     // summary_track[id][6] = not_align;
     // summary_track[id][7] = sum_track[id]
 
-    // assign new dictionary base on the RTT score
-    var validate_dup
-    if (rtt!=''){
-        for (let key in aln_dict[id]){
-        validate_ins = Check_ins_RTT(key)
-        if (validate_ins[0]){
-            aln_dict[id][validate_dup[4]]= aln_dict[id][key]
-            delete aln_dict[id][key]
-        }
-    }
-    }  
 
     for (let key in aln_dict[id]){
         if ((aln_dict[id][key][1]!=8)&&(aln_dict[id][key][0]>10)&&(aln_dict[id][key][0]>(1*MutationThreshold*sum_track[id]/100))&&(key.split('\n')[0].trim().length>region_analyse*2-4)){
             aln_dict_fil[id][key] = aln_dict[id][key][0];
         }
     }
+
+    // assign new dictionary base on the RTT score
+    var validate_ins
+    if (rtt!=''){
+        for (let key in aln_dict_fil[id]){
+            if (key.split('\n')[1].trim().length>5){
+                validate_ins = Check_ins_RTT(key, buff_size=6)
+                if (validate_ins[0]){
+                    aln_dict_fil[id][validate_ins[3]]= aln_dict_fil[id][key]
+                    aln_dict[id][validate_ins[3]]= aln_dict[id][key]
+                    delete aln_dict[id][key]
+                    delete aln_dict_fil[id][key]
+                }
+            }
+        }
+    }  
     
     no_indel[barcode] = 0; 
     no_indel_arr[barcode] = []
@@ -3504,14 +3510,15 @@ function PlotAlignment(barcode, locus){
             // if ((key[x+region_analyse*2]!="\xa0")&&(key[x+region_analyse*2]!="\n")){
             if ('ACTG'.includes(key[x+region_analyse*2])){
                 if (image_loc == 0){
-                    var imageElement = document.createElementNS(NS, "image");
-                    imageElement.setAttribute("x", 120+12*(x-xfrom+10)-16); // Set the x-coordinate of the image
-
-                    imageElement.setAttribute("y", ysize+delypos+4); // Set the y-coordinate of the image
-                    imageElement.setAttribute("width", 12); // Set the width of the image
-                    imageElement.setAttribute("height", 12); // Set the height of the image
-                    imageElement.setAttribute("href", "crisprnano2/insert.svg"); // Set the path to your image file
-                    svg.appendChild(imageElement);
+                    const line = document.createElementNS(NS, "line");
+                    // Set line attributes to make it vertical
+                    line.setAttribute("x1", 120+12*(x-xfrom+10)-18);
+                    line.setAttribute("y1", ysize+delypos-14);
+                    line.setAttribute("x2", 120+12*(x-xfrom+10)-18);
+                    line.setAttribute("y2", ysize+delypos+20);
+                    line.setAttribute("stroke", "blue");
+                    line.setAttribute("stroke-width", "3");
+                    svg.appendChild(line);
                     image_loc =1;
                 }
                 if (duplication1[0]){
@@ -3521,7 +3528,7 @@ function PlotAlignment(barcode, locus){
                     SVGObj.setAttribute("fill", "rgb(255,255,255");
                 }
                 SVGObj.style.stroke=T_cl;
-                SVGObj.setAttribute("x", 120+12*(x-xfrom+10));
+                SVGObj.setAttribute("x", 120+12*(x-xfrom+9)-4);
                 SVGObj.setAttribute("y", ysize+delypos+4);
                 SVGObj.setAttribute("width", "12");
                 SVGObj.setAttribute("height", "12");
@@ -3531,7 +3538,7 @@ function PlotAlignment(barcode, locus){
             }
 
             SVGObj= document.createElementNS(NS,"text");
-            SVGObj.setAttribute("x", 120+12*(x-xfrom+10)+5);
+            SVGObj.setAttribute("x", 120+12*(x-xfrom+9)+1);
             SVGObj.setAttribute("y", ysize+delypos+15);
             SVGObj.setAttribute("font-size", "13");
             SVGObj.setAttribute("fill", N_cl);
@@ -4010,14 +4017,15 @@ function PlotAlignment_bulk(barcode, locus, bulk_threshold){
             // if ((key[x+region_analyse*2]!="\xa0")&&(key[x+region_analyse*2]!="\n")){
             if ('ACTG'.includes(key[x+region_analyse*2])){
                 if (image_loc == 0){
-                    var imageElement = document.createElementNS(NS, "image");
-                    imageElement.setAttribute("x", 120+12*(x-xfrom+10)-16); // Set the x-coordinate of the image
-
-                    imageElement.setAttribute("y", ysize+delypos+4); // Set the y-coordinate of the image
-                    imageElement.setAttribute("width", 12); // Set the width of the image
-                    imageElement.setAttribute("height", 12); // Set the height of the image
-                    imageElement.setAttribute("href", "crisprnano2/insert.svg"); // Set the path to your image file
-                    svg.appendChild(imageElement);
+                    const line = document.createElementNS(NS, "line");
+                    // Set line attributes to make it vertical
+                    line.setAttribute("x1", 120+12*(x-xfrom+10)-18);
+                    line.setAttribute("y1", ysize+delypos-14);
+                    line.setAttribute("x2", 120+12*(x-xfrom+10)-18);
+                    line.setAttribute("y2", ysize+delypos+20);
+                    line.setAttribute("stroke", "blue");
+                    line.setAttribute("stroke-width", "3");
+                    svg.appendChild(line);
                     image_loc =1;
                 }
                 if (duplication1[0]){
@@ -4027,7 +4035,7 @@ function PlotAlignment_bulk(barcode, locus, bulk_threshold){
                     SVGObj.setAttribute("fill", "rgb(255,255,255");
                 }
                 SVGObj.style.stroke=T_cl;
-                SVGObj.setAttribute("x", 120+12*(x-xfrom+10));
+                SVGObj.setAttribute("x", 120+12*(x-xfrom+9)-4);
                 SVGObj.setAttribute("y", ysize+delypos+4);
                 SVGObj.setAttribute("width", "12");
                 SVGObj.setAttribute("height", "12");
@@ -4037,7 +4045,7 @@ function PlotAlignment_bulk(barcode, locus, bulk_threshold){
             }
 
             SVGObj= document.createElementNS(NS,"text");
-            SVGObj.setAttribute("x", 120+12*(x-xfrom+10)+5);
+            SVGObj.setAttribute("x", 120+12*(x-xfrom+9)+1);
             SVGObj.setAttribute("y", ysize+delypos+15);
             SVGObj.setAttribute("font-size", "13");
             SVGObj.setAttribute("fill", N_cl);
@@ -4589,18 +4597,19 @@ function PlotAlignment_off(gene_i)
             // if ((key[x+region_analyse*2]!="\xa0")&&(key[x+region_analyse*2]!="\n")){
             if ('ACTG'.includes(key[x+region_analyse*2])){
                 if (image_loc == 0){
-                    var imageElement = document.createElementNS(NS, "image");
-                    imageElement.setAttribute("x", 120+12*(x-xfrom+10)-16); // Set the x-coordinate of the image
-                        
-                    imageElement.setAttribute("y", ysize+delypos+4); // Set the y-coordinate of the image
-                    imageElement.setAttribute("width", 12); // Set the width of the image
-                    imageElement.setAttribute("height", 12); // Set the height of the image
-                    imageElement.setAttribute("href", "crisprnano2/insert.svg"); // Set the path to your image file
-                    svg.appendChild(imageElement);
+                    const line = document.createElementNS(NS, "line");
+                    // Set line attributes to make it vertical
+                    line.setAttribute("x1", 120+12*(x-xfrom+10)-18);
+                    line.setAttribute("y1", ysize+delypos-14);
+                    line.setAttribute("x2", 120+12*(x-xfrom+10)-18);
+                    line.setAttribute("y2", ysize+delypos+20);
+                    line.setAttribute("stroke", "blue");
+                    line.setAttribute("stroke-width", "3");
+                    svg.appendChild(line);
                     image_loc =1;
                 }
                 SVGObj.style.stroke=T_cl;
-                SVGObj.setAttribute("x", 120+12*(x-xfrom+10));
+                SVGObj.setAttribute("x", 120+12*(x-xfrom+9)-4);
                 SVGObj.setAttribute("y", ysize+delypos+4);
                 SVGObj.setAttribute("width", "12");
                 SVGObj.setAttribute("height", "12");
@@ -4611,7 +4620,7 @@ function PlotAlignment_off(gene_i)
             }
 
             SVGObj= document.createElementNS(NS,"text");
-            SVGObj.setAttribute("x", 120+12*(x-xfrom+10)+5);
+            SVGObj.setAttribute("x", 120+12*(x-xfrom+9)+1);
             SVGObj.setAttribute("y", ysize+delypos+15);
             SVGObj.setAttribute("font-size", "13");
             SVGObj.setAttribute("fill", N_cl);
@@ -4751,7 +4760,7 @@ function Check_duplication(sequence_seq){
     return [duplicate, index_in, insertion_trim.length];   
 }
 
-function Check_ins_RTT(sequence_seq, buff_size = 10){
+function Check_ins_RTT(sequence_seq, buff_size = 5){
     // This function will check the insertion track expand it to the both site of insertion position then use global alignment to RTT, 
     // if there is better matching, shift the cutting site to the maximum point
     // Update the new aligment entry to the alignment dictionary
@@ -4762,26 +4771,30 @@ function Check_ins_RTT(sequence_seq, buff_size = 10){
     var shifted = false
     const main_track = sequence_seq.split('\n')[0]
     const insertion = sequence_seq.split('\n')[1]
-    const insertion_trim = insertion.trim()
-    var insertion_buff 
+    const insertion_trim = insertion.trim() 
     var index_in 
-    var m_homo = ''
     var seq_new = sequence_seq
     if (insertion_trim !=''){
         index_in = insertion.indexOf(insertion_trim)
         if (index_in >buff_size && index_in< (main_track.length -buff_size)){
+            var insertion_buff
             insertion_buff =  main_track.slice(index_in-buff_size, index_in) + insertion_trim + main_track.slice(index_in, index_in +buff_size)
         }
-        var rst = bsa_align(insertion_buff, rtt, [ms, mms], [gapo, gape], is_local = true);
-
-    }
-    if (m_homo.length>=minseq& m_homo.length< insertion_trim.length){
-        //update the dictionary with new insertion position
-        duplicate = true
-        index_in = index_in + m_homo.length
-        seq_new = main_track +'\n'+ insertion.substr(0,index_in- m_homo.length) + ''.padStart(m_homo.length, ' ') + insertion_trim.substr(m_homo.length, insertion_trim.length) + m_homo + ''.padStart((insertion.length- index_in-insertion_trim.length), ' ') +'\n'
-    }
-    return [duplicate, index_in, insertion_trim.length, m_homo, seq_new];   
+        try{
+            if (typeof insertion_buff.length !== undefined){
+                var rst = bsa_align(insertion_buff, rtt, [ms, mms], [gapo, gape], is_local = true);
+            // update new insertion position 
+                if (rst[1]!=buff_size){
+                var ins_new = insertion_buff.slice(rst[1], rst[1]+insertion_trim.length)
+                shifted = true
+                //update the dictionary with new insertion position
+                seq_new = main_track +'\n'+  ''.padStart(index_in + rst[1]- buff_size, ' ') + ins_new  + ''.padStart((main_track.length - (index_in + rst[1]- buff_size +ins_new.length)), ' ') +'\n'
+                }
+            }
+        }
+        catch (error){}
+    }    
+    return [shifted, ins_new, insertion_trim.length, seq_new];   
 }
 
 
