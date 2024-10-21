@@ -255,6 +255,7 @@
                     <br>
                     <small class="text-muted">Window size & indel rate will automatically adjusted</small>
                     <br>
+                    <br>
                     <div class="form-check">
                         <input class="form-check-input" type="checkbox" value="" id="run_mode">
                         <label class="form-check-label">
@@ -1196,10 +1197,8 @@ function FileReceived() {
     var id = CurrentFileId;
     var targetingOligo = document.getElementsByName("TargetingOligo")[0].value.replace(/[\s\n]+/g, '').toUpperCase(); //TargetingOligo
     PhredThreshold = 1*document.getElementsByName("Phred")[0].value;
-    var checkbox = document.getElementById('prime_editing');
     var prime_mode = document.getElementById('prime_editing').checked;
-    var checkbox = document.getElementById('prime_editing');
-    var prime_mode = document.getElementById('prime_editing').checked;
+    var ML_mode = document.getElementById('run_mode').checked;
     // Add a change event listener to the checkbox
 
     //check target oligo in reference or reverse ref
