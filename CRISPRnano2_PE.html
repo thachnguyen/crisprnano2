@@ -3548,6 +3548,21 @@ function PlotAlignment(barcode, locus){
             svg.appendChild(SVGObj);
             }
         }
+
+        for (let x=xfrom-10; x<xto-10; x++){
+            if (x>0){
+                //draw RTT:
+                SVGObj= document.createElementNS(NS,"text");
+                SVGObj.setAttribute("x", 120+12*(x-xfrom+9)+1);
+                SVGObj.setAttribute("y", ysize+delypos+30);
+                SVGObj.setAttribute("font-size", "13");
+                SVGObj.setAttribute("fill", N_cl);
+                SVGObj.textContent = key[x+region_analyse*4+1];
+                SVGObj.setAttribute("text-anchor", "middle");
+                SVGObj.setAttribute("pointer-events","none");
+                svg.appendChild(SVGObj);
+            }
+        }
         
         SVGObj= document.createElementNS(NS,"text");
         SVGObj.setAttribute("x", 5);
@@ -3626,6 +3641,7 @@ function PlotAlignment_bulk(barcode, locus, bulk_threshold){
             delete aln_dict_bulk[key]
         }
     }
+
 
     //aggregate aln_track
     //Find top 3:
@@ -3808,7 +3824,7 @@ function PlotAlignment_bulk(barcode, locus, bulk_threshold){
     indel_info_hist = []
 
     for (let key in aln_dict_bulk){
-                //aggregate WT
+        //aggregate WT
         var micro_homology_data = Check_RIMA(key)
         var duplication1 = Check_duplication(key)
         var rima_class = 'other EJ'
@@ -4053,6 +4069,21 @@ function PlotAlignment_bulk(barcode, locus, bulk_threshold){
             SVGObj.setAttribute("text-anchor", "middle");
             SVGObj.setAttribute("pointer-events","none");
             svg.appendChild(SVGObj);
+            }
+        }
+
+        for (let x=xfrom-10; x<xto-10; x++){
+            if (x>0){
+                //draw RTT:
+                SVGObj= document.createElementNS(NS,"text");
+                SVGObj.setAttribute("x", 120+12*(x-xfrom+9)+1);
+                SVGObj.setAttribute("y", ysize+delypos+30);
+                SVGObj.setAttribute("font-size", "13");
+                SVGObj.setAttribute("fill", N_cl);
+                SVGObj.textContent = key[x+region_analyse*4+1];
+                SVGObj.setAttribute("text-anchor", "middle");
+                SVGObj.setAttribute("pointer-events","none");
+                svg.appendChild(SVGObj);
             }
         }
         
@@ -4774,6 +4805,9 @@ function Check_ins_RTT(sequence_seq, buff_size = 5){
     const insertion_trim = insertion.trim() 
     var index_in 
     var seq_new = sequence_seq
+    var ins_new
+    var rtt_ins =""
+    var fmt
     if (insertion_trim !=''){
         index_in = insertion.indexOf(insertion_trim)
         if (index_in >buff_size && index_in< (main_track.length -buff_size)){
@@ -4785,13 +4819,22 @@ function Check_ins_RTT(sequence_seq, buff_size = 5){
                 var rst = bsa_align(insertion_buff, rtt, [ms, mms], [gapo, gape], is_local = true);
             // update new insertion position 
                 if (rst[1]!=buff_size){
-                var ins_new = insertion_buff.slice(rst[1], rst[1]+insertion_trim.length)
+                ins_new = insertion_buff.slice(rst[1], rst[1]+insertion_trim.length)
                 shifted = true
+                }
+                else{
+                    ins_new = insertion_trim
+                }
+                var rst1 = bsa_align(ins_new, rtt, [ms, mms], [gapo, gape], is_local = false);
+                fmt = bsa_cigar2gaps(ins_new, rtt, rst1[1], rst1[2]);
+                ins_new = fmt[0]
+                rtt_ins = fmt[1]
+                var index_ins_gap = index_in - ins_new.search(/[A-Z]/);
                 //update the dictionary with new insertion position
-                seq_new = main_track +'\n'+  ''.padStart(index_in + rst[1]- buff_size, ' ') + ins_new  + ''.padStart((main_track.length - (index_in + rst[1]- buff_size +ins_new.length)), ' ') +'\n'
+                seq_new = main_track +'\n'+  ''.padStart(index_ins_gap + rst[1]- buff_size, ' ') + ins_new  + ''.padStart((main_track.length - (index_ins_gap + rst[1]- buff_size +ins_new.length)), ' ') +'\n'+ ''.padStart(index_ins_gap + rst[1]- buff_size -7, ' ') +'(RTT)  ' + rtt_ins  + ''.padStart((main_track.length - (index_ins_gap + rst[1]- buff_size +ins_new.length)), ' ') +'\n'
                 }
             }
-        }
+        
         catch (error){}
     }    
     return [shifted, ins_new, insertion_trim.length, seq_new];   
@@ -5148,7 +5191,6 @@ const optional_para_Container1 = document.getElementById('optional_para_Containe
 optional_para1.addEventListener('click', function() {
     optional_para_Container1.classList.toggle('hidden');
 });
-
 
 </script>
 </html>
