@@ -260,6 +260,7 @@
                         <input class="form-check-input" type="checkbox" value="" id="run_mode">
                         <label class="form-check-label">
                           BOOSTING mode (Using machine learning, faster but less accurate)
+                          <small class="text-muted">Use machine learning classification model, faster but less accurate</small>
                         </label>
                     </div>
                     <br>Gene Name (**):
@@ -1305,7 +1306,7 @@ function FileReceived() {
                     
                     else if (!prime_mode){
                         // var check_roi = roi.some(roi1 => roi.includes(roi1));
-                        if (read.includes(locus_check)||ReverseComplement(read).includes(locus_check)){// UPDATE v2.0 checking 4 posiblities of read, threshold score =region_analyse+10 
+                        if (read.includes(locus_check1)||ReverseComplement(read).includes(locus_check1)||read.includes(locus_check2)||ReverseComplement(read).includes(locus_check2)){// UPDATE v2.0 checking 4 posiblities of read, threshold score =region_analyse+10 
                             var rst = bsa_align(locus, read, [ms, mms], [gapo, gape], is_local=true);
                             if (rst[0] < (region_analyse*1)){
                                 try{
@@ -1341,7 +1342,7 @@ function FileReceived() {
                     
             } 
             else {
-                if (read.includes(locus_check)||ReverseComplement(read).includes(locus_check)){// UPDATE v2.0 checking 4 posiblities of read, threshold score =region_analyse+10 
+                if (read.includes(locus_check1)||ReverseComplement(read).includes(locus_check1)||read.includes(locus_check2)||ReverseComplement(read).includes(locus_check2)){// UPDATE v2.0 checking 4 posiblities of read, threshold score =region_analyse+10 
                     var rst = bsa_align(locus, read, [ms, mms], [gapo, gape], is_local=true);
                     if (rst[0] < (region_analyse*1)){
                         try{
@@ -1379,6 +1380,18 @@ function FileReceived() {
     reader.result = "";
     reader = "";
     CurrentFileChunk++;
+
+    // Generate feature dictionary
+    if (ML_mode){
+        var seq 
+        if (CurrentFileChunk>1){
+
+        }
+    }
+
+
+
+
 
     if ((CurrentFileChunk)*chunksize >= files[CurrentFileId].size) //end of file -> next file
         {
@@ -4751,6 +4764,21 @@ function ReverseString(str) {
         return str.split('').reverse().join('')
     }
 
+//Convertion standard alignment key to original 1D format WRT ref[breakingpoint ]    
+function KeytoSeq(seq_key, size= 30){
+    const ref1 = seq_key.split('\n')[0].replace(/-/g, "");
+    const ins1 = seq_key.split('\n')[1]
+    var ins_trim = ins1.trim()
+    var new_key
+    if (ins_trim == ''){
+        new_key = ref1.substring(RightBsPos-size, RightBsPos+size)        
+    }
+    else{
+        new_key = ref1.substring(0, ins1.indexOf(ins_trim)) + ins_trim + ref1.substring(ins1.indexOf(ins_trim), ref1.length)
+    }
+    return new_key
+}
+
 function PrintSVGAlignment(){
     var printWindow = document.open('', 'Print', 'width=1250, height=400');
     printWindow.document.writeln(document.getElementById("DIV_alignment").innerHTML);
@@ -4758,7 +4786,6 @@ function PrintSVGAlignment(){
     printWindow.print();
     printWindow.close();
 }
-
 
 // Check micro homology for given sequence 
 // input: our alignment dictionary element does not contain insertion track
@@ -4948,13 +4975,15 @@ function Start(){
     }
     
     //Update new locus, and sgRNA position 
-    locus_check = locus.substring(RightBsPos -region_analyse*1-10, RightBsPos -region_analyse*1)
+    locus_check1 = locus.substring(RightBsPos -region_analyse*1-10, RightBsPos -region_analyse*1)
+    locus_check2 = locus.substring(RightBsPos + region_analyse*1, RightBsPos +region_analyse*1 +10)
+
     locus = locus.substring(RightBsPos -region_analyse*1, RightBsPos + 20 +region_analyse*1)
     //add new roi for adaptive aligning
-    for (let i=0; i<1; i++){
-        roi.push(locus.substring(i, i+20));
-        roi.push(ReverseComplement(locus.substring(i, i+20)));
-    }
+    // for (let i=0; i<1; i++){
+    //     roi.push(locus.substring(i, i+20));
+    //     roi.push(ReverseComplement(locus.substring(i, i+20)));
+    // }
     RightBsPos = locus.search(rightbs);
     //breaking point on locus 
     if (rightbs!=rightbs != document.getElementsByName("RightBS")[0].value.replace(/[\s\n]+/g, '').toUpperCase()){
@@ -5068,7 +5097,6 @@ var bst_nt5 = [
     4, 4, 4, 4,  4, 4, 4, 4,  4, 4, 4, 4,  4, 4, 4, 4
 ];
 
-
 function binQualityScores(qualityScores, resolution) {
             const bins = new Array(Math.ceil(40 / resolution)).fill(0);
             for (let score of qualityScores) {
@@ -5100,14 +5128,19 @@ var currenttab = 0;
 TabClicked(0);
 
 var RightBsPos=0;
+
 //raw aligned dictionary
 var aln_dict = Array(96);
+
+//candidate seq dictionary for classifier
+var aln_dict_ML = Array(96);
 //filtered aligned dictionary
 var aln_dict_fil = Array(96)
 
 var AlignmentPrecalc
 var locus = '';
-var locus_check = ''; //adaptive ref
+var locus_check1 = ''; //adaptive ref pair
+var locus_check2 = ''; //adaptive ref
 var rtt = ''
 var files;
 var reader;
@@ -5128,7 +5161,7 @@ var length_array = Array(96)
 
 var region_analyse =30;
 
-var roi = []
+// var roi = []
 
 // Offtarget analyzer
 var CurrentAlignment_off = 0;
@@ -5191,13 +5224,6 @@ optional_para.addEventListener('click', function() {
     optional_para_Container.classList.toggle('hidden');
 });
 
-// new field for Prime Editing mode
-const optional_para1 = document.getElementById('optional_para1');
-const optional_para_Container1 = document.getElementById('optional_para_Container1');
-
-optional_para1.addEventListener('click', function() {
-    optional_para_Container1.classList.toggle('hidden');
-});
 
 </script>
 </html>
