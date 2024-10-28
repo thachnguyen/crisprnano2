@@ -1,22 +1,12 @@
 <html>
     <head>
     <style>
-        h1{
-        color:rgba(2, 3, 88, 0.932);
-        padding:0;
-        font-family:Baskerville, "Palatino Linotype", Palatino, "Century Schoolbook L", "Arial", sans-serif;
-        font-size:30px;
-        }
         .column {
         float: left;
         width: 50%;
         }
         .input_form {
         border-radius: 6px;
-        border: 2px solid #0c0c0c;
-        }
-        .top_menu {
-        border-radius: 10px;
         border: 2px solid #0c0c0c;
         }
         .button {
@@ -182,8 +172,7 @@
             <div class="text-center">
                 <div class="btn-group btn-group-lg mr-3" role="group" id="aBtnGroup" aria-label="Basic example">
                     <button type="button"  name="setup" class="btn btn-info" onclick="TabClicked(0);">GENERAL ANALYZER</button>
-                    <button type="button"  name="setup" class="btn btn-info" onclick="TabClicked(0);">PRIME EDITING ANALYZER</button>
-
+                    <a href="https://crisprnano.de/CRISPRnano2_PE.html" type="button"  name="setup" class="btn btn-info" >PRIME EDITING ANALYZER</a>
                     <button type="button"  name="result" class="btn btn-info" onclick="TabClicked(1);">RESULTS</button>
                     <button type="button"  name="bulkview_result" class="btn btn-info" onclick="TabClicked(4);">BULK/SINGLE CLONE VIEWER</button>
                     <button type="button"  name="offtarget_result" class="btn btn-info" onclick="TabClicked(5);">OFF-TARGET ANALYSIS</button>
@@ -200,7 +189,7 @@
                 <div class="popup" onclick="myFunction1()">(? Click here!)
                     <span class="popuptext" id="help1">FASTQ output files from Illumina or ONT. We recommend file's size smaller than 200MB. Make sure that the correct ordering is applied in the file browser. The file allocation to individual pie charts can be verified by the numbers given at alignment track. Click again to close.</span>
                 </div>
-                    <br><input type="file" id="files" class="input_form" name="files[]" multiple=""><br>
+                    <br><input type="file" id="files" class="form-control" name="files[]" multiple=""><br>
                     <br>
                     <label>Data type:</label>
                     <select id="mySelect" onchange="setValue()">
@@ -224,18 +213,18 @@
                         <span class="popuptext" id="help8">Name of the study gene (Human only). Click to close.</span>
                     </div>
                     <br>
-                    <input type="text" class="input_form" size="40" name="GeneName" value="" onchange="getFastaSequence()"><br>
+                    <input type="text" class="form-control" size="40" name="GeneName" value="" onchange="getFastaSequence() " placeholder="e.g. AHR"><br>
                     <small class="text-muted">Gene names are from <a href="https://crisprnano.de/genename.txt">this list</a></small><br>
                     <br>pegRNA (*): 
                     <div class="popup" onclick="myFunction4()">(? Click here!)
                         <span class="popuptext" id="help4">In this field the nuclease target site is entered. The sequence has to be in the same orientation as the reference sequence above. Click again to close</span>
                     </div>
-                    <br><input type="text" class="input_form" size="40" name="RightBS" value="CATTTGCTGGAGGTCACCCA"><br>
+                    <br><input type="text" class="form-control" size="40" name="RightBS" value="CATTTGCTGGAGGTCACCCA"><br>
                     <br>Targeting mutagenesis oligonucleotide (Knock-in): 
                     <div class="popup" onclick="myFunction7()">(? Click here!)
                         <span class="popuptext" id="help7">Donor oligonucleotide sequence used to introduce a site specific genomic modification. The sequence entered should be in the same orientation as the amplicon sequence. Click again to close.</span>
                     </div>
-                    <br><input type="text" class="input_form" size="40" name="TargetingOligo" value=""><br>
+                    <br><input type="text" class="form-control" size="40" name="TargetingOligo" value=""><br>
                     <div class="form-check">
                         <input class="form-check-input" type="checkbox" value="" id="prime_editing">
                         <label class="form-check-label">
@@ -260,16 +249,12 @@
                             </div>
                             <br><input type="text" class="input_form" size="30" id="locus" name="Locus" value=""> 
                             <br>
-                            <br>Reverse Transcription Template (RTT)  
-                            <br><input type="text" size="30" class="input_form" id = "RTT" name="RTT" ><br>
-                            <small class="text-muted">RTT (optional) is secondary guide for insertion track</small>
-                            <br>
                             <br>             
                                 Interested region (optional) +/- bp: 
                                 <div class="popup" onclick="myFunction5()">(? Click here!)
                                     <span class="popuptext" id="help5"> For ONT reads, it is recommended to use -/+15 bases around the predicted DNA lesion. Larger regions are prone to false positive indels. Larger regions (total of 200-250 bp) can be safely used with Illumina reads. You can drag and drop the central point of the predicted double strand break in the genomic sequence to the left or to the right. Default value 0 is double strand breaking point- Crisprnano will use the first index of sgRNA mapped on reference. Click again to close</span>
                                 </div>
-                                <br><input type="text" size="30" name="region_analyse" value="45" class="input_form" onchange="checkValue();"><br>
+                                <br><input type="text" size="30" name="region_analyse" value="40" class="input_form" onchange="checkValue();"><br>
         
                                 <br>Indel Threshold [%]: 
                                 <div class="popup" onclick="myFunction9()">(? Click here!)
@@ -658,7 +643,7 @@ function setValue() {
         document.getElementsByName("Phred")[0].value = '10'
     }
     else {
-        document.getElementsByName('region_analyse')[0].value = "45";
+        document.getElementsByName('region_analyse')[0].value = "40";
         document.getElementsByName("MutationThreshold")[0].value = '2'
         document.getElementsByName("Phred")[0].value = '20'
     } 
@@ -1725,14 +1710,14 @@ function ReadNextFileChunk()
     reader = new FileReader();
     reader.onload = FileReceived;
     reader.readAsText(files[CurrentFileId].slice(CurrentFileChunk*chunksize, (CurrentFileChunk+1)*chunksize));
-    document.getElementById('progress').innerHTML = "File "+(CurrentFileId+1)+": "+ (CurrentFileChunk*chunksize/1000000).toFixed(2)+ "MB / "+Math.round(files[CurrentFileId].size/1000000)+" MB processed. Please keep this windows open!";
+    document.getElementById('progress').innerHTML = "File "+(CurrentFileId+1)+": "+ (CurrentFileChunk*chunksize/1000000).toFixed(2)+ " MB / "+Math.round(files[CurrentFileId].size/1000000)+" MB processed. Please keep this window open!";
 }
 
 function ReadNextFileChunk_off(){
     reader = new FileReader();
     reader.onload = FileReceived_off;
     reader.readAsText(files[CurrentFileId_off].slice(CurrentFileChunk*chunksize, (CurrentFileChunk+1)*chunksize));
-    document.getElementById('progress1').innerHTML = "OFFTARGET Gene: "+gene_list[gene_id] +" Analysing.\n Current file "+(CurrentFileId_off+1)+": "+ (CurrentFileChunk*chunksize/1000000).toFixed(2)+ "MB / "+Math.round(files[CurrentFileId_off].size/1000000)+" MB processed. Please keep this windows open!";
+    document.getElementById('progress1').innerHTML = "OFFTARGET Gene: "+gene_list[gene_id] +" Analysing.\n Current file "+(CurrentFileId_off+1)+": "+ (CurrentFileChunk*chunksize/1000000).toFixed(2)+ " MB / "+Math.round(files[CurrentFileId_off].size/1000000)+" MB processed. Please keep this window open!";
 }
 
 function DrawPie()
@@ -5070,9 +5055,9 @@ function Start(){
     if (locus == ''){
         locus = document.getElementsByName("Locus")[0].value.replace(/[\s\n]+/g, '').toUpperCase(); //reference sequence
     }
-    if (rtt == ''){
-        rtt = document.getElementsByName("RTT")[0].value.replace(/[\s\n]+/g, '').toUpperCase(); //reference sequence
-    }
+    // if (rtt == ''){
+    //     rtt = document.getElementsByName("RTT")[0].value.replace(/[\s\n]+/g, '').toUpperCase(); //reference sequence
+    // }
     rightbs = document.getElementsByName("RightBS")[0].value.replace(/[\s\n]+/g, '').toUpperCase(); // sgRNA seq  
     
     MutationThreshold = document.getElementsByName("MutationThreshold")[0].value;
