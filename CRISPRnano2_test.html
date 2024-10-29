@@ -125,9 +125,8 @@
         <link href="./crisprnano2/stylesQuery.css" rel="stylesheet">
 
         </head>
-        <body data-new-gr-c-s-check-loaded="14.1130.0" data-gr-ext-installed="">
+        <body>
             <nav class="navbar sticky-top navbar-expand-sm navbar-light">
-                <!-- <a class="navbar-brand" href="https://www.crisprnano.de/CRISPRnano2.html"><img src="./crisprnano2/title_white.png" width="180"></a> -->
                 <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarToggler11" aria-controls="navbarToggler11" aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
@@ -172,7 +171,7 @@
             <div class="text-center">
                 <div class="btn-group btn-group-lg mr-3" role="group" id="aBtnGroup" aria-label="Basic example">
                     <button type="button"  name="setup" class="btn btn-info" onclick="TabClicked(0);">GENERAL ANALYZER</button>
-                    <a href="https://crisprnano.de/CRISPRnano2_PE.html" type="button"  name="setup" class="btn btn-info" >PRIME EDITING ANALYZER</a>
+                    <button type="button"  id="setup_PE" class="btn btn-info">PRIME EDITING ANALYZER</button>
                     <button type="button"  name="result" class="btn btn-info" onclick="TabClicked(1);">RESULTS</button>
                     <button type="button"  name="bulkview_result" class="btn btn-info" onclick="TabClicked(4);">BULK/SINGLE CLONE VIEWER</button>
                     <button type="button"  name="offtarget_result" class="btn btn-info" onclick="TabClicked(5);">OFF-TARGET ANALYSIS</button>
@@ -222,9 +221,9 @@
                     <small class="text-muted">Gene names are from <a href="https://crisprnano.de/genename.txt">this </a> list, if Gene name is blank, the customized reference sequence must be given or system will search by given sgRNA. </a></small><br>
                 </div>
                 <div class = "col-sm">
-                    <label>sgRNA (*): </label>
+                    <label>gRNA (*): </label>
                     <div class="popup" onclick="myFunction4()">(? Click here!)
-                        <span class="popuptext" id="help4">In this field the nuclease target site is entered. The sequence has to be in the same orientation as the reference sequence above. Click again to close</span>
+                        <span class="popuptext" id="help4">In this field the nuclease target site is entered. In Prime Editing analyser, this is pegRNA. Click again to close</span>
                     </div>
                     <br><input type="text" class="form-control" size="40" name="RightBS" value="CATTTGCTGGAGGTCACCCA"><br>
                 </div>
@@ -241,11 +240,37 @@
 
                 </div>
                 </div>
+                <div class="hidden" id = "optional_para_Container_PE">
+                    <h3>Extra options for Prime Editing</h3>
+                <div class="row">   
+                    <div class = "col-sm">
+                        <label>Reverse Transcription Template (RTT)  </label>
+                        <input type="text" size="30" class="form-control" id = "RTT" name="RTT" ><br>
+                        <small class="text-muted">RTT (optional) is secondary guide for insertion track</small>
+                    </div>
+                    <div class = "col-sm">
+                        <div class = "col-sm">
+                            <label>Scaffold  </label>
+                            <input type="text" size="30" class="form-control" id = "scaffold" name="scaffold" ><br>
+                            <small class="text-muted">Scaffold (optional) is extra guide for quantified insertion track</small>
+                        </div>
+                    </div>
+                    <div class = "col-sm">
+                        <label>Desired Edit  </label>
+                        <input type="text" size="30" class="form-control" id = "d_edit" name="d_edit" ><br>
+                        <small class="text-muted">Desired edit sequence (optional) is extra guide for annotate genotype</small>
+                    </div>
+                    <div class = "col-sm">
+                        <label>Partial Edit  </label>
+                        <input type="text" size="30" class="form-control" id = "p_edit" name="p_edit" ><br>
+                        <small class="text-muted">Partial edit sequence (optional) is extra guide for annotate genotype</small>
+                    </div>
+                </div> 
+                </div>
                 <h3 id='optional_para'>Optional parameters</h3>
                 <small class="text-muted">Click to expand</small>
                 <div id = "optional_para_Container" class="hidden">
                 <div class="row">
-
                         <div class = "col-sm">
                             <label>Customized Sequence</label>               
                             <div class="popup" onclick="myFunction3()">(? Click here!)
@@ -286,7 +311,7 @@
                 <br>
                 <div class="row">
                     <input type="submit" name="submit" value="SUBMIT  " class="btn btn-primary btn-lg" id="submit" onclick="Start();">
-                    <div id="progress" style="display:none; padding: 10px; border: 10px solid #CCC; background: #EEE; width:60%; position:absolute; top:50%;left:40%">
+                    <div id="progress" style="display:none; padding: 10px; border: 10px solid #CCC; background: #EEE; width:40%; position:absolute; top:50%;left:40%">
                     </div>
                 </div>
                 <!-- <a href="https://iufduesseldorf-my.sharepoint.com/:u:/g/personal/thach_nguyen_iuf-duesseldorf_de/ER4kM3RQaRJLiltUCpcT2iMBiEvGvs3u2NiDTdtSPBLE1Q?e=8FEAJc">(Our test sample)</a><br> -->
@@ -500,11 +525,13 @@
                     </div>
                     <br>
                     
-                    <input type="text" class="input_form" size="40" name="GeneName_list" id="GeneName_list" value="" onchange="checkOccurrence(); getFastaSequence_list();"><br>
+                    <input type="text" class="form-control" size="40" name="GeneName_list" id="GeneName_list" value="" onchange="checkOccurrence(); getFastaSequence_list();">
                     <small class="text-muted">Off-target analysis will check up to 4 genes in a single run</small>
                     <br>
-                    <button id="toggleButton">List of offset sgRNA:</button>
                     <br>
+                    <button id="toggleButton" class="btn btn-sm btn-light brd">List of offset sgRNA:</button>
+                    <br>
+                    
                     <small class="text-muted">If off-target sgRNA empty, system will take the previous sgRNA to find region of interest</small>
                     <br>
                     <div id="sgRNAContainer" class="hidden">
@@ -524,7 +551,7 @@
                     </div>
                     <br>
 
-                    <input type="submit" name="submit" value="START OFFTARGET ANALYZER " class="btn btn-primary btn-sm" id="submit" onclick="Start2();">
+                    <input type="submit" name="submit" value="START OFFTARGET ANALYZER " class="btn btn-sm btn-light brd" id="submit" onclick="Start2();">
                     <br>
                     <br>
                     <div class="text-right">
@@ -609,8 +636,8 @@ function checkOccurrence() {
     }
 } 
 
+// Get the input value and check their conditions
 function checkValue() {
-    // Get the input value
     const region_analyse1 = document.getElementsByName('region_analyse')[0].value;
     // Define the target string to check occurrence
     const MutationThreshold1 = document.getElementsByName("MutationThreshold")[0].value;
@@ -654,18 +681,15 @@ function setValue() {
 
 var AlignmentDragging = false, AlignmentLastX, AlignmentLastY, AlignmentStartPos = 0;
 
-function AlignmentMouseDown(evt)
-{
+function AlignmentMouseDown(evt){
     AlignmentLastX = evt.clientX;
     AlignmentLastY = evt.clientY;
     AlignmentDragging = true;
     return false;
 }
 
-function AlignmentMouseMove(evt)
-{
-    if (AlignmentDragging)
-    {
+function AlignmentMouseMove(evt){
+    if (AlignmentDragging){
         var x = evt.clientX;
         var y = evt.clientY;
         //alert(x-AlignmentLastX);
@@ -681,8 +705,7 @@ function AlignmentMouseMove(evt)
 
 function AlignmentMouseMove_bulk(evt)
 {
-    if (AlignmentDragging)
-    {
+    if (AlignmentDragging){
         var x = evt.clientX;
         var y = evt.clientY;
         var shift = (x-AlignmentLastX)/12;
@@ -697,8 +720,7 @@ function AlignmentMouseMove_bulk(evt)
 
 function AlignmentMouseMove_off(evt)
 {
-    if (AlignmentDragging)
-    {
+    if (AlignmentDragging){
         var x = evt.clientX;
         var y = evt.clientY;
         var shift = (x-AlignmentLastX)/12;
@@ -710,7 +732,6 @@ function AlignmentMouseMove_off(evt)
     }
     return false;
 }
-
 
 function AlignmentMouseUp(evt) {
     AlignmentDragging = false;
@@ -1050,7 +1071,6 @@ function bsa_cigar2gaps_breakpoint(target, query, start, cigar, bkp1, bkp2){
             }
         }    
     }
-
     return [[oq.substr(bkp1-start, bkp2-bkp1), oq1.substr(bkp1-start, bkp2-bkp1)], aln_type, gap_len];
 }
 
@@ -1187,7 +1207,6 @@ function FileReceived() {
     var prime_mode = document.getElementById('prime_editing').checked;
     var ML_mode = document.getElementById('run_mode').checked;
     var ML_genotype= 1*document.getElementsByName("ML_genotype")[0].value;
-    // Add a change event listener to the checkbox
 
     //check target oligo in reference or reverse ref
     if (targetingOligo1 !=""){
@@ -1242,7 +1261,7 @@ function FileReceived() {
                         aln_dict[id][str1][0] = 1
                         aln_dict[id][str1][1] = aln_type
                     }
-                    }
+                }
                 else {
                     index_oli_read = ReverseComplement(read).search(targetingOligo1);
                     if (index_oli_read!=-1){
@@ -1322,7 +1341,6 @@ function FileReceived() {
                         }           
                     }
                 }
-                    
             } 
             else {
                 if (read.includes(locus_check1)||ReverseComplement(read).includes(locus_check1)||read.includes(locus_check2)||ReverseComplement(read).includes(locus_check2)){// UPDATE v2.0 checking 4 posiblities of read, threshold score =region_analyse+10 
@@ -1472,7 +1490,6 @@ function FileReceived() {
                         }           
                     }
                 }
-                    
             } 
             else {
                 if (read.includes(locus_check1)||ReverseComplement(read).includes(locus_check1)||read.includes(locus_check2)||ReverseComplement(read).includes(locus_check2)){// UPDATE v2.0 checking 4 posiblities of read, threshold score =region_analyse+10 
@@ -1603,9 +1620,6 @@ function FileReceived_off() {
                     aln_type = fmt1[1]
                     str1 += fmt[0] + '\n';
                     str1 += fmt[1] + '\n';
-                    //aggregate aln track into dictionary
-                    //if (containsAny(locus_list[gene_id], str2_arr)||containsAny(ReverseComplement(locus_list[gene_id]), str2_arr)){
-                    //aggregate aln track into dictionary
                         if (aln_type !=0){
                             if (aln_dict_off[gene_id].hasOwnProperty(str1)){
                                 aln_dict_off[gene_id][str1]+=1
@@ -1620,7 +1634,6 @@ function FileReceived_off() {
                         }          
                 }
             }
-
         }
     }
 
@@ -1719,7 +1732,7 @@ function ReadNextFileChunk_off(){
     reader = new FileReader();
     reader.onload = FileReceived_off;
     reader.readAsText(files[CurrentFileId_off].slice(CurrentFileChunk*chunksize, (CurrentFileChunk+1)*chunksize));
-    document.getElementById('progress1').innerHTML = "OFFTARGET Gene: "+gene_list[gene_id] +" Analysing.\n Current file "+(CurrentFileId_off+1)+": "+ (CurrentFileChunk*chunksize/1000000).toFixed(2)+ " MB / "+Math.round(files[CurrentFileId_off].size/1000000)+" MB processed. Please keep this window open!";
+    document.getElementById('progress1').innerHTML = "OFFTARGET Gene: "+gene_list[gene_id] +" Analysing.\n Current file "+(CurrentFileId_off+1)+" : "+ (CurrentFileChunk*chunksize/1000000).toFixed(2)+ " MB / "+Math.round(files[CurrentFileId_off].size/1000000)+" MB processed. Please keep this window open!";
 }
 
 function DrawPie()
@@ -5057,9 +5070,9 @@ function Start(){
     if (locus == ''){
         locus = document.getElementsByName("Locus")[0].value.replace(/[\s\n]+/g, '').toUpperCase(); //reference sequence
     }
-    // if (rtt == ''){
-    //     rtt = document.getElementsByName("RTT")[0].value.replace(/[\s\n]+/g, '').toUpperCase(); //reference sequence
-    // }
+    if (rtt == ''){
+        rtt = document.getElementsByName("RTT")[0].value.replace(/[\s\n]+/g, '').toUpperCase(); //reference sequence
+    }
     rightbs = document.getElementsByName("RightBS")[0].value.replace(/[\s\n]+/g, '').toUpperCase(); // sgRNA seq  
     
     MutationThreshold = document.getElementsByName("MutationThreshold")[0].value;
@@ -5339,15 +5352,22 @@ const N_cl = "rgb(0, 0, 0)"
 
 const toggleButton = document.getElementById('toggleButton');
 const sgRNAContainer = document.getElementById('sgRNAContainer');
-const optional_para = document.getElementById('optional_para');
-const optional_para_Container = document.getElementById('optional_para_Container');
-
 toggleButton.addEventListener('click', function() {
     sgRNAContainer.classList.toggle('hidden');
 });
 
+const optional_para = document.getElementById('optional_para');
+const optional_para_Container = document.getElementById('optional_para_Container');
+
 optional_para.addEventListener('click', function() {
     optional_para_Container.classList.toggle('hidden');
+});
+
+const optional_para_PE = document.getElementById('setup_PE');
+const optional_para_Container_PE = document.getElementById('optional_para_Container_PE');
+
+optional_para_PE.addEventListener('click', function() {
+    optional_para_Container_PE.classList.toggle('hidden');
 });
 
 

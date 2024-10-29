@@ -125,9 +125,8 @@
         <link href="./crisprnano2/stylesQuery.css" rel="stylesheet">
 
         </head>
-        <body data-new-gr-c-s-check-loaded="14.1130.0" data-gr-ext-installed="">
+        <body>
             <nav class="navbar sticky-top navbar-expand-sm navbar-light">
-                <!-- <a class="navbar-brand" href="https://www.crisprnano.de/CRISPRnano2.html"><img src="./crisprnano2/title_white.png" width="180"></a> -->
                 <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarToggler11" aria-controls="navbarToggler11" aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
@@ -172,7 +171,7 @@
             <div class="text-center">
                 <div class="btn-group btn-group-lg mr-3" role="group" id="aBtnGroup" aria-label="Basic example">
                     <button type="button"  name="setup" class="btn btn-info" onclick="TabClicked(0);">GENERAL ANALYZER</button>
-                    <a href="https://crisprnano.de/CRISPRnano2_PE.html" type="button"  name="setup" class="btn btn-info" >PRIME EDITING ANALYZER</a>
+                    <button type="button"  id="setup_PE" class="btn btn-info">PRIME EDITING ANALYZER</button>
                     <button type="button"  name="result" class="btn btn-info" onclick="TabClicked(1);">RESULTS</button>
                     <button type="button"  name="bulkview_result" class="btn btn-info" onclick="TabClicked(4);">BULK/SINGLE CLONE VIEWER</button>
                     <button type="button"  name="offtarget_result" class="btn btn-info" onclick="TabClicked(5);">OFF-TARGET ANALYSIS</button>
@@ -183,24 +182,27 @@
         <br>
         <div id="setup" style="position:absolute; left:20px; top:80px">
 <br>
-                <div class="column">
+                <div class="row">
                 <h3>Input data</h3>    
-                FASTQ Files (*): 
-                <div class="popup" onclick="myFunction1()">(? Click here!)
-                    <span class="popuptext" id="help1">FASTQ output files from Illumina or ONT. We recommend file's size smaller than 200MB. Make sure that the correct ordering is applied in the file browser. The file allocation to individual pie charts can be verified by the numbers given at alignment track. Click again to close.</span>
+                <div class = "col-sm">
+                    <label>
+                        FASTQ Files (*): 
+                    </label> 
+                    <br><input type="file" id="files" class="form-control" name="files[]" multiple="">
+                    <small class="text-muted">Uncompressed FASTQ output files from Illumina, ONT or PacBio. Make sure that the correct ordering is applied in the file browser. The file allocation to individual pie charts can be verified by the numbers given at alignment track.</small>
                 </div>
-                    <br><input type="file" id="files" class="form-control" name="files[]" multiple=""><br>
-                    <br>
+                <div class = "col-sm">
                     <label>Data type:</label>
-                    <select id="mySelect" onchange="setValue()">
+                    <select id="mySelect" onchange="setValue()" class="form-control">
                         <option value="illu">Illumina</option>
                         <option value="ont">Nanopore</option>
                         <option value="pacbio">PacBio or Nanopore Duplex</option>
                     </select>
-                    <br>
-                    <small class="text-muted">Window size & indel rate will automatically adjusted</small>
-                    <br>
-                    <br>
+                    <small class="text-muted">Window size & indel rate parameter will be automatically adjusted</small>
+                </div>
+                <div class = "col-sm">
+                    <label>Maximum expected genotype (ML mode only): </label> 
+                    <input type="text" size="30" class="form-control" id= "ML_genotype" name="ML_genotype" value="10" onchange="checkValue();">
                     <div class="form-check">
                         <input class="form-check-input" type="checkbox" value="" id="run_mode">
                         <label class="form-check-label">
@@ -208,103 +210,122 @@
                           <small class="text-muted">Use machine learning classification model, faster but less accurate</small>
                         </label>
                     </div>
-                    <br>Gene Name (**):
-                    <div class="popup" onclick="myFunction8()">(? Click here!)
-                        <span class="popuptext" id="help8">Name of the study gene (Human only). Click to close.</span>
-                    </div>
-                    <br>
-                    <input type="text" class="form-control" size="40" name="GeneName" value="" onchange="getFastaSequence() " placeholder="e.g. AHR"><br>
-                    <small class="text-muted">Gene names are from <a href="https://crisprnano.de/genename.txt">this list</a></small><br>
-                    <br>pegRNA (*): 
+        
+                </div>
+                </div>
+                <br>
+                <div class="row">
+                <div class = "col-sm">
+                    <label>Gene Name:</label>
+                    <input type="text" class="form-control" size="40" name="GeneName" value="" onchange="getFastaSequence() " placeholder="e.g. AHR">
+                    <small class="text-muted">Gene names are from <a href="https://crisprnano.de/genename.txt">this </a> list, if Gene name is blank, the customized reference sequence must be given or system will search by given sgRNA. </a></small><br>
+                </div>
+                <div class = "col-sm">
+                    <label>gRNA (*): </label>
                     <div class="popup" onclick="myFunction4()">(? Click here!)
-                        <span class="popuptext" id="help4">In this field the nuclease target site is entered. The sequence has to be in the same orientation as the reference sequence above. Click again to close</span>
+                        <span class="popuptext" id="help4">In this field the nuclease target site is entered. In Prime Editing analyser, this is pegRNA. Click again to close</span>
                     </div>
                     <br><input type="text" class="form-control" size="40" name="RightBS" value="CATTTGCTGGAGGTCACCCA"><br>
-                    <br>Targeting mutagenesis oligonucleotide (Knock-in): 
-                    <div class="popup" onclick="myFunction7()">(? Click here!)
-                        <span class="popuptext" id="help7">Donor oligonucleotide sequence used to introduce a site specific genomic modification. The sequence entered should be in the same orientation as the amplicon sequence. Click again to close.</span>
-                    </div>
-                    <br><input type="text" class="form-control" size="40" name="TargetingOligo" value=""><br>
+                </div>
+                <div class = "col-sm">
+                    <label> Targeting mutagenesis oligonucleotide (Knock-in):</label>  
+                    <input type="text" class="form-control" size="40" name="TargetingOligo" value="">
+                    <small class="text-muted"> Donor oligonucleotide sequence used to introduce a site specific genomic modification. The sequence entered should be in the same orientation as the amplicon sequence.</small>
                     <div class="form-check">
                         <input class="form-check-input" type="checkbox" value="" id="prime_editing">
                         <label class="form-check-label">
                           Knockin-only mode (exclude INDEL)
                         </label>
                     </div>
-                    <br>
-                    <input type="submit" name="submit" value="SUBMIT  " class="btn btn-primary btn-lg" id="submit" onclick="Start();">
-                    <div id="progress" style="display:none; padding: 10px; border: 10px solid #CCC; background: #EEE; width:60%; position:absolute; top:50%;left:40%">
-                    </div>
 
                 </div>
-                <div class="column">
-                        <h5><a href="https://github.com/thachnguyen/CRISPRnano">Manual</a></h5>
-                        <h5><a href="https://github.com/thachnguyen/CRISPRnano" target="_top">Source code on Github</a></h5>
-                            <h3 id='optional_para'>Optional parameters</h3>
-                            <small class="text-muted">Click to expand</small>
-                            <div id = "optional_para_Container" class="hidden">
-                            Sequence (if genename given, leave it blank):                 
+                </div>
+                <div class="hidden" id = "optional_para_Container_PE">
+                    <h3>Extra options for Prime Editing</h3>
+                <div class="row">   
+                    <div class = "col-sm">
+                        <label>Reverse Transcription Template (RTT)  </label>
+                        <input type="text" size="30" class="form-control" id = "RTT" name="RTT" ><br>
+                        <small class="text-muted">RTT (optional) is secondary guide for insertion track</small>
+                    </div>
+                    <div class = "col-sm">
+                        <div class = "col-sm">
+                            <label>Scaffold  </label>
+                            <input type="text" size="30" class="form-control" id = "scaffold" name="scaffold" ><br>
+                            <small class="text-muted">Scaffold (optional) is extra guide for quantified insertion track</small>
+                        </div>
+                    </div>
+                    <div class = "col-sm">
+                        <label>Desired Edit  </label>
+                        <input type="text" size="30" class="form-control" id = "d_edit" name="d_edit" ><br>
+                        <small class="text-muted">Desired edit sequence (optional) is extra guide for annotate genotype</small>
+                    </div>
+                    <div class = "col-sm">
+                        <label>Partial Edit  </label>
+                        <input type="text" size="30" class="form-control" id = "p_edit" name="p_edit" ><br>
+                        <small class="text-muted">Partial edit sequence (optional) is extra guide for annotate genotype</small>
+                    </div>
+                </div> 
+                </div>
+                <h3 id='optional_para'>Optional parameters</h3>
+                <small class="text-muted">Click to expand</small>
+                <div id = "optional_para_Container" class="hidden">
+                <div class="row">
+                        <div class = "col-sm">
+                            <label>Customized Sequence</label>               
                             <div class="popup" onclick="myFunction3()">(? Click here!)
                                 <span class="popuptext" id="help3">Reference amplicon length should be in the range of 200-300 bases with the nuclease target site located roughly in the middle. You can get the reference from Ensembl link below. Click again to close</span>
                             </div>
-                            <br><input type="text" class="input_form" size="30" id="locus" name="Locus" value=""> 
-                            <br>
-                            <br>             
-                                Interested region (optional) +/- bp: 
-                                <div class="popup" onclick="myFunction5()">(? Click here!)
-                                    <span class="popuptext" id="help5"> For ONT reads, it is recommended to use -/+15 bases around the predicted DNA lesion. Larger regions are prone to false positive indels. Larger regions (total of 200-250 bp) can be safely used with Illumina reads. You can drag and drop the central point of the predicted double strand break in the genomic sequence to the left or to the right. Default value 0 is double strand breaking point- Crisprnano will use the first index of sgRNA mapped on reference. Click again to close</span>
-                                </div>
-                                <br><input type="text" size="30" name="region_analyse" value="40" class="input_form" onchange="checkValue();"><br>
-        
-                                <br>Indel Threshold [%]: 
-                                <div class="popup" onclick="myFunction9()">(? Click here!)
-                                    <span class="popuptext" id="help9">The Indel Threshold determines at what relative occurrence an individual indel mutation is considered as a unique allele of the respective clone analyzed, and is thus displayed in the alignment list. Low threshold values can result in false positive allele calling due to sequencing errors, whereas high threshold values result in false negative allele calling. Values in between 0 - 100 % can be entered. We recommend to use 5% for ONT reads and 2% for Illumina reads (default is set to 5%). Click again to close.</span>
-                                </div> 
-                                <br><input type="text" size="30" class="input_form" id= "allelethreshold" name="MutationThreshold" value="2" onchange="checkValue();"><br>
-                                <br>PHred Threshold: 
-                                <div class="popup" onclick="myFunction10()">(? Click here!)
-                                    <span class="popuptext" id="help10">The Quality threshold determine the minimum filter base, For Illumina it should be >20, For ONT it should be >10, Click again to close.</span>
-                                </div> 
-                                <br><input type="text" size="30" class="input_form" id = "phredthreshold" name="Phred" value="20" onchange="checkValue();"><br>
+                            <br><input type="text" class="form-control" size="30" id="locus" name="Locus" value=""> 
+                            <small class="text-muted">
+                                (if genename given, leave it blank):  
+                            </small>
+
+                        </div>
+                        <div class = "col-sm">
+                            <label>Interested region (optional) +/- bp: </label>
+                            <div class="popup" onclick="myFunction5()">(? Click here!)
+                                <span class="popuptext" id="help5"> For ONT reads, it is recommended to use -/+15 bases around the predicted DNA lesion. Larger regions are prone to false positive indels. Larger regions (total of 200-250 bp) can be safely used with Illumina reads. You can drag and drop the central point of the predicted double strand break in the genomic sequence to the left or to the right. Default value 0 is double strand breaking point- Crisprnano will use the first index of sgRNA mapped on reference. Click again to close</span>
                             </div>
-                            <p></p>
-        
-                            <br> <br><br>                <br>
-                            <br>
-                            <br>
-                          
+                            <br><input type="text" size="30" name="region_analyse" value="40" class="form-control" onchange="checkValue();"><br>
+                        </div>
+                        <div class = "col-sm">
+                            <label>Indel Threshold [%]: </label>
+                            <div class="popup" onclick="myFunction9()">(? Click here!)
+                                <span class="popuptext" id="help9">The Indel Threshold determines at what relative occurrence an individual indel mutation is considered as a unique allele of the respective clone analyzed, and is thus displayed in the alignment list. Low threshold values can result in false positive allele calling due to sequencing errors, whereas high threshold values result in false negative allele calling. Values in between 0 - 100 % can be entered. We recommend to use 5% for ONT reads and 2% for Illumina reads (default is set to 5%). Click again to close.</span>
+                            </div> 
+                            <br><input type="text" size="30" class="form-control" id= "allelethreshold" name="MutationThreshold" value="2" onchange="checkValue();"><br>
+                        </div>
+                        <div class = "col-sm">
+                            <label>PHred Threshold: </label>
+                            <div class="popup" onclick="myFunction10()">(? Click here!)
+                                <span class="popuptext" id="help10">The Quality threshold determine the minimum filter base, For Illumina it should be >20, For ONT it should be >10, Click again to close.</span>
+                            </div> 
+                            <br><input type="text" size="30" class="form-control" id = "phredthreshold" name="Phred" value="20" onchange="checkValue();"><br>
+                        
+
+                        </div>
+                    </div>
+
                 </div>
                 <br>
+                <div class="row">
+                    <input type="submit" name="submit" value="SUBMIT  " class="btn btn-primary btn-lg" id="submit" onclick="Start();">
+                    <div id="progress" style="display:none; padding: 10px; border: 10px solid #CCC; background: #EEE; width:40%; position:absolute; top:50%;left:40%">
+                    </div>
+                </div>
                 <!-- <a href="https://iufduesseldorf-my.sharepoint.com/:u:/g/personal/thach_nguyen_iuf-duesseldorf_de/ER4kM3RQaRJLiltUCpcT2iMBiEvGvs3u2NiDTdtSPBLE1Q?e=8FEAJc">(Our test sample)</a><br> -->
  
-                <br>
-                <br>
-                <br>
-                <br>                    <br>
-                <br>                    <br>
-                <br>                    <br>
-                <br>
-                <br>
-                <br>                    <br>
-                <br>                    <br>
-                <br>                    <br>
-                <br>                    <br>
-                <br>                    <br>
-                <br>
-                <br>                    <br>
-                <br>                    <br>
 
-                
+                <br>
+                <br>
                 <a style="font-style: italic;">
                     CRISPRnano website is free and open to all users and there is no login required.<br>
                     To use CRISPRnano, you must enable JavaScript on your web browser.<br>
                     If you want to use CRISPRnano offline, please download </a><a href="https://iufduesseldorf-my.sharepoint.com/:u:/g/personal/thach_nguyen_iuf-duesseldorf_de/EeZRZlyFP31Gu-s-w57wlfEB42anCiwxbXRms_U_GAekpQ?e=YxlI2v"> the offline html file here.</a> <br>
                     <br>
-                <a style="font-style: italic;"> (*) Mandatory field 
+                <a style="font-style: italic;"> (*) Mandatory 
                 <br>
-                <a style="font-style: italic;"> (**) If Gene name is blank, customer sequence must given 
-                    <br>
-                    <br>
                 <br>
                 Reference: <br>
                 Nguyen, T., Ramachandran, H., Martins, S., Krutmann, J. and Rossi, A., 2022. Identification of genome edited cells using CRISPRnano. Nucleic Acids Research.<br></a>
@@ -504,11 +525,13 @@
                     </div>
                     <br>
                     
-                    <input type="text" class="input_form" size="40" name="GeneName_list" id="GeneName_list" value="" onchange="checkOccurrence(); getFastaSequence_list();"><br>
+                    <input type="text" class="form-control" size="40" name="GeneName_list" id="GeneName_list" value="" onchange="checkOccurrence(); getFastaSequence_list();">
                     <small class="text-muted">Off-target analysis will check up to 4 genes in a single run</small>
                     <br>
-                    <button id="toggleButton">List of offset sgRNA:</button>
                     <br>
+                    <button id="toggleButton" class="btn btn-sm btn-light brd">List of offset sgRNA:</button>
+                    <br>
+                    
                     <small class="text-muted">If off-target sgRNA empty, system will take the previous sgRNA to find region of interest</small>
                     <br>
                     <div id="sgRNAContainer" class="hidden">
@@ -528,7 +551,7 @@
                     </div>
                     <br>
 
-                    <input type="submit" name="submit" value="START OFFTARGET ANALYZER " class="btn btn-primary btn-sm" id="submit" onclick="Start2();">
+                    <input type="submit" name="submit" value="START OFFTARGET ANALYZER " class="btn btn-sm btn-light brd" id="submit" onclick="Start2();">
                     <br>
                     <br>
                     <div class="text-right">
@@ -613,12 +636,13 @@ function checkOccurrence() {
     }
 } 
 
+// Get the input value and check their conditions
 function checkValue() {
-    // Get the input value
     const region_analyse1 = document.getElementsByName('region_analyse')[0].value;
     // Define the target string to check occurrence
     const MutationThreshold1 = document.getElementsByName("MutationThreshold")[0].value;
     const phred = document.getElementsByName("Phred")[0].value;
+    const ML_genotype = document.getElementsByName("ML_genotype")[0].value;
     if (MutationThreshold1*1 > 100||MutationThreshold1*1<0) {
     alert('Please check the Mutation threshold again');
     document.getElementsByName("MutationThreshold")[0].value = '2';
@@ -630,6 +654,10 @@ function checkValue() {
     if (region_analyse1*1 > 70||region_analyse1*1<30) {
     alert('System only support region area from 30-70 bp');
     document.getElementsByName('region_analyse')[0].value = "40";
+    } 
+    if (ML_genotype*1 > 20||ML_genotype*1<2) {
+    alert('System only support maximum genotype between 2 to 20');
+    document.getElementsByName('ML_genotype')[0].value = "10";
     } 
 }
 
@@ -653,18 +681,15 @@ function setValue() {
 
 var AlignmentDragging = false, AlignmentLastX, AlignmentLastY, AlignmentStartPos = 0;
 
-function AlignmentMouseDown(evt)
-{
+function AlignmentMouseDown(evt){
     AlignmentLastX = evt.clientX;
     AlignmentLastY = evt.clientY;
     AlignmentDragging = true;
     return false;
 }
 
-function AlignmentMouseMove(evt)
-{
-    if (AlignmentDragging)
-    {
+function AlignmentMouseMove(evt){
+    if (AlignmentDragging){
         var x = evt.clientX;
         var y = evt.clientY;
         //alert(x-AlignmentLastX);
@@ -680,8 +705,7 @@ function AlignmentMouseMove(evt)
 
 function AlignmentMouseMove_bulk(evt)
 {
-    if (AlignmentDragging)
-    {
+    if (AlignmentDragging){
         var x = evt.clientX;
         var y = evt.clientY;
         var shift = (x-AlignmentLastX)/12;
@@ -696,8 +720,7 @@ function AlignmentMouseMove_bulk(evt)
 
 function AlignmentMouseMove_off(evt)
 {
-    if (AlignmentDragging)
-    {
+    if (AlignmentDragging){
         var x = evt.clientX;
         var y = evt.clientY;
         var shift = (x-AlignmentLastX)/12;
@@ -709,7 +732,6 @@ function AlignmentMouseMove_off(evt)
     }
     return false;
 }
-
 
 function AlignmentMouseUp(evt) {
     AlignmentDragging = false;
@@ -1049,7 +1071,6 @@ function bsa_cigar2gaps_breakpoint(target, query, start, cigar, bkp1, bkp2){
             }
         }    
     }
-
     return [[oq.substr(bkp1-start, bkp2-bkp1), oq1.substr(bkp1-start, bkp2-bkp1)], aln_type, gap_len];
 }
 
@@ -1185,7 +1206,7 @@ function FileReceived() {
     PhredThreshold = 1*document.getElementsByName("Phred")[0].value;
     var prime_mode = document.getElementById('prime_editing').checked;
     var ML_mode = document.getElementById('run_mode').checked;
-    // Add a change event listener to the checkbox
+    var ML_genotype= 1*document.getElementsByName("ML_genotype")[0].value;
 
     //check target oligo in reference or reverse ref
     if (targetingOligo1 !=""){
@@ -1240,7 +1261,7 @@ function FileReceived() {
                         aln_dict[id][str1][0] = 1
                         aln_dict[id][str1][1] = aln_type
                     }
-                    }
+                }
                 else {
                     index_oli_read = ReverseComplement(read).search(targetingOligo1);
                     if (index_oli_read!=-1){
@@ -1320,7 +1341,6 @@ function FileReceived() {
                         }           
                     }
                 }
-                    
             } 
             else {
                 if (read.includes(locus_check1)||ReverseComplement(read).includes(locus_check1)||read.includes(locus_check2)||ReverseComplement(read).includes(locus_check2)){// UPDATE v2.0 checking 4 posiblities of read, threshold score =region_analyse+10 
@@ -1360,7 +1380,7 @@ function FileReceived() {
                 aln_dict_ML[CurrentFileId] = []
                 let entries = Object.entries(aln_dict[CurrentFileId]);
                 entries.sort((a, b) => b[1][0] - a[1][0]);
-                let top10Dict = Object.fromEntries(entries.slice(0, 10));
+                let top10Dict = Object.fromEntries(entries.slice(0, ML_genotype));
                 for (let key in top10Dict){
                     aln_dict_ML[CurrentFileId][KeytoSeq(key)[0]] = KeytoSeq(key)[1]
                 }
@@ -1470,7 +1490,6 @@ function FileReceived() {
                         }           
                     }
                 }
-                    
             } 
             else {
                 if (read.includes(locus_check1)||ReverseComplement(read).includes(locus_check1)||read.includes(locus_check2)||ReverseComplement(read).includes(locus_check2)){// UPDATE v2.0 checking 4 posiblities of read, threshold score =region_analyse+10 
@@ -1601,9 +1620,6 @@ function FileReceived_off() {
                     aln_type = fmt1[1]
                     str1 += fmt[0] + '\n';
                     str1 += fmt[1] + '\n';
-                    //aggregate aln track into dictionary
-                    //if (containsAny(locus_list[gene_id], str2_arr)||containsAny(ReverseComplement(locus_list[gene_id]), str2_arr)){
-                    //aggregate aln track into dictionary
                         if (aln_type !=0){
                             if (aln_dict_off[gene_id].hasOwnProperty(str1)){
                                 aln_dict_off[gene_id][str1]+=1
@@ -1618,7 +1634,6 @@ function FileReceived_off() {
                         }          
                 }
             }
-
         }
     }
 
@@ -1717,7 +1732,7 @@ function ReadNextFileChunk_off(){
     reader = new FileReader();
     reader.onload = FileReceived_off;
     reader.readAsText(files[CurrentFileId_off].slice(CurrentFileChunk*chunksize, (CurrentFileChunk+1)*chunksize));
-    document.getElementById('progress1').innerHTML = "OFFTARGET Gene: "+gene_list[gene_id] +" Analysing.\n Current file "+(CurrentFileId_off+1)+": "+ (CurrentFileChunk*chunksize/1000000).toFixed(2)+ " MB / "+Math.round(files[CurrentFileId_off].size/1000000)+" MB processed. Please keep this window open!";
+    document.getElementById('progress1').innerHTML = "OFFTARGET Gene: "+gene_list[gene_id] +" Analysing.\n Current file "+(CurrentFileId_off+1)+" : "+ (CurrentFileChunk*chunksize/1000000).toFixed(2)+ " MB / "+Math.round(files[CurrentFileId_off].size/1000000)+" MB processed. Please keep this window open!";
 }
 
 function DrawPie()
@@ -5055,9 +5070,9 @@ function Start(){
     if (locus == ''){
         locus = document.getElementsByName("Locus")[0].value.replace(/[\s\n]+/g, '').toUpperCase(); //reference sequence
     }
-    // if (rtt == ''){
-    //     rtt = document.getElementsByName("RTT")[0].value.replace(/[\s\n]+/g, '').toUpperCase(); //reference sequence
-    // }
+    if (rtt == ''){
+        rtt = document.getElementsByName("RTT")[0].value.replace(/[\s\n]+/g, '').toUpperCase(); //reference sequence
+    }
     rightbs = document.getElementsByName("RightBS")[0].value.replace(/[\s\n]+/g, '').toUpperCase(); // sgRNA seq  
     
     MutationThreshold = document.getElementsByName("MutationThreshold")[0].value;
@@ -5337,15 +5352,22 @@ const N_cl = "rgb(0, 0, 0)"
 
 const toggleButton = document.getElementById('toggleButton');
 const sgRNAContainer = document.getElementById('sgRNAContainer');
-const optional_para = document.getElementById('optional_para');
-const optional_para_Container = document.getElementById('optional_para_Container');
-
 toggleButton.addEventListener('click', function() {
     sgRNAContainer.classList.toggle('hidden');
 });
 
+const optional_para = document.getElementById('optional_para');
+const optional_para_Container = document.getElementById('optional_para_Container');
+
 optional_para.addEventListener('click', function() {
     optional_para_Container.classList.toggle('hidden');
+});
+
+const optional_para_PE = document.getElementById('setup_PE');
+const optional_para_Container_PE = document.getElementById('optional_para_Container_PE');
+
+optional_para_PE.addEventListener('click', function() {
+    optional_para_Container_PE.classList.toggle('hidden');
 });
 
 
