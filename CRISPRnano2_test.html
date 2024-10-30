@@ -3284,13 +3284,13 @@ function Pre_PlotAlignment(barcode, locus){
 function PlotAlignment(barcode, locus){
 
     var id = barcode;
-    
+
     //aggregate aln_track
     //Find top 3:
     var aln_type = ["Not align","No indel", "Inframe Indel", "Outframe indel", "", "","", "targetingOligo", "Ambigious"]
     var ysize = 30;
     var max=0;
-    
+
     var svg = document.getElementById("SVGmut");
     var NS="http://www.w3.org/2000/svg";
     var svgns = "http://www.w3.org/2000/svg";
@@ -3333,7 +3333,7 @@ function PlotAlignment(barcode, locus){
 
     delypos+=delyshift;
 
-  // Legend RIMA2
+    // Legend RIMA2
     SVGObj= document.createElementNS(NS,"text");
     SVGObj.setAttribute("y", ysize+delypos-70);
     SVGObj.setAttribute("font-size", "24");
@@ -3429,7 +3429,7 @@ function PlotAlignment(barcode, locus){
         SVGObj.setAttribute("text-anchor", "middle");
         svg.appendChild(SVGObj);
     }
-    
+
     var imageElement = document.createElementNS(NS, "image");
     if (rightbs!=document.getElementsByName("RightBS")[0].value.replace(/[\s\n]+/g, '').toUpperCase()){
         imageElement.setAttribute("x", 95+12*(RightBsPos-xfrom )); // Set the x-coordinate of the image
@@ -3476,7 +3476,7 @@ function PlotAlignment(barcode, locus){
         else {
             rima_class = 'other EJ'
         }
-         
+        
         if (rima_class=='MH-del'||rima_class=='other EJ (MH-del 1bp)') { 
             for (let x=xfrom-70; x<xto+10; x++){
                 if (((x >= micro_homology_data[1]-xfrom+10)&&(x < micro_homology_data[1]-xfrom+10 + micro_homology_data[0].length))||((x >= micro_homology_data[2]-xfrom+10)&&(x < micro_homology_data[2]-xfrom+10 + micro_homology_data[0].length))){
