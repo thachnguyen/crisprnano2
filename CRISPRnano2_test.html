@@ -143,7 +143,7 @@
                 </div>
             </nav>
             <div class="d-flex justify-content-center mt-3">
-                <img id="titleIndex" width="60%" src="./crisprnano2/titleBig_new.png">
+                <img id="titleIndex" width="60%" src="./crisprnano2/titleBig_new1.png">
             </div>
         <hr>
         <div class="row">
@@ -482,6 +482,14 @@
 
         <div id="results" style="position: absolute; left: 20px; top: 160px; display: none;">
             <div class="column">
+                <div class="btn-group btn-group-lg mr-3" role="group" id="result_pie" >
+                    <button type="button" class="btn btn-sm btn-light brd" name="setup">GENOTYPE</button>
+                    <button type="button" class="btn btn-sm btn-light brd" >RIMA</button>
+                    <button type="button" class="btn btn-sm btn-light brd" name="result">Indel distribution</button>
+                    <button type="button" class="btn btn-sm btn-light brd" name="bulkview_result" >Quality</button>
+                    <button type="button" class="btn btn-sm btn-light brd" name="offtarget_result" >Length</button>
+                </div>
+                <br>
                 <div id="DIV_piecharts">
                     <svg id="SVGpie" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="900" height="520">
                     </svg>
@@ -1186,6 +1194,9 @@ function FileReceived() {
     var gape = -1  // gap extent score
     var id = CurrentFileId;
     var targetingOligo1 = document.getElementsByName("TargetingOligo")[0].value.replace(/[\s\n]+/g, '').toUpperCase(); //TargetingOligo
+    var d_edit = document.getElementsByName("d_edit")[0].value.replace(/[\s\n]+/g, '').toUpperCase(); // desired edit
+    var p_edit = document.getElementsByName("p_edit")[0].value.replace(/[\s\n]+/g, '').toUpperCase(); //partial edit
+
     PhredThreshold = 1*document.getElementsByName("Phred")[0].value;
     var prime_mode = document.getElementById('prime_editing').checked;
     var ML_mode = document.getElementById('run_mode').checked;
@@ -3155,7 +3166,7 @@ function Pre_PlotAlignment(barcode, locus){
     if (rtt!=''){
         for (let key in aln_dict_fil[id]){
             if (key.split('\n')[1].trim().length>5){
-                validate_ins = Check_ins_RTT(key, buff_size=6)
+                validate_ins = Check_ins_RTT(key, buff_size=4)
                 if (validate_ins[0]){
                     aln_dict_fil[id][validate_ins[3]]= aln_dict_fil[id][key]
                     aln_dict[id][validate_ins[3]]= aln_dict[id][key]
@@ -4947,8 +4958,8 @@ function Check_ins_RTT(sequence_seq, buff_size = 5){
     // if there is better matching, shift the cutting site to the maximum point
     // Update the new aligment entry to the alignment dictionary
     var ms = 1 // match score
-    var mms = -2//mismatch score
-    var gapo = -2  // gap open score
+    var mms = -1//mismatch score
+    var gapo = -3  // gap open score
     var gape = -1  // gap extent score
     var shifted = false
     const main_track = sequence_seq.split('\n')[0]
