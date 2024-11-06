@@ -157,7 +157,7 @@ div.selector {
                 </div>
             </nav>
             <div class="d-flex justify-content-center mt-3">
-                <img id="titleIndex" width="60%" src="./crisprnano2/titleBig_new1.png">
+                <img id="titleIndex" width="60%" src="./crisprnano2/CRISPRnano2.png">
             </div>
         <hr>
         <div class="row">
@@ -1143,9 +1143,9 @@ function getFastaSequence() {
         var lines = data.split('\n');
         var locus1 = lines.slice(1).join('');
         locus=locus1;
-        if (locus!=""){
-        alert('Loading given genes list successfully');
-    }
+    //     if (locus!=""){
+    //     alert('Loading given genes list successfully');
+    // }
     })
     .catch(error => {
     if (error.message === 'Network response was not ok') {
