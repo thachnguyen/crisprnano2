@@ -1370,8 +1370,17 @@ function FileReceived() {
                     // var str2_arr = fmt[0].split('-')
                     str1 += fmt[0] + '\n';
                     str1 += fmt[1] + '\n';
-                    //aggregate aln track into dictionary
-                    // if (containsAny(locus, str2_arr)||containsAny(ReverseComplement(locus), str2_arr)){
+
+                    // new aln_type for desired edit and partial edit
+                    if ((p_edit!='')||(d_edit!='')){
+                        if (read.includes(d_edit)||read.includes(ReverseComplement(d_edit))){
+                            aln_type = 9;
+                        }
+                        else if (read.includes(p_edit)||read.includes(ReverseComplement(p_edit))){
+                            aln_type = 10;
+                        }
+                    }
+
                     if (aln_type !=0){
                         if (aln_dict[id].hasOwnProperty(str1)){
                             aln_dict[id][str1][0]+=1
@@ -1554,8 +1563,6 @@ function FileReceived() {
         setTimeout("ReadNextFileChunk();",10);
     } else {
         DrawPie();
-        end_time = Date.now()/1000;
-        alert(`Execution time: ${(end_time - start_time).toFixed(2)} seconds`);
     }
     }
 
@@ -5148,8 +5155,10 @@ function myFunction10() {
 }
 
 function Start(){
-    start_time = Date.now()/1000
     document.getElementById("progress").style.display = '';
+    if (locus==''){
+        getFastaSequence();
+    }
 
     //Reset all variables
     for (var i=0; i<96; i++) {
@@ -5438,7 +5447,6 @@ var out_indel_arr = Array(96)
 var targetingOligo = Array(96)
 var targetingOligo_arr = Array(96)
 var rima_hist
-var start_time
 var end_time
 
 
