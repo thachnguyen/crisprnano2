@@ -223,7 +223,9 @@ div.selector {
                     <div class="popup" onclick="myFunction4()">(? Click here!)
                         <span class="popuptext" id="help4">In this field the nuclease target site is entered. In Prime Editing analyser, this is pegRNA. Click again to close</span>
                     </div>
-                    <br><input type="text" class="form-control" size="40" name="RightBS" id = "RightBS" value="CATTTGCTGGAGGTCACCCA"><br>
+                    <br><input type="text" class="form-control" size="40" name="RightBS" id = "RightBS" value="CATTTGCTGGAGGTCACCCA">
+                    <small class="text-muted">NOTE: this is pegRNA for Prime Editing Mode</small>
+
                 </div>
                 <div class = "col-sm">
                     <label> Targeting mutagenesis oligonucleotide (Knock-in):</label>  
@@ -1147,7 +1149,7 @@ function getFastaSequence() {
     })
     .catch(error => {
     if (error.message === 'Network response was not ok') {
-        alert('The provided URL is not valid or the gene name is not found. Please check your input and try again.');
+        alert('The provided URL is not valid or the gene name is not found. Please check your input and try again. Or you can use the customized reference in Optional form below');
         locus="";
     } 
     else {
@@ -5010,6 +5012,7 @@ function SelectGRNA(line){
     var rev = line[3];
     document.getElementById("RightBS").value = ts;
     document.getElementById("GeneName").value = gene;
+    getFastaSequence()
 }
 
 function Hide_auto_complete(){

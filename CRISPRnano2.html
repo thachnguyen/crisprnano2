@@ -5,23 +5,6 @@
         float: left;
         width: 50%;
         }
-        .input_form {
-        border-radius: 6px;
-        border: 2px solid #0c0c0c;
-        }
-        .button {
-        background-color: #7dbfe0; 
-        border: 2px solid #0c0c0c;
-        border-radius: 10px;
-        color: rgb(8, 8, 8);
-        padding: 10px 22px;
-        text-align: center;
-        text-decoration: none;
-        display: inline-block;
-        font-size: 12px;
-        margin: 4px 2px;
-        cursor: pointer;
-        }
 
         /* Popup container - can be anything you want */
 .popup {
@@ -33,7 +16,21 @@
   -ms-user-select: none;
   user-select: none;
 }
-
+div.selector {
+                    background-color: rgba(255, 255, 255, 0.95);
+                    position: absolute;
+                    padding: 20px;
+                    line-height: 25px;
+                }
+                button {
+                    background: none;
+                    background-color: rgba(38,170,220, 0.3);
+                    border: none;
+                    border-radius: 3px;
+                    margin-top: 3px;
+                    padding: 3px;
+                    font-size: 12;
+                }
 .hidden {
       display: none;
     }
@@ -160,7 +157,7 @@
                 </div>
             </nav>
             <div class="d-flex justify-content-center mt-3">
-                <img id="titleIndex" width="60%" src="./crisprnano2/titleBig_new.png">
+                <img id="titleIndex" width="60%" src="./crisprnano2/titleBig_new1.png">
             </div>
         <hr>
         <div class="row">
@@ -217,15 +214,18 @@
                 <div class="row">
                 <div class = "col-sm">
                     <label>Gene Name:</label>
-                    <input type="text" class="form-control" size="40" name="GeneName" value="" onchange="getFastaSequence() " placeholder="e.g. AHR">
-                    <small class="text-muted">Gene names are from <a href="https://crisprnano.de/genename.txt">this </a> list, if Gene name is blank, the customized reference sequence must be given or system will search by given sgRNA. </a></small><br>
+                    <input type="text" class="form-control" size="40" name="GeneName" id = "GeneName" value="" oninput="FindGRNA(this.value);"  placeholder="e.g. AHR" onblur="setTimeout('Hide_auto_complete();',500);">
+                    <div id="gene_auto_complete" class="selector" style="display:none;"></div>
+                    <small class="text-muted">This will list all recommended Genes and coding region gRNAs (support Human and Mouse only). Gene names are from <a href="https://crisprnano.de/genename.txt">this </a> list. You can select the interest pair. If Gene name is blank, the customized reference sequence must be given or system will search by given sgRNA. </a></small><br>
                 </div>
                 <div class = "col-sm">
                     <label>gRNA (*): </label>
                     <div class="popup" onclick="myFunction4()">(? Click here!)
                         <span class="popuptext" id="help4">In this field the nuclease target site is entered. In Prime Editing analyser, this is pegRNA. Click again to close</span>
                     </div>
-                    <br><input type="text" class="form-control" size="40" name="RightBS" value="CATTTGCTGGAGGTCACCCA"><br>
+                    <br><input type="text" class="form-control" size="40" name="RightBS" id = "RightBS" value="CATTTGCTGGAGGTCACCCA">
+                    <small class="text-muted">NOTE: this is pegRNA for Prime Editing Mode</small>
+
                 </div>
                 <div class = "col-sm">
                     <label> Targeting mutagenesis oligonucleotide (Knock-in):</label>  
@@ -499,6 +499,14 @@
 
         <div id="results" style="position: absolute; left: 20px; top: 160px; display: none;">
             <div class="column">
+                <div class="btn-group btn-group-lg mr-3" role="group" id="result_pie" >
+                    <button type="button" class="btn btn-sm btn-light brd" name="setup">GENOTYPE</button>
+                    <button type="button" class="btn btn-sm btn-light brd" >RIMA</button>
+                    <button type="button" class="btn btn-sm btn-light brd" name="result">Indel distribution</button>
+                    <button type="button" class="btn btn-sm btn-light brd" name="bulkview_result" >Quality</button>
+                    <button type="button" class="btn btn-sm btn-light brd" name="offtarget_result" >Length</button>
+                </div>
+                <br>
                 <div id="DIV_piecharts">
                     <svg id="SVGpie" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="900" height="520">
                     </svg>
@@ -537,16 +545,16 @@
                     <div id="sgRNAContainer" class="hidden">
                     <br>
                     <small class="text-muted">sgRNA gene 1</small>
-                    <input type="text" class="input_form" size="40" name="sgRNA1" id="sgRNA1" value="" ><br>
+                    <input type="text" class="form-control" size="40" name="sgRNA1" id="sgRNA1" value="" ><br>
                     <br>
                     <small class="text-muted">sgRNA gene 2</small>
-                    <input type="text" class="input_form" size="40" name="sgRNA2" id="sgRNA2" value=""><br>
+                    <input type="text" class="form-control" size="40" name="sgRNA2" id="sgRNA2" value=""><br>
                     <br>
                     <small class="text-muted">sgRNA gene 3</small>
-                    <input type="text" class="input_form" size="40" name="sgRNA3" id="sgRNA3" value=""><br>
+                    <input type="text" class="form-control" size="40" name="sgRNA3" id="sgRNA3" value=""><br>
                     <br>
                     <small class="text-muted">sgRNA gene 4</small>
-                    <input type="text" class="input_form" size="40" name="sgRNA4" id="sgRNA4" value=""><br>
+                    <input type="text" class="form-control" size="40" name="sgRNA4" id="sgRNA4" value=""><br>
                     <br>
                     </div>
                     <br>
@@ -1141,7 +1149,7 @@ function getFastaSequence() {
     })
     .catch(error => {
     if (error.message === 'Network response was not ok') {
-        alert('The provided URL is not valid or the gene name is not found. Please check your input and try again.');
+        alert('The provided URL is not valid or the gene name is not found. Please check your input and try again. Or you can use the customized reference in Optional form below');
         locus="";
     } 
     else {
@@ -1203,6 +1211,9 @@ function FileReceived() {
     var gape = -1  // gap extent score
     var id = CurrentFileId;
     var targetingOligo1 = document.getElementsByName("TargetingOligo")[0].value.replace(/[\s\n]+/g, '').toUpperCase(); //TargetingOligo
+    var d_edit = document.getElementsByName("d_edit")[0].value.replace(/[\s\n]+/g, '').toUpperCase(); // desired edit
+    var p_edit = document.getElementsByName("p_edit")[0].value.replace(/[\s\n]+/g, '').toUpperCase(); //partial edit
+
     PhredThreshold = 1*document.getElementsByName("Phred")[0].value;
     var prime_mode = document.getElementById('prime_editing').checked;
     var ML_mode = document.getElementById('run_mode').checked;
@@ -3172,7 +3183,7 @@ function Pre_PlotAlignment(barcode, locus){
     if (rtt!=''){
         for (let key in aln_dict_fil[id]){
             if (key.split('\n')[1].trim().length>5){
-                validate_ins = Check_ins_RTT(key, buff_size=6)
+                validate_ins = Check_ins_RTT(key, buff_size=4)
                 if (validate_ins[0]){
                     aln_dict_fil[id][validate_ins[3]]= aln_dict_fil[id][key]
                     aln_dict[id][validate_ins[3]]= aln_dict[id][key]
@@ -4921,6 +4932,93 @@ function PrintSVGAlignment(){
     printWindow.close();
 }
 
+
+function FindGRNA(gene) {
+    var fileUrl
+    if (document.URL.includes('www')){
+        fileUrl = 'https://www.crisprnano.de/spCas9_human_geckov2.txt';
+    }
+    else {
+        fileUrl = 'https://crisprnano.de/spCas9_human_geckov2.txt';
+    }
+    // Fetch the file
+    fetch(fileUrl)
+    .then(response => {
+        // Check if the response is successful
+        if (!response.ok) {
+        throw new Error('Network response was not ok ' + response.statusText);
+        }
+        return response.text(); // Read the response as text
+    })
+    .then(data => {
+        // Handle the text data here
+        console.log(data);
+        CRISPRlib = data;
+    })
+    .catch(error => {
+        // Handle errors
+        console.error('There was a problem with the fetch operation:', error);
+    });
+    
+    var table = "";
+
+    if (gene.length >= 2)
+    {
+        //correct upper / lower case mouse / human:
+        var geneUpperCase = gene.toUpperCase();
+        var geneLowerCase = gene.toLowerCase();
+        gene = geneUpperCase;
+        var pos=0, hit;
+        while (pos<CRISPRlib.length && (hit = CRISPRlib.indexOf(gene, pos)) != -1)
+        {
+            var line="";
+            pos = hit;
+            while (pos<CRISPRlib.length && CRISPRlib[pos] != "\n"){
+                line += CRISPRlib[pos++];
+            }
+
+            if (hit==0 || CRISPRlib[hit-1]=="\n"){
+                line = line.split("\t");
+                if (line.length >= 2) {
+                    table += "<button onclick='SelectGRNA(\""+line+"\");'>GeCKO v2.0 "+line[0]+" "+line[1]+"</button><br>";
+                }
+            }
+        }
+        if (CRISPRlib == "") table = "please wait for the gRNA library to be loaded.<br>";
+        table += "<button onclick='SelectGRNA();'>Enter custom target site</button>";
+    }
+
+    //move gene_auto_complete to input:
+    var gene_auto_complete = document.getElementById("gene_auto_complete");
+    var gene_input = document.getElementsByName("GeneName")[0];
+    gene_auto_complete.innerHTML = table;
+    var x = gene_input.offsetLeft;
+    var y = gene_input.offsetTop+30;
+    gene_auto_complete.style.left = x;
+    gene_auto_complete.style.top = y;
+    if (table=="") gene_auto_complete.style.display = "none";
+    else gene_auto_complete.style.display = "";
+}
+
+function SelectGRNA(line){
+    document.getElementById("gene_auto_complete").style.display = "none";
+    document.getElementById("RightBS").value = "";
+
+    if (!line) return;
+    line = line.split(",");
+    var gene = line[0];
+    var ts = line[1];
+    var fwd = line[2];
+    var rev = line[3];
+    document.getElementById("RightBS").value = ts;
+    document.getElementById("GeneName").value = gene;
+    getFastaSequence()
+}
+
+function Hide_auto_complete(){
+            gene_auto_complete.style.display = "none";
+        }
+
 // Check micro homology for given sequence 
 // input: our alignment dictionary element does not contain insertion track
 
@@ -4964,8 +5062,8 @@ function Check_ins_RTT(sequence_seq, buff_size = 5){
     // if there is better matching, shift the cutting site to the maximum point
     // Update the new aligment entry to the alignment dictionary
     var ms = 1 // match score
-    var mms = -2//mismatch score
-    var gapo = -2  // gap open score
+    var mms = -1//mismatch score
+    var gapo = -3  // gap open score
     var gape = -1  // gap extent score
     var shifted = false
     const main_track = sequence_seq.split('\n')[0]
@@ -5349,6 +5447,14 @@ const A_cl = "rgb(0,150,0)"
 const C_cl ="rgb(0,0,255)"
 const G_cl = "rgb(200, 100, 0)"
 const N_cl = "rgb(0, 0, 0)"
+
+var CRISPRlib = ""
+var indexedDB = window.indexedDB;
+var IDBTransaction = window.IDBTransaction;
+var dbVersion = 1.0;
+// Create/open database
+var request = indexedDB.open("CRISPRnano2_testFiles", dbVersion);
+var db;
 
 const toggleButton = document.getElementById('toggleButton');
 const sgRNAContainer = document.getElementById('sgRNAContainer');
