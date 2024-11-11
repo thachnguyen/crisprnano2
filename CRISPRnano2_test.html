@@ -3624,14 +3624,13 @@ function PlotAlignment_bulk(barcode, locus, bulk_threshold){
     });
     aln_dict_bulk = Object.fromEntries(items.map(([v, k]) => [v, k]));
 
-    for (let key in aln_dict_bulk){
-        if (key in aln_dict[0]) {
-        }
-        else{
-            delete aln_dict_bulk[key]
-        }
-    }
-
+    // for (let key in aln_dict_bulk){
+    //     if (key in aln_dict[0]) {
+    //     }
+    //     else{
+    //         delete aln_dict_bulk[key]
+    //     }
+    // }
 
     //aggregate aln_track
     //Find top 3:
@@ -4423,15 +4422,6 @@ function PlotAlignment_off(gene_i)
         for (let x=0; x<30*2; x++){
             //draw main track:
             if ((key[x]==locus_list[barcode][BreakPoint-region_analyse+x])||(key[x]=='N')||(key[x]=='-')||(typeof(key[x])=='undefined')){
-                // SVGObj= document.createElementNS(svgns, "rect");
-                // SVGObj.setAttribute("x", 120+12*(x)-5);
-                // SVGObj.setAttribute("y", ysize+delypos-10);
-                // SVGObj.setAttribute("width", "11");
-                // SVGObj.setAttribute("height", "11");
-                // SVGObj.setAttribute("fill", "rgb(255,255,255");
-                // SVGObj.setAttribute("text-anchor", "middle");
-                // SVGObj.setAttribute("pointer-events","none");
-                // svg.appendChild(SVGObj);
                 }
             }
 
