@@ -500,20 +500,21 @@ div.selector {
         <div id="results" style="position: absolute; left: 20px; top: 160px; display: none;">
             <div class="column">
                 <div class="btn-group btn-group-lg mr-3" role="group" id="result_pie" >
-                    <button type="button" class="btn btn-sm btn-light brd" name="setup">GENOTYPE</button>
-                    <button type="button" class="btn btn-sm btn-light brd" >RIMA</button>
+                    <button type="button" class="btn btn-sm btn-light brd" name="setup" onclick="TabClicked(7)">GENOTYPE</button>
+                    <button type="button" class="btn btn-sm btn-light brd" onclick="TabClicked(8)">RIMA</button>
                     <!-- <button type="button" class="btn btn-sm btn-light brd" name="result">Indel distribution</button>
                     <button type="button" class="btn btn-sm btn-light brd" name="bulkview_result" >Quality</button>
                     <button type="button" class="btn btn-sm btn-light brd" name="offtarget_result" >Length</button> -->
                 </div>
                 <br>
                 <br>
-                <div id="DIV_piecharts">
+                <div id="DIV_piecharts" > 
+                    <!-- //</div>style="position: absolute; left: 20px; top: 160px; display: none;"> -->
                     <svg id="SVGpie" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="900" height="520">
                     </svg>
                 </div>
                 <div id="DIV_piecharts_rima">
-                <svg id="SVGpie_rima" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="900" height="520">
+                <svg id="SVGpie_rima" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="900" height="520" style="display: none;">
                     </svg>
                 </div>
                 <div id="DIV_alignment">
@@ -1091,7 +1092,7 @@ function TabClicked(i)
 {
     if (i==0) document.getElementById("setup").style.display = "";
     else document.getElementById("setup").style.display = "none";
-    if (i==1) document.getElementById("results").style.display = "";
+    if (i==1||i ==7||i ==8) document.getElementById("results").style.display = "";
     else document.getElementById("results").style.display = "none";
 
     if (i==2) document.getElementById("manual").style.display = "";
@@ -1107,6 +1108,10 @@ function TabClicked(i)
     else document.getElementById("offtarget_view").style.display = "none";
     if (i==6) document.getElementById("testdata").style.display = "";
     else document.getElementById("testdata").style.display = "none";
+    if (i==1||i==7) document.getElementById("SVGpie").style.display = "";
+    else document.getElementById("SVGpie").style.display = "none";
+    if (i==8) document.getElementById("SVGpie_rima").style.display = "";
+    else document.getElementById("SVGpie_rima").style.display = "none";
 
     document.getElementById("progress").style.display = "none";
     document.getElementById("progress1").style.display = "none";
@@ -1562,6 +1567,7 @@ function FileReceived() {
         setTimeout("ReadNextFileChunk();",10);
     } else {
         DrawPie();
+        DrawPie_rima();
     }
     }
 
@@ -1869,34 +1875,36 @@ function DrawPie()
             }
 
             // desired edit
-            lastangle = angle;
-            angle+=2*3.1415*0.995*summary_track[barcode][6]/sum;
-            var startx = size*Math.cos(lastangle);
-            var starty = size*Math.sin(lastangle);
-            var plusx = size*(Math.cos(angle)-Math.cos(lastangle));
-            var plusy = size*(Math.sin(angle)-Math.sin(lastangle));
-            var largearc = 0;
-            if (angle-lastangle > 3.1415) largearc = 1;
-            var SVGObj= document.createElementNS(NS,"path");
-            SVGObj.setAttributeNS(null, "d", "M "+midx+","+midy+" l "+startx+","+starty+" a "+size+" "+size+" 0 "+largearc+" 1 "+plusx+" "+plusy+" z");
-            SVGObj.style.fill="rgb(156, 39, 176)";
-            SVGObj.setAttribute("pointer-events","none");
-            svg.appendChild(SVGObj);
+            if (p_edit!=""||d_edit!=""){
+                lastangle = angle;
+                angle+=2*3.1415*0.995*summary_track[barcode][6]/sum;
+                var startx = size*Math.cos(lastangle);
+                var starty = size*Math.sin(lastangle);
+                var plusx = size*(Math.cos(angle)-Math.cos(lastangle));
+                var plusy = size*(Math.sin(angle)-Math.sin(lastangle));
+                var largearc = 0;
+                if (angle-lastangle > 3.1415) largearc = 1;
+                var SVGObj= document.createElementNS(NS,"path");
+                SVGObj.setAttributeNS(null, "d", "M "+midx+","+midy+" l "+startx+","+starty+" a "+size+" "+size+" 0 "+largearc+" 1 "+plusx+" "+plusy+" z");
+                SVGObj.style.fill="rgb(156, 39, 176)";
+                SVGObj.setAttribute("pointer-events","none");
+                svg.appendChild(SVGObj);
 
-            // partial edit
-            lastangle = angle;
-            angle+=2*3.1415*0.995*summary_track[barcode][8]/sum;
-            var startx = size*Math.cos(lastangle);
-            var starty = size*Math.sin(lastangle);
-            var plusx = size*(Math.cos(angle)-Math.cos(lastangle));
-            var plusy = size*(Math.sin(angle)-Math.sin(lastangle));
-            var largearc = 0;
-            if (angle-lastangle > 3.1415) largearc = 1;
-            var SVGObj= document.createElementNS(NS,"path");
-            SVGObj.setAttributeNS(null, "d", "M "+midx+","+midy+" l "+startx+","+starty+" a "+size+" "+size+" 0 "+largearc+" 1 "+plusx+" "+plusy+" z");
-            SVGObj.style.fill="rgb(198, 255, 0)";
-            SVGObj.setAttribute("pointer-events","none");
-            svg.appendChild(SVGObj);
+                // partial edit
+                lastangle = angle;
+                angle+=2*3.1415*0.995*summary_track[barcode][8]/sum;
+                var startx = size*Math.cos(lastangle);
+                var starty = size*Math.sin(lastangle);
+                var plusx = size*(Math.cos(angle)-Math.cos(lastangle));
+                var plusy = size*(Math.sin(angle)-Math.sin(lastangle));
+                var largearc = 0;
+                if (angle-lastangle > 3.1415) largearc = 1;
+                var SVGObj= document.createElementNS(NS,"path");
+                SVGObj.setAttributeNS(null, "d", "M "+midx+","+midy+" l "+startx+","+starty+" a "+size+" "+size+" 0 "+largearc+" 1 "+plusx+" "+plusy+" z");
+                SVGObj.style.fill="rgb(198, 255, 0)";
+                SVGObj.setAttribute("pointer-events","none");
+                svg.appendChild(SVGObj);
+            }
 
             // targetingOligo
             lastangle = angle;
@@ -1913,9 +1921,7 @@ function DrawPie()
             SVGObj.style.fill="rgb(0,232,30)";
             SVGObj.setAttribute("pointer-events","none");
             svg.appendChild(SVGObj);
-            // read_ambigous, remove in v2.0
         }
-
         //SVG:
         var SVGObj= document.createElementNS(NS,"text");
         SVGObj.setAttribute("font-family", "sans-serif");
@@ -2057,15 +2063,14 @@ function DrawPie()
     document.title = "Result for "+document.getElementsByName("GeneName")[0].value+" ("+files.length+" barcodes read)";
 }
 
-function DrawPie_rima()
-{
+function DrawPie_rima() {
     var svg = document.getElementById("SVGpie_rima");
     var NS="http://www.w3.org/2000/svg";
     TabClicked(1);
     //reset svg:
     while (svg.lastChild) svg.removeChild(svg.lastChild);
     //register mouse listener:
-    svg.addEventListener("mousedown", PieClick, false);
+    svg.addEventListener("mousedown", PieClick_rima, false);
     var BLAU=["rgb(50,42,126)","rgb(16,115,179)","rgb(38,170,220)", "rgb(50,42,126)","rgb(16,115,179)","rgb(38,170,220)"];
 
     var maxsum = 0;
@@ -2075,55 +2080,15 @@ function DrawPie_rima()
     
     for (var barcode=0; barcode<96; barcode++){
         var sum = 0;
-        var inf_indel1 =  Array(6)
-        var out_indel1 = Array(6)
-        var p_edit1 = 0
-        var d_edit1 = 0
-        var oligo = 0
-        var wt = 0
-        for (let i=0; i <6; i++){
-            inf_indel1[i] = 0;
-            out_indel1[i] = 0;
-        }
-        // classify indel into several subset
-        for (let key in aln_dict_fil[barcode]){
-            if (aln_dict[barcode][key][1] == 2){
-                for (let i=0; i <6; i++){
-                    if (inf_indel1[i]==0){
-                        inf_indel1[i]=aln_dict_fil[barcode][key];
-                        sum +=inf_indel1[i];
-                        break;
-                    }
-                }
-            } else if (aln_dict[barcode][key][1] == 3){
-                for (let i=0; i <6; i++){
-                    if (out_indel1[i]==0){
-                        out_indel1[i]=aln_dict_fil[barcode][key];
-                        sum += out_indel1[i];
-                        break;
-                    }
-                }
-            }
-            else if (aln_dict[barcode][key][1] == 9){
-                d_edit1 += aln_dict_fil[barcode][key];
-                sum += aln_dict_fil[barcode][key];
-            }
-            else if (aln_dict[barcode][key][1] == 10){
-                p_edit1 += aln_dict_fil[barcode][key];
-                sum += aln_dict_fil[barcode][key];
-            }
-
-        }
-        sum += summary_track[barcode][2]+ summary_track[barcode][1]
-
-        var size = 24*Math.sqrt(sum/maxsum);
-        var midx = (barcode%12)*50 + 25;
-        var midy = Math.floor(barcode/12) * 65 + 25;
         if (summary_track[barcode][7] > 0) {
-            //wt:
+            sum = rima_hist_all[barcode][0]+ rima_hist_all[barcode][1]+rima_hist_all[barcode][2]
+            var size = 24*Math.sqrt(sum/maxsum);
+            var midx = (barcode%12)*50 + 25;
+            var midy = Math.floor(barcode/12) * 65 + 25;
+            //MH_del:
             var angle = -3.1415/2;
             var lastangle = angle;
-            angle+=2*3.1415*0.995*summary_track[barcode][2]/sum;
+            angle+=2*3.1415*0.995*rima_hist_all[barcode][0]/sum;
             //SVG:
             var startx = size*Math.cos(lastangle);
             var starty = size*Math.sin(lastangle);
@@ -2134,112 +2099,52 @@ function DrawPie_rima()
             var SVGObj= document.createElementNS(NS,"path");
             SVGObj.setAttributeNS(null, "d", "M "+midx+","+midy+" l "+startx+","+starty+" a "+size+" "+size+" 0 "+largearc+" 1 "+plusx+" "+plusy+" z");
             SVGObj.style.fill="rgb(200,200,200)";
-
             SVGObj.setAttribute("pointer-events","none");
             svg.appendChild(SVGObj);
 
-            for (let i=0; i <6; i++){
-                // inframe indel 6 sub-types
-                lastangle = angle;
-                angle+=2*3.1415*0.995*inf_indel1[i]/sum;
-                var startx = size*Math.cos(lastangle);
-                var starty = size*Math.sin(lastangle);
-                var plusx = size*(Math.cos(angle)-Math.cos(lastangle));
-                var plusy = size*(Math.sin(angle)-Math.sin(lastangle));
-                var largearc = 0;
-                if (angle-lastangle > 3.1415) largearc = 1;
-                var SVGObj= document.createElementNS(NS,"path");
-                SVGObj.setAttributeNS(null, "d", "M "+midx+","+midy+" l "+startx+","+starty+" a "+size+" "+size+" 0 "+largearc+" 1 "+plusx+" "+plusy+" z");
-                SVGObj.style.fill=BLAU[i];
-                SVGObj.setAttribute("pointer-events","none");
-                svg.appendChild(SVGObj);
-            }
-
-            for (let i=0; i <6; i++){
-                // outframe indel
-                lastangle = angle;
-                angle+=2*3.1415*0.995*out_indel1[i]/sum;
-                var startx = size*Math.cos(lastangle);
-                var starty = size*Math.sin(lastangle);
-                var plusx = size*(Math.cos(angle)-Math.cos(lastangle));
-                var plusy = size*(Math.sin(angle)-Math.sin(lastangle));
-                var largearc = 0;
-                if (angle-lastangle > 3.1415) largearc = 1;
-                var SVGObj= document.createElementNS(NS,"path");
-                SVGObj.setAttributeNS(null, "d", "M "+midx+","+midy+" l "+startx+","+starty+" a "+size+" "+size+" 0 "+largearc+" 1 "+plusx+" "+plusy+" z");
-                SVGObj.style.fill=ROT[i];
-                SVGObj.setAttribute("pointer-events","none");
-                svg.appendChild(SVGObj);
-            }
-
-            // desired edit
             lastangle = angle;
-            angle+=2*3.1415*0.995*summary_track[barcode][6]/sum;
-            var startx = size*Math.cos(lastangle);
-            var starty = size*Math.sin(lastangle);
-            var plusx = size*(Math.cos(angle)-Math.cos(lastangle));
-            var plusy = size*(Math.sin(angle)-Math.sin(lastangle));
-            var largearc = 0;
+            angle+=2*3.1415*0.995*rima_hist_all[barcode][1]/sum;
+            startx = size*Math.cos(lastangle);
+            starty = size*Math.sin(lastangle);
+            plusx = size*(Math.cos(angle)-Math.cos(lastangle));
+            plusy = size*(Math.sin(angle)-Math.sin(lastangle));
+            largearc = 0;
             if (angle-lastangle > 3.1415) largearc = 1;
-            var SVGObj= document.createElementNS(NS,"path");
+            SVGObj= document.createElementNS(NS,"path");
             SVGObj.setAttributeNS(null, "d", "M "+midx+","+midy+" l "+startx+","+starty+" a "+size+" "+size+" 0 "+largearc+" 1 "+plusx+" "+plusy+" z");
-            SVGObj.style.fill="rgb(156, 39, 176)";
+            SVGObj.style.fill=BLAU[0];
             SVGObj.setAttribute("pointer-events","none");
             svg.appendChild(SVGObj);
 
-            // partial edit
             lastangle = angle;
-            angle+=2*3.1415*0.995*summary_track[barcode][8]/sum;
-            var startx = size*Math.cos(lastangle);
-            var starty = size*Math.sin(lastangle);
-            var plusx = size*(Math.cos(angle)-Math.cos(lastangle));
-            var plusy = size*(Math.sin(angle)-Math.sin(lastangle));
-            var largearc = 0;
+            angle+=2*3.1415*0.995*rima_hist_all[barcode][2]/sum;
+            startx = size*Math.cos(lastangle);
+            starty = size*Math.sin(lastangle);
+            plusx = size*(Math.cos(angle)-Math.cos(lastangle));
+            plusy = size*(Math.sin(angle)-Math.sin(lastangle));
+            largearc = 0;
             if (angle-lastangle > 3.1415) largearc = 1;
-            var SVGObj= document.createElementNS(NS,"path");
+            SVGObj= document.createElementNS(NS,"path");
             SVGObj.setAttributeNS(null, "d", "M "+midx+","+midy+" l "+startx+","+starty+" a "+size+" "+size+" 0 "+largearc+" 1 "+plusx+" "+plusy+" z");
-            SVGObj.style.fill="rgb(198, 255, 0)";
+            SVGObj.style.fill=BLAU[1];
             SVGObj.setAttribute("pointer-events","none");
             svg.appendChild(SVGObj);
 
-            // targetingOligo
-            lastangle = angle;
-            angle+=2*3.1415*0.995*summary_track[barcode][1]/sum;
-
-            var startx = size*Math.cos(lastangle);
-            var starty = size*Math.sin(lastangle);
-            var plusx = size*(Math.cos(angle)-Math.cos(lastangle));
-            var plusy = size*(Math.sin(angle)-Math.sin(lastangle));
-            var largearc = 0;
-            if (angle-lastangle > 3.1415) largearc = 1;
-            var SVGObj= document.createElementNS(NS,"path");
-            SVGObj.setAttributeNS(null, "d", "M "+midx+","+midy+" l "+startx+","+starty+" a "+size+" "+size+" 0 "+largearc+" 1 "+plusx+" "+plusy+" z");
-            SVGObj.style.fill="rgb(0,232,30)";
+            var SVGObj= document.createElementNS(NS,"text");
+            SVGObj.setAttribute("font-family", "sans-serif");
+            SVGObj.setAttribute("font-weight", "100");
+            SVGObj.setAttribute("x", midx);
+            SVGObj.setAttribute("y", midy+36);
+            SVGObj.setAttribute("font-size", "11");
+            SVGObj.setAttribute("text-anchor", "middle");
             SVGObj.setAttribute("pointer-events","none");
-            svg.appendChild(SVGObj);
-            // read_ambigous, remove in v2.0
-        }
-
-        //SVG:
-        var SVGObj= document.createElementNS(NS,"text");
-        SVGObj.setAttribute("font-family", "sans-serif");
-        SVGObj.setAttribute("font-weight", "100");
-        SVGObj.setAttribute("x", midx);
-        SVGObj.setAttribute("y", midy+36);
-        SVGObj.setAttribute("font-size", "11");
-        SVGObj.setAttribute("text-anchor", "middle");
-        SVGObj.setAttribute("pointer-events","none");
-        if (genotype[barcode]==''||!genotype[barcode]){
             SVGObj.textContent = GetWellPos(barcode)
+            svg.appendChild(SVGObj);
         }
-        else if (genotype[barcode]) {
-            SVGObj.textContent = GetWellPos(barcode)+ " ("+ genotype[barcode]+ ")";
-        }
-        svg.appendChild(SVGObj);
     }
     //legende:
     var midx = 13*50 + 25;
-    var midy = 0 * 65 + 25;
+    var midy = 25;
     for (var i=0; i<8; i++) {
         var vol = Math.floor(maxsum/100)*100/Math.pow(2,i);
         var size = 24*Math.sqrt(vol/maxsum);
@@ -2251,7 +2156,7 @@ function DrawPie_rima()
         SVGObj.style.fill="none";
         SVGObj.style.stroke="rgb(100,100,100)";
         svg.appendChild(SVGObj);
-        var SVGObj= document.createElementNS(NS,"text");
+        SVGObj= document.createElementNS(NS,"text");
         SVGObj.setAttribute("font-family", "sans-serif");
         SVGObj.setAttribute("font-weight", "100");
         SVGObj.setAttribute("x", midx+40);
@@ -2261,68 +2166,43 @@ function DrawPie_rima()
         svg.appendChild(SVGObj);
         midy += size*2+10;
     }
-    for (var i=0; i<3; i++){
-        var SVGObj= document.createElementNS(NS,"circle");
-        SVGObj.setAttributeNS(null, "cx", midx +20*i -10);
-        SVGObj.setAttributeNS(null, "cy", midy+30+20);
-        SVGObj.setAttributeNS(null, "r" , 6);
-        SVGObj.style.fill=BLAU[i];
-        svg.appendChild(SVGObj);
-    }
-    for (var i=0; i<3; i++){
-        SVGObj= document.createElementNS(NS,"circle");
-        SVGObj.setAttributeNS(null, "cx", midx +20*i -10);
-        SVGObj.setAttributeNS(null, "cy", midy+30+40);
-        SVGObj.setAttributeNS(null, "r" , 6);
-        SVGObj.style.fill=ROT[i];
-        svg.appendChild(SVGObj);
-    }
 
-    SVGObj= document.createElementNS(NS,"circle");
+    var SVGObj= document.createElementNS(NS,"circle");
     SVGObj.setAttributeNS(null, "cx", midx +10);
-    SVGObj.setAttributeNS(null, "cy", midy+30+60);
+    SVGObj.setAttributeNS(null, "cy", midy+50);
     SVGObj.setAttributeNS(null, "r" , 6);
     SVGObj.style.fill="rgb(200,200,200)";
     svg.appendChild(SVGObj);
-
     SVGObj= document.createElementNS(NS,"circle");
     SVGObj.setAttributeNS(null, "cx", midx +10);
-    SVGObj.setAttributeNS(null, "cy", midy+30+80);
+    SVGObj.setAttributeNS(null, "cy", midy+70);
     SVGObj.setAttributeNS(null, "r" , 6);
-    SVGObj.style.fill="rgb(0,200,0)";
+    SVGObj.style.fill=BLAU[0];
     svg.appendChild(SVGObj);
-
-    //added desired and partial circles
-    if (p_edit !=""||d_edit!=""){
-        SVGObj= document.createElementNS(NS,"circle");
-        SVGObj.setAttributeNS(null, "cx", midx +10);
-        SVGObj.setAttributeNS(null, "cy", midy+30+100);
-        SVGObj.setAttributeNS(null, "r" , 6);
-        SVGObj.style.fill="rgb(156, 39, 176)";
-        svg.appendChild(SVGObj);
-        SVGObj= document.createElementNS(NS,"circle");
-        SVGObj.setAttributeNS(null, "cx", midx +10);
-        SVGObj.setAttributeNS(null, "cy", midy+30+120);
-        SVGObj.setAttributeNS(null, "r" , 6);
-        SVGObj.style.fill="rgb(198, 255, 0)";
-        svg.appendChild(SVGObj);
-    }
-        
-    var SVGObj= document.createElementNS(NS,"text");
+    
+    SVGObj= document.createElementNS(NS,"circle");
+    SVGObj.setAttributeNS(null, "cx", midx +10);
+    SVGObj.setAttributeNS(null, "cy", midy+90);
+    SVGObj.setAttributeNS(null, "r" , 6);
+    SVGObj.style.fill=BLAU[1];
+    BLAU[1]
+    svg.appendChild(SVGObj);
+  
+    SVGObj= document.createElementNS(NS,"text");
     SVGObj.setAttribute("font-family", "sans-serif");
     SVGObj.setAttribute("font-weight", "100");
     SVGObj.setAttribute("x", midx+50);
     SVGObj.setAttribute("y", midy+53);
     SVGObj.setAttribute("font-size", "12");
-    SVGObj.textContent = "in-frame indels";
+    SVGObj.textContent = "MH-del";
     svg.appendChild(SVGObj);
-    var SVGObj= document.createElementNS(NS,"text");
+    SVGObj= document.createElementNS(NS,"text");
     SVGObj.setAttribute("font-family", "sans-serif");
     SVGObj.setAttribute("font-weight", "100");
     SVGObj.setAttribute("x", midx+50);
     SVGObj.setAttribute("y", midy+53+20);
     SVGObj.setAttribute("font-size", "12");
-    SVGObj.textContent = "out-of-frame indels";
+    SVGObj.textContent = "NHEJ";
     svg.appendChild(SVGObj);
     SVGObj= document.createElementNS(NS,"text");
     SVGObj.setAttribute("font-family", "sans-serif");
@@ -2330,34 +2210,9 @@ function DrawPie_rima()
     SVGObj.setAttribute("x", midx+50);
     SVGObj.setAttribute("y", midy+53+40);
     SVGObj.setAttribute("font-size", "12");
-    SVGObj.textContent = "no indel";
+    SVGObj.textContent = "Other EJ";
     svg.appendChild(SVGObj);
-    SVGObj= document.createElementNS(NS,"text");
-    SVGObj.setAttribute("font-family", "sans-serif");
-    SVGObj.setAttribute("font-weight", "100");
-    SVGObj.setAttribute("x", midx+50);
-    SVGObj.setAttribute("y", midy+53+60);
-    SVGObj.setAttribute("font-size", "12");
-    SVGObj.textContent = "targeted mutagenesis";
-    svg.appendChild(SVGObj);
-    if (p_edit !=""||d_edit!=""){
-        SVGObj= document.createElementNS(NS,"text");
-        SVGObj.setAttribute("font-family", "sans-serif");
-        SVGObj.setAttribute("font-weight", "100");
-        SVGObj.setAttribute("x", midx+50);
-        SVGObj.setAttribute("y", midy+53+80);
-        SVGObj.setAttribute("font-size", "12");
-        SVGObj.textContent = "DESIRED edit";
-        svg.appendChild(SVGObj);
-        SVGObj= document.createElementNS(NS,"text");
-        SVGObj.setAttribute("font-family", "sans-serif");
-        SVGObj.setAttribute("font-weight", "100");
-        SVGObj.setAttribute("x", midx+50);
-        SVGObj.setAttribute("y", midy+53+100);
-        SVGObj.setAttribute("font-size", "12");
-        SVGObj.textContent = "PARTIAL edit";
-        svg.appendChild(SVGObj);
-    }
+
     document.title = "Result for "+document.getElementsByName("GeneName")[0].value+" ("+files.length+" barcodes read)";
 }
 
@@ -2477,7 +2332,7 @@ function DrawPie_bulk()
         SVGObj.style.fill="rgb(0,232,30)";
         SVGObj.setAttribute("pointer-events","none");
         svg.appendChild(SVGObj);
-        }
+    }
 
         //SVG:
         SVGObj= document.createElementNS(NS,"text");
@@ -2575,12 +2430,13 @@ function DrawPie_bulk()
 
     //Plot RIMA Pie
     var svg = document.getElementById("RIMApie_bulk");
+    while (svg.lastChild) svg.removeChild(svg.lastChild);
     var angle = -3.1415/2;
     lastangle = angle;
     midx = 100;
     midy = 100;
     // MH-Del
-    angle+=2*3.1415*0.995*rima_hist[0]/(rima_hist[0]+rima_hist[1]+rima_hist[2]);
+    angle+=2*3.1415*0.995*rima_hist_all[barcode][0]/(rima_hist_all[barcode][0]+rima_hist_all[barcode][1]+rima_hist_all[barcode][2]);
     //SVG:
     var startx = size*Math.cos(lastangle);
     var starty = size*Math.sin(lastangle);
@@ -2596,7 +2452,7 @@ function DrawPie_bulk()
 
     // NHEJ
     lastangle = angle;
-    angle+=2*3.1415*0.995*rima_hist[1]/(rima_hist[0]+rima_hist[1]+rima_hist[2]);
+    angle+=2*3.1415*0.995*rima_hist_all[barcode][1]/(rima_hist_all[barcode][0]+rima_hist_all[barcode][1]+rima_hist_all[barcode][2]);
     startx = size*Math.cos(lastangle);
     starty = size*Math.sin(lastangle);
     plusx = size*(Math.cos(angle)-Math.cos(lastangle));
@@ -2611,7 +2467,7 @@ function DrawPie_bulk()
 
     // Other EJ
     lastangle = angle;
-    angle+=2*3.1415*0.995*rima_hist[2]/(rima_hist[0]+rima_hist[1]+rima_hist[2]);
+    angle+=2*3.1415*0.995*rima_hist_all[barcode][2]/(rima_hist_all[barcode][0]+rima_hist_all[barcode][1]+rima_hist_all[barcode][2]);
     startx = size*Math.cos(lastangle);
     starty = size*Math.sin(lastangle);
     plusx = size*(Math.cos(angle)-Math.cos(lastangle));
@@ -2664,7 +2520,7 @@ function DrawPie_bulk()
     SVGObj.setAttribute("x", midx+80);
     SVGObj.setAttribute("y", midy+2);
     SVGObj.setAttribute("font-size", "12");
-    SVGObj.textContent = "MH-del:    "+ (100*rima_hist[0]/(rima_hist[0]+rima_hist[1]+rima_hist[2])).toFixed(2)+ " %";
+    SVGObj.textContent = "MH-del:    "+ (100*rima_hist_all[barcode][0]/(rima_hist_all[barcode][0]+rima_hist_all[barcode][1]+rima_hist_all[barcode][2])).toFixed(2)+ " %";
     svg.appendChild(SVGObj);
     SVGObj= document.createElementNS(NS,"text");
     SVGObj.setAttribute("font-family", "sans-serif");
@@ -2672,7 +2528,7 @@ function DrawPie_bulk()
     SVGObj.setAttribute("x", midx+80);
     SVGObj.setAttribute("y", midy+22)
     SVGObj.setAttribute("font-size", "12");
-    SVGObj.textContent = "NHEJ:    "+ (100*rima_hist[1]/(rima_hist[0]+rima_hist[1]+rima_hist[2])).toFixed(2)+ " %";
+    SVGObj.textContent = "NHEJ:    "+ (100*rima_hist_all[barcode][1]/(rima_hist_all[barcode][0]+rima_hist_all[barcode][1]+rima_hist_all[barcode][2])).toFixed(2)+ " %";
     svg.appendChild(SVGObj);
     SVGObj= document.createElementNS(NS,"text");
     SVGObj.setAttribute("font-family", "sans-serif");
@@ -2680,7 +2536,7 @@ function DrawPie_bulk()
     SVGObj.setAttribute("x", midx+80);
     SVGObj.setAttribute("y", midy+42)
     SVGObj.setAttribute("font-size", "12");
-    SVGObj.textContent = "Other EJ:    "+ (100*rima_hist[2]/(rima_hist[0]+rima_hist[1]+rima_hist[2])).toFixed(2)+ " %";
+    SVGObj.textContent = "Other EJ:    "+ (100*rima_hist_all[barcode][2]/(rima_hist_all[barcode][0]+rima_hist_all[barcode][1]+rima_hist_all[barcode][2])).toFixed(2)+ " %";
     svg.appendChild(SVGObj);
 
     // Parse FASTQ data and extract quality scores
@@ -3019,6 +2875,16 @@ function PieClick(evt){
     SelectClone(xx+12*yy);
 }
 
+function PieClick_rima(evt){
+    var top = document.getElementById("SVGpie_rima").getBoundingClientRect().top;
+    var left = document.getElementById("SVGpie_rima").getBoundingClientRect().left;
+    var x = evt.clientX-left;
+    var y = evt.clientY-top;
+    var xx = Math.round((x-25)/50);
+    var yy = Math.round((y-25)/65);
+    SelectClone(xx+12*yy);
+}
+
 function PieClick_off(evt){
     var top1 = document.getElementById("SVGpie_off").getBoundingClientRect().top;
     var left = document.getElementById("SVGpie_off").getBoundingClientRect().left;
@@ -3216,8 +3082,24 @@ function Pre_PlotAlignment(barcode, locus){
 }
 
 function PlotAlignment(barcode, locus){
-
     var id = barcode;
+    rima_hist_all[barcode] = [0,0,0]
+    for (let key in aln_dict_fil[barcode]){
+        //aggregate WT
+        var micro_homology_data = Check_RIMA(key)
+        var duplication1 = Check_duplication(key)
+        if (micro_homology_data[0]!=''){
+            if (micro_homology_data[0].length>=2){
+                rima_hist_all[barcode][0] += aln_dict_fil[barcode][key]
+            }
+        }
+        else if ((micro_homology_data[3]==1)||((micro_homology_data[1]!=-1)&&(micro_homology_data[2]-micro_homology_data[1]==1))){
+            rima_hist_all[barcode][1] += aln_dict_fil[barcode][key]
+        }
+        else {
+            rima_hist_all[barcode][2] += aln_dict_fil[barcode][key]
+        }
+    }
 
     //aggregate aln_track
     //Find top 3:
@@ -3272,7 +3154,14 @@ function PlotAlignment(barcode, locus){
         SVGObj.setAttribute("font-size", "16");
         SVGObj.textContent = "Desired edit reads: " + summary_track[barcode][6]+ " READS, (" +(summary_track[barcode][6]*100/summary_track[barcode][7]).toFixed(2)+"%)" +"   |  Partial edit: " +summary_track[barcode][8] +" READS, (" +(summary_track[barcode][8]*100/summary_track[barcode][7]).toFixed(2)+"%)" 
         svg.appendChild(SVGObj);
+        delypos+=30;
     }
+    SVGObj= document.createElementNS(NS,"text");
+    SVGObj.setAttribute("x", 40);
+    SVGObj.setAttribute("y", ysize+delypos);
+    SVGObj.setAttribute("font-size", "16");
+    SVGObj.textContent = "MH-del: "  +(rima_hist_all[barcode][0]*100/(rima_hist_all[barcode][0] +rima_hist_all[barcode][1]+ rima_hist_all[barcode][2])).toFixed(2) +" | NHEJ : " +(rima_hist_all[barcode][1]*100/(rima_hist_all[barcode][0] +rima_hist_all[barcode][1]+ rima_hist_all[barcode][2])).toFixed(2) +" | Other EJ : " +(rima_hist_all[barcode][2]*100/(rima_hist_all[barcode][0] +rima_hist_all[barcode][1]+ rima_hist_all[barcode][2])).toFixed(2)
+    svg.appendChild(SVGObj);
     delypos+=delyshift;
 
     // Legend RIMA2
@@ -3933,16 +3822,12 @@ function PlotAlignment_bulk(barcode, locus, bulk_threshold){
             rima_class = 'other EJ (MH-del 1bp)'
             if (micro_homology_data[0].length>=2){
                 rima_class = 'MH-del';
-                rima_hist[0] += aln_dict_bulk[key]
             }
         }
         else if ((micro_homology_data[3]==1)||((micro_homology_data[1]!=-1)&&(micro_homology_data[2]-micro_homology_data[1]==1))){
-            var rima_class = 'NHEJ'
-            rima_hist[1] += aln_dict_bulk[key]
-        }
+            var rima_class = 'NHEJ'        }
         else {
             rima_class = 'other EJ'
-            rima_hist[2] += aln_dict_bulk[key]
         }
          
         if (rima_class=='MH-del'||rima_class=='other EJ (MH-del 1bp)') { 
