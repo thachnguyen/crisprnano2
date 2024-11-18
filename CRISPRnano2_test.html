@@ -531,9 +531,8 @@ div.selector {
                     </div>
                     <small class="text-muted">NOTE: Click to the sample after selecting above option. Bulk view use lower percentage threshold</small>
                     <br>
-                    <br>
                 <h4>OFF TARGET Analysis (optional)</h4>    
-                    List of off-target Gene names (separate by ,):
+                    List off-target Gene names (separate by ,):
                     <div class="popup" onclick="myFunction8()">(? Click here!)
                         <span class="popuptext" id="help8">Name of the study genes, seperate by , . Click to close.</span>
                     </div>
@@ -541,29 +540,23 @@ div.selector {
                     
                     <input type="text" class="form-control" size="40" name="GeneName_list" id="GeneName_list" value="" onchange="checkOccurrence(); getFastaSequence_list();">
                     <small class="text-muted">Off-target analysis will check up to 4 genes in a single run</small>
-                    <br>
+    
                     <br>
                     <button id="toggleButton" class="btn btn-sm btn-light brd">List of offset sgRNA:</button>
                     <br>
                     
                     <small class="text-muted">If off-target sgRNA empty, system will take the previous sgRNA to find region of interest</small>
-                    <br>
                     <div id="sgRNAContainer" class="hidden">
-                    <br>
                     <small class="text-muted">sgRNA gene 1</small>
-                    <input type="text" class="form-control" size="40" name="sgRNA1" id="sgRNA1" value="" ><br>
-                    <br>
+                    <input type="text" class="form-control" size="40" name="sgRNA1" id="sgRNA1" value="" >
                     <small class="text-muted">sgRNA gene 2</small>
-                    <input type="text" class="form-control" size="40" name="sgRNA2" id="sgRNA2" value=""><br>
-                    <br>
+                    <input type="text" class="form-control" size="40" name="sgRNA2" id="sgRNA2" value="">
                     <small class="text-muted">sgRNA gene 3</small>
-                    <input type="text" class="form-control" size="40" name="sgRNA3" id="sgRNA3" value=""><br>
-                    <br>
+                    <input type="text" class="form-control" size="40" name="sgRNA3" id="sgRNA3" value="">
                     <small class="text-muted">sgRNA gene 4</small>
-                    <input type="text" class="form-control" size="40" name="sgRNA4" id="sgRNA4" value=""><br>
-                    <br>
+                    <input type="text" class="form-control" size="40" name="sgRNA4" id="sgRNA4" value="">
                     </div>
-                    <br>
+                  
 
                     <input type="submit" name="submit" value="START OFFTARGET ANALYZER " class="btn btn-sm btn-light brd" id="submit" onclick="Start2();">
                     <br>
@@ -571,7 +564,7 @@ div.selector {
                     <div class="text-right">
                     <h4>Save data</h4> 
                     <button class="btn btn-secondary btn-sm" onclick="SaveProject();"> SAVE HTLM File (.html)</button> 
-                    <br>
+                    
                     <br>
                     <button class="btn btn-secondary btn-sm" onclick="SaveReport();">Indel report Excel .XLSX</button>
                     <br>
@@ -2080,11 +2073,11 @@ function DrawPie_rima() {
     
     for (var barcode=0; barcode<96; barcode++){
         var sum = 0;
+        var midx = (barcode%12)*50 + 25;
+        var midy = Math.floor(barcode/12) * 65 + 25;
         if (summary_track[barcode][7] > 0) {
             sum = rima_hist_all[barcode][0]+ rima_hist_all[barcode][1]+rima_hist_all[barcode][2]
             var size = 24*Math.sqrt(sum/maxsum);
-            var midx = (barcode%12)*50 + 25;
-            var midy = Math.floor(barcode/12) * 65 + 25;
             //MH_del:
             var angle = -3.1415/2;
             var lastangle = angle;
@@ -2098,7 +2091,7 @@ function DrawPie_rima() {
             if (angle-lastangle > 3.1415) largearc = 1;
             var SVGObj= document.createElementNS(NS,"path");
             SVGObj.setAttributeNS(null, "d", "M "+midx+","+midy+" l "+startx+","+starty+" a "+size+" "+size+" 0 "+largearc+" 1 "+plusx+" "+plusy+" z");
-            SVGObj.style.fill="rgb(200,200,200)";
+            SVGObj.style.fill="rgb(84, 199, 199)";
             SVGObj.setAttribute("pointer-events","none");
             svg.appendChild(SVGObj);
 
@@ -2112,7 +2105,7 @@ function DrawPie_rima() {
             if (angle-lastangle > 3.1415) largearc = 1;
             SVGObj= document.createElementNS(NS,"path");
             SVGObj.setAttributeNS(null, "d", "M "+midx+","+midy+" l "+startx+","+starty+" a "+size+" "+size+" 0 "+largearc+" 1 "+plusx+" "+plusy+" z");
-            SVGObj.style.fill=BLAU[0];
+            SVGObj.style.fill=BLAU[1];
             SVGObj.setAttribute("pointer-events","none");
             svg.appendChild(SVGObj);
 
@@ -2126,21 +2119,20 @@ function DrawPie_rima() {
             if (angle-lastangle > 3.1415) largearc = 1;
             SVGObj= document.createElementNS(NS,"path");
             SVGObj.setAttributeNS(null, "d", "M "+midx+","+midy+" l "+startx+","+starty+" a "+size+" "+size+" 0 "+largearc+" 1 "+plusx+" "+plusy+" z");
-            SVGObj.style.fill=BLAU[1];
+            SVGObj.style.fill="rgb(200, 200, 200)";
             SVGObj.setAttribute("pointer-events","none");
-            svg.appendChild(SVGObj);
-
-            var SVGObj= document.createElementNS(NS,"text");
-            SVGObj.setAttribute("font-family", "sans-serif");
-            SVGObj.setAttribute("font-weight", "100");
-            SVGObj.setAttribute("x", midx);
-            SVGObj.setAttribute("y", midy+36);
-            SVGObj.setAttribute("font-size", "11");
-            SVGObj.setAttribute("text-anchor", "middle");
-            SVGObj.setAttribute("pointer-events","none");
-            SVGObj.textContent = GetWellPos(barcode)
             svg.appendChild(SVGObj);
         }
+        var SVGObj= document.createElementNS(NS,"text");
+        SVGObj.setAttribute("font-family", "sans-serif");
+        SVGObj.setAttribute("font-weight", "100");
+        SVGObj.setAttribute("x", midx);
+        SVGObj.setAttribute("y", midy+36);
+        SVGObj.setAttribute("font-size", "11");
+        SVGObj.setAttribute("text-anchor", "middle");
+        SVGObj.setAttribute("pointer-events","none");
+        SVGObj.textContent = GetWellPos(barcode)
+        svg.appendChild(SVGObj);
     }
     //legende:
     var midx = 13*50 + 25;
@@ -2171,20 +2163,20 @@ function DrawPie_rima() {
     SVGObj.setAttributeNS(null, "cx", midx +10);
     SVGObj.setAttributeNS(null, "cy", midy+50);
     SVGObj.setAttributeNS(null, "r" , 6);
-    SVGObj.style.fill="rgb(200,200,200)";
+    SVGObj.style.fill="rgb(84, 199, 199)";
     svg.appendChild(SVGObj);
     SVGObj= document.createElementNS(NS,"circle");
     SVGObj.setAttributeNS(null, "cx", midx +10);
     SVGObj.setAttributeNS(null, "cy", midy+70);
     SVGObj.setAttributeNS(null, "r" , 6);
-    SVGObj.style.fill=BLAU[0];
+    SVGObj.style.fill=BLAU[1];
     svg.appendChild(SVGObj);
     
     SVGObj= document.createElementNS(NS,"circle");
     SVGObj.setAttributeNS(null, "cx", midx +10);
     SVGObj.setAttributeNS(null, "cy", midy+90);
     SVGObj.setAttributeNS(null, "r" , 6);
-    SVGObj.style.fill=BLAU[1];
+    SVGObj.style.fill="rgb(200, 200, 200)";
     BLAU[1]
     svg.appendChild(SVGObj);
   
@@ -2446,7 +2438,7 @@ function DrawPie_bulk()
     if (angle-lastangle > 3.1415) largearc = 1;
     var SVGObj= document.createElementNS(NS,"path");
     SVGObj.setAttributeNS(null, "d", "M "+midx+","+midy+" l "+startx+","+starty+" a "+size+" "+size+" 0 "+largearc+" 1 "+plusx+" "+plusy+" z");
-    SVGObj.style.fill="rgb(200,200,200)";
+    SVGObj.style.fill="rgb(84, 199, 199)";
     SVGObj.setAttribute("pointer-events","none");
     svg.appendChild(SVGObj);
 
@@ -2461,7 +2453,7 @@ function DrawPie_bulk()
     if (angle-lastangle > 3.1415) largearc = 1;
     SVGObj= document.createElementNS(NS,"path");
     SVGObj.setAttributeNS(null, "d", "M "+midx+","+midy+" l "+startx+","+starty+" a "+size+" "+size+" 0 "+largearc+" 1 "+plusx+" "+plusy+" z");
-    SVGObj.style.fill=BLAU[0];
+    SVGObj.style.fill=BLAU[1];
     SVGObj.setAttribute("pointer-events","none");
     svg.appendChild(SVGObj);
 
@@ -2476,7 +2468,7 @@ function DrawPie_bulk()
     if (angle-lastangle > 3.1415) largearc = 1;
     SVGObj= document.createElementNS(NS,"path");
     SVGObj.setAttributeNS(null, "d", "M "+midx+","+midy+" l "+startx+","+starty+" a "+size+" "+size+" 0 "+largearc+" 1 "+plusx+" "+plusy+" z");
-    SVGObj.style.fill=BLAU[1];
+    SVGObj.style.fill="rgb(200, 200, 200)";
     SVGObj.setAttribute("pointer-events","none");
     svg.appendChild(SVGObj);
 
@@ -2497,21 +2489,21 @@ function DrawPie_bulk()
     SVGObj.setAttributeNS(null, "cx", midx+20);
     SVGObj.setAttributeNS(null, "cy", midy);
     SVGObj.setAttributeNS(null, "r" , 6);
-    SVGObj.style.fill="rgb(200,200,200)";
+    SVGObj.style.fill="rgb(84, 199, 199)";
     svg.appendChild(SVGObj);
     
     SVGObj= document.createElementNS(NS,"circle");
     SVGObj.setAttributeNS(null, "cx", midx+20);
     SVGObj.setAttributeNS(null, "cy", midy +20);
     SVGObj.setAttributeNS(null, "r" , 6);
-    SVGObj.style.fill=BLAU[0];
+    SVGObj.style.fill=BLAU[1];
     svg.appendChild(SVGObj);
     
     SVGObj= document.createElementNS(NS,"circle");
     SVGObj.setAttributeNS(null, "cx", midx+20);
     SVGObj.setAttributeNS(null, "cy", midy +40);
     SVGObj.setAttributeNS(null, "r" , 6);
-    SVGObj.style.fill=BLAU[1];
+    SVGObj.style.fill="rgb(200, 200, 200)";
     svg.appendChild(SVGObj);
 
     SVGObj= document.createElementNS(NS,"text");
@@ -4742,10 +4734,10 @@ function PrintSVGAlignment(){
 function FindGRNA(gene) {
     var fileUrl
     if (document.URL.includes('www')){
-        fileUrl = 'https://www.crisprnano.de/spCas9_human_geckov2.txt';
+        fileUrl = 'https://www.crisprnano.de/tkov3_guide_sequence.csv';
     }
     else {
-        fileUrl = 'https://crisprnano.de/spCas9_human_geckov2.txt';
+        fileUrl = 'https://crisprnano.de/tkov3_guide_sequence.csv';
     }
     // Fetch the file
     fetch(fileUrl)
@@ -4786,7 +4778,7 @@ function FindGRNA(gene) {
             if (hit==0 || CRISPRlib[hit-1]=="\n"){
                 line = line.split("\t");
                 if (line.length >= 2) {
-                    table += "<button onclick='SelectGRNA(\""+line+"\");'>GeCKO v2.0 "+line[0]+" "+line[1]+"</button><br>";
+                    table += "<button onclick='SelectGRNA(\""+line+"\");'>tKOv3  GENE:"+line[0]+"   gRNA:"+line[1]+"   Locus:"+line[2]+"   type:"+line[3]+"</button><br>";
                 }
             }
         }
