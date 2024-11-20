@@ -159,26 +159,27 @@ div.selector {
             <div class="d-flex justify-content-center mt-3">
                 <img id="titleIndex" width="60%" src="./crisprnano2/CRISPRnano2.png">
             </div>
-        <hr>
+     
         <div class="row">
             <div class="col-md-11" style="float:none;margin:auto;">
                 <div class="card">
                     <br>
-        <div id="DIV_topmenu">
-            <div class="text-center">
-                <div class="btn-group btn-group-lg mr-3" role="group" id="aBtnGroup" aria-label="Basic example">
-                    <button type="button"  name="setup" class="btn btn-info" onclick="TabClicked(0);">GENERAL ANALYZER</button>
-                    <button type="button"  id="setup_PE" class="btn btn-info">PRIME EDITING ANALYZER</button>
-                    <button type="button"  name="result" class="btn btn-info" onclick="TabClicked(1);">RESULTS</button>
-                    <button type="button"  name="bulkview_result" class="btn btn-info" onclick="TabClicked(4);">BULK/SINGLE CLONE VIEWER</button>
-                    <button type="button"  name="offtarget_result" class="btn btn-info" onclick="TabClicked(5);">OFF-TARGET ANALYSIS</button>
-                    <button type="button"  name="result" class="btn btn-info" onclick="TabClicked(6);">TEST DATA</button>
-                </div>
-            </div>
-        </div>
+                    <div id="DIV_topmenu">
+                        <div class="text-center">
+                            <div class="btn-group btn-group-lg mr-3" role="group" id="aBtnGroup" aria-label="Basic example">
+                                <button type="button"  name="setup" class="btn btn-info" onclick="TabClicked(0);">GENERAL ANALYZER</button>
+                                <button type="button"  id="setup_PE" class="btn btn-info">PRIME EDITING ANALYZER</button>
+                                <button type="button"  name="result" class="btn btn-info" onclick="TabClicked(1);">RESULTS</button>
+                                <button type="button"  name="bulkview_result" class="btn btn-info" onclick="TabClicked(4);">BULK/SINGLE CLONE VIEWER</button>
+                                <button type="button"  name="offtarget_result" class="btn btn-info" onclick="TabClicked(5);">OFF-TARGET ANALYSIS</button>
+                                <button type="button"  name="result" class="btn btn-info" onclick="TabClicked(6);">TEST DATA</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>    
         <br>
-        <div id="setup" style="position:absolute; left:20px; top:80px">
-<br>
+        <div id="setup" style="position:center; top:80px">
+                <br>
                 <div class="row">
                 <h3>Input data</h3>    
                 <div class = "col-sm">
@@ -231,11 +232,23 @@ div.selector {
                     <label> Targeting mutagenesis oligonucleotide (Knock-in):</label>  
                     <input type="text" class="form-control" size="40" name="TargetingOligo" value="">
                     <!-- <small class="text-muted"> Donor oligonucleotide sequence used to introduce a site specific genomic modification. The sequence entered should be in the same orientation as the amplicon sequence.</small> -->
-                    <div class="form-check">
-                        <input class="form-check-input" type="checkbox" value="" id="prime_editing">
-                        <small class="text-muted">
-                          Knockin-only mode (exclude INDEL)
-                        </small>
+                    <div class="row">
+                        <div class = "col-sm">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" value="" id="prime_editing">
+                                <small class="text-muted">
+                                Knockin-only mode (exclude INDEL)
+                                </small>
+                            </div>
+                        </div>
+                        <div class = "col-sm">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" value="" id="HA">
+                                <small class="text-muted">
+                                Excluded Homology Arm (HA)
+                                </small>
+                            </div>
+                        </div>
                     </div>
 
                 </div>
@@ -310,13 +323,10 @@ div.selector {
                 </div>
                 <br>
                 <div class="row">
-                    <input type="submit" name="submit" value="SUBMIT  " class="btn btn-primary btn-lg" id="submit" onclick="Start();">
+                    <input type="submit" name="submit" value="SUBMIT" style="position:center" class="btn btn-secondary btn-lg" id="submit" onclick="Start();">
                     <div id="progress" style="display:none; padding: 10px; border: 10px solid #CCC; background: #EEE; width:40%; position:absolute; top:50%;left:40%">
                     </div>
                 </div>
-                <!-- <a href="https://iufduesseldorf-my.sharepoint.com/:u:/g/personal/thach_nguyen_iuf-duesseldorf_de/ER4kM3RQaRJLiltUCpcT2iMBiEvGvs3u2NiDTdtSPBLE1Q?e=8FEAJc">(Our test sample)</a><br> -->
- 
-
                 <br>
                 <br>
                 <a style="font-style: italic;">
@@ -335,7 +345,7 @@ div.selector {
             </div>
         
         
-        <div id="about" style="position: absolute; left: 20px; top: 120px; width: 70%; display: none;">
+        <div id="about" style="position:center; top:80px; display: none;">
             <br>
             <br>
             <b>About:</b>
@@ -357,7 +367,7 @@ div.selector {
             <br><br>
         </div>
 
-        <div id="manual" style="position: absolute; left: 20px; top: 120px; width: 70%; display: none;">
+        <div id="manual" style="position:center; top:80px; display: none;">
             <br>
             <br>
             <h3>CRISPRnano manual</h3>
@@ -445,7 +455,7 @@ div.selector {
             
         </div>
 
-        <div id="testdata" style="position: absolute; left: 20px; top: 120px; width: 70%; display: none;">
+        <div id="testdata" style="position:center; top:80px; display: none;">
             <br>
             <br>
             <h3>TEST DATA</h3>
@@ -497,7 +507,7 @@ div.selector {
             
         </div>
 
-        <div id="results" style="position: absolute; left: 20px; top: 160px; display: none;">
+        <div id="results" style="position:center; top:80px; display: none;">
             <div class="column">
                 <div class="btn-group btn-group-lg mr-3" role="group" id="result_pie" >
                     <button type="button" class="btn btn-sm btn-light brd" name="setup" onclick="TabClicked(7)">GENOTYPE</button>
@@ -523,7 +533,7 @@ div.selector {
                 </div>
 
             </div>
-            <div class="column" style="position: absolute; left: 900px; top: 60px">
+            <div class="column" style="position: left">
                 <h3>SECONDARY ANALYSIS</h3> 
                 <div class="form-check form-switch">
                     <input class="form-check-input" type="checkbox" id="bulkview">
@@ -556,7 +566,7 @@ div.selector {
                     <small class="text-muted">sgRNA gene 4</small>
                     <input type="text" class="form-control" size="40" name="sgRNA4" id="sgRNA4" value="">
                     </div>
-                  
+                    <br>
 
                     <input type="submit" name="submit" value="START OFFTARGET ANALYZER " class="btn btn-sm btn-light brd" id="submit" onclick="Start2();">
                     <br>
@@ -587,7 +597,7 @@ div.selector {
             </div> 
         </div>
 
-        <div id="bulkview_result" style="position: absolute; left: 20px; top: 160px; display: none;">
+        <div id="bulkview_result" style="position:center; top:80px; display: none;">
             <div id="DIV_piecharts_bulk" >
                 <div>
                 <div class="box">
@@ -612,7 +622,7 @@ div.selector {
             </div>
         </div>
 
-        <div id="offtarget_view" style="position: absolute; left: 20px; top: 160px; display: none;">
+        <div id="offtarget_view" style="position:center; top:80px; display: none;">
             <div class="column">
                 <div id="DIV_piecharts_off">
                     <svg id="SVGpie_off" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="1600" height="420">
@@ -2065,7 +2075,8 @@ function DrawPie_rima() {
     //register mouse listener:
     svg.addEventListener("mousedown", PieClick_rima, false);
     var BLAU=["rgb(50,42,126)","rgb(16,115,179)","rgb(38,170,220)", "rgb(50,42,126)","rgb(16,115,179)","rgb(38,170,220)"];
-
+    const KI_1 = "rgb(154, 34, 93)"
+    const KI_2 = BLAU[2]
     var maxsum = 0;
     for (var barcode=0; barcode<96; barcode++) {
         if (summary_track[barcode][7] > maxsum) maxsum = summary_track[barcode][7];
@@ -2076,7 +2087,7 @@ function DrawPie_rima() {
         var midx = (barcode%12)*50 + 25;
         var midy = Math.floor(barcode/12) * 65 + 25;
         if (summary_track[barcode][7] > 0) {
-            sum = rima_hist_all[barcode][0]+ rima_hist_all[barcode][1]+rima_hist_all[barcode][2]
+            sum = rima_hist_all[barcode][0]+ rima_hist_all[barcode][1]+rima_hist_all[barcode][2]+ rima_hist_all[barcode][3] +rima_hist_all[barcode][4]
             var size = 24*Math.sqrt(sum/maxsum);
             //MH_del:
             var angle = -3.1415/2;
@@ -2120,6 +2131,34 @@ function DrawPie_rima() {
             SVGObj= document.createElementNS(NS,"path");
             SVGObj.setAttributeNS(null, "d", "M "+midx+","+midy+" l "+startx+","+starty+" a "+size+" "+size+" 0 "+largearc+" 1 "+plusx+" "+plusy+" z");
             SVGObj.style.fill="rgb(200, 200, 200)";
+            SVGObj.setAttribute("pointer-events","none");
+            svg.appendChild(SVGObj);
+
+            lastangle = angle;
+            angle+=2*3.1415*0.995*rima_hist_all[barcode][3]/sum;
+            startx = size*Math.cos(lastangle);
+            starty = size*Math.sin(lastangle);
+            plusx = size*(Math.cos(angle)-Math.cos(lastangle));
+            plusy = size*(Math.sin(angle)-Math.sin(lastangle));
+            largearc = 0;
+            if (angle-lastangle > 3.1415) largearc = 1;
+            SVGObj= document.createElementNS(NS,"path");
+            SVGObj.setAttributeNS(null, "d", "M "+midx+","+midy+" l "+startx+","+starty+" a "+size+" "+size+" 0 "+largearc+" 1 "+plusx+" "+plusy+" z");
+            SVGObj.style.fill="rgb(154, 34, 93)";
+            SVGObj.setAttribute("pointer-events","none");
+            svg.appendChild(SVGObj);
+
+            lastangle = angle;
+            angle+=2*3.1415*0.995*rima_hist_all[barcode][4]/sum;
+            startx = size*Math.cos(lastangle);
+            starty = size*Math.sin(lastangle);
+            plusx = size*(Math.cos(angle)-Math.cos(lastangle));
+            plusy = size*(Math.sin(angle)-Math.sin(lastangle));
+            largearc = 0;
+            if (angle-lastangle > 3.1415) largearc = 1;
+            SVGObj= document.createElementNS(NS,"path");
+            SVGObj.setAttributeNS(null, "d", "M "+midx+","+midy+" l "+startx+","+starty+" a "+size+" "+size+" 0 "+largearc+" 1 "+plusx+" "+plusy+" z");
+            SVGObj.style.fill=BLAU[2];
             SVGObj.setAttribute("pointer-events","none");
             svg.appendChild(SVGObj);
         }
@@ -2171,15 +2210,25 @@ function DrawPie_rima() {
     SVGObj.setAttributeNS(null, "r" , 6);
     SVGObj.style.fill=BLAU[1];
     svg.appendChild(SVGObj);
-    
     SVGObj= document.createElementNS(NS,"circle");
     SVGObj.setAttributeNS(null, "cx", midx +10);
     SVGObj.setAttributeNS(null, "cy", midy+90);
     SVGObj.setAttributeNS(null, "r" , 6);
-    SVGObj.style.fill="rgb(200, 200, 200)";
-    BLAU[1]
+    SVGObj.style.fill= KI_1;
     svg.appendChild(SVGObj);
-  
+    SVGObj= document.createElementNS(NS,"circle");
+    SVGObj.setAttributeNS(null, "cx", midx +10);
+    SVGObj.setAttributeNS(null, "cy", midy+110);
+    SVGObj.setAttributeNS(null, "r" , 6);
+    SVGObj.style.fill= KI_2;
+    svg.appendChild(SVGObj);
+    SVGObj= document.createElementNS(NS,"circle");
+    SVGObj.setAttributeNS(null, "cx", midx +10);
+    SVGObj.setAttributeNS(null, "cy", midy+130);
+    SVGObj.setAttributeNS(null, "r" , 6);
+    SVGObj.style.fill="rgb(200, 200, 200)";
+    svg.appendChild(SVGObj);
+
     SVGObj= document.createElementNS(NS,"text");
     SVGObj.setAttribute("font-family", "sans-serif");
     SVGObj.setAttribute("font-weight", "100");
@@ -2201,6 +2250,22 @@ function DrawPie_rima() {
     SVGObj.setAttribute("font-weight", "100");
     SVGObj.setAttribute("x", midx+50);
     SVGObj.setAttribute("y", midy+53+40);
+    SVGObj.setAttribute("font-size", "12");
+    SVGObj.textContent = "NHEJ-KI";
+    svg.appendChild(SVGObj);
+    SVGObj= document.createElementNS(NS,"text");
+    SVGObj.setAttribute("font-family", "sans-serif");
+    SVGObj.setAttribute("font-weight", "100");
+    SVGObj.setAttribute("x", midx+50);
+    SVGObj.setAttribute("y", midy+53+60);
+    SVGObj.setAttribute("font-size", "12");
+    SVGObj.textContent = "HDR-KI";
+    svg.appendChild(SVGObj);
+    SVGObj= document.createElementNS(NS,"text");
+    SVGObj.setAttribute("font-family", "sans-serif");
+    SVGObj.setAttribute("font-weight", "100");
+    SVGObj.setAttribute("x", midx+50);
+    SVGObj.setAttribute("y", midy+53+80);
     SVGObj.setAttribute("font-size", "12");
     SVGObj.textContent = "Other EJ";
     svg.appendChild(SVGObj);
@@ -2427,8 +2492,9 @@ function DrawPie_bulk()
     lastangle = angle;
     midx = 100;
     midy = 100;
+    const rima_sum = rima_hist_all[barcode][0]+rima_hist_all[barcode][1]+rima_hist_all[barcode][2]+rima_hist_all[barcode][3]+rima_hist_all[barcode][4]
     // MH-Del
-    angle+=2*3.1415*0.995*rima_hist_all[barcode][0]/(rima_hist_all[barcode][0]+rima_hist_all[barcode][1]+rima_hist_all[barcode][2]);
+    angle+=2*3.1415*0.995*rima_hist_all[barcode][0]/rima_sum;
     //SVG:
     var startx = size*Math.cos(lastangle);
     var starty = size*Math.sin(lastangle);
@@ -2444,7 +2510,7 @@ function DrawPie_bulk()
 
     // NHEJ
     lastangle = angle;
-    angle+=2*3.1415*0.995*rima_hist_all[barcode][1]/(rima_hist_all[barcode][0]+rima_hist_all[barcode][1]+rima_hist_all[barcode][2]);
+    angle+=2*3.1415*0.995*rima_hist_all[barcode][1]/rima_sum;
     startx = size*Math.cos(lastangle);
     starty = size*Math.sin(lastangle);
     plusx = size*(Math.cos(angle)-Math.cos(lastangle));
@@ -2459,7 +2525,7 @@ function DrawPie_bulk()
 
     // Other EJ
     lastangle = angle;
-    angle+=2*3.1415*0.995*rima_hist_all[barcode][2]/(rima_hist_all[barcode][0]+rima_hist_all[barcode][1]+rima_hist_all[barcode][2]);
+    angle+=2*3.1415*0.995*rima_hist_all[barcode][2]/rima_sum;
     startx = size*Math.cos(lastangle);
     starty = size*Math.sin(lastangle);
     plusx = size*(Math.cos(angle)-Math.cos(lastangle));
@@ -2469,6 +2535,34 @@ function DrawPie_bulk()
     SVGObj= document.createElementNS(NS,"path");
     SVGObj.setAttributeNS(null, "d", "M "+midx+","+midy+" l "+startx+","+starty+" a "+size+" "+size+" 0 "+largearc+" 1 "+plusx+" "+plusy+" z");
     SVGObj.style.fill="rgb(200, 200, 200)";
+    SVGObj.setAttribute("pointer-events","none");
+    svg.appendChild(SVGObj);
+
+    lastangle = angle;
+    angle+=2*3.1415*0.995*rima_hist_all[barcode][3]/rima_sum;
+    startx = size*Math.cos(lastangle);
+    starty = size*Math.sin(lastangle);
+    plusx = size*(Math.cos(angle)-Math.cos(lastangle));
+    plusy = size*(Math.sin(angle)-Math.sin(lastangle));
+    var largearc = 0;
+    if (angle-lastangle > 3.1415) largearc = 1;
+    SVGObj= document.createElementNS(NS,"path");
+    SVGObj.setAttributeNS(null, "d", "M "+midx+","+midy+" l "+startx+","+starty+" a "+size+" "+size+" 0 "+largearc+" 1 "+plusx+" "+plusy+" z");
+    SVGObj.style.fill="rgb(154, 34, 93)";
+    SVGObj.setAttribute("pointer-events","none");
+    svg.appendChild(SVGObj);
+
+    lastangle = angle;
+    angle+=2*3.1415*0.995*rima_hist_all[barcode][4]/rima_sum;
+    startx = size*Math.cos(lastangle);
+    starty = size*Math.sin(lastangle);
+    plusx = size*(Math.cos(angle)-Math.cos(lastangle));
+    plusy = size*(Math.sin(angle)-Math.sin(lastangle));
+    var largearc = 0;
+    if (angle-lastangle > 3.1415) largearc = 1;
+    SVGObj= document.createElementNS(NS,"path");
+    SVGObj.setAttributeNS(null, "d", "M "+midx+","+midy+" l "+startx+","+starty+" a "+size+" "+size+" 0 "+largearc+" 1 "+plusx+" "+plusy+" z");
+    SVGObj.style.fill=BLAU[2];
     SVGObj.setAttribute("pointer-events","none");
     svg.appendChild(SVGObj);
 
@@ -2498,10 +2592,22 @@ function DrawPie_bulk()
     SVGObj.setAttributeNS(null, "r" , 6);
     SVGObj.style.fill=BLAU[1];
     svg.appendChild(SVGObj);
-    
     SVGObj= document.createElementNS(NS,"circle");
     SVGObj.setAttributeNS(null, "cx", midx+20);
     SVGObj.setAttributeNS(null, "cy", midy +40);
+    SVGObj.setAttributeNS(null, "r" , 6);
+    SVGObj.style.fill="rgb(154, 34, 93)"
+    svg.appendChild(SVGObj);
+    SVGObj= document.createElementNS(NS,"circle");
+    SVGObj.setAttributeNS(null, "cx", midx+20);
+    SVGObj.setAttributeNS(null, "cy", midy +60);
+    SVGObj.setAttributeNS(null, "r" , 6);
+    SVGObj.style.fill=BLAU[2];
+    svg.appendChild(SVGObj);
+    
+    SVGObj= document.createElementNS(NS,"circle");
+    SVGObj.setAttributeNS(null, "cx", midx+20);
+    SVGObj.setAttributeNS(null, "cy", midy +80);
     SVGObj.setAttributeNS(null, "r" , 6);
     SVGObj.style.fill="rgb(200, 200, 200)";
     svg.appendChild(SVGObj);
@@ -2512,7 +2618,7 @@ function DrawPie_bulk()
     SVGObj.setAttribute("x", midx+80);
     SVGObj.setAttribute("y", midy+2);
     SVGObj.setAttribute("font-size", "12");
-    SVGObj.textContent = "MH-del:    "+ (100*rima_hist_all[barcode][0]/(rima_hist_all[barcode][0]+rima_hist_all[barcode][1]+rima_hist_all[barcode][2])).toFixed(2)+ " %";
+    SVGObj.textContent = "MH-del:    "+ (100*rima_hist_all[barcode][0]/rima_sum).toFixed(2)+ " %";
     svg.appendChild(SVGObj);
     SVGObj= document.createElementNS(NS,"text");
     SVGObj.setAttribute("font-family", "sans-serif");
@@ -2520,7 +2626,7 @@ function DrawPie_bulk()
     SVGObj.setAttribute("x", midx+80);
     SVGObj.setAttribute("y", midy+22)
     SVGObj.setAttribute("font-size", "12");
-    SVGObj.textContent = "NHEJ:    "+ (100*rima_hist_all[barcode][1]/(rima_hist_all[barcode][0]+rima_hist_all[barcode][1]+rima_hist_all[barcode][2])).toFixed(2)+ " %";
+    SVGObj.textContent = "NHEJ:    "+ (100*rima_hist_all[barcode][1]/rima_sum).toFixed(2)+ " %";
     svg.appendChild(SVGObj);
     SVGObj= document.createElementNS(NS,"text");
     SVGObj.setAttribute("font-family", "sans-serif");
@@ -2528,7 +2634,23 @@ function DrawPie_bulk()
     SVGObj.setAttribute("x", midx+80);
     SVGObj.setAttribute("y", midy+42)
     SVGObj.setAttribute("font-size", "12");
-    SVGObj.textContent = "Other EJ:    "+ (100*rima_hist_all[barcode][2]/(rima_hist_all[barcode][0]+rima_hist_all[barcode][1]+rima_hist_all[barcode][2])).toFixed(2)+ " %";
+    SVGObj.textContent = "NHEJ KI:    "+ (100*rima_hist_all[barcode][3]/rima_sum).toFixed(2)+ " %";
+    svg.appendChild(SVGObj);
+    SVGObj= document.createElementNS(NS,"text");
+    SVGObj.setAttribute("font-family", "sans-serif");
+    SVGObj.setAttribute("font-weight", "100");
+    SVGObj.setAttribute("x", midx+80);
+    SVGObj.setAttribute("y", midy+62)
+    SVGObj.setAttribute("font-size", "12");
+    SVGObj.textContent = "HDR KI:    "+ (100*rima_hist_all[barcode][4]/rima_sum).toFixed(2)+ " %";
+    svg.appendChild(SVGObj);
+    SVGObj= document.createElementNS(NS,"text");
+    SVGObj.setAttribute("font-family", "sans-serif");
+    SVGObj.setAttribute("font-weight", "100");
+    SVGObj.setAttribute("x", midx+80);
+    SVGObj.setAttribute("y", midy+82)
+    SVGObj.setAttribute("font-size", "12");
+    SVGObj.textContent = "Other EJ:    "+ (100*rima_hist_all[barcode][2]/rima_sum).toFixed(2)+ " %";
     svg.appendChild(SVGObj);
 
     // Parse FASTQ data and extract quality scores
@@ -3075,20 +3197,37 @@ function Pre_PlotAlignment(barcode, locus){
 
 function PlotAlignment(barcode, locus){
     var id = barcode;
-    rima_hist_all[barcode] = [0,0,0]
+    rima_hist_all[barcode] = [0,0,0,0,0]
     for (let key in aln_dict_fil[barcode]){
         //aggregate WT
         var micro_homology_data = Check_RIMA(key)
         var duplication1 = Check_duplication(key)
+        var rima_class = 'other EJ'
+        var HA = document.getElementById('HA').checked;
+
         if (micro_homology_data[0]!=''){
+            rima_class = 'other EJ (MH-del 1bp)'
             if (micro_homology_data[0].length>=2){
+                rima_class = 'MH-del'
                 rima_hist_all[barcode][0] += aln_dict_fil[barcode][key]
             }
         }
         else if ((micro_homology_data[3]==1)||((micro_homology_data[1]!=-1)&&(micro_homology_data[2]-micro_homology_data[1]==1))){
+            rima_class = 'NHEJ'
             rima_hist_all[barcode][1] += aln_dict_fil[barcode][key]
         }
+        else if (typeof aln_dict[barcode][key][1] !== "undefined" && aln_dict[barcode][key][1] ===7){
+            if (HA) {
+                rima_class = 'NHEJ-KI'
+                rima_hist_all[barcode][3] += aln_dict_fil[barcode][key]
+                }
+            else {
+                rima_class = 'HDR-KI'
+                rima_hist_all[barcode][4] += aln_dict_fil[barcode][key]
+                }
+            }
         else {
+            rima_class = 'other EJ'
             rima_hist_all[barcode][2] += aln_dict_fil[barcode][key]
         }
     }
@@ -3098,6 +3237,7 @@ function PlotAlignment(barcode, locus){
     var aln_type = ["Not align","No indel", "Inframe Indel", "Outframe indel", "", "","", "targetingOligo", "Ambigious", "DESIRED edit", "PARTIAL edit"]
     var ysize = 30;
     var max=0;
+    var rima_sum = rima_hist_all[barcode][0] +rima_hist_all[barcode][1]+ rima_hist_all[barcode][2]+rima_hist_all[barcode][3]+ rima_hist_all[barcode][4]
 
     var svg = document.getElementById("SVGmut");
     var NS="http://www.w3.org/2000/svg";
@@ -3152,7 +3292,7 @@ function PlotAlignment(barcode, locus){
     SVGObj.setAttribute("x", 40);
     SVGObj.setAttribute("y", ysize+delypos);
     SVGObj.setAttribute("font-size", "16");
-    SVGObj.textContent = "MH-del: "  +(rima_hist_all[barcode][0]*100/(rima_hist_all[barcode][0] +rima_hist_all[barcode][1]+ rima_hist_all[barcode][2])).toFixed(2) +" | NHEJ : " +(rima_hist_all[barcode][1]*100/(rima_hist_all[barcode][0] +rima_hist_all[barcode][1]+ rima_hist_all[barcode][2])).toFixed(2) +" | Other EJ : " +(rima_hist_all[barcode][2]*100/(rima_hist_all[barcode][0] +rima_hist_all[barcode][1]+ rima_hist_all[barcode][2])).toFixed(2)
+    SVGObj.textContent = "MH-del: "+(rima_hist_all[barcode][0]*100/rima_sum).toFixed(2) +" | NHEJ : " +(rima_hist_all[barcode][1]*100/rima_sum).toFixed(2) + " | NHEJ-KI : " +(rima_hist_all[barcode][3]*100/rima_sum).toFixed(2)+" | HDR-KI : " +(rima_hist_all[barcode][4]*100/rima_sum).toFixed(2)+" | Other EJ : " +(rima_hist_all[barcode][2]*100/rima_sum).toFixed(2)
     svg.appendChild(SVGObj);
     delypos+=delyshift;
 
@@ -3281,28 +3421,11 @@ function PlotAlignment(barcode, locus){
     svg.appendChild(SVGObj);
     delypos+=delyshift;
     var id1 = 1;
-    rima_hist_all[barcode] = [0,0,0]
+
     for (let key in aln_dict_fil[barcode]){
         //aggregate WT
         var micro_homology_data = Check_RIMA(key)
-        var duplication1 = Check_duplication(key)
-        var rima_class = 'other EJ'
-        if (micro_homology_data[0]!=''){
-            rima_class = 'other EJ (MH-del 1bp)'
-            if (micro_homology_data[0].length>=2){
-                rima_class = 'MH-del'
-                rima_hist_all[barcode][0] += aln_dict_fil[barcode][key]
-            }
-        }
-        else if ((micro_homology_data[3]==1)||((micro_homology_data[1]!=-1)&&(micro_homology_data[2]-micro_homology_data[1]==1))){
-            var rima_class = 'NHEJ'
-            rima_hist_all[barcode][1] += aln_dict_fil[barcode][key]
-        }
-        else {
-            rima_class = 'other EJ'
-            rima_hist_all[barcode][2] += aln_dict_fil[barcode][key]
-        }
-        
+        var duplication1 = Check_duplication(key)        
         if (rima_class=='MH-del'||rima_class=='other EJ (MH-del 1bp)') { 
             for (let x=xfrom-70; x<xto+10; x++){
                 if (((x >= micro_homology_data[1]-xfrom+10)&&(x < micro_homology_data[1]-xfrom+10 + micro_homology_data[0].length))||((x >= micro_homology_data[2]-xfrom+10)&&(x < micro_homology_data[2]-xfrom+10 + micro_homology_data[0].length))){
@@ -3489,7 +3612,6 @@ function PlotAlignment(barcode, locus){
             if (x>0){
             //draw insert:
             SVGObj= document.createElementNS(svgns, "rect");
-            // if ((key[x+region_analyse*2]!="\xa0")&&(key[x+region_analyse*2]!="\n")){
             if ('ACTG'.includes(key[x+region_analyse*2])){
                 if (image_loc == 0){
                     const line = document.createElementNS(NS, "line");
@@ -3576,6 +3698,12 @@ function PlotAlignment(barcode, locus){
         else if (rima_class == 'MH-del'){
             SVGObj.setAttribute("fill", "rgb(84, 199, 199)");
         }
+        else if (rima_class == 'NHEJ-KI'){
+            SVGObj.setAttribute("fill", "rgb(154, 34, 93)");
+        }
+        else if (rima_class == 'HDR-KI'){
+            SVGObj.setAttribute("fill", "rgb(16,115,179)");
+        }
 
         SVGObj.textContent +="RIMA classified as: "+ rima_class;
         svg.appendChild(SVGObj);
@@ -3591,8 +3719,6 @@ function PlotAlignment_bulk(barcode, locus, bulk_threshold){
     // check genotype
     var id = barcode;
     aln_dict_bulk = {}
-    rima_hist = [0, 0, 0]
-
     for (let key in aln_dict[id]){
         if ((aln_dict[id][key][1]!=8)&&(aln_dict[id][key][0]>10)&&(aln_dict[id][key][0]>(1*bulk_threshold*summary_track[id][0]/100))&&(key.split('\n')[0].trim().length>region_analyse*2-4)){
             aln_dict_bulk[key] = aln_dict[id][key][0];
@@ -4750,7 +4876,6 @@ function FindGRNA(gene) {
     })
     .then(data => {
         // Handle the text data here
-        console.log(data);
         CRISPRlib = data;
     })
     .catch(error => {
@@ -5235,7 +5360,6 @@ var out_indel = Array(96)
 var out_indel_arr = Array(96)
 var targetingOligo = Array(96)
 var targetingOligo_arr = Array(96)
-var rima_hist
 var rima_hist_all = Array(96)
 
 const T_cl = "rgb(255,0,0)"
