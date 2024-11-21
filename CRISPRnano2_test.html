@@ -1156,9 +1156,6 @@ function getFastaSequence() {
         var lines = data.split('\n');
         var locus1 = lines.slice(1).join('');
         locus=locus1;
-    //     if (locus!=""){
-    //     alert('Loading given genes list successfully');
-    // }
     })
     .catch(error => {
     if (error.message === 'Network response was not ok') {
@@ -3025,7 +3022,7 @@ function SelectClone(barcode) {
             document.getElementById("DIV_alignment").innerHTML = AlignmentPrecalc[barcode];
             CurrentAlignment = barcode;
             AlignmentStartPos = 0;
-            Pre_PlotAlignment(barcode, locus);
+            // Pre_PlotAlignment(barcode, locus);
             PlotAlignment(barcode, locus);
             }
     else alert("No data available for the selected barcode.");
@@ -3073,23 +3070,38 @@ function Pre_PlotAlignment(barcode, locus){
             aln_dict_fil[id][key] = aln_dict[id][key][0];
         }
     }
-
     // assign new dictionary base on the RTT score
     var validate_ins
     if (rtt!=''){
+        //for reupdate RTT
+        var ins_arr = []
         for (let key in aln_dict_fil[id]){
             if (key.split('\n')[1].trim().length>5){
-                validate_ins = Check_ins_RTT(key, buff_size=4)
-                if (validate_ins[0]){
+                validate_ins = Check_ins_RTT(key, buff_size=5)
+                if (validate_ins[0]&&typeof validate_ins[3]!== "undefined"){
                     aln_dict_fil[id][validate_ins[3]]= aln_dict_fil[id][key]
                     aln_dict[id][validate_ins[3]]= aln_dict[id][key]
                     delete aln_dict[id][key]
                     delete aln_dict_fil[id][key]
+                    ins_arr.push(validate_ins[4])
                 }
             }
         }
-    }  
-    
+        var insertion_pos = findMostPopular(ins_arr)
+        for (let key in aln_dict_fil[id]){
+            if (key.split('\n')[1].trim().length>0){
+                validate_ins = Check_ins_RTT2(key, insertion_pos)
+                if (validate_ins[0]){
+                    if (typeof validate_ins[3]!== "undefined"){
+                        aln_dict_fil[id][validate_ins[3]]= aln_dict_fil[id][key]
+                        aln_dict[id][validate_ins[3]]= aln_dict[id][key]
+                        delete aln_dict[id][key]
+                        delete aln_dict_fil[id][key]
+                    }
+                }
+            }
+        }  
+    }
     no_indel[barcode] = 0; 
     no_indel_arr[barcode] = []
     inf_indel[barcode] =  0;
@@ -3198,13 +3210,12 @@ function Pre_PlotAlignment(barcode, locus){
 function PlotAlignment(barcode, locus){
     var id = barcode;
     rima_hist_all[barcode] = [0,0,0,0,0]
+    var rima_class = 'other EJ'
+    var HA = document.getElementById('HA').checked;
     for (let key in aln_dict_fil[barcode]){
         //aggregate WT
         var micro_homology_data = Check_RIMA(key)
         var duplication1 = Check_duplication(key)
-        var rima_class = 'other EJ'
-        var HA = document.getElementById('HA').checked;
-
         if (micro_homology_data[0]!=''){
             rima_class = 'other EJ (MH-del 1bp)'
             if (micro_homology_data[0].length>=2){
@@ -3425,7 +3436,27 @@ function PlotAlignment(barcode, locus){
     for (let key in aln_dict_fil[barcode]){
         //aggregate WT
         var micro_homology_data = Check_RIMA(key)
-        var duplication1 = Check_duplication(key)        
+        var duplication1 = Check_duplication(key)
+        if (micro_homology_data[0]!=''){
+            rima_class = 'other EJ (MH-del 1bp)'
+            if (micro_homology_data[0].length>=2){
+                rima_class = 'MH-del'
+            }
+        }
+        else if ((micro_homology_data[3]==1)||((micro_homology_data[1]!=-1)&&(micro_homology_data[2]-micro_homology_data[1]==1))){
+            rima_class = 'NHEJ'
+        }
+        else if (typeof aln_dict[barcode][key][1] !== "undefined" && aln_dict[barcode][key][1] ===7){
+            if (HA) {
+                rima_class = 'NHEJ-KI'
+                }
+            else {
+                rima_class = 'HDR-KI'
+                }
+            }
+        else {
+            rima_class = 'other EJ'
+        }        
         if (rima_class=='MH-del'||rima_class=='other EJ (MH-del 1bp)') { 
             for (let x=xfrom-70; x<xto+10; x++){
                 if (((x >= micro_homology_data[1]-xfrom+10)&&(x < micro_homology_data[1]-xfrom+10 + micro_homology_data[0].length))||((x >= micro_homology_data[2]-xfrom+10)&&(x < micro_homology_data[2]-xfrom+10 + micro_homology_data[0].length))){
@@ -3680,8 +3711,7 @@ function PlotAlignment(barcode, locus){
         SVGObj.setAttribute("y", ysize+delypos);
         SVGObj.setAttribute("font-size", "14");
         // Count INDEL's length
-        var gap_len1 = (key.substring(region_analyse*2 +1, region_analyse*4).split("G").length-1) +(key.substring(region_analyse*2 +1, region_analyse*4).split("A").length-1) +(key.substring(region_analyse*2 +1, region_analyse*4).split("T").length-1) +(key.substring(region_analyse*2 +1, region_analyse*4).split("C").length-1) - (key.split("-").length-1);
-
+        var gap_len1 = key.substring(region_analyse*2 +1, region_analyse*4).replace(/-/g, "").replace(/\s+/g, "").length -  (key.substring(0, region_analyse*2).split("-").length-1)
         SVGObj.textContent +="TYPE: "+ aln_type[aln_dict[barcode][key][1]] + ", (" + gap_len1 + " bp)" +" | " +aln_dict_fil[barcode][key] +"  Reads, " + (aln_dict_fil[barcode][key]/summary_track[barcode][7]*100).toFixed(2) + " %";
         svg.appendChild(SVGObj);
 
@@ -4202,7 +4232,7 @@ function PlotAlignment_bulk(barcode, locus, bulk_threshold){
         SVGObj.setAttribute("y", ysize+delypos);
         SVGObj.setAttribute("font-size", "14");
         // Count INDEL's length
-        var gap_len1 = (key.substring(region_analyse*2 +1, region_analyse*4).split("G").length-1) +(key.substring(region_analyse*2 +1, region_analyse*4).split("A").length-1) +(key.substring(region_analyse*2 +1, region_analyse*4).split("T").length-1) +(key.substring(region_analyse*2 +1, region_analyse*4).split("C").length-1) - (key.split("-").length-1);
+        var gap_len1 = key.substring(region_analyse*2 +1, region_analyse*4).replace(/-/g, "").replace(/\s+/g, "").length -  (key.substring(0, region_analyse*2).split("-").length-1)
 
         SVGObj.textContent +="TYPE: "+ aln_type[aln_dict[barcode][key][1]] + ", (" + gap_len1 + " bp)" +" | " +aln_dict_bulk[key] +"  Reads, " + (aln_dict_bulk[key]/summary_track[barcode][7]*100).toFixed(2) + " %";
         if (gap_len1*1<0){
@@ -4765,7 +4795,7 @@ function PlotAlignment_off(gene_i)
         SVGObj.setAttribute("y", ysize+delypos);
         SVGObj.setAttribute("font-size", "14");
         // Count INDEL's length
-        var gap_len1 = (key.substring(region_analyse*2 +1, region_analyse*4).split("G").length-1) +(key.substring(region_analyse*2 +1, region_analyse*4).split("A").length-1) +(key.substring(region_analyse*2 +1, region_analyse*4).split("T").length-1) +(key.substring(region_analyse*2 +1, region_analyse*4).split("C").length-1) - (key.split("-").length-1);
+        var gap_len1 = key.substring(region_analyse*2 +1, region_analyse*4).replace(/-/g, "").replace(/\s+/g, "").length -  (key.substring(0, region_analyse*2).split("-").length-1)
 
         SVGObj.textContent +="TYPE: "+ aln_type[aln_type_dict_off[barcode][key]] + ", (" + gap_len1 + " bp)" +" | " +aln_dict_fil_off[barcode][key] +"  Reads, " + (aln_dict_fil_off[barcode][key]/summary_track_off[barcode][7]*100).toFixed(2) + " %";
         svg.appendChild(SVGObj);
@@ -4999,8 +5029,7 @@ function Check_ins_RTT(sequence_seq, buff_size = 5){
     if (insertion_trim !=''){
         index_in = insertion.indexOf(insertion_trim)
         if (index_in >buff_size && index_in< (main_track.length -buff_size)){
-            var insertion_buff
-            insertion_buff =  main_track.slice(index_in-buff_size, index_in) + insertion_trim + main_track.slice(index_in, index_in +buff_size)
+            var insertion_buff =  main_track.slice(index_in-buff_size, index_in) + insertion_trim + main_track.slice(index_in, index_in +buff_size)
         }
         try{
             if (typeof insertion_buff.length !== undefined){
@@ -5024,8 +5053,70 @@ function Check_ins_RTT(sequence_seq, buff_size = 5){
             }
         catch (error){}
     }    
-    return [shifted, ins_new, insertion_trim.length, seq_new];   
+    return [shifted, ins_new, insertion_trim.length, seq_new, index_ins_gap + rst[1]- buff_size + ins_new.search(/[A-Z]/)];   
 }
+
+
+function Check_ins_RTT2(sequence_seq, common_post){
+    // This function will check the insertion track again base on the RTT shifted position
+    var ms = 1 // match score
+    var mms = -1//mismatch score
+    var gapo = -3  // gap open score
+    var gape = -1  // gap extent score
+    const main_track = sequence_seq.split('\n')[0]
+    const insertion = sequence_seq.split('\n')[1]
+    const insertion_trim = insertion.replace(/-/g, "").replace(/\s+/g, "")
+    var index_in 
+    var seq_new = sequence_seq
+    var seq_new1
+    var ins_new
+    var shifted = false
+    var insertion_buff =  main_track.slice(index_in-4, index_in) + insertion_trim + main_track.slice(index_in, index_in +4)
+
+    if (insertion_trim !=''){
+        index_in = insertion.indexOf(insertion_trim)
+        var insertion_buff =  main_track.slice(index_in-5, index_in) + insertion_trim + main_track.slice(index_in, index_in +5)
+
+        if (index_in <common_post){
+            if (insertion_trim.substring(0, common_post-index_in)== main_track.substring(index_in, common_post)){
+                ins_new = insertion_trim.substring(common_post-index_in, insertion_trim.length) + insertion_trim.substring(0, common_post-index_in)
+                shifted = true
+            }
+        }
+        else if (index_in > common_post){
+            if (insertion_trim.substring(insertion_trim.length-(index_in-common_post), insertion_trim.length)== main_track.substring(common_post,index_in)){
+                ins_new = main_track.substring(common_post,index_in) + insertion_trim.substring(0, insertion_trim.length-(index_in-common_post))
+                shifted = true
+        }
+        if (shifted){
+            try{
+            if (typeof insertion_buff.length !== undefined){
+                var rst = bsa_align(insertion_buff, rtt, [ms, mms], [gapo, gape], is_local = true);
+            // update new insertion position 
+
+                var rst1 = bsa_align(ins_new, rtt, [ms, mms], [gapo, gape], is_local = false);
+                fmt = bsa_cigar2gaps(ins_new, rtt, rst1[1], rst1[2]);
+                ins_new = fmt[0]
+                rtt_ins = fmt[1]
+                var index_ins_gap = index_in - ins_new.search(/[A-Z]/);
+                //update the dictionary with new insertion position
+                seq_new = main_track +'\n'+  ''.padStart(index_ins_gap + rst[1]- buff_size, ' ') + ins_new  + ''.padStart((main_track.length - (index_ins_gap + rst[1]- buff_size +ins_new.length)), ' ') +'\n'+ ''.padStart(index_ins_gap + rst[1]- buff_size -7, ' ') +'(RTT)  ' + rtt_ins  + ''.padStart((main_track.length - (index_ins_gap + rst[1]- buff_size +ins_new.length)), ' ') +'\n'
+                }
+            }
+            catch (error){}
+            }    
+            if (sequence_seq.split('\n')[2].includes('RTT')){
+                seq_new =  seq_new1+''.padStart(index_ins_gap + rst[1]- buff_size -7, ' ') +'(RTT)  ' + rtt_ins  + ''.padStart((main_track.length - (index_ins_gap + rst[1]- buff_size +ins_new.length)), ' ') +'\n'
+            }
+            else {
+                seq_new =  seq_new1
+            }
+        }
+        }
+        
+    return [shifted, ins_new, insertion_trim.length, seq_new, index_ins_gap];   
+}
+
 
 // For google site
 function myFunction1() {
@@ -5233,6 +5324,25 @@ function Start2(){
 
 function containsAny(string, array) {
   return array.every(item => string.includes(item));
+}
+
+//Function to find most popular to tune insertion
+function findMostPopular(arr) {
+    const countMap = new Map();
+    // Count occurrences of each element
+    for (let elem of arr) {
+        countMap.set(elem, (countMap.get(elem) || 0) + 1);
+    }
+    let maxCount = 0;
+    let mostPopular = null;
+
+    for (let [key, count] of countMap) {
+        if (count > maxCount) {
+            maxCount = count;
+            mostPopular = key;
+        }
+    }
+    return mostPopular;
 }
 
 var bst_nt5 = [
