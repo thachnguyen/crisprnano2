@@ -245,7 +245,7 @@ div.selector {
                             <div class="form-check">
                                 <input class="form-check-input" type="checkbox" value="" id="HA">
                                 <small class="text-muted">
-                                Excluded Homology Arm (HA)
+                                Excluding Homology Arm (HA)
                                 </small>
                             </div>
                         </div>
@@ -323,7 +323,7 @@ div.selector {
                 </div>
                 <br>
                 <div class="row">
-                    <input type="submit" name="submit" value="SUBMIT" style="position:center" class="btn btn-secondary btn-lg" id="submit" onclick="Start();">
+                    <input type="submit" name="submit" value="SUBMIT" style="position:center" class="btn btn-primary btn-lg" id="submit" onclick="Start();">
                     <div id="progress" style="display:none; padding: 10px; border: 10px solid #CCC; background: #EEE; width:40%; position:absolute; top:50%;left:40%">
                     </div>
                 </div>
@@ -660,8 +660,8 @@ function checkValue() {
     const MutationThreshold1 = document.getElementsByName("MutationThreshold")[0].value;
     const phred = document.getElementsByName("Phred")[0].value;
     const ML_genotype = document.getElementsByName("ML_genotype")[0].value;
-    if (MutationThreshold1*1 > 100||MutationThreshold1*1<0) {
-    alert('Please check the Mutation threshold again');
+    if (MutationThreshold1*1 > 100||MutationThreshold1*1<0.5) {
+    alert('Please check the Mutation threshold again, supported range 0.5-100%');
     document.getElementsByName("MutationThreshold")[0].value = '2';
     }
     if (phred*1 > 60||phred*1<5) {
