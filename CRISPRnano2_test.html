@@ -660,8 +660,8 @@ function checkValue() {
     const MutationThreshold1 = document.getElementsByName("MutationThreshold")[0].value;
     const phred = document.getElementsByName("Phred")[0].value;
     const ML_genotype = document.getElementsByName("ML_genotype")[0].value;
-    if (MutationThreshold1*1 > 100||MutationThreshold1*1<0.5) {
-    alert('Please check the Mutation threshold again, supported range 0.5-100%');
+    if (MutationThreshold1*1 > 100||MutationThreshold1*1<0.2) {
+    alert('Please check the Mutation threshold again, supported range 0.2-100%');
     document.getElementsByName("MutationThreshold")[0].value = '2';
     }
     if (phred*1 > 60||phred*1<5) {
@@ -5071,8 +5071,8 @@ function Check_ins_RTT2(sequence_seq, common_post){
     var seq_new1
     var ins_new
     var shifted = false
-    var insertion_buff =  main_track.slice(index_in-4, index_in) + insertion_trim + main_track.slice(index_in, index_in +4)
-
+    var insertion_buff =  main_track.slice(index_in-5, index_in) + insertion_trim + main_track.slice(index_in, index_in +5)
+    var buff_size = 5
     if (insertion_trim !=''){
         index_in = insertion.indexOf(insertion_trim)
         var insertion_buff =  main_track.slice(index_in-5, index_in) + insertion_trim + main_track.slice(index_in, index_in +5)
@@ -5087,29 +5087,28 @@ function Check_ins_RTT2(sequence_seq, common_post){
             if (insertion_trim.substring(insertion_trim.length-(index_in-common_post), insertion_trim.length)== main_track.substring(common_post,index_in)){
                 ins_new = main_track.substring(common_post,index_in) + insertion_trim.substring(0, insertion_trim.length-(index_in-common_post))
                 shifted = true
+                index_in = common_post
         }
         if (shifted){
             try{
             if (typeof insertion_buff.length !== undefined){
                 var rst = bsa_align(insertion_buff, rtt, [ms, mms], [gapo, gape], is_local = true);
             // update new insertion position 
-
                 var rst1 = bsa_align(ins_new, rtt, [ms, mms], [gapo, gape], is_local = false);
                 fmt = bsa_cigar2gaps(ins_new, rtt, rst1[1], rst1[2]);
                 ins_new = fmt[0]
                 rtt_ins = fmt[1]
                 var index_ins_gap = index_in - ins_new.search(/[A-Z]/);
                 //update the dictionary with new insertion position
-                seq_new = main_track +'\n'+  ''.padStart(index_ins_gap + rst[1]- buff_size, ' ') + ins_new  + ''.padStart((main_track.length - (index_ins_gap + rst[1]- buff_size +ins_new.length)), ' ') +'\n'+ ''.padStart(index_ins_gap + rst[1]- buff_size -7, ' ') +'(RTT)  ' + rtt_ins  + ''.padStart((main_track.length - (index_ins_gap + rst[1]- buff_size +ins_new.length)), ' ') +'\n'
                 }
             }
             catch (error){}
             }    
             if (sequence_seq.split('\n')[2].includes('RTT')){
-                seq_new =  seq_new1+''.padStart(index_ins_gap + rst[1]- buff_size -7, ' ') +'(RTT)  ' + rtt_ins  + ''.padStart((main_track.length - (index_ins_gap + rst[1]- buff_size +ins_new.length)), ' ') +'\n'
+                seq_new = main_track +'\n'+  ''.padStart(index_ins_gap + rst[1]- buff_size, ' ') + ins_new  + ''.padStart((main_track.length - (index_ins_gap + rst[1]- buff_size +ins_new.length)), ' ') +'\n'+ ''.padStart(index_ins_gap + rst[1]- buff_size -7, ' ') +'(RTT)  ' + rtt_ins  + ''.padStart((main_track.length - (index_ins_gap + rst[1]- buff_size +ins_new.length)), ' ') +'\n'
             }
             else {
-                seq_new =  seq_new1
+                seq_new = main_track +'\n'+  ''.padStart(index_ins_gap + rst[1]- buff_size, ' ') + ins_new  + ''.padStart((main_track.length - (index_ins_gap + rst[1]- buff_size +ins_new.length)), ' ')
             }
         }
         }
