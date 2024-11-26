@@ -169,6 +169,8 @@ div.selector {
                             <div class="btn-group btn-group-lg mr-3" role="group" id="aBtnGroup" aria-label="Basic example">
                                 <button type="button"  name="setup" class="btn btn-info" onclick="TabClicked(0);">GENERAL ANALYZER</button>
                                 <button type="button"  id="setup_PE" class="btn btn-info">PRIME EDITING ANALYZER</button>
+                                <div id="save" style="display:none">test</div>
+
                                 <button type="button"  name="result" class="btn btn-info" onclick="TabClicked(1);">RESULTS</button>
                                 <button type="button"  name="bulkview_result" class="btn btn-info" onclick="TabClicked(4);">BULK/SINGLE CLONE VIEWER</button>
                                 <button type="button"  name="offtarget_result" class="btn btn-info" onclick="TabClicked(5);">OFF-TARGET ANALYSIS</button>
@@ -1380,10 +1382,14 @@ function FileReceived() {
                     // new aln_type for desired edit and partial edit
                     if ((p_edit!='')||(d_edit!='')){
                         if (d_edit!=''&&(read.includes(d_edit)||read.includes(ReverseComplement(d_edit)))){
-                            aln_type = 9;
+                            if (fmt[1].trim()==""){
+                                aln_type = 9;
+                            }
                         }
                         else if (p_edit!=''&&(read.includes(p_edit)||read.includes(ReverseComplement(p_edit)))){
-                            aln_type = 10;
+                            if (fmt[1].trim()==""){
+                                aln_type = 10;
+                            }
                         }
                     }
 
