@@ -232,7 +232,7 @@ div.selector {
                 </div>
                 <div class = "col-sm">
                     <label> Targeting mutagenesis oligonucleotide (Knock-in):</label>  
-                    <input type="text" class="form-control" size="40" name="TargetingOligo" value="">
+                    <input type="text" class="form-control" size="40" id="TargetingOligo" name="TargetingOligo" value="">
                     <!-- <small class="text-muted"> Donor oligonucleotide sequence used to introduce a site specific genomic modification. The sequence entered should be in the same orientation as the amplicon sequence.</small> -->
                     <div class="row">
                         <div class = "col-sm">
@@ -331,6 +331,7 @@ div.selector {
                 </div>
                 <br>
                 <br>
+                <small class="text-muted">
                 <a style="font-style: italic;">
                     CRISPRnano website is free and open to all users and there is no login required.<br>
                     To use CRISPRnano, you must enable JavaScript on your web browser.<br>
@@ -338,12 +339,13 @@ div.selector {
                     <br>
                 <a style="font-style: italic;"> (*) Mandatory 
                 <br>
-                <br>
+            
                 Reference: <br>
                 Nguyen, T., Ramachandran, H., Martins, S., Krutmann, J. and Rossi, A., 2022. Identification of genome edited cells using CRISPRnano. Nucleic Acids Research.<br></a>
-                <br><br>
+                
                 <br>
                 Question: thach.nguyen**(replace with email symbol)**iuf-duesseldorf.de
+            </small>
             </div>
         
         
@@ -373,7 +375,7 @@ div.selector {
             <br>
             <br>
             <h3>CRISPRnano manual</h3>
-            CRISPRnano is a javascript-based program that was developed for rapid deep sequencing based genotyping of nuclease edited cell clones. CRISPRnano supports noisy Oxford Nanopore but also Next Generation Sequencing (NGS) reads such as Illumina, PacBio, or classic Sanger Sequencing.<br><br>
+            CRISPRnano v2 is a javascript-based program that was developed for rapid deep sequencing based genotyping of nuclease edited cell clones. CRISPRnano supports noisy Oxford Nanopore but also Next Generation Sequencing (NGS) reads such as Illumina, PacBio, or classic Sanger Sequencing.<br><br>
             <b>Input data:</b>
             <br>
             <br>CRISPRnano analyzes FASTQ output files from ONT, NGS, or Sanger systems.
@@ -382,13 +384,15 @@ div.selector {
             The file allocation to individual pie charts can be verified by the numbers given at alignment track.
             Our data contains multiple small FASTQ files.  FASTQ files can be concatenated using command <b>cat</b> under Linux or <b>type</b> under Windows environment.<br>
             On Linux terminal:<br>
-            $ cat /path/to/fastq/files/*.fastq &gt; /your/new/location/output.fastq<br><br>
+            $ cat /path/to/fastq/files/*.fastq &gt; /your/new/location/output.fastq<br>
             On Window command prompt (path symbol is different):<br>
             $ type \path\to\fastq\files\*.fastq&gt; \your\new\location\output.fastq<br>
-            
+            <b> Data type:</b>
+            <br>
             <br>
             <b>Reference sequences</b> 
             <br>
+            CRISPRnano can load
             Reference amplicon length should be in the range of 200-350 bases (based on your library preparation), with the nuclease target site located roughly in the middle. The reference sequence of your gene of interest can be retrieved from <a href="http://ftp.ensembl.org/pub/release-105/fasta/homo_sapiens/dna/"> Ensembl database</a>. <br><br>
 
             <b>Nuclease Target Site</b> 
@@ -510,13 +514,27 @@ div.selector {
         </div>
 
         <div id="results" style="position:center; top:80px; display: none;">
+            <div class="btn-group btn-group-toggle" data-toggle="buttons">
+                <label class="btn btn-secondary" onclick="SaveProject();">
+                   SAVE HTML
+                </label>
+                <label class="btn btn-secondary" onclick="SaveReport();">
+                   Indel Excel
+                </label>
+                <label class="btn btn-secondary" onclick="SaveReportcsv();">
+                   Indel CSV
+                </label>
+                <label class="btn btn-secondary" onclick="SaveSVGAlignment();">
+                     Alignment (.svg)
+                  </label>
+                  <label class="btn btn-secondary" onclick="PrintSVG();">
+                     Print PIE
+                  </label>
+              </div> 
             <div class="column">
                 <div class="btn-group btn-group-lg mr-3" role="group" id="result_pie" >
                     <button type="button" class="btn btn-sm btn-light brd" name="setup" onclick="TabClicked(7)">GENOTYPE</button>
                     <button type="button" class="btn btn-sm btn-light brd" onclick="TabClicked(8)">RIMA</button>
-                    <!-- <button type="button" class="btn btn-sm btn-light brd" name="result">Indel distribution</button>
-                    <button type="button" class="btn btn-sm btn-light brd" name="bulkview_result" >Quality</button>
-                    <button type="button" class="btn btn-sm btn-light brd" name="offtarget_result" >Length</button> -->
                 </div>
                 <br>
                 <br>
@@ -535,6 +553,7 @@ div.selector {
                 </div>
 
             </div>
+            <br>
             <div class="column" style="position: left">
                 <h3>SECONDARY ANALYSIS</h3> 
                 <div class="form-check form-switch">
@@ -573,22 +592,7 @@ div.selector {
                     <input type="submit" name="submit" value="START OFFTARGET ANALYZER " class="btn btn-sm btn-light brd" id="submit" onclick="Start2();">
                     <br>
                     <br>
-                    <div class="text-right">
-                    <h4>Save data</h4> 
-                    <button class="btn btn-secondary btn-sm" onclick="SaveProject();"> SAVE HTLM File (.html)</button> 
-                    
-                    <br>
-                    <button class="btn btn-secondary btn-sm" onclick="SaveReport();">Indel report Excel .XLSX</button>
-                    <br>
-                    <br>
-                    <button class="btn btn-secondary btn-sm" onclick="SaveReportcsv();">Indel report CSV .csv</button>
-                    <br> 
-                    <br>
-                    <button class="btn btn-secondary btn-sm" onclick="SaveSVGAlignment();">Save alignment (.svg)</button> 
-                    <br>
-                    <br>
-                    <button class="btn btn-secondary btn-sm" onclick="PrintSVG();">Print pie charts (.pdf)</button> 
-                    </div>
+   
                     <div id="progress1" style="display:none; padding: 10px; border: 10px solid #CCC; background: #EEE; width:80%; position:absolute; top:40%;left:0%">
                     </div>
                         <br>
@@ -1222,7 +1226,7 @@ function FileReceived() {
     var gapo = -4  // gap open score
     var gape = -1  // gap extent score
     var id = CurrentFileId;
-    var targetingOligo1 = document.getElementsByName("TargetingOligo")[0].value.replace(/[\s\n]+/g, '').toUpperCase(); //TargetingOligo
+    targetingOligo1 = document.getElementsByName("TargetingOligo")[0].value.replace(/[\s\n]+/g, '').toUpperCase(); //TargetingOligo
     PhredThreshold = 1*document.getElementsByName("Phred")[0].value;
     var prime_mode = document.getElementById('prime_editing').checked;
     var ML_mode = document.getElementById('run_mode').checked;
@@ -1602,66 +1606,42 @@ function FileReceived_off() {
         var readlen = read.length;
         var aln_type;
         var target = locus_list[gene_id];
-        var targetingOligo1 = document.getElementsByName("TargetingOligo")[0].value.replace(/[\s\n]+/g, '').toUpperCase(); //TargetingOligo
         var mean_phred = 0;
         for (let pos = 0; pos < readlen; pos++) {
             mean_phred = mean_phred + phred.charCodeAt(pos);
         }
         mean_phred = mean_phred/readlen; 
-    
         if (mean_phred > PhredThreshold){ 
-            if ((targetingOligo1 !="") &&(read.includes(targetingOligo1)||read.includes(ReverseComplement(targetingOligo1))||read.includes(ReverseString(targetingOligo1))||read.includes(ReverseComplement(ReverseString(targetingOligo1))))){
-                aln_type = 7;
-                // remove this part in knockin, speed up the program
-                hits_off[i].push(aln_type)
+            // UPDATE v2.0 checking 4 posiblities of read, threshold score =region_analyse+10
+            if (read.includes(locus_list1[gene_id])||read.includes(ReverseComplement(locus_list1[gene_id]))){ 
                 var rst = bsa_align(target, read, [ms, mms], [gapo, gape], is_local=true);
+                if (rst[0] < (region_analyse*1+10)){
+                    try{
+                        read = ReverseComplement(read);
+                        rst = bsa_align(target, read, [ms, mms], [gapo, gape], is_local=true);
+                    }
+                    catch (error){}
+                }
                 var str1 = ''
                 var fmt1 = bsa_cigar2gaps_breakpoint(target, read, rst[1], rst[2], BreakPoint-region_analyse*1, BreakPoint + region_analyse*1);
                 var fmt = fmt1[0]
-                            
+                aln_type = fmt1[1]
                 str1 += fmt[0] + '\n';
                 str1 += fmt[1] + '\n';
-                
-                if (aln_dict_off[i].hasOwnProperty(str1)){
-                    aln_dict_off[i][str1]+=1
-                }
-                else {
-                    aln_dict_off[i][str1] = 1
-                    aln_type_dict_off[i][str1] = aln_type
-                }
-                hits_off[i].push(aln_type)
-            } 
-            else {
-                // UPDATE v2.0 checking 4 posiblities of read, threshold score =region_analyse+10
-                if (read.includes(locus_list1[gene_id])||read.includes(ReverseComplement(locus_list1[gene_id]))){ 
-                    var rst = bsa_align(target, read, [ms, mms], [gapo, gape], is_local=true);
-                    if (rst[0] < (region_analyse*1+10)){
-                        try{
-                        read = ReverseComplement(read);
-                        rst = bsa_align(target, read, [ms, mms], [gapo, gape], is_local=true);
+                    if (aln_type !=0){
+                        if (aln_dict_off[gene_id].hasOwnProperty(str1)){
+                            aln_dict_off[gene_id][str1]+=1
                         }
-                        catch (error){}
+                        else {
+                            aln_dict_off[gene_id][str1] = 1
+                            aln_type_dict_off[gene_id][str1] = aln_type
+                        }
                     }
-                    var str1 = ''
-                    var fmt1 = bsa_cigar2gaps_breakpoint(target, read, rst[1], rst[2], BreakPoint-region_analyse*1, BreakPoint + region_analyse*1);
-                    var fmt = fmt1[0]
-                    aln_type = fmt1[1]
-                    str1 += fmt[0] + '\n';
-                    str1 += fmt[1] + '\n';
-                        if (aln_type !=0){
-                            if (aln_dict_off[gene_id].hasOwnProperty(str1)){
-                                aln_dict_off[gene_id][str1]+=1
-                            }
-                            else {
-                                aln_dict_off[gene_id][str1] = 1
-                                aln_type_dict_off[gene_id][str1] = aln_type
-                            }
-                        }
-                        if (str1.length>(region_analyse*2-2)){
-                            hits_off[gene_id].push(aln_type);
-                        }          
-                }
+                    if (str1.length>(region_analyse*2-2)){
+                        hits_off[gene_id].push(aln_type);
+                    }          
             }
+            
         }
     }
 
@@ -4418,14 +4398,12 @@ function PlotAlignment_bulk(barcode, locus, bulk_threshold){
         showlegend: true
         }
     };
-
     // Plot
     Plotly.newPlot('Indel_plot', [tracePositive, traceNegative], layout);
 }
 
 //Alignment summary plot:
-function PlotAlignment_off(gene_i)
-{
+function PlotAlignment_off(gene_i) {
     var id = gene_i;
     var barcode = gene_i;
     for (let key in aln_dict_off[id]){
@@ -4509,7 +4487,7 @@ function PlotAlignment_off(gene_i)
             aln_dict_fil_off[id][candidate_wt] = sum_wt;
     }
 
-        // For saving csv
+    // For saving csv
     summary_track_off[id][2] = no_indel;
     summary_track_off[id][3] = inf_indel;
     summary_track_off[id][4] = out_indel;
@@ -4574,16 +4552,15 @@ function PlotAlignment_off(gene_i)
         SVGObj.setAttribute("text-anchor", "middle");
         svg.appendChild(SVGObj);
     }
-    //sgRNA
+    //check and auto-edit sgRNA
     if (rightbs!=document.getElementsByName("RightBS")[0].value.replace(/[\s\n]+/g, '').toUpperCase()){
         locus2 = ReverseComplement(locus)
     }
     else{
         locus2 = locus
     }
-
+    //draw base:
     for (let x=RightBsPos; x<RightBsPos+rightbs.length; x++){
-        //draw base:
         SVGObj= document.createElementNS(NS,"text");
         SVGObj.setAttribute("y", ysize+delypos);
         SVGObj.setAttribute("font-size", "14");
@@ -4630,7 +4607,6 @@ function PlotAlignment_off(gene_i)
             if ((key[x]==locus_list[barcode][BreakPoint-region_analyse+x])||(key[x]=='N')||(key[x]=='-')||(typeof(key[x])=='undefined')){
                 }
             }
-
         if (aln_type_dict_off[id][key]==1 && (Object.keys(no_indel_arr).length ==2)){
             for (let x=xfrom-10; x<xto-10; x++){
             //draw main track:
@@ -4863,23 +4839,18 @@ function PlotAlignment_off(gene_i)
      AlignmentPrecalc_off[gene_i] = document.getElementById("DIV_alignment_off").innerHTML;
 }
 
-//Save HTML, all the required variables
-
+//Save HTML, all the required variables store in BLOB and load later
 function SaveProject() {
-    var aln_data = {genename: document.getElementsByName("GeneName")[0].value, BreakPoint: BreakPoint , files_name:files_name, region_analyse: region_analyse,  RightBsPos: RightBsPos, locus: locus, rightbs: rightbs, rtt: rtt, d_edit: d_edit, p_edit: p_edit, threshold: MutationThreshold, PhredThreshold: PhredThreshold,
+    var aln_data = {genename: document.getElementsByName("GeneName")[0].value, BreakPoint: BreakPoint , files_name:files_name, region_analyse: region_analyse,  RightBsPos: RightBsPos, locus: locus, rightbs: rightbs, rtt: rtt, targetingOligo1: targetingOligo1 ,d_edit: d_edit, p_edit: p_edit, MutationThreshold: MutationThreshold, PhredThreshold: PhredThreshold,
     aln_dict: aln_dict, aln_dict_fil: aln_dict_fil}
     var blob = new Blob([JSON.stringify(aln_data)], { type: 'application/json'});  
-
     var reader = new window.FileReader();
+    targetingOligo
     reader.onloadend = function(){
         base64data = reader.result;
         base64data = base64data.split(",")[1]; //remove header
-
         var html = "<meta http-equiv='refresh' content='0; url=https://crisprnano.de/CRISPRnano2_test.html#"+base64data+"'>";
-
-        //add SVG image as a preview:
         html += "<html><body>"+document.getElementById("DIV_piecharts").innerHTML+"</body></html>";
-
         var blob2 = new Blob([html], {type: 'text/plain'});
         var a = document.createElement('a');
         a.download = "Result_"+document.getElementsByName("GeneName")[0].value+".html";
@@ -4923,6 +4894,8 @@ function LoadData(){
         document.getElementById("region_analyse").value = region_analyse
         rtt = store_data.rtt;
         document.getElementById("RTT").value = rtt;
+        targetingOligo1 = store_data.targetingOligo1;
+        document.getElementById("TargetingOligo").value = targetingOligo1;
         PhredThreshold = store_data.PhredThreshold;
         document.getElementById("phredthreshold").value = PhredThreshold;
         document.getElementById("GeneName").value = store_data.genename;
@@ -4959,6 +4932,7 @@ function LoadData(){
         }
         DrawPie();
         DrawPie_rima();
+        SelectClone(0);
         window.location.hash = "";
     }
 }
@@ -4983,7 +4957,6 @@ function SaveReport() {
 function SaveReportcsv() {
     //alert(svg.innerHTML);
     const csvContent = summary_track_select.map(row => row.join("\t")).join("\n");
- 
     var bb = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
     var a = document.createElement('a');
     a.download = document.getElementsByName("GeneName")[0].value+".csv";
@@ -5113,7 +5086,6 @@ function FindGRNA(gene) {
 function SelectGRNA(line){
     document.getElementById("gene_auto_complete").style.display = "none";
     document.getElementById("RightBS").value = "";
-
     if (!line) return;
     line = line.split(",");
     var gene = line[0];
@@ -5126,7 +5098,7 @@ function SelectGRNA(line){
 }
 
 function Hide_auto_complete(){
-            gene_auto_complete.style.display = "none";
+    gene_auto_complete.style.display = "none";
 }
 
 // Check micro homology for given sequence 
@@ -5348,7 +5320,7 @@ function Start(){
     }
     rightbs = document.getElementsByName("RightBS")[0].value.replace(/[\s\n]+/g, '').toUpperCase(); // sgRNA seq  
     
-    MutationThreshold = document.getElementsByName("MutationThreshold")[0].value;
+    MutationThreshold = document.getElementsByName("MutationThreshold")[0].value*1;
     region_analyse = document.getElementsByName("region_analyse")[0].value;
 
     //Find Target site in the reference sequence/locus:
@@ -5566,6 +5538,7 @@ var aln_dict_fil = Array(96)
 
 var AlignmentPrecalc
 var locus = '';
+var targetingOligo1 = ''; // KI sequence
 var locus_check1 = ''; //adaptive ref pair
 var locus_check2 = ''; //adaptive ref
 var d_edit 
@@ -5588,7 +5561,7 @@ var summary_track_select = Array(97)
 summary_track_select[0] = ["Sample", "%Oligo (KI)", "% WT", "% In-frame", "% Out-frame", "# Total Aligned Read"]
 var phred_array = Array(96)
 var length_array = Array(96)
-var region_analyse =30;
+var region_analyse = 30;
 
 // Offtarget analyzer
 var CurrentAlignment_off = 0;
@@ -5638,13 +5611,9 @@ const C_cl ="rgb(0,0,255)"
 const G_cl = "rgb(200, 100, 0)"
 const N_cl = "rgb(0, 0, 0)"
 
+//Using local files
 var CRISPRlib = ""
-var indexedDB = window.indexedDB;
-var IDBTransaction = window.IDBTransaction;
 var dbVersion = 1.0;
-// Create/open database
-var request = indexedDB.open("CRISPRnano2_testFiles", dbVersion);
-var db;
 
 const toggleButton = document.getElementById('toggleButton');
 const sgRNAContainer = document.getElementById('sgRNAContainer');
@@ -5665,8 +5634,6 @@ const optional_para_Container_PE = document.getElementById('optional_para_Contai
 optional_para_PE.addEventListener('click', function() {
     optional_para_Container_PE.classList.toggle('hidden');
 });
-
 LoadData();
-
 </script>
 </html>
