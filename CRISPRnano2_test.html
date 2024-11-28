@@ -302,7 +302,7 @@ div.selector {
                             <div class="popup" onclick="myFunction5()">(? Click here!)
                                 <span class="popuptext" id="help5"> For ONT reads, it is recommended to use -/+15 bases around the predicted DNA lesion. Larger regions are prone to false positive indels. Larger regions (total of 200-250 bp) can be safely used with Illumina reads. You can drag and drop the central point of the predicted double strand break in the genomic sequence to the left or to the right. Default value 0 is double strand breaking point- Crisprnano will use the first index of sgRNA mapped on reference. Click again to close</span>
                             </div>
-                            <br><input type="text" size="30" name="region_analyse" value="40" class="form-control" onchange="checkValue();"><br>
+                            <br><input type="text" size="30" name="region_analyse" id="region_analyse" value="40" class="form-control" onchange="checkValue();"><br>
                         </div>
                         <div class = "col-sm">
                             <label>Indel Threshold [%]: </label>
@@ -663,20 +663,20 @@ function checkValue() {
     const phred = document.getElementsByName("Phred")[0].value;
     const ML_genotype = document.getElementsByName("ML_genotype")[0].value;
     if (MutationThreshold1*1 > 100||MutationThreshold1*1<0.2) {
-    alert('Please check the Mutation threshold again, supported range 0.2-100%');
-    document.getElementsByName("MutationThreshold")[0].value = '2';
+        alert('Please check the Mutation threshold again, supported range 0.2-100%');
+        document.getElementsByName("MutationThreshold")[0].value = '2';
     }
     if (phred*1 > 60||phred*1<5) {
-    alert('Please check this value again, Phred should be in range 5 to 60');
+        alert('Please check this value again, Phred should be in range 5 to 60');
     document.getElementsByName("Phred")[0].value = '10';
     }
     if (region_analyse1*1 > 70||region_analyse1*1<30) {
-    alert('System only support region area from 30-70 bp');
-    document.getElementsByName('region_analyse')[0].value = "40";
+        alert('System only support region area from 30-70 bp');
+        document.getElementsByName('region_analyse')[0].value = "40";
     } 
     if (ML_genotype*1 > 20||ML_genotype*1<2) {
-    alert('System only support maximum genotype between 2 to 20');
-    document.getElementsByName('ML_genotype')[0].value = "10";
+        alert('System only support maximum genotype between 2 to 20');
+        document.getElementsByName('ML_genotype')[0].value = "10";
     } 
 }
 
@@ -2066,7 +2066,7 @@ function DrawPie()
         SVGObj.textContent = "PARTIAL edit";
         svg.appendChild(SVGObj);
     }
-    document.title = "Result for "+document.getElementsByName("GeneName")[0].value+" ("+files.length+" barcodes read)";
+    document.title = "Result for "+document.getElementsByName("GeneName")[0].value+" ("+files_name.length+" barcodes read)";
 }
 
 function DrawPie_rima() {
@@ -2273,7 +2273,7 @@ function DrawPie_rima() {
     SVGObj.textContent = "Other EJ";
     svg.appendChild(SVGObj);
 
-    document.title = "Result for "+document.getElementsByName("GeneName")[0].value+" ("+files.length+" barcodes read)";
+    document.title = "Result for "+document.getElementsByName("GeneName")[0].value+" ("+files_name.length+" barcodes read)";
 }
 
 
@@ -2804,7 +2804,7 @@ function DrawPie_bulk() {
     // Plot
     Plotly.newPlot('GC_plot', histogramData2, layout2);
 
-    document.title = "Bulk Result for "+document.getElementsByName("GeneName")[0].value+" ("+files.length+" barcodes read)";
+    document.title = "Bulk Result for "+document.getElementsByName("GeneName")[0].value+" ("+files_name.length+" barcodes read)";
 }
 
 function DrawPie_off()
@@ -3040,7 +3040,7 @@ function DrawPie_off()
     SVGObj.textContent = "no indel: "
     svg.appendChild(SVGObj);
  
-    document.title = "Off-target Result for "+document.getElementsByName("GeneName")[0].value+" ("+files.length+" barcodes read)";
+    document.title = "Off-target Result for "+document.getElementsByName("GeneName")[0].value+" ("+files_name.length+" barcodes read)";
 }
 
 function PieClick(evt){
@@ -3338,7 +3338,7 @@ function PlotAlignment(id, locus){
     SVGObj.setAttribute("y", ysize+delypos);
     SVGObj.setAttribute("font-size", "16");
     SVGObj.setAttribute("font-weight", "600");
-    SVGObj.textContent = "SUMMARY: Gene: "+document.getElementsByName("GeneName")[0].value+"   |   File "+GetWellPos(id)+": "+files[id].name;
+    SVGObj.textContent = "SUMMARY: Gene: "+document.getElementsByName("GeneName")[0].value+"   |   File "+GetWellPos(id)+": "+files_name[id];
     svg.appendChild(SVGObj);
     delypos+=30;
 
@@ -3838,14 +3838,6 @@ function PlotAlignment_bulk(barcode, locus, bulk_threshold){
     });
     aln_dict_bulk = Object.fromEntries(items.map(([v, k]) => [v, k]));
 
-    // for (let key in aln_dict_bulk){
-    //     if (key in aln_dict[0]) {
-    //     }
-    //     else{
-    //         delete aln_dict_bulk[key]
-    //     }
-    // }
-
     //aggregate aln_track
     //Find top 3:
     var aln_type = ["Not align","No indel", "Inframe Indel", "Outframe indel", "", "","", "targetingOligo", "Ambigious", "DESIRED edit", "PARTIAL edit"]
@@ -3874,7 +3866,7 @@ function PlotAlignment_bulk(barcode, locus, bulk_threshold){
     SVGObj.setAttribute("y", ysize+delypos);
     SVGObj.setAttribute("font-size", "16");
     SVGObj.setAttribute("font-weight", "600");
-    SVGObj.textContent = "SUMMARY: Gene: "+document.getElementsByName("GeneName")[0].value+"   |   File "+GetWellPos(barcode)+": "+files[barcode].name;
+    SVGObj.textContent = "SUMMARY: Gene: "+document.getElementsByName("GeneName")[0].value+"   |   File "+GetWellPos(barcode)+": "+files_name[barcode];
     svg.appendChild(SVGObj);
     delypos+=30;
 
@@ -4871,6 +4863,105 @@ function PlotAlignment_off(gene_i)
      AlignmentPrecalc_off[gene_i] = document.getElementById("DIV_alignment_off").innerHTML;
 }
 
+//Save HTML, all the required variables
+
+function SaveProject() {
+    var aln_data = {genename: document.getElementsByName("GeneName")[0].value, BreakPoint: BreakPoint , files_name:files_name, region_analyse: region_analyse,  RightBsPos: RightBsPos, locus: locus, rightbs: rightbs, rtt: rtt, d_edit: d_edit, p_edit: p_edit, threshold: MutationThreshold, PhredThreshold: PhredThreshold,
+    aln_dict: aln_dict, aln_dict_fil: aln_dict_fil}
+    var blob = new Blob([JSON.stringify(aln_data)], { type: 'application/json'});  
+
+    var reader = new window.FileReader();
+    reader.onloadend = function(){
+        base64data = reader.result;
+        base64data = base64data.split(",")[1]; //remove header
+
+        var html = "<meta http-equiv='refresh' content='0; url=https://crisprnano.de/CRISPRnano2_test.html#"+base64data+"'>";
+
+        //add SVG image as a preview:
+        html += "<html><body>"+document.getElementById("DIV_piecharts").innerHTML+"</body></html>";
+
+        var blob2 = new Blob([html], {type: 'text/plain'});
+        var a = document.createElement('a');
+        a.download = "Result_"+document.getElementsByName("GeneName")[0].value+".html";
+        a.href = window.URL.createObjectURL(blob2);
+        a.textContent = 'Click here to save';
+        a.dataset.downloadurl = ['text/plain', a.download, a.href].join(':');
+        document.getElementById("save").appendChild(a);
+        a.click();
+    }
+    reader.readAsDataURL(blob);
+}
+
+// This will load all offline variables
+
+function LoadData(){
+    if (window.location.hash) {
+        phred_array = Array(96)
+        length_array = Array(96)
+        gcContent = Array(96)
+        // Re initialized variable
+        for (let i=0; i<96; i++) {
+            phred_array[i] = []
+            length_array[i] = []
+            gcContent[i] = []
+        }
+        AlignmentPrecalc = new Array(96);
+        for (let i=0; i<96; i++){
+            sum_track[i] = 0;
+            summary_track[i] = Array(9); 
+        }
+        //alert(window.location.hash.substr(1));
+        var store_data = atob(window.location.hash.substr(1));
+        store_data = JSON.parse(store_data)
+        //Update GUI
+        BreakPoint = store_data.BreakPoint;
+        files_name = store_data.files_name;
+        RightBsPos = store_data.RightBsPos;
+        MutationThreshold = store_data.MutationThreshold;
+        document.getElementById("allelethreshold").value = MutationThreshold;
+        region_analyse = store_data.region_analyse;
+        document.getElementById("region_analyse").value = region_analyse
+        rtt = store_data.rtt;
+        document.getElementById("RTT").value = rtt;
+        PhredThreshold = store_data.PhredThreshold;
+        document.getElementById("phredthreshold").value = PhredThreshold;
+        document.getElementById("GeneName").value = store_data.genename;
+        p_edit = store_data.p_edit;
+        document.getElementById("p_edit").value = store_data.p_edit;
+        d_edit = store_data.d_edit;
+        document.getElementById("d_edit").value = store_data.d_edit;
+        rightbs = store_data.rightbs;
+        document.getElementById("RightBS").value = store_data.rightbs;
+        locus = store_data.locus;
+        document.getElementById("locus").value = store_data.locus;
+        aln_dict = store_data.aln_dict;
+        aln_dict_fil = store_data.aln_dict_fil;
+        for (let id=0;id <96;id++){
+            for (let key in aln_dict_fil[id]){
+                var key1 = key.replace(/Â/g, " ");
+                key1 = key1.replace(/↵/g, "\n");
+                if (key1!=key){
+                    aln_dict_fil[id][key1] = aln_dict_fil[id][key]
+                    delete aln_dict_fil[id][key]
+                }
+            }
+            for (let key in aln_dict[id]){
+                var key1 = key.replace(/Â/g, " ");
+                key1 = key1.replace(/↵/g, "\n");
+                if (key1!=key){
+                    aln_dict[id][key1] = aln_dict[id][key]
+                    delete aln_dict[id][key]
+                }
+            }            
+            Pre_PlotAlignment(id, locus);
+            PlotAlignment(id, locus);
+            //Update for wrong encoding entries
+        }
+        DrawPie();
+        DrawPie_rima();
+        window.location.hash = "";
+    }
+}
 
 function SaveReport() {
     //alert(svg.innerHTML);
@@ -5122,7 +5213,6 @@ function Check_ins_RTT(sequence_seq, buff_size = 5){
     return [shifted, ins_new, insertion_trim.length, seq_new, index_ins_gap + rst[1]- buff_size + ins_new.search(/[A-Z]/)];   
 }
 
-
 function Check_ins_RTT2(sequence_seq, common_post){
     // This function will check the insertion track again base on the RTT shifted position
     var ms = 1 // match score
@@ -5160,15 +5250,15 @@ function Check_ins_RTT2(sequence_seq, common_post){
         if (shifted){
             if (sequence_seq.split('\n')[2].includes('RTT')){
             try{
-            if (typeof insertion_buff.length !== undefined){
-                var rst = bsa_align(insertion_buff, rtt, [ms, mms], [gapo, gape], is_local = true);
-            // update new insertion position 
-                var rst1 = bsa_align(ins_new, rtt, [ms, mms], [gapo, gape], is_local = false);
-                fmt = bsa_cigar2gaps(ins_new, rtt, rst1[1], rst1[2]);
-                ins_new = fmt[0]
-                rtt_ins = fmt[1]
-                index_ins_gap = index_in - ins_new.search(/[A-Z]/);
-                //update the dictionary with new insertion position
+                if (typeof insertion_buff.length !== undefined){
+                    var rst = bsa_align(insertion_buff, rtt, [ms, mms], [gapo, gape], is_local = true);
+                // update new insertion position 
+                    var rst1 = bsa_align(ins_new, rtt, [ms, mms], [gapo, gape], is_local = false);
+                    fmt = bsa_cigar2gaps(ins_new, rtt, rst1[1], rst1[2]);
+                    ins_new = fmt[0]
+                    rtt_ins = fmt[1]
+                    index_ins_gap = index_in - ins_new.search(/[A-Z]/);
+                    //update the dictionary with new insertion position
                 }
             }
             catch (error){
@@ -5179,7 +5269,7 @@ function Check_ins_RTT2(sequence_seq, common_post){
                 seq_new = main_track +'\n'+  ''.padStart(index_in, ' ') + ins_new  + ''.padStart((main_track.length - (index_in+ ins_new.length)), ' ')
             }
         }
-        }
+    }
     return [shifted, ins_new, insertion_trim.length, seq_new, index_ins_gap];   
 }
 
@@ -5227,6 +5317,7 @@ function myFunction10() {
 function Start(){
     document.getElementById("progress").style.display = '';
     //Reset all variables
+    files_name = []
     for (var i=0; i<96; i++) {
         phred_array[i] = []
         length_array[i] = []
@@ -5309,6 +5400,9 @@ function Start(){
     
     var evt = document.getElementById('files');
     files = evt.files;
+    for (let i=0; i<files.length; i++){
+        files_name.push(files[i].name)
+    }
 
     if (files.length <= 0) {
         alert("No files were specified. Please upload your fastq files");
@@ -5478,6 +5572,7 @@ var d_edit
 var p_edit 
 var rtt = ''
 var files;
+var files_name = [];
 var reader;
 var CurrentFileId;
 var CurrentFileId_off;
@@ -5493,7 +5588,6 @@ var summary_track_select = Array(97)
 summary_track_select[0] = ["Sample", "%Oligo (KI)", "% WT", "% In-frame", "% Out-frame", "# Total Aligned Read"]
 var phred_array = Array(96)
 var length_array = Array(96)
-
 var region_analyse =30;
 
 // Offtarget analyzer
@@ -5571,6 +5665,8 @@ const optional_para_Container_PE = document.getElementById('optional_para_Contai
 optional_para_PE.addEventListener('click', function() {
     optional_para_Container_PE.classList.toggle('hidden');
 });
+
+LoadData();
 
 </script>
 </html>
