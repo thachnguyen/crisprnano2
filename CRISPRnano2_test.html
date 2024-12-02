@@ -217,7 +217,7 @@ div.selector {
                 <div class="row">
                 <div class = "col-sm">
                     <label>Gene Name:</label>
-                    <input type="text" class="form-control" size="40" name="GeneName" id = "GeneName" value="" oninput="FindGRNA(this.value);"  placeholder="e.g. AHR" onblur="setTimeout('Hide_auto_complete();',500);">
+                    <input type="text" class="form-control" size="40" name="GeneName" id = "GeneName" value="" oninput="FindGRNA(this.value);" onchange="getFastaSequence()" placeholder="e.g. AHR" onblur="setTimeout('Hide_auto_complete();',500);">
                     <div id="gene_auto_complete" class="selector" style="display:none;"></div>
                     <!-- <small class="text-muted">This will list all recommended Genes and coding region gRNAs (support Human and Mouse only). Gene names are from <a href="https://crisprnano.de/genename.txt">this </a> list. You can select the interest pair. If Gene name is blank, the customized reference sequence must be given or system will search by given sgRNA. </a></small><br> -->
                 </div>
@@ -1252,8 +1252,7 @@ function FileReceived() {
         if (cursor4 >= origlen) break;
         else cursor = cursor4+1;
 
-        var read = original.slice(cursor1+1,cursor2);
-        gcContent[id].push(calculateGCContent(read)); 
+        var read = original.slice(cursor1+1,cursor2); 
         var phred = original.slice(cursor3+1,cursor4); 
         var readlen = read.length;
         var aln_type;
@@ -1262,10 +1261,28 @@ function FileReceived() {
         for (let pos = 0; pos < readlen; pos++) {
             mean_phred = mean_phred + phred.charCodeAt(pos)-33;
         }
-        mean_phred = mean_phred/readlen; 
-        phred_array[id].push(mean_phred)
+        mean_phred = (mean_phred/readlen).toFixed(1);
+        if (phred_array[id].hasOwnProperty(mean_phred)){
+            phred_array[id][mean_phred]+=1
+        }
+        else {
+            phred_array[id][mean_phred] = 1
+        }
+
         if (readlen >10) {
-            length_array[id].push(readlen)
+            if (length_array[id].hasOwnProperty(readlen)){
+                length_array[id][readlen]+=1
+            }
+            else {
+                length_array[id][readlen] = 1
+            }
+        }
+        var gcContent_1 = calculateGCContent(read).toFixed(1)
+        if (gcContent[id].hasOwnProperty(gcContent_1)){
+            gcContent[id][gcContent_1]+=1
+        }
+        else {
+            gcContent[id][gcContent_1] = 1
         }
         
         if ((mean_phred > PhredThreshold)&&(CurrentFileChunk<2)){ 
@@ -2689,89 +2706,82 @@ function DrawPie_bulk() {
     // Parse FASTQ data and extract quality scores
 
     const qualityScores = phred_array[barcode];
-    const binnedQualityScores = binQualityScores(qualityScores, 1);
+    const x = Object.keys(qualityScores).map(key => parseInt(key)); 
+    const y = Object.values(qualityScores);
 
-    // Create histogram data
-    const histogramData = [
-            {
-                x: binnedQualityScores.map((count, index) => index * 1),
-                y: binnedQualityScores,
-                type: 'bar'
+    const trace = {
+            x: x,
+            y: y,
+            type: 'bar',
+            marker: {
+                color: 'rgba(55, 128, 191, 0.7)',
+                line: {
+                    color: 'rgba(55, 128, 191, 1.0)',
+                    width: 2
+                }
             }
-        ];
-
-    // Set layout
-    const layout = {
-        title: 'Quality Score Histogram',
-        xaxis: {
-            title: 'PHRED Quality Score',
-            range: [-10, 60], // Set the x-axis range from 0 to 40
+        };
+        const layout = {
+            title: 'Quality Score Histogram',
+            xaxis: { title: 'Quality', range: [-10, 60] },
+            yaxis: { title: 'Counts' },
+         // Set the x-axis range from 0 to 40
             dtick: 5
-        },
-        yaxis: {
-            title: 'Count'
-        }
-    };
+        };
+    Plotly.newPlot('QC_plot', [trace], layout);
+   
 
-    // Plot
-    Plotly.newPlot('QC_plot', histogramData, layout);
-
-    // Parse FASTQ data and extract quality scores
+    ////////////////////////////////
     const read_length = length_array[barcode];
+    const x1 = Object.keys(read_length).map(key => parseInt(key)); 
+    const y1 = Object.values(read_length);
 
-    // Create histogram data
-    const histogramData1 = [
-        {
-            x: read_length,
-            type: 'histogram'
-        }
-    ];
-
-    // Set layout
-    const layout1 = {
-        title: 'Read Length Distribution',
-        xaxis: {
-            title: 'Read length (bp)',
-            range: [-10, 1000], // Set the x-axis range from 0 to 40
-        },
-        yaxis: {
-            title: 'Count'
-        }
-    };
-
-    // Plot
-    Plotly.newPlot('read_plot', histogramData1, layout1);
-
-
-       // Parse FASTQ data and extract quality scores
-
-    const gcData = gcContent[barcode];
-    const binnedgcData = binQualityScores(gcData, 1);
-
-    // Create histogram data
-    const histogramData2 = [
-            {
-                x: binnedgcData.map((count, index) => index * 1),
-                y: binnedgcData,
-                type: 'bar'
+    const trace1 = {
+            x: x1,
+            y: y1,
+            type: 'bar',
+            width: 5,
+            marker: {
+                color: 'rgba(55, 128, 191, 0.7)',
+                line: {
+                    color: 'rgba(55, 128, 191, 1.0)',
+                    width: 2
+                }
             }
-        ];
-
-    // Set layout
-    const layout2 = {
-        title: 'GC Content Histogram',
-        xaxis: {
-            title: 'GC Content %',
-            range: [10, 70], // Set the x-axis range from 0 to 40
+        };
+        const layout1 = {
+            title: 'Read length (bp)',
+            xaxis: { title: 'Read length (bp)' },
+            yaxis: { title: 'Counts' },
             dtick: 5
-        },
-        yaxis: {
-            title: 'Count'
-        }
-    };
+        };
+        Plotly.newPlot('read_plot', [trace1], layout1);
 
-    // Plot
-    Plotly.newPlot('GC_plot', histogramData2, layout2);
+
+        const gcContent1 =  gcContent[barcode];
+        const x2 = Object.keys(gcContent1).map(key => parseInt(key)); 
+        const y2 = Object.values(gcContent1);
+
+        const trace2 = {
+                x: x2,
+                y: y2,
+                type: 'bar',
+                marker: {
+                    color: 'rgba(55, 128, 191, 0.7)',
+                    line: {
+                        color: 'rgba(55, 128, 191, 1.0)',
+                        width: 2
+                    }
+                }
+            };
+            const layout2 = {
+                title: 'GC content',
+                xaxis: { title: 'GC content %', range: [10, 90] },
+                yaxis: { title: 'Counts' },
+                range: [10, 80], // Set the x-axis range from 0 to 40
+                dtick: 5
+            };
+        Plotly.newPlot('GC_plot', [trace2], layout2);
 
     document.title = "Bulk Result for "+document.getElementsByName("GeneName")[0].value+" ("+files_name.length+" barcodes read)";
 }
@@ -3058,7 +3068,6 @@ function SelectClone(barcode) {
             document.getElementById("DIV_alignment").innerHTML = AlignmentPrecalc[barcode];
             CurrentAlignment = barcode;
             AlignmentStartPos = 0;
-            // Pre_PlotAlignment(barcode, locus);
             PlotAlignment(barcode, locus);
             }
     else alert("No data available for the selected barcode.");
@@ -3086,6 +3095,13 @@ function GetWellPos(i)
 function Pre_PlotAlignment(id, locus){
     //compute number of aligned read
     // check genotype
+    // remove low entry
+    for (let key in aln_dict[id]){
+        if ((aln_dict[id][key][0]<15)){
+            delete aln_dict[id][key]
+        }
+    }
+
     for (let key in aln_dict[id]){
         sum_track[id] += aln_dict[id][key][0];
     }
@@ -3102,7 +3118,7 @@ function Pre_PlotAlignment(id, locus){
     summary_track[id][8] = 0;
 
     for (let key in aln_dict[id]){
-        if ((aln_dict[id][key][1]!=8)&&(aln_dict[id][key][0]>10)&&(aln_dict[id][key][0]>(1*MutationThreshold*sum_track[id]/100))&&(key.split('\n')[0].trim().length>region_analyse*2-4)){
+        if ((aln_dict[id][key][1]!=8)&&(aln_dict[id][key][0]>(1*MutationThreshold*sum_track[id]/100))&&(key.split('\n')[0].trim().length>region_analyse*2-4)){
             aln_dict_fil[id][key] = aln_dict[id][key][0];
         }
     }
@@ -3779,9 +3795,9 @@ function PlotAlignment(id, locus){
     AlignmentPrecalc[id] = document.getElementById("DIV_alignment").innerHTML;
 }
 
-function PlotAlignment_bulk(barcode, locus, bulk_threshold){
-    //compute number of aligned read
-    // check genotype
+function PlotAlignment_bulk(barcode, locus, bulk_threshold = bulk_threshold){
+    //compute number of aligned read in bulk mode
+    // check genotype 
     var id = barcode;
     aln_dict_bulk = {}
     for (let key in aln_dict[id]){
@@ -3790,22 +3806,20 @@ function PlotAlignment_bulk(barcode, locus, bulk_threshold){
         }
     }
     
-    if (summary_track[id][7]>0) {
-        summary_track_select[id+1] =  [GetWellPos(id), (summary_track[id][1]/summary_track[id][7]*100).toFixed(2), (summary_track[id][2]/summary_track[id][7]*100).toFixed(2), (summary_track[id][3]/summary_track[id][7]*100).toFixed(2), (summary_track[id][4]/summary_track[id][7]*100).toFixed(2), summary_track[id][7]]
-    }
-    else {
-        summary_track_select[id+1] =  [GetWellPos(id), summary_track[id][1], summary_track[id][2], summary_track[id][3], summary_track[id][4], summary_track[id][7]]
-    }
-
     // sort aligment tract
     var items = Object.keys(aln_dict_bulk).map(function(key) {
-    return [key, aln_dict_bulk[key]];
+        return [key, aln_dict_bulk[key]];
     });
+
     // Sort the array based on the second element
     items.sort(function(first, second) {
-    return second[1] - first[1];
+        return second[1] - first[1];
     });
     aln_dict_bulk = Object.fromEntries(items.map(([v, k]) => [v, k]));
+    var sum_bulk = 0
+    for (let key in aln_dict_bulk){
+        sum_bulk += aln_dict_bulk[key]
+    }
 
     //aggregate aln_track
     //Find top 3:
@@ -3843,14 +3857,14 @@ function PlotAlignment_bulk(barcode, locus, bulk_threshold){
     SVGObj.setAttribute("x", 40);
     SVGObj.setAttribute("y", ysize+delypos);
     SVGObj.setAttribute("font-size", "16");
-    SVGObj.textContent = "Total aligned reads: " + summary_track[barcode][7] +"   |  Outframe indel: " +summary_track[barcode][4]+ " READS, (" +(summary_track[barcode][4]*100/summary_track[barcode][7]).toFixed(2)+"%)" +"   |  Inframe indel: " +summary_track[barcode][3]+ " READS, (" +(summary_track[barcode][3]*100/summary_track[barcode][7]).toFixed(2)+"%)";
+    SVGObj.textContent = "Total aligned reads in bulk: " + sum_bulk +"   |  Outframe indel: " +summary_track[barcode][4]+ " READS, (" +(summary_track[barcode][4]*100/sum_bulk).toFixed(2)+"%)" +"   |  Inframe indel: " +summary_track[barcode][3]+ " READS, (" +(summary_track[barcode][3]*100/sum_bulk).toFixed(2)+"%)";
     svg.appendChild(SVGObj);
     delypos+=30;
     SVGObj= document.createElementNS(NS,"text");
     SVGObj.setAttribute("x", 40);
     SVGObj.setAttribute("y", ysize+delypos);
     SVGObj.setAttribute("font-size", "16");
-    SVGObj.textContent = "targetingOligo reads: " + summary_track[barcode][1] +"   |  No indel: " +summary_track[barcode][2] +" READS, (" +(summary_track[barcode][2]*100/summary_track[barcode][7]).toFixed(2)+"%)" +"   | Read ambigous: " +summary_track[barcode][5] //+"   | Not aligned to interested region: " +summary_track[barcode][6];
+    SVGObj.textContent = "targetingOligo reads: " + summary_track[barcode][1] +"   |  No indel: " +summary_track[barcode][2] +" READS, (" +(summary_track[barcode][2]*100/sum_bulk).toFixed(2)+"%)" +"   | Read ambigous: " +summary_track[barcode][5] //+"   | Not aligned to interested region: " +summary_track[barcode][6];
     svg.appendChild(SVGObj);
 
     delypos+=delyshift;
@@ -4261,7 +4275,7 @@ function PlotAlignment_bulk(barcode, locus, bulk_threshold){
         // Count INDEL's length
         var gap_len1 = key.substring(region_analyse*2 +1, region_analyse*4).replace(/-/g, "").replace(/\s+/g, "").length -  (key.substring(0, region_analyse*2).split("-").length-1)
 
-        SVGObj.textContent +="TYPE: "+ aln_type[aln_dict[barcode][key][1]] + ", (" + gap_len1 + " bp)" +" | " +aln_dict_bulk[key] +"  Reads, " + (aln_dict_bulk[key]/summary_track[barcode][7]*100).toFixed(2) + " %";
+        SVGObj.textContent +="TYPE: "+ aln_type[aln_dict[barcode][key][1]] + ", (" + gap_len1 + " bp)" +" | " +aln_dict_bulk[key] +"  Reads, " + (aln_dict_bulk[key]/sum_bulk*100).toFixed(2) + " %";
         if (gap_len1*1<0){
             loc_indel = key.search('-') -BreakPoint;
             if (rightbs!=document.getElementsByName("RightBS")[0].value.replace(/[\s\n]+/g, '').toUpperCase()){
@@ -4802,8 +4816,7 @@ function PlotAlignment_off(gene_i) {
 //Save HTML, all the required variables store in BLOB and load later
 function SaveProject() {
     var aln_data = {genename: document.getElementsByName("GeneName")[0].value, BreakPoint: BreakPoint , files_name:files_name, region_analyse: region_analyse,  RightBsPos: RightBsPos, locus: locus, rightbs: rightbs, rtt: rtt, targetingOligo1: targetingOligo1 ,d_edit: d_edit, p_edit: p_edit, MutationThreshold: MutationThreshold, PhredThreshold: PhredThreshold,
-    aln_dict: aln_dict, aln_dict_off: aln_dict_off}
-    // aln_dict_fil: aln_dict_fil, aln}
+    aln_dict: aln_dict, aln_dict_fil: aln_dict_fil, aln_dict_off: aln_dict_off,aln_dict_fil_off: aln_dict_fil_off,phred_array: phred_array, gcContent: gcContent, length_array:length_array}
     var blob = new Blob([JSON.stringify(aln_data)], { type: 'application/json'});  
     var reader = new window.FileReader();
     targetingOligo
@@ -4828,15 +4841,6 @@ function SaveProject() {
 
 function LoadData(){
     if (window.location.hash) {
-        phred_array = Array(96)
-        length_array = Array(96)
-        gcContent = Array(96)
-        // Re initialized variable
-        for (let i=0; i<96; i++) {
-            phred_array[i] = []
-            length_array[i] = []
-            gcContent[i] = []
-        }
         AlignmentPrecalc = new Array(96);
         for (let i=0; i<96; i++){
             sum_track[i] = 0;
@@ -4845,7 +4849,7 @@ function LoadData(){
         //alert(window.location.hash.substr(1));
         var store_data = atob(window.location.hash.substr(1));
         store_data = JSON.parse(store_data)
-        //Update GUI
+        //Update GUI and variables
         BreakPoint = store_data.BreakPoint;
         files_name = store_data.files_name;
         RightBsPos = store_data.RightBsPos;
@@ -4870,9 +4874,12 @@ function LoadData(){
         document.getElementById("locus").value = store_data.locus;
         aln_dict = store_data.aln_dict;
         aln_dict_fil = store_data.aln_dict_fil;
+        phred_array = store_data.phred_array;
+        gcContent = store_data.gcContent;
+        length_array = store_data.length_array;
         for (let id=0;id <96;id++){
             for (let key in aln_dict_fil[id]){
-                var key1 = key.replace(/Â/g, " ");
+                var key1 = key.replace(/Â/g, "");
                 key1 = key1.replace(/↵/g, "\n");
                 if (key1!=key){
                     aln_dict_fil[id][key1] = aln_dict_fil[id][key]
@@ -4880,7 +4887,7 @@ function LoadData(){
                 }
             }
             for (let key in aln_dict[id]){
-                var key1 = key.replace(/Â/g, " ");
+                var key1 = key.replace(/Â/g, "");
                 key1 = key1.replace(/↵/g, "\n");
                 if (key1!=key){
                     aln_dict[id][key1] = aln_dict[id][key]
@@ -4916,8 +4923,19 @@ function SaveReport() {
 }
 
 function SaveReportcsv() {
-    //alert(svg.innerHTML);
-    const csvContent = summary_track_select.map(row => row.join("\t")).join("\n");
+    const now = new Date();
+    var config_data = "# Analysis on: " + now.toString()+"\n";
+    config_data += "# Gene: " +document.getElementsByName("GeneName")[0].value +"\n";
+    config_data += "# sgRNA:" + rightbs +"\n";
+    config_data += "# Referfence: " + locus +"\n";
+    config_data += "# Target Oligo: " + targetingOligo1 +"\n";
+    config_data += "# RTT: " + rtt +"\n";
+    config_data += "# Desired Edit: " + d_edit +"\n";
+    config_data += "# Partial Edit: " + p_edit +"\n";
+    config_data += "# Region Analyser: " + region_analyse +"\n";
+    config_data += "# Indel Threshold: " + MutationThreshold +"\n";
+    config_data += "# Phred Threshold: " + PhredThreshold +"\n";
+    const csvContent = config_data + summary_track_select.map(row => row.join("\t")).join("\n");
     var bb = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
     var a = document.createElement('a');
     a.download = document.getElementsByName("GeneName")[0].value+".csv";
@@ -5252,11 +5270,11 @@ function Start(){
     //Reset all variables
     files_name = []
     for (var i=0; i<96; i++) {
-        phred_array[i] = []
-        length_array[i] = []
+        phred_array[i] = {}
+        length_array[i] = {}
         aln_dict[i] = {}
         aln_dict_fil[i] = {}
-        gcContent[i] = []
+        gcContent[i] = {}
     }
     AlignmentPrecalc = new Array(96);
     for (var i=0; i<96; i++){
