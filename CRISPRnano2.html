@@ -312,7 +312,7 @@ div.selector {
                             <br><input type="text" size="30" class="form-control" id= "allelethreshold" name="MutationThreshold" value="2" onchange="checkValue();"><br>
                         </div>
                         <div class = "col-sm">
-                            <label>PHred Threshold: </label>
+                            <label>Phred Threshold: </label>
                             <div class="popup" onclick="myFunction10()">(? Click here!)
                                 <span class="popuptext" id="help10">The Quality threshold determine the minimum filter base, For Illumina it should be >20, For ONT it should be >10, Click again to close.</span>
                             </div> 
@@ -514,23 +514,6 @@ div.selector {
         </div>
 
         <div id="results" style="position:center; top:80px; display: none;">
-            <div class="btn-group btn-group-toggle" data-toggle="buttons">
-                <label class="btn btn-secondary" onclick="SaveProject();">
-                   SAVE HTML
-                </label>
-                <label class="btn btn-secondary" onclick="SaveReport();">
-                   Indel Excel
-                </label>
-                <label class="btn btn-secondary" onclick="SaveReportcsv();">
-                   Indel CSV
-                </label>
-                <label class="btn btn-secondary" onclick="SaveSVGAlignment();">
-                     Alignment (.svg)
-                  </label>
-                  <label class="btn btn-secondary" onclick="PrintSVG();">
-                     Print PIE
-                  </label>
-              </div> 
             <div class="column">
                 <div class="btn-group btn-group-lg mr-3" role="group" id="result_pie" >
                     <button type="button" class="btn btn-sm btn-light brd" name="setup" onclick="TabClicked(7)">GENOTYPE</button>
@@ -553,8 +536,24 @@ div.selector {
                 </div>
 
             </div>
-            <br>
-            <div class="column" style="position: left">
+            <div class="column" style="position:  absolute; left: 1000px;">
+                <div class="btn-group btn-group-toggle" data-toggle="buttons">
+                    <label class="btn btn-secondary" onclick="SaveProject();">
+                       SAVE HTML
+                    </label>
+                    <label class="btn btn-secondary" onclick="SaveReport();">
+                       Indel Excel
+                    </label>
+                    <label class="btn btn-secondary" onclick="SaveReportcsv();">
+                       Indel CSV
+                    </label>
+                    <label class="btn btn-secondary" onclick="SaveSVGAlignment();">
+                         Alignment (.svg)
+                      </label>
+                      <label class="btn btn-secondary" onclick="PrintSVG();">
+                         Print PIE
+                      </label>
+                  </div> 
                 <h3>SECONDARY ANALYSIS</h3> 
                 <div class="form-check form-switch">
                     <input class="form-check-input" type="checkbox" id="bulkview">
@@ -2735,12 +2734,11 @@ function DrawPie_bulk() {
     const read_length = length_array[barcode];
     const x1 = Object.keys(read_length).map(key => parseInt(key)); 
     const y1 = Object.values(read_length);
-
     const trace1 = {
             x: x1,
             y: y1,
             type: 'bar',
-            width: 5,
+            width: 2,
             marker: {
                 color: 'rgba(55, 128, 191, 0.7)',
                 line: {
@@ -2749,11 +2747,11 @@ function DrawPie_bulk() {
                 }
             }
         };
+        
         const layout1 = {
             title: 'Read length (bp)',
-            xaxis: { title: 'Read length (bp)' },
+            xaxis: { title: 'Read length (bp)', range: [10, 2000]},
             yaxis: { title: 'Counts' },
-            dtick: 5
         };
         Plotly.newPlot('read_plot', [trace1], layout1);
 
@@ -2779,7 +2777,6 @@ function DrawPie_bulk() {
                 xaxis: { title: 'GC content %', range: [10, 90] },
                 yaxis: { title: 'Counts' },
                 range: [10, 80], // Set the x-axis range from 0 to 40
-                dtick: 5
             };
         Plotly.newPlot('GC_plot', [trace2], layout2);
 
@@ -3212,7 +3209,7 @@ function Pre_PlotAlignment(id, locus){
     summary_track[id][2] = no_indel[id];
     summary_track[id][3] = inf_indel[id];
     summary_track[id][4] = out_indel[id];
-    summary_track[id][7] = no_indel[id]+inf_indel[id]+out_indel[id]+targetingOligo[id];
+    summary_track[id][7] = no_indel[id]+inf_indel[id]+out_indel[id]+targetingOligo[id] + summary_track[id][6] + summary_track[id][8];
     if (summary_track[id][7]>0) {
         summary_track_select[id+1] =  [GetWellPos(id), (summary_track[id][1]/summary_track[id][7]*100).toFixed(2), (summary_track[id][2]/summary_track[id][7]*100).toFixed(2), (summary_track[id][3]/summary_track[id][7]*100).toFixed(2), (summary_track[id][4]/summary_track[id][7]*100).toFixed(2), summary_track[id][7]]
     }
@@ -4388,7 +4385,7 @@ function PlotAlignment_bulk(barcode, locus, bulk_threshold = bulk_threshold){
         const layout = {
         title: 'Indel Size and Location',
         xaxis: {
-        title: 'Indel Size and Location (Interactive)',
+        title: 'Indel Size and Location',
         range: [-80, 80]
         },
         yaxis: {
@@ -4823,7 +4820,7 @@ function SaveProject() {
     reader.onloadend = function(){
         base64data = reader.result;
         base64data = base64data.split(",")[1]; //remove header
-        var html = "<meta http-equiv='refresh' content='0; url=https://crisprnano.de/CRISPRnano2_test.html#"+base64data+"'>";
+        var html = "<meta http-equiv='refresh' content='0; url=https://crisprnano.de/CRISPRnano2.html#"+base64data+"'>";
         html += "<html><body>"+document.getElementById("DIV_piecharts").innerHTML+"</body></html>";
         var blob2 = new Blob([html], {type: 'text/plain'});
         var a = document.createElement('a');
