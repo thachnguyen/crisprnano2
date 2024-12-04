@@ -302,7 +302,7 @@ div.selector {
                             <div class="popup" onclick="myFunction5()">(? Click here!)
                                 <span class="popuptext" id="help5"> For ONT reads, it is recommended to use -/+15 bases around the predicted DNA lesion. Larger regions are prone to false positive indels. Larger regions (total of 200-250 bp) can be safely used with Illumina reads. You can drag and drop the central point of the predicted double strand break in the genomic sequence to the left or to the right. Default value 0 is double strand breaking point- Crisprnano will use the first index of sgRNA mapped on reference. Click again to close</span>
                             </div>
-                            <br><input type="text" size="30" name="region_analyse" id="region_analyse" value="40" class="form-control" onchange="checkValue();"><br>
+                            <br><input type="text" size="30" name="region_analyse" id="region_analyse" value="120" class="form-control" onchange="checkValue();"><br>
                         </div>
                         <div class = "col-sm">
                             <label>Indel Threshold [%]: </label>
@@ -673,9 +673,9 @@ function checkValue() {
         alert('Please check this value again, Phred should be in range 5 to 60');
     document.getElementsByName("Phred")[0].value = '10';
     }
-    if (region_analyse1*1 > 70||region_analyse1*1<30) {
-        alert('System only support region area from 30-70 bp');
-        document.getElementsByName('region_analyse')[0].value = "40";
+    if (region_analyse1*1 > 160||region_analyse1*1<60) {
+        alert('System only support region size from 60-160 bp');
+        document.getElementsByName('region_analyse')[0].value = "120";
     } 
     if (ML_genotype*1 > 20||ML_genotype*1<2) {
         alert('System only support maximum genotype between 2 to 20');
@@ -1625,10 +1625,10 @@ function FileReceived_off() {
         for (let pos = 0; pos < readlen; pos++) {
             mean_phred = mean_phred + phred.charCodeAt(pos);
         }
-        mean_phred = mean_phred/readlen; 
+        mean_phred = mean_phred/readlen;
         if (mean_phred > PhredThreshold){ 
             // UPDATE v2.0 checking 4 posiblities of read, threshold score =region_analyse+10
-            if (read.includes(locus_list1[gene_id])||read.includes(ReverseComplement(locus_list1[gene_id]))){ 
+            // if (read.includes(locus_list1[gene_id])||read.includes(ReverseComplement(locus_list1[gene_id]))){ 
                 var rst = bsa_align(target, read, [ms, mms], [gapo, gape], is_local=true);
                 if (rst[0] < (region_analyse*1+10)){
                     try{
@@ -1653,7 +1653,7 @@ function FileReceived_off() {
                             aln_dict_off[gene_id][str1][1] = aln_type;
                         }
                     }         
-            }
+            // }
         }
     }
 
@@ -3236,7 +3236,8 @@ function Pre_PlotAlignment(id, locus){
             if ((out_indel[id]/summary_track[id][7] < 0.7)&& (inf_indel[id]/summary_track[id][7] < 0.7) && (targetingOligo[id]/summary_track[id][7]<0.7)) {
             genotype[id] = 'HET'
             }
-            else if ((out_indel[id]/summary_track[id][7] >0.95)&& (out_indel_arr[id].length ==2)&& (out_indel_arr[id][0]/summary_track[id][7] > 0.35)&& (out_indel_arr[id][0]/summary_track[id][7] < 0.65)) {
+            else if ((out_indel[id]/summary_track[id][7] >0.90)&& (out_indel_arr[id].length >2)&& (out_indel_arr[id][0]/summary_track[id][7] > 0.30)){ 
+                //&& (out_indel_arr[id][0]/summary_track[id][7] < 0.65)) {
                 genotype[id] = 'KO'
             }
         }
@@ -3509,17 +3510,17 @@ function PlotAlignment(id, locus){
             rima_class = 'other EJ'
         }        
         if (rima_class=='MH-del'||rima_class=='other EJ (MH-del 1bp)') { 
-            for (let x=xfrom-70; x<xto+10; x++){
+            for (let x=xfrom-40; x<xto+10; x++){
                 if (((x >= micro_homology_data[1]-xfrom+10)&&(x < micro_homology_data[1]-xfrom+10 + micro_homology_data[0].length))||((x >= micro_homology_data[2]-xfrom+10)&&(x < micro_homology_data[2]-xfrom+10 + micro_homology_data[0].length))){
-                    SVGObj= document.createElementNS(svgns, "rect");
-                    SVGObj.setAttribute("x", 120+12*(x)-5);
-                    SVGObj.setAttribute("y", ysize+delypos-10);
-                    SVGObj.setAttribute("width", "11");
-                    SVGObj.setAttribute("height", "11");
-                    SVGObj.setAttribute("fill", "rgb(0,255,255");
-                    SVGObj.setAttribute("text-anchor", "middle");
-                    SVGObj.setAttribute("pointer-events","none");
-                    svg.appendChild(SVGObj);
+                        SVGObj= document.createElementNS(svgns, "rect");
+                        SVGObj.setAttribute("x", 120+12*(x)-5);
+                        SVGObj.setAttribute("y", ysize+delypos-10);
+                        SVGObj.setAttribute("width", "11");
+                        SVGObj.setAttribute("height", "11");
+                        SVGObj.setAttribute("fill", "rgb(0,255,255");
+                        SVGObj.setAttribute("text-anchor", "middle");
+                        SVGObj.setAttribute("pointer-events","none");
+                        svg.appendChild(SVGObj);
                 }
             }
         }
@@ -4021,7 +4022,7 @@ function PlotAlignment_bulk(barcode, locus, bulk_threshold = bulk_threshold){
         }
          
         if (rima_class=='MH-del'||rima_class=='other EJ (MH-del 1bp)') { 
-            for (let x=xfrom-70; x<xto+10; x++){
+            for (let x=xfrom-40; x<xto+10; x++){
                 if (((x >= micro_homology_data[1]-xfrom+10)&&(x < micro_homology_data[1]-xfrom+10 + micro_homology_data[0].length))||((x >= micro_homology_data[2]-xfrom+10)&&(x < micro_homology_data[2]-xfrom+10 + micro_homology_data[0].length))){
                     SVGObj= document.createElementNS(svgns, "rect");
                     SVGObj.setAttribute("x", 120+12*(x)-5);
@@ -5302,7 +5303,7 @@ function Start(){
     rightbs = document.getElementsByName("RightBS")[0].value.replace(/[\s\n]+/g, '').toUpperCase(); // sgRNA seq  
     
     MutationThreshold = document.getElementsByName("MutationThreshold")[0].value*1;
-    region_analyse = document.getElementsByName("region_analyse")[0].value;
+    region_analyse = (0.5*document.getElementsByName("region_analyse")[0].value).toFixed(0);
 
     //Find Target site in the reference sequence/locus:
     if (rightbs.length == 0){
@@ -5345,7 +5346,7 @@ function Start(){
     RightBsPos = locus.search(rightbs);
     //breaking point on locus 
     if (rightbs!=rightbs != document.getElementsByName("RightBS")[0].value.replace(/[\s\n]+/g, '').toUpperCase()){
-        BreakPoint = RightBsPos + 20 -10;
+        BreakPoint = RightBsPos + 10;
     }
     else{
         BreakPoint = RightBsPos + 20 
@@ -5372,7 +5373,7 @@ function Start2(){
     document.getElementById("progress1").style.display = '';
     gene_list = document.getElementsByName("GeneName_list")[0].value.split(',')
     rightbs = document.getElementsByName("RightBS")[0].value.replace(/[\s\n]+/g, '').toUpperCase(); // sgRNA seq
-    region_analyse = document.getElementsByName("region_analyse")[0].value;
+    region_analyse = (0.5*document.getElementsByName("region_analyse")[0].value).toFixed(0);
 
     //reset all varibles
     for (var i=0; i<4; i++){
@@ -5396,38 +5397,56 @@ function Start2(){
         alert("No target site was entered. Please enter a valid sequence");
         return;
     }
+    locus_list1[0] = document.getElementById("sgRNA1").value;
+    locus_list1[1] = document.getElementById("sgRNA2").value;
+    locus_list1[2] = document.getElementById("sgRNA3").value;
+    locus_list1[3] = document.getElementById("sgRNA4").value;
 
     for (let i = 0; i<locus_list.length; i++){
-        var rst = bsa_align(locus_list[i], rightbs, [ms, mms], [gapo, gape], is_local=true);
-        if (rst[0]<(rightbs.length/2)){
-            rst = bsa_align(ReverseComplement(locus_list[i]), rightbs, [ms, mms], [gapo, gape], is_local=true);
+        if (locus_list1[i]==""){
+            var rst = bsa_align(locus_list[i], rightbs, [ms, mms], [gapo, gape], is_local=true);
             if (rst[0]<(rightbs.length/2)){
-                alert("The target site was not found in the given OFF-TARGET reference gene ("+ gene_list[i] +"). Please enter a valid gene name");
-            }
+                rst = bsa_align(ReverseComplement(locus_list[i]), rightbs, [ms, mms], [gapo, gape], is_local=true);
+                if (rst[0]<(rightbs.length/2)){
+                    alert("The target site was not found in the given OFF-TARGET reference gene ("+ gene_list[i] +"). Please enter a valid gene name");
+                }
+                else {
+                RightBsPos_off[i] = rst[1];
+                locus_list1[i] = ReverseComplement(locus_list[i]).substring(RightBsPos_off[i] -region_analyse*1-30, RightBsPos_off[i] -region_analyse*1)
+                locus_list[i] = ReverseComplement(locus_list[i]).substring(RightBsPos_off[i] -region_analyse*1, RightBsPos_off[i] + rightbs.length +region_analyse*1)
+                }
+            }   
             else {
-            RightBsPos_off[i] = rst[1];
-            locus_list1[i] = ReverseComplement(locus_list[i]).substring(RightBsPos_off[i] -region_analyse*1-30, RightBsPos_off[i] -region_analyse*1)
-            locus_list[i] = ReverseComplement(locus_list[i]).substring(RightBsPos_off[i] -region_analyse*1, RightBsPos_off[i] + rightbs.length +region_analyse*1)
+                RightBsPos_off[i] = rst[1];
+                locus_list1[i] = locus_list[i].substring(RightBsPos_off[i] -region_analyse*1-30, RightBsPos_off[i] -region_analyse*1)
+                locus_list[i] = locus_list[i].substring(RightBsPos_off[i] -region_analyse*1, RightBsPos_off[i] + 20 +region_analyse*1)
             }
-        }   
-        else {
-            RightBsPos_off[i] = rst[1];
-            locus_list1[i] = locus_list[i].substring(RightBsPos_off[i] -region_analyse*1-30, RightBsPos_off[i] -region_analyse*1)
+            //Update new index
+            var rst = bsa_align(locus_list[i], rightbs, [ms, mms], [gapo, gape], is_local=true);
+            if (rst[0]<(rightbs.length-3)){
+                rst = bsa_align(ReverseComplement(locus_list[i]), rightbs, [ms, mms], [gapo, gape], is_local=true);
+                if (rst[0]<(rightbs.length-3)){
+                    RightBsPos_off[i] = rst[1];
+                }
+            }   
+            else {
+                RightBsPos_off[i] = rst[1];
+                BreakPoint_off[i] = RightBsPos_off[i] + 20
+            }
+        }
+        else{
+            if (locus_list[i].includes(locus_list1[i])){
+                RightBsPos_off = locus_list[i].indexOf(locus_list1[i])
+            }
+            else if (locus_list[i].includes(ReverseComplement(locus_list1[i]))){
+                locus_list1[i] = ReverseComplement(locus_list1[i])
+                RightBsPos_off = locus_list[i].indexOf(locus_list1[i])
+            }
+            BreakPoint_off[i] = RightBsPos_off[i] + 20
             locus_list[i] = locus_list[i].substring(RightBsPos_off[i] -region_analyse*1, RightBsPos_off[i] + 20 +region_analyse*1)
         }
-        //Update new index
-        var rst = bsa_align(locus_list[i], rightbs, [ms, mms], [gapo, gape], is_local=true);
-        if (rst[0]<(rightbs.length-3)){
-            rst = bsa_align(ReverseComplement(locus_list[i]), rightbs, [ms, mms], [gapo, gape], is_local=true);
-            if (rst[0]<(rightbs.length-3)){
-                RightBsPos_off[i] = rst[1];
-            }
-        }   
-        else {
-            RightBsPos_off[i] = rst[1];
-            BreakPoint_off[i] = RightBsPos_off[i] + 20
-        }
-    }    
+    }  
+
     CurrentFileId_off = CurrentAlignment;
     CurrentFileChunk = 0;
     ReadNextFileChunk_off();
@@ -5540,7 +5559,7 @@ var summary_track_select = Array(97)
 summary_track_select[0] = ["Sample", "%Oligo (KI)", "% WT", "% In-frame", "% Out-frame", "# Total Aligned Read"]
 var phred_array = Array(96)
 var length_array = Array(96)
-var region_analyse = 30;
+var region_analyse = 80;
 
 // Offtarget analyzer
 var CurrentAlignment_off = 0;
