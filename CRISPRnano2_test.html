@@ -3557,8 +3557,8 @@ function PlotAlignment(id, locus){
                 svg.appendChild(SVGObj);
             }
             else {
-                var fontsize1 = 2+ Math.floor(13*no_indel_arr[id][Object.keys(no_indel_arr[id])[0]]/(no_indel_arr[id][Object.keys(no_indel_arr[id])[0]]+no_indel_arr[id][Object.keys(no_indel_arr[id])[1]]))
-                var fontsize2 = 2+ Math.floor(13*no_indel_arr[id][Object.keys(no_indel_arr[id])[1]]/(no_indel_arr[id][Object.keys(no_indel_arr[id])[0]]+no_indel_arr[id][Object.keys(no_indel_arr[id])[1]]))
+                var fontsize1 = 4+ Math.floor(13*no_indel_arr[id][Object.keys(no_indel_arr[id])[0]]/(no_indel_arr[id][Object.keys(no_indel_arr[id])[0]]+no_indel_arr[id][Object.keys(no_indel_arr[id])[1]]))
+                var fontsize2 = 4+ Math.floor(13*no_indel_arr[id][Object.keys(no_indel_arr[id])[1]]/(no_indel_arr[id][Object.keys(no_indel_arr[id])[0]]+no_indel_arr[id][Object.keys(no_indel_arr[id])[1]]))
 
                 SVGObj= document.createElementNS(NS, "text");
                 SVGObj.setAttribute("x", 120+12*(x-xfrom+10));
@@ -4035,110 +4035,110 @@ function PlotAlignment_bulk(barcode, locus, bulk_threshold = bulk_threshold){
             }
         }
         
-        if (aln_dict[id][key][1]==1 && (Object.keys(no_indel_arr[barcode]).length ==2)){
-            for (let x=xfrom-10; x<xto-10; x++){
-            //draw main track:
-            if (Object.keys(no_indel_arr[barcode])[0][x]==Object.keys(no_indel_arr[barcode])[1][x]){
-                SVGObj= document.createElementNS(NS, "text");
-                SVGObj.setAttribute("y", ysize+delypos);
-                SVGObj.setAttribute("font-size", "13");
-                SVGObj.setAttribute("font-weight", "400");
-                if (key[x]=="T"){SVGObj.textContent = key[x];
-                    SVGObj.setAttribute("fill", T_cl);
-                }
-                else if (key[x]=="A"){SVGObj.textContent = key[x];
-                    SVGObj.setAttribute("fill", A_cl);
-                }
-                else if (key[x]=="C"){SVGObj.textContent = key[x];
-                    SVGObj.setAttribute("fill", C_cl);
-                }
-                else if (key[x]=="G"){SVGObj.textContent = key[x];
-                    SVGObj.setAttribute("fill", G_cl);
-                }
-                else if (key[x]=="N"){SVGObj.textContent = key[x];
-                    SVGObj.setAttribute("fill", N_cl);
-                }
-                else if (key[x]=="-"){SVGObj.textContent = key[x];
-                    SVGObj.setAttribute("fill", "rgb(0,0,0");
-                }
-                SVGObj.setAttribute("x", 120+12*(x-xfrom+10));
-                SVGObj.setAttribute("text-anchor", "middle");
-                SVGObj.setAttribute("pointer-events","none");
-                svg.appendChild(SVGObj);
-            }
-            else {
-                var fontsize1 = 2+ Math.floor(13*no_indel_arr[barcode][Object.keys(no_indel_arr[barcode])[0]]/(no_indel_arr[barcode][Object.keys(no_indel_arr[barcode])[0]]+no_indel_arr[barcode][Object.keys(no_indel_arr[barcode])[1]]))
-                var fontsize2 = 2+ Math.floor(13*no_indel_arr[barcode][Object.keys(no_indel_arr[barcode])[1]]/(no_indel_arr[barcode][Object.keys(no_indel_arr[barcode])[0]]+no_indel_arr[barcode][Object.keys(no_indel_arr[barcode])[1]]))
+        // if (aln_dict[id][key][1]==1 && (Object.keys(no_indel_arr[barcode]).length ==2)){
+        //     for (let x=xfrom-10; x<xto-10; x++){
+        //     //draw main track:
+        //     if (Object.keys(no_indel_arr[barcode])[0][x]==Object.keys(no_indel_arr[barcode])[1][x]){
+        //         SVGObj= document.createElementNS(NS, "text");
+        //         SVGObj.setAttribute("y", ysize+delypos);
+        //         SVGObj.setAttribute("font-size", "13");
+        //         SVGObj.setAttribute("font-weight", "400");
+        //         if (key[x]=="T"){SVGObj.textContent = key[x];
+        //             SVGObj.setAttribute("fill", T_cl);
+        //         }
+        //         else if (key[x]=="A"){SVGObj.textContent = key[x];
+        //             SVGObj.setAttribute("fill", A_cl);
+        //         }
+        //         else if (key[x]=="C"){SVGObj.textContent = key[x];
+        //             SVGObj.setAttribute("fill", C_cl);
+        //         }
+        //         else if (key[x]=="G"){SVGObj.textContent = key[x];
+        //             SVGObj.setAttribute("fill", G_cl);
+        //         }
+        //         else if (key[x]=="N"){SVGObj.textContent = key[x];
+        //             SVGObj.setAttribute("fill", N_cl);
+        //         }
+        //         else if (key[x]=="-"){SVGObj.textContent = key[x];
+        //             SVGObj.setAttribute("fill", "rgb(0,0,0");
+        //         }
+        //         SVGObj.setAttribute("x", 120+12*(x-xfrom+10));
+        //         SVGObj.setAttribute("text-anchor", "middle");
+        //         SVGObj.setAttribute("pointer-events","none");
+        //         svg.appendChild(SVGObj);
+        //     }
+        //     else {
+        //         var fontsize1 = 2+ Math.floor(13*no_indel_arr[barcode][Object.keys(no_indel_arr[barcode])[0]]/(no_indel_arr[barcode][Object.keys(no_indel_arr[barcode])[0]]+no_indel_arr[barcode][Object.keys(no_indel_arr[barcode])[1]]))
+        //         var fontsize2 = 2+ Math.floor(13*no_indel_arr[barcode][Object.keys(no_indel_arr[barcode])[1]]/(no_indel_arr[barcode][Object.keys(no_indel_arr[barcode])[0]]+no_indel_arr[barcode][Object.keys(no_indel_arr[barcode])[1]]))
 
-                SVGObj= document.createElementNS(NS, "text");
-                SVGObj.setAttribute("y", ysize+delypos+fontsize1-5);
-                SVGObj.setAttribute("font-size", fontsize1);
-                SVGObj.setAttribute("font-weight", "600");
+        //         SVGObj= document.createElementNS(NS, "text");
+        //         SVGObj.setAttribute("y", ysize+delypos+fontsize1-5);
+        //         SVGObj.setAttribute("font-size", fontsize1);
+        //         SVGObj.setAttribute("font-weight", "600");
 
-                if (Object.keys(no_indel_arr[barcode])[0][x]=="T"){SVGObj.setAttribute("fill", T_cl);
-                }
-                else if (Object.keys(no_indel_arr[barcode])[0][x]=="A"){SVGObj.setAttribute("fill", A_cl);
-                }
-                else if (Object.keys(no_indel_arr[barcode])[0][x]=="C"){SVGObj.setAttribute("fill", C_cl);
-                }
-                else if (Object.keys(no_indel_arr[barcode])[0][x]=="G"){SVGObj.setAttribute("fill", G_cl);
-                }
-                else if (Object.keys(no_indel_arr[barcode])[0][x]=="N"){SVGObj.setAttribute("fill", N_cl);
-                }
-                else if (Object.keys(no_indel_arr[barcode])[0][x]=="-"){SVGObj.setAttribute("fill", N_cl);
-                }
-                SVGObj.textContent = Object.keys(no_indel_arr)[0][x];
-                SVGObj.setAttribute("x", 120+12*(x-xfrom+10));
-                SVGObj.setAttribute("text-anchor", "middle");
-                SVGObj.setAttribute("pointer-events","none");
-                svg.appendChild(SVGObj);
+        //         if (Object.keys(no_indel_arr[barcode])[0][x]=="T"){SVGObj.setAttribute("fill", T_cl);
+        //         }
+        //         else if (Object.keys(no_indel_arr[barcode])[0][x]=="A"){SVGObj.setAttribute("fill", A_cl);
+        //         }
+        //         else if (Object.keys(no_indel_arr[barcode])[0][x]=="C"){SVGObj.setAttribute("fill", C_cl);
+        //         }
+        //         else if (Object.keys(no_indel_arr[barcode])[0][x]=="G"){SVGObj.setAttribute("fill", G_cl);
+        //         }
+        //         else if (Object.keys(no_indel_arr[barcode])[0][x]=="N"){SVGObj.setAttribute("fill", N_cl);
+        //         }
+        //         else if (Object.keys(no_indel_arr[barcode])[0][x]=="-"){SVGObj.setAttribute("fill", N_cl);
+        //         }
+        //         SVGObj.textContent = Object.keys(no_indel_arr)[0][x];
+        //         SVGObj.setAttribute("x", 120+12*(x-xfrom+10));
+        //         SVGObj.setAttribute("text-anchor", "middle");
+        //         SVGObj.setAttribute("pointer-events","none");
+        //         svg.appendChild(SVGObj);
 
-                SVGObj= document.createElementNS(NS, "text");
-                SVGObj.setAttribute("y", ysize+delypos+15);
-                SVGObj.setAttribute("font-size", 8);
-                SVGObj.setAttribute("font-weight", "400");
-                SVGObj.textContent = no_indel_arr[barcode][Object.keys(no_indel_arr[barcode])[1]] + " "+Object.keys(no_indel_arr[barcode])[1][x]
-                SVGObj.setAttribute("x", 120+12*(x-xfrom+10));
-                SVGObj.setAttribute("text-anchor", "middle");
-                SVGObj.setAttribute("pointer-events","none");
-                svg.appendChild(SVGObj);
+        //         SVGObj= document.createElementNS(NS, "text");
+        //         SVGObj.setAttribute("y", ysize+delypos+15);
+        //         SVGObj.setAttribute("font-size", 8);
+        //         SVGObj.setAttribute("font-weight", "400");
+        //         SVGObj.textContent = no_indel_arr[barcode][Object.keys(no_indel_arr[barcode])[1]] + " "+Object.keys(no_indel_arr[barcode])[1][x]
+        //         SVGObj.setAttribute("x", 120+12*(x-xfrom+10));
+        //         SVGObj.setAttribute("text-anchor", "middle");
+        //         SVGObj.setAttribute("pointer-events","none");
+        //         svg.appendChild(SVGObj);
 
-                SVGObj= document.createElementNS(NS, "text");
-                SVGObj.setAttribute("y", ysize+delypos+25);
-                SVGObj.setAttribute("font-size", 8);
-                SVGObj.setAttribute("font-weight", "400");
-                SVGObj.textContent = no_indel_arr[barcode][Object.keys(no_indel_arr[barcode])[0]] + " " +Object.keys(no_indel_arr[barcode])[0][x]
-                SVGObj.setAttribute("x", 120+12*(x-xfrom+10));
-                SVGObj.setAttribute("text-anchor", "middle");
-                SVGObj.setAttribute("pointer-events","none");
-                svg.appendChild(SVGObj);
+        //         SVGObj= document.createElementNS(NS, "text");
+        //         SVGObj.setAttribute("y", ysize+delypos+25);
+        //         SVGObj.setAttribute("font-size", 8);
+        //         SVGObj.setAttribute("font-weight", "400");
+        //         SVGObj.textContent = no_indel_arr[barcode][Object.keys(no_indel_arr[barcode])[0]] + " " +Object.keys(no_indel_arr[barcode])[0][x]
+        //         SVGObj.setAttribute("x", 120+12*(x-xfrom+10));
+        //         SVGObj.setAttribute("text-anchor", "middle");
+        //         SVGObj.setAttribute("pointer-events","none");
+        //         svg.appendChild(SVGObj);
 
-                SVGObj= document.createElementNS(NS, "text");
-                SVGObj.setAttribute("y", ysize+delypos-5);
-                SVGObj.setAttribute("font-size", fontsize2);
-                SVGObj.setAttribute("font-weight", "600");
+        //         SVGObj= document.createElementNS(NS, "text");
+        //         SVGObj.setAttribute("y", ysize+delypos-5);
+        //         SVGObj.setAttribute("font-size", fontsize2);
+        //         SVGObj.setAttribute("font-weight", "600");
 
-                if (Object.keys(no_indel_arr[barcode])[1][x]=="T"){SVGObj.setAttribute("fill", T_cl);
-                }
-                else if (Object.keys(no_indel_arr[barcode])[1][x]=="A"){SVGObj.setAttribute("fill", A_cl);
-                }
-                else if (Object.keys(no_indel_arr[barcode])[1][x]=="C"){SVGObj.setAttribute("fill", C_cl);
-                }
-                else if (Object.keys(no_indel_arr[barcode])[1][x]=="G"){SVGObj.setAttribute("fill", G_cl);
-                }
-                else if (Object.keys(no_indel_arr[barcode])[1][x]=="N"){SVGObj.setAttribute("fill", N_cl);
-                }
-                else if (Object.keys(no_indel_arr[barcode])[1][x]=="-"){SVGObj.setAttribute("fill", "rgb(0,0,0");
-                }
-                SVGObj.textContent = Object.keys(no_indel_arr[barcode])[1][x];
-                SVGObj.setAttribute("x", 120+12*(x-xfrom+10));
-                SVGObj.setAttribute("text-anchor", "middle");
-                SVGObj.setAttribute("pointer-events","none");
-                svg.appendChild(SVGObj);
-            }
-        }
-        }
-        else {
+        //         if (Object.keys(no_indel_arr[barcode])[1][x]=="T"){SVGObj.setAttribute("fill", T_cl);
+        //         }
+        //         else if (Object.keys(no_indel_arr[barcode])[1][x]=="A"){SVGObj.setAttribute("fill", A_cl);
+        //         }
+        //         else if (Object.keys(no_indel_arr[barcode])[1][x]=="C"){SVGObj.setAttribute("fill", C_cl);
+        //         }
+        //         else if (Object.keys(no_indel_arr[barcode])[1][x]=="G"){SVGObj.setAttribute("fill", G_cl);
+        //         }
+        //         else if (Object.keys(no_indel_arr[barcode])[1][x]=="N"){SVGObj.setAttribute("fill", N_cl);
+        //         }
+        //         else if (Object.keys(no_indel_arr[barcode])[1][x]=="-"){SVGObj.setAttribute("fill", "rgb(0,0,0");
+        //         }
+        //         SVGObj.textContent = Object.keys(no_indel_arr[barcode])[1][x];
+        //         SVGObj.setAttribute("x", 120+12*(x-xfrom+10));
+        //         SVGObj.setAttribute("text-anchor", "middle");
+        //         SVGObj.setAttribute("pointer-events","none");
+        //         svg.appendChild(SVGObj);
+        //     }
+        // }
+        // }
+        // else {
             for (let x=xfrom-10; x<xto-10; x++){
             //draw main track:
             if ((key[x]==locus[BreakPoint-region_analyse+x])||(key[x]=='N')||(key[x]=='-')||(typeof(key[x])=='undefined')){
@@ -4198,7 +4198,7 @@ function PlotAlignment_bulk(barcode, locus, bulk_threshold = bulk_threshold){
             SVGObj.setAttribute("pointer-events","none");
             svg.appendChild(SVGObj); 
             }
-        }
+        // }
         
         var image_loc = 0;
         for (let x=xfrom-10; x<xto-10; x++){
@@ -5588,7 +5588,7 @@ var gene_list = ''
 var genotype = Array(96)
 var aln_dict_bulk 
 var gcContent = Array(96)
-var bulk_threshold = 1
+var bulk_threshold = 0.5
 
 var no_indel = Array(96) 
 var no_indel_arr = Array(96)
