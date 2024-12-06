@@ -611,20 +611,22 @@ div.selector {
                 <div class="box">
                     <svg id="RIMApie_bulk" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="400" height="300"></svg>
                 </div>
-                <div id="Indel_plot" class = "box" style="width: 400px; height: 300px;">
-                </div>
                 </div>
                 <div>
-                <div id="QC_plot" class = "box" style="width: 400px; height: 300px;"></div>
-                <div id="read_plot" class = "box" style="width: 480px; height: 300px;"></div>
-                <div id="GC_plot" class = "box" style="width: 400px; height: 300px;"></div>
                 </div>
             </div>
 
             <div id="DIV_alignment_bulk" >
-                <svg id="SVGmut_bulk" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="1600" height="5000">
+                <svg id="SVGmut_bulk" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="1600";>
                 </svg>
             </div>
+            <div>
+                <div id="Indel_plot" class = "box" style="width: 400px; height: 300px;"></div>
+                <div id="QC_plot" class = "box" style="width: 400px; height: 300px;"></div>
+                <div id="read_plot" class = "box" style="width: 480px; height: 300px;"></div>
+                <div id="GC_plot" class = "box" style="width: 400px; height: 300px;"></div>
+            </div>
+
         </div>
 
         <div id="offtarget_view" style="position:center; top:80px; display: none;">
@@ -691,11 +693,13 @@ function setValue() {
         document.getElementsByName('region_analyse')[0].value = "90";
         document.getElementsByName("MutationThreshold")[0].value = '5'
         document.getElementsByName("Phred")[0].value = '10'
+        bulk_threshold = 1;
     }
     else {
         document.getElementsByName('region_analyse')[0].value = "120";
         document.getElementsByName("MutationThreshold")[0].value = '2'
         document.getElementsByName("Phred")[0].value = '20'
+        bulk_threshold = 0.5;
     } 
 }
 
@@ -1763,8 +1767,7 @@ function ReadNextFileChunk_off(){
     document.getElementById('progress1').innerHTML = "OFFTARGET Analysing.\n Current file "+(CurrentFileId_off+1)+" : "+ (CurrentFileChunk*chunksize/1000000).toFixed(2)+ " MB / "+Math.round(files[CurrentFileId_off].size/1000000)+" MB processed. Please keep this window open and don't switch to other tabs in your web browser!!";
 }
 
-function DrawPie()
-{
+function DrawPie(active_barcode = 0) {
     var svg = document.getElementById("SVGpie");
     var NS="http://www.w3.org/2000/svg";
     TabClicked(1);
@@ -1937,6 +1940,9 @@ function DrawPie()
         SVGObj.setAttribute("font-size", "11");
         SVGObj.setAttribute("text-anchor", "middle");
         SVGObj.setAttribute("pointer-events","none");
+        if (active_barcode== barcode){
+            SVGObj.style.fill="rgb(16, 126, 204)";
+        }
         if (genotype[barcode]==''||!genotype[barcode]){
             SVGObj.textContent = GetWellPos(barcode)
         }
@@ -3077,11 +3083,12 @@ function SelectClone(barcode) {
         }
     } 
     else if (AlignmentPrecalc[barcode]){
-            document.getElementById("DIV_alignment").innerHTML = AlignmentPrecalc[barcode];
-            CurrentAlignment = barcode;
-            AlignmentStartPos = 0;
-            PlotAlignment(barcode, locus);
-            }
+        document.getElementById("DIV_alignment").innerHTML = AlignmentPrecalc[barcode];
+        CurrentAlignment = barcode;
+        AlignmentStartPos = 0;
+        PlotAlignment(barcode, locus);
+        DrawPie(active_barcode = barcode);
+        }
     else alert("No data available for the selected barcode.");
 }
 
@@ -3209,8 +3216,8 @@ function Pre_PlotAlignment(id, locus){
             for (const key1 in no_indel_arr[id]) {
                 const value = no_indel_arr[id][key1];
                 if (value > maxValue) {
-                maxValue = value;
-                candidate_wt = key1;
+                    maxValue = value;
+                    candidate_wt = key1;
                 }
                 sum_wt += value;
                 delete aln_dict_fil[id][key1];
@@ -3226,10 +3233,10 @@ function Pre_PlotAlignment(id, locus){
     summary_track[id][4] = out_indel[id];
     summary_track[id][7] = no_indel[id]+inf_indel[id]+out_indel[id]+targetingOligo[id] + summary_track[id][6] + summary_track[id][8];
     if (summary_track[id][7]>0) {
-        summary_track_select[id+1] =  [GetWellPos(id), (summary_track[id][1]/summary_track[id][7]*100).toFixed(2), (summary_track[id][2]/summary_track[id][7]*100).toFixed(2), (summary_track[id][3]/summary_track[id][7]*100).toFixed(2), (summary_track[id][4]/summary_track[id][7]*100).toFixed(2), summary_track[id][7]]
+        summary_track_select[id+1] =  [GetWellPos(id), (summary_track[id][1]/summary_track[id][7]*100).toFixed(2), (summary_track[id][2]/summary_track[id][7]*100).toFixed(2), (summary_track[id][3]/summary_track[id][7]*100).toFixed(2), (summary_track[id][4]/summary_track[id][7]*100).toFixed(2),(summary_track[id][6]*100/summary_track[id][7]).toFixed(2),(summary_track[id][8]*100/summary_track[id][7]).toFixed(2) , summary_track[id][7]]
     }
     else {
-        summary_track_select[id+1] =  [GetWellPos(id), summary_track[id][1],  summary_track[id][2], summary_track[id][3], summary_track[id][4], summary_track[id][7]]
+        summary_track_select[id+1] =  [GetWellPos(id), summary_track[id][1],  summary_track[id][2], summary_track[id][3], summary_track[id][4],0, 0 ,summary_track[id][7]]
     }
 
     // check genotype
@@ -3248,18 +3255,23 @@ function Pre_PlotAlignment(id, locus){
                 }
         }
         else {
-            if ((out_indel[id]/summary_track[id][7] < 0.7)&& (inf_indel[id]/summary_track[id][7] < 0.7) && (targetingOligo[id]/summary_track[id][7]<0.7)) {
+            if ((out_indel[id]/summary_track[id][7] > 0.3)&&(out_indel[id]/summary_track[id][7] < 0.7)) {
                 genotype[id] = 'HET'
             }
-            else if (no_indel_arr[id].length>1 && no_indel_arr[id][Object.keys(no_indel_arr[id])[0]]/(no_indel_arr[id][Object.keys(no_indel_arr[id])[0]]+no_indel_arr[id][Object.keys(no_indel_arr[id])[1]]) >0.3) {
+            else if ((out_indel[id]/summary_track[id][7] > 0.3)&&(out_indel[id]/summary_track[id][7] < 0.7)) {
                 genotype[id] = 'HET'
             }
-            else if ((out_indel[id]/summary_track[id][7] >0.90)&& (out_indel_arr[id].length >1)&& (out_indel_arr[id][0]/summary_track[id][7] > 0.20)){ 
-                //&& (out_indel_arr[id][0]/summary_track[id][7] < 0.65)) {
+            else if ((targetingOligo[id]/summary_track[id][7]<0.7)&& (targetingOligo[id]/summary_track[id][7]>0.7)) {
+                genotype[id] = 'HET'
+            }
+            else if (Object.keys(no_indel_arr[id]).length>1 && no_indel_arr[id][Object.keys(no_indel_arr[id])[0]]/(no_indel_arr[id][Object.keys(no_indel_arr[id])[0]]+no_indel_arr[id][Object.keys(no_indel_arr[id])[1]]) >0.3) {
+                genotype[id] = 'HET'
+            }
+            else if ((out_indel[id]/summary_track[id][7] > 0.98)&& (out_indel_arr[id].length >1)&& (out_indel_arr[id][0]/summary_track[id][7] > 0.20)){ 
                 genotype[id] = 'KO'
             }
             else {
-            genotype[id] = ''
+                genotype[id] = ''
             }
         }
     }
@@ -3288,6 +3300,9 @@ function PlotAlignment(id, locus){
             if (micro_homology_data[0].length>=2){
                 rima_class = 'MH-del'
                 rima_hist_all[id][0] += aln_dict_fil[id][key]
+            }
+            else{
+                rima_hist_all[id][2] += aln_dict_fil[id][key]
             }
         }
         else if ((micro_homology_data[3]==1)||((micro_homology_data[1]!=-1)&&(micro_homology_data[2]-micro_homology_data[1]==1))){
@@ -3837,6 +3852,7 @@ function PlotAlignment_bulk(barcode, locus, bulk_threshold = bulk_threshold){
     for (let key in aln_dict_bulk){
         sum_bulk += aln_dict_bulk[key]
     }
+    const svgHeight = 150+ Object.keys(aln_dict_bulk).length *80
 
     //aggregate aln_track
     //Find top 3:
@@ -3848,6 +3864,8 @@ function PlotAlignment_bulk(barcode, locus, bulk_threshold = bulk_threshold){
     var NS="http://www.w3.org/2000/svg";
     var svgns = "http://www.w3.org/2000/svg";
     var strokew = "0.5";
+    svg.setAttribute("height", svgHeight);
+
 
     svg.addEventListener("mousedown", AlignmentMouseDown, false);
     svg.addEventListener("mousemove", AlignmentMouseMove_bulk, false);
@@ -5589,7 +5607,7 @@ var PhredThreshold = 40; // 7 +33
 var sum_track = Array(96)
 var summary_track = Array(96)
 var summary_track_select = Array(97)
-summary_track_select[0] = ["Sample", "%Oligo (KI)", "% WT", "% In-frame", "% Out-frame", "# Total Aligned Read"]
+summary_track_select[0] = ["Sample", "%Oligo (KI)", "% WT", "% In-frame", "% Out-frame", "% Desired Edit","% Partial Edit",  "# Total Aligned Read"]
 var phred_array = Array(96)
 var length_array = Array(96)
 var region_analyse = 80;
@@ -5621,7 +5639,7 @@ var gene_list = ''
 var genotype = Array(96)
 var aln_dict_bulk 
 var gcContent = Array(96)
-var bulk_threshold = 0.5
+var bulk_threshold = 1
 
 var no_indel = Array(96) 
 var no_indel_arr = Array(96)
