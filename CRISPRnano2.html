@@ -231,7 +231,7 @@ div.selector {
 
                 </div>
                 <div class = "col-sm">
-                    <label> Targeting mutagenesis oligonucleotide (Knock-in):</label>  
+                    <label> Targeting mutagenesis oligonucleotide (Knock-in), OR Base Editing:</label>  
                     <input type="text" class="form-control" size="40" id="TargetingOligo" name="TargetingOligo" value="">
                     <!-- <small class="text-muted"> Donor oligonucleotide sequence used to introduce a site specific genomic modification. The sequence entered should be in the same orientation as the amplicon sequence.</small> -->
                     <div class="row">
@@ -247,7 +247,7 @@ div.selector {
                             <div class="form-check">
                                 <input class="form-check-input" type="checkbox" value="" id="HA">
                                 <small class="text-muted">
-                                Excluding Homology Arm (HA)
+                                Non-homology end joining KI
                                 </small>
                             </div>
                         </div>
@@ -606,10 +606,10 @@ div.selector {
             <div id="DIV_piecharts_bulk" >
                 <div>
                 <div class="box">
-                    <svg id="SVGpie_bulk" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="400" height="300"></svg>
+                    <svg id="SVGpie_bulk" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="600" height="400"></svg>
                 </div>
                 <div class="box">
-                    <svg id="RIMApie_bulk" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="400" height="300"></svg>
+                    <svg id="RIMApie_bulk" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="400" height="400"></svg>
                 </div>
                 </div>
                 <div>
@@ -1776,8 +1776,8 @@ function DrawPie(active_barcode = 0) {
     //register mouse listener:
     svg.addEventListener("mousedown", PieClick, false);
 
-    var ROT= ["rgb(232,0,30)","rgb(255,102,0)","rgb(252,176,78)","rgb(232,0,30)","rgb(255,102,0)","rgb(252,176,78)"]; 
-    var BLAU=["rgb(50,42,126)","rgb(16,115,179)","rgb(38,170,220)", "rgb(50,42,126)","rgb(16,115,179)","rgb(38,170,220)"];
+    var ROT= ["rgb(255,69,0)","rgb(255,127,80)","rgb(255,215,0)","rgb(255,69,0)","rgb(255,127,80)","rgb(255,215,0)"]; 
+    var BLAU=["rgb(72,118,255)","rgb(99,184,255	)" ,"rgb(135,206,250)", "rgb(72,118,255)","rgb(99,184,255)", "rgb(135,206,250)"];
 
     var maxsum = 0;
     for (var barcode=0; barcode<96; barcode++) {
@@ -2084,8 +2084,6 @@ function DrawPie_rima() {
     //register mouse listener:
     svg.addEventListener("mousedown", PieClick_rima, false);
     var BLAU=["rgb(50,42,126)","rgb(16,115,179)","rgb(38,170,220)", "rgb(50,42,126)","rgb(16,115,179)","rgb(38,170,220)"];
-    const KI_1 = "rgb(154, 34, 93)"
-    const KI_2 = BLAU[2]
     var maxsum = 0;
     for (var barcode=0; barcode<96; barcode++) {
         if (summary_track[barcode][7] > maxsum) maxsum = summary_track[barcode][7];
@@ -2293,9 +2291,9 @@ function DrawPie_bulk() {
     //register mouse listener:
     // svg.addEventListener("mousedown", PieClick, false);
 
-    var ROT= ["rgb(232,0,30)","rgb(255,102,0)","rgb(252,176,78)", "rgb(232,0,30)","rgb(255,102,0)","rgb(252,176,78)"]; 
-    var BLAU=["rgb(50,42,126)","rgb(16,115,179)","rgb(38,170,220)", "rgb(50,42,126)","rgb(16,115,179)","rgb(38,170,220)"];
-
+    var ROT= ["rgb(255,69,0)","rgb(255,127,80)","rgb(255,215,0)","rgb(255,69,0)","rgb(255,127,80)","rgb(255,215,0)"]; 
+    var BLAU=["rgb(72,118,255)","rgb(99,184,255	)" ,"rgb(135,206,250)", "rgb(72,118,255)","rgb(99,184,255)", "rgb(135,206,250)"];
+    var sum_bulk = 0
     var size = 75;
     var midx = 100;
     var midy = 100;
@@ -2327,6 +2325,10 @@ function DrawPie_bulk() {
                 }
             }
         }
+    }
+    var sum_bulk = 0;
+    for (let key in aln_dict_bulk){
+        sum_bulk += aln_dict_bulk[key]
     }
 
     sum += summary_track[barcode][2]+ summary_track[barcode][1]
@@ -2458,7 +2460,7 @@ function DrawPie_bulk() {
     for (var i=0; i<3; i++){
         SVGObj= document.createElementNS(NS,"circle");
         SVGObj.setAttributeNS(null, "cx", midx+20*i);
-        SVGObj.setAttributeNS(null, "cy", midy);
+        SVGObj.setAttributeNS(null, "cy", midy+40);
         SVGObj.setAttributeNS(null, "r" , 6);
         SVGObj.style.fill="none";
         SVGObj.style.fill=BLAU[i];
@@ -2467,7 +2469,7 @@ function DrawPie_bulk() {
     for (var i=0; i<3; i++){
         SVGObj= document.createElementNS(NS,"circle");
         SVGObj.setAttributeNS(null, "cx", midx+20*i);
-        SVGObj.setAttributeNS(null, "cy", midy +20);
+        SVGObj.setAttributeNS(null, "cy", midy +60);
         SVGObj.setAttributeNS(null, "r" , 6);
         SVGObj.style.fill="none";
         SVGObj.style.fill=ROT[i];
@@ -2475,7 +2477,7 @@ function DrawPie_bulk() {
     }
         SVGObj= document.createElementNS(NS,"circle");
         SVGObj.setAttributeNS(null, "cx", midx+20);
-        SVGObj.setAttributeNS(null, "cy", midy +40);
+        SVGObj.setAttributeNS(null, "cy", midy +80);
         SVGObj.setAttributeNS(null, "r" , 6);
         SVGObj.style.fill="none";
         SVGObj.style.fill="rgb(200,200,200)";
@@ -2483,7 +2485,7 @@ function DrawPie_bulk() {
 
         SVGObj= document.createElementNS(NS,"circle");
         SVGObj.setAttributeNS(null, "cx", midx+20);
-        SVGObj.setAttributeNS(null, "cy", midy +60);
+        SVGObj.setAttributeNS(null, "cy", midy +100);
         SVGObj.setAttributeNS(null, "r" , 6);
         SVGObj.style.fill="none";
         SVGObj.style.fill="rgb(0,200,0)";
@@ -2492,56 +2494,91 @@ function DrawPie_bulk() {
         if (p_edit !=""||d_edit!=""){
             SVGObj= document.createElementNS(NS,"circle");
             SVGObj.setAttributeNS(null, "cx", midx +20);
-            SVGObj.setAttributeNS(null, "cy", midy +80);
+            SVGObj.setAttributeNS(null, "cy", midy +120);
             SVGObj.setAttributeNS(null, "r" , 6);
             SVGObj.style.fill="rgb(156, 39, 176)";
             svg.appendChild(SVGObj);
             SVGObj= document.createElementNS(NS,"circle");
             SVGObj.setAttributeNS(null, "cx", midx +20);
-            SVGObj.setAttributeNS(null, "cy", midy +100);
+            SVGObj.setAttributeNS(null, "cy", midy +140);
             SVGObj.setAttributeNS(null, "r" , 6);
             SVGObj.style.fill="rgb(198, 255, 0)";
             svg.appendChild(SVGObj);
         }
-    
+    SVGObj= document.createElementNS(NS,"text");
+    SVGObj.setAttribute("x", midx+40);
+    SVGObj.setAttribute("y", midy+5);
+    SVGObj.setAttribute("font-size", "14");
+    SVGObj.setAttribute("font-weight", "600");
+    SVGObj.textContent = "SUMMARY: Gene: "+document.getElementsByName("GeneName")[0].value+"   |   File "+GetWellPos(barcode)+": "+files_name[barcode];
+    svg.appendChild(SVGObj);
+    SVGObj= document.createElementNS(NS,"text");
+    SVGObj.setAttribute("x", midx+79);
+    SVGObj.setAttribute("y", midy+26);
+    SVGObj.setAttribute("font-size", "16");
+    SVGObj.textContent = "Total aligned reads in bulk: ";
+    svg.appendChild(SVGObj);
+    SVGObj= document.createElementNS(NS,"text");
+    SVGObj.setAttribute("x", midx+280);
+    SVGObj.setAttribute("y", midy+26);
+    SVGObj.setAttribute("font-size", "16");
+    SVGObj.setAttribute("font-weight", "600");
+    SVGObj.style.fill="rgb(255, 0, 0)";
+    SVGObj.textContent = sum_bulk;
+
+
+    svg.appendChild(SVGObj);
+
     SVGObj= document.createElementNS(NS,"text");
     SVGObj.setAttribute("font-family", "sans-serif");
     SVGObj.setAttribute("font-weight", "100");
     SVGObj.setAttribute("x", midx+80);
-    SVGObj.setAttribute("y", midy+2);
+    SVGObj.setAttribute("y", midy+42);
     SVGObj.setAttribute("font-size", "12");
-    SVGObj.textContent = "in-frame indels: "+ summary_track_select[barcode+1][3]+ " %";
+    SVGObj.textContent = "in-frame indels: "+ summary_track[barcode][3]+ " READS, ("+summary_track_select[barcode+1][3]+ " %)";
+    svg.appendChild(SVGObj);
+
+    SVGObj= document.createElementNS(NS,"text");
+    SVGObj.setAttribute("font-family", "sans-serif");
+    SVGObj.setAttribute("font-weight", "100");
+    SVGObj.setAttribute("x", midx+80);
+    SVGObj.setAttribute("y", midy+62)
+    SVGObj.setAttribute("font-size", "12");
+    SVGObj.textContent = "out-of-frame indels: ";
+    svg.appendChild(SVGObj);
+
+    SVGObj= document.createElementNS(NS,"text");
+    SVGObj.setAttribute("font-family", "sans-serif");
+    SVGObj.setAttribute("font-weight", "600");
+    SVGObj.style.fill="rgb(255, 0, 0)";
+    SVGObj.setAttribute("x", midx+190);
+    SVGObj.setAttribute("y", midy+62)
+    SVGObj.setAttribute("font-size", "12");
+    SVGObj.textContent = summary_track[barcode][4]+ " READS, (" +summary_track_select[barcode+1][4]+ " %)";
+    svg.appendChild(SVGObj);
+
+    SVGObj= document.createElementNS(NS,"text");
+    SVGObj.setAttribute("font-family", "sans-serif");
+    SVGObj.setAttribute("font-weight", "100");
+    SVGObj.setAttribute("x", midx+80);
+    SVGObj.setAttribute("y", midy+82)
+    SVGObj.setAttribute("font-size", "12");
+    SVGObj.textContent = "no indel: "+ summary_track[barcode][2] +" READS, (" + summary_track_select[barcode+1][2]+ " %)";
     svg.appendChild(SVGObj);
     SVGObj= document.createElementNS(NS,"text");
     SVGObj.setAttribute("font-family", "sans-serif");
     SVGObj.setAttribute("font-weight", "100");
     SVGObj.setAttribute("x", midx+80);
-    SVGObj.setAttribute("y", midy+22)
+    SVGObj.setAttribute("y", midy+102);
     SVGObj.setAttribute("font-size", "12");
-    SVGObj.textContent = "out-of-frame indels: "+ summary_track_select[barcode+1][4]+ " %";
-    svg.appendChild(SVGObj);
-    SVGObj= document.createElementNS(NS,"text");
-    SVGObj.setAttribute("font-family", "sans-serif");
-    SVGObj.setAttribute("font-weight", "100");
-    SVGObj.setAttribute("x", midx+80);
-    SVGObj.setAttribute("y", midy+42)
-    SVGObj.setAttribute("font-size", "12");
-    SVGObj.textContent = "no indel: "+ summary_track_select[barcode+1][2]+ " %";
-    svg.appendChild(SVGObj);
-    SVGObj= document.createElementNS(NS,"text");
-    SVGObj.setAttribute("font-family", "sans-serif");
-    SVGObj.setAttribute("font-weight", "100");
-    SVGObj.setAttribute("x", midx+80);
-    SVGObj.setAttribute("y", midy+62);
-    SVGObj.setAttribute("font-size", "12");
-    SVGObj.textContent = "targeted mutagenesis (KI): "+ summary_track_select[barcode+1][1]+ " %";
+    SVGObj.textContent = "targeted mutagenesis (KI): "+ summary_track[barcode][1] +" READS, (" +summary_track_select[barcode+1][1]+ " %)";
     svg.appendChild(SVGObj);
     if (p_edit !=""||d_edit!=""){
         SVGObj= document.createElementNS(NS,"text");
         SVGObj.setAttribute("font-family", "sans-serif");
         SVGObj.setAttribute("font-weight", "100");
         SVGObj.setAttribute("x", midx+80);
-        SVGObj.setAttribute("y", midy+82);
+        SVGObj.setAttribute("y", midy+122);
         SVGObj.setAttribute("font-size", "12");
         SVGObj.textContent = "DESIRED edit: " +(summary_track[barcode][6]*100/summary_track[barcode][7]).toFixed(2)+"%" ;
         svg.appendChild(SVGObj);
@@ -2549,7 +2586,7 @@ function DrawPie_bulk() {
         SVGObj.setAttribute("font-family", "sans-serif");
         SVGObj.setAttribute("font-weight", "100");
         SVGObj.setAttribute("x", midx+80);
-        SVGObj.setAttribute("y", midy+102);
+        SVGObj.setAttribute("y", midy+142);
         SVGObj.setAttribute("font-size", "12");
         SVGObj.textContent = "PARTIAL edit: " +(summary_track[barcode][8]*100/summary_track[barcode][7]).toFixed(2)+"%";
         svg.appendChild(SVGObj);
@@ -2666,13 +2703,13 @@ function DrawPie_bulk() {
     SVGObj.setAttributeNS(null, "cx", midx+20);
     SVGObj.setAttributeNS(null, "cy", midy +40);
     SVGObj.setAttributeNS(null, "r" , 6);
-    SVGObj.style.fill="rgb(154, 34, 93)"
+    SVGObj.style.fill=KI_1;
     svg.appendChild(SVGObj);
     SVGObj= document.createElementNS(NS,"circle");
     SVGObj.setAttributeNS(null, "cx", midx+20);
     SVGObj.setAttributeNS(null, "cy", midy +60);
     SVGObj.setAttributeNS(null, "r" , 6);
-    SVGObj.style.fill=BLAU[2];
+    SVGObj.style.fill=KI_2;
     svg.appendChild(SVGObj);
     
     SVGObj= document.createElementNS(NS,"circle");
@@ -3518,7 +3555,7 @@ function PlotAlignment(id, locus){
 
     //reference:
     SVGObj= document.createElementNS(NS,"text");
-    SVGObj.setAttribute("x", 5);
+    SVGObj.setAttribute("x", 1);
     SVGObj.setAttribute("y", ysize+delypos+20);
     SVGObj.setAttribute("font-size", "13");
     SVGObj.textContent += "REFERENCE 5'->3'";
@@ -3575,11 +3612,140 @@ function PlotAlignment(id, locus){
         if (aln_dict[id][key][1]==1 && (Object.keys(no_indel_arr[id]).length >1)){
             for (let x=xfrom-10; x<xto-10; x++){
             //draw main track:
-            if (Object.keys(no_indel_arr[id])[0][x]==Object.keys(no_indel_arr[id])[1][x]){
+                if (Object.keys(no_indel_arr[id])[0][x]==Object.keys(no_indel_arr[id])[1][x]){
+                    SVGObj= document.createElementNS(NS, "text");
+                    SVGObj.setAttribute("y", ysize+delypos);
+                    SVGObj.setAttribute("font-size", "13");
+                    SVGObj.setAttribute("font-weight", "400");
+                    if (key[x]=="T"){SVGObj.textContent = key[x];
+                        SVGObj.setAttribute("fill", T_cl);
+                    }
+                    else if (key[x]=="A"){SVGObj.textContent = key[x];
+                        SVGObj.setAttribute("fill", A_cl);
+                    }
+                    else if (key[x]=="C"){SVGObj.textContent = key[x];
+                        SVGObj.setAttribute("fill", C_cl);
+                    }
+                    else if (key[x]=="G"){SVGObj.textContent = key[x];
+                        SVGObj.setAttribute("fill", G_cl);
+                    }
+                    else if (key[x]=="N"){SVGObj.textContent = key[x];
+                        SVGObj.setAttribute("fill", N_cl);
+                    }
+                    else if (key[x]=="-"){SVGObj.textContent = key[x];
+                        SVGObj.setAttribute("fill", "rgb(0,0,0");
+                    }
+                    SVGObj.setAttribute("x", 120+12*(x-xfrom+10));
+                    SVGObj.setAttribute("text-anchor", "middle");
+                    SVGObj.setAttribute("pointer-events","none");
+                    svg.appendChild(SVGObj);
+                }
+                else {
+                    var fontsize1 = 4+ Math.floor(13*no_indel_arr[id][Object.keys(no_indel_arr[id])[0]]/(no_indel_arr[id][Object.keys(no_indel_arr[id])[0]]+no_indel_arr[id][Object.keys(no_indel_arr[id])[1]]))
+                    var fontsize2 = 4+ Math.floor(13*no_indel_arr[id][Object.keys(no_indel_arr[id])[1]]/(no_indel_arr[id][Object.keys(no_indel_arr[id])[0]]+no_indel_arr[id][Object.keys(no_indel_arr[id])[1]]))
+                    SVGObj= document.createElementNS(NS, "text");
+                    SVGObj.setAttribute("x", 120+12*(x-xfrom+10));
+                    SVGObj.setAttribute("y", ysize+delypos-5);
+                    SVGObj.setAttribute("font-size", fontsize1);
+                    SVGObj.setAttribute("font-weight", "600");
+                    if (Object.keys(no_indel_arr[id])[0][x]=="T"){SVGObj.setAttribute("fill", T_cl);
+                    }
+                    else if (Object.keys(no_indel_arr[id])[0][x]=="A"){SVGObj.setAttribute("fill", A_cl);
+                    }
+                    else if (Object.keys(no_indel_arr[id])[0][x]=="C"){SVGObj.setAttribute("fill", C_cl);
+                    }
+                    else if (Object.keys(no_indel_arr[id])[0][x]=="G"){SVGObj.setAttribute("fill", G_cl);
+                    }
+                    else if (Object.keys(no_indel_arr[id])[0][x]=="N"){SVGObj.setAttribute("fill", N_cl);
+                    }
+
+                    SVGObj.textContent = Object.keys(no_indel_arr[id])[0][x];
+                    SVGObj.setAttribute("text-anchor", "middle");
+                    SVGObj.setAttribute("pointer-events","none");
+                    svg.appendChild(SVGObj);
+
+                    SVGObj= document.createElementNS(NS, "text");
+                    SVGObj.setAttribute("x", 120+12*(x-xfrom+10));
+                    SVGObj.setAttribute("y", ysize+delypos+5);
+                    SVGObj.setAttribute("font-size", fontsize2);
+                    SVGObj.setAttribute("font-weight", "600");
+
+                    if (Object.keys(no_indel_arr[id])[1][x]=="T"){SVGObj.setAttribute("fill", T_cl);
+                    }
+                    else if (Object.keys(no_indel_arr[id])[1][x]=="A"){SVGObj.setAttribute("fill", A_cl);
+                    }
+                    else if (Object.keys(no_indel_arr[id])[1][x]=="C"){SVGObj.setAttribute("fill", C_cl);
+                    }
+                    else if (Object.keys(no_indel_arr[id])[1][x]=="G"){SVGObj.setAttribute("fill", G_cl);
+                    }
+                    else if (Object.keys(no_indel_arr[id])[1][x]=="N"){SVGObj.setAttribute("fill", N_cl);
+                    }
+                    SVGObj.textContent = Object.keys(no_indel_arr[id])[1][x];
+                    SVGObj.setAttribute("text-anchor", "middle");
+                    SVGObj.setAttribute("pointer-events","none");
+                    svg.appendChild(SVGObj);
+
+                    SVGObj= document.createElementNS(NS, "text");
+                    SVGObj.setAttribute("y", ysize+delypos+25);
+                    SVGObj.setAttribute("font-size", 8);
+                    SVGObj.setAttribute("font-weight", "400");
+                    SVGObj.textContent = no_indel_arr[id][Object.keys(no_indel_arr[id])[1]] + " "+Object.keys(no_indel_arr[id])[1][x]
+                    SVGObj.setAttribute("x", 120+12*(x-xfrom+10));
+                    SVGObj.setAttribute("text-anchor", "middle");
+                    SVGObj.setAttribute("pointer-events","none");
+                    svg.appendChild(SVGObj);
+
+                    SVGObj= document.createElementNS(NS, "text");
+                    SVGObj.setAttribute("y", ysize+delypos+15);
+                    SVGObj.setAttribute("font-size", 8);
+                    SVGObj.setAttribute("font-weight", "400");
+                    SVGObj.textContent = no_indel_arr[id][Object.keys(no_indel_arr[id])[0]] + " " +Object.keys(no_indel_arr[id])[0][x]
+                    SVGObj.setAttribute("x", 120+12*(x-xfrom+10));
+                    SVGObj.setAttribute("text-anchor", "middle");
+                    SVGObj.setAttribute("pointer-events","none");
+                    svg.appendChild(SVGObj);
+                }
+            }
+        }
+        else {
+            for (let x=xfrom-10; x<xto-10; x++){
+                //draw main track:
+                if ((key[x]==locus[BreakPoint-region_analyse+x])||(key[x]=='N')||(key[x]=='-')||(typeof(key[x])=='undefined')){
+                    if ((duplication1[0])&&(x>=duplication1[1])&&(x<(duplication1[1]+duplication1[2]))){
+                        SVGObj= document.createElementNS(svgns, "rect");
+                        SVGObj.setAttribute("fill", "rgb(255,255,0");
+                        SVGObj.style.stroke=T_cl;
+                        SVGObj.setAttribute("x", 120+12*(x-xfrom+10)-5);
+                        SVGObj.setAttribute("y", ysize+delypos-10);
+                        SVGObj.setAttribute("width", "12");
+                        SVGObj.setAttribute("height", "12");
+                        SVGObj.setAttribute("text-anchor", "middle");
+                        SVGObj.setAttribute("pointer-events","none");
+                        svg.appendChild(SVGObj);
+                        }
+                    SVGObj= document.createElementNS(NS, "text");
+                    SVGObj.setAttribute("font-weight", "400");
+                }
+                else if ('ACTGN'.includes(key[x])){
+                    SVGObj= document.createElementNS(svgns, "rect");
+                    SVGObj.style.stroke=N_cl;
+                    SVGObj.setAttribute("x", 115+12*(x-xfrom+10));
+                    SVGObj.setAttribute("y", ysize+delypos-10);
+                    SVGObj.setAttribute("width", "11");
+                    SVGObj.setAttribute("height", "11");
+                    SVGObj.setAttribute("fill", "rgb(255,255,255");
+                    SVGObj.setAttribute("text-anchor", "middle");
+                    SVGObj.setAttribute("pointer-events","none");
+                    svg.appendChild(SVGObj);
+                    SVGObj= document.createElementNS(NS, "text");
+                    SVGObj.setAttribute("font-weight", "600");
+                }
                 SVGObj= document.createElementNS(NS, "text");
+                SVGObj.setAttribute("font-weight", "400");
+                SVGObj.setAttribute("x", 115+12*(x-xfrom+10));
                 SVGObj.setAttribute("y", ysize+delypos);
                 SVGObj.setAttribute("font-size", "13");
-                SVGObj.setAttribute("font-weight", "400");
+
                 if (key[x]=="T"){SVGObj.textContent = key[x];
                     SVGObj.setAttribute("fill", T_cl);
                 }
@@ -3596,188 +3762,58 @@ function PlotAlignment(id, locus){
                     SVGObj.setAttribute("fill", N_cl);
                 }
                 else if (key[x]=="-"){SVGObj.textContent = key[x];
-                    SVGObj.setAttribute("fill", "rgb(0,0,0");
+                    SVGObj.setAttribute("fill", N_cl);
                 }
                 SVGObj.setAttribute("x", 120+12*(x-xfrom+10));
                 SVGObj.setAttribute("text-anchor", "middle");
                 SVGObj.setAttribute("pointer-events","none");
-                svg.appendChild(SVGObj);
-            }
-            else {
-                var fontsize1 = 4+ Math.floor(13*no_indel_arr[id][Object.keys(no_indel_arr[id])[0]]/(no_indel_arr[id][Object.keys(no_indel_arr[id])[0]]+no_indel_arr[id][Object.keys(no_indel_arr[id])[1]]))
-                var fontsize2 = 4+ Math.floor(13*no_indel_arr[id][Object.keys(no_indel_arr[id])[1]]/(no_indel_arr[id][Object.keys(no_indel_arr[id])[0]]+no_indel_arr[id][Object.keys(no_indel_arr[id])[1]]))
-
-                SVGObj= document.createElementNS(NS, "text");
-                SVGObj.setAttribute("x", 120+12*(x-xfrom+10));
-                SVGObj.setAttribute("y", ysize+delypos-5);
-                SVGObj.setAttribute("font-size", fontsize1);
-                SVGObj.setAttribute("font-weight", "600");
-                if (Object.keys(no_indel_arr[id])[0][x]=="T"){SVGObj.setAttribute("fill", T_cl);
-                }
-                else if (Object.keys(no_indel_arr[id])[0][x]=="A"){SVGObj.setAttribute("fill", A_cl);
-                }
-                else if (Object.keys(no_indel_arr[id])[0][x]=="C"){SVGObj.setAttribute("fill", C_cl);
-                }
-                else if (Object.keys(no_indel_arr[id])[0][x]=="G"){SVGObj.setAttribute("fill", G_cl);
-                }
-                else if (Object.keys(no_indel_arr[id])[0][x]=="N"){SVGObj.setAttribute("fill", N_cl);
-                }
-
-                SVGObj.textContent = Object.keys(no_indel_arr[id])[0][x];
-                SVGObj.setAttribute("text-anchor", "middle");
-                SVGObj.setAttribute("pointer-events","none");
-                svg.appendChild(SVGObj);
-
-                SVGObj= document.createElementNS(NS, "text");
-                SVGObj.setAttribute("x", 120+12*(x-xfrom+10));
-                SVGObj.setAttribute("y", ysize+delypos+5);
-                SVGObj.setAttribute("font-size", fontsize2);
-                SVGObj.setAttribute("font-weight", "600");
-
-                if (Object.keys(no_indel_arr[id])[1][x]=="T"){SVGObj.setAttribute("fill", T_cl);
-                }
-                else if (Object.keys(no_indel_arr[id])[1][x]=="A"){SVGObj.setAttribute("fill", A_cl);
-                }
-                else if (Object.keys(no_indel_arr[id])[1][x]=="C"){SVGObj.setAttribute("fill", C_cl);
-                }
-                else if (Object.keys(no_indel_arr[id])[1][x]=="G"){SVGObj.setAttribute("fill", G_cl);
-                }
-                else if (Object.keys(no_indel_arr[id])[1][x]=="N"){SVGObj.setAttribute("fill", N_cl);
-                }
-                SVGObj.textContent = Object.keys(no_indel_arr[id])[1][x];
-                SVGObj.setAttribute("text-anchor", "middle");
-                SVGObj.setAttribute("pointer-events","none");
-                svg.appendChild(SVGObj);
-
-                SVGObj= document.createElementNS(NS, "text");
-                SVGObj.setAttribute("y", ysize+delypos+25);
-                SVGObj.setAttribute("font-size", 8);
-                SVGObj.setAttribute("font-weight", "400");
-                SVGObj.textContent = no_indel_arr[id][Object.keys(no_indel_arr[id])[1]] + " "+Object.keys(no_indel_arr[id])[1][x]
-                SVGObj.setAttribute("x", 120+12*(x-xfrom+10));
-                SVGObj.setAttribute("text-anchor", "middle");
-                SVGObj.setAttribute("pointer-events","none");
-                svg.appendChild(SVGObj);
-
-                SVGObj= document.createElementNS(NS, "text");
-                SVGObj.setAttribute("y", ysize+delypos+15);
-                SVGObj.setAttribute("font-size", 8);
-                SVGObj.setAttribute("font-weight", "400");
-                SVGObj.textContent = no_indel_arr[id][Object.keys(no_indel_arr[id])[0]] + " " +Object.keys(no_indel_arr[id])[0][x]
-                SVGObj.setAttribute("x", 120+12*(x-xfrom+10));
-                SVGObj.setAttribute("text-anchor", "middle");
-                SVGObj.setAttribute("pointer-events","none");
-                svg.appendChild(SVGObj);
-
-
-            }
-        }
-        }
-        else {
-            for (let x=xfrom-10; x<xto-10; x++){
-            //draw main track:
-            if ((key[x]==locus[BreakPoint-region_analyse+x])||(key[x]=='N')||(key[x]=='-')||(typeof(key[x])=='undefined')){
-                if ((duplication1[0])&&(x>=duplication1[1])&&(x<(duplication1[1]+duplication1[2]))){
-                    SVGObj= document.createElementNS(svgns, "rect");
-                    SVGObj.setAttribute("fill", "rgb(255,255,0");
-                    SVGObj.style.stroke=T_cl;
-                    SVGObj.setAttribute("x", 120+12*(x-xfrom+10)-5);
-                    SVGObj.setAttribute("y", ysize+delypos-10);
-                    SVGObj.setAttribute("width", "12");
-                    SVGObj.setAttribute("height", "12");
-                    SVGObj.setAttribute("text-anchor", "middle");
-                    SVGObj.setAttribute("pointer-events","none");
-                    svg.appendChild(SVGObj);
-                    }
-                SVGObj= document.createElementNS(NS, "text");
-                SVGObj.setAttribute("font-weight", "400");
-            }
-            else {
-                SVGObj= document.createElementNS(svgns, "rect");
-                SVGObj.style.stroke=N_cl;
-                SVGObj.setAttribute("x", 115+12*(x-xfrom+10));
-                SVGObj.setAttribute("y", ysize+delypos-10);
-                SVGObj.setAttribute("width", "11");
-                SVGObj.setAttribute("height", "11");
-                SVGObj.setAttribute("fill", "rgb(255,255,255");
-                SVGObj.setAttribute("text-anchor", "middle");
-                SVGObj.setAttribute("pointer-events","none");
-                svg.appendChild(SVGObj);
-                SVGObj= document.createElementNS(NS, "text");
-                SVGObj.setAttribute("font-weight", "600");
-            }
-            
-            SVGObj.setAttribute("y", ysize+delypos);
-            SVGObj.setAttribute("font-size", "13");
-
-            if (key[x]=="T"){SVGObj.textContent = key[x];
-                SVGObj.setAttribute("fill", T_cl);
-            }
-            else if (key[x]=="A"){SVGObj.textContent = key[x];
-                SVGObj.setAttribute("fill", A_cl);
-            }
-            else if (key[x]=="C"){SVGObj.textContent = key[x];
-                SVGObj.setAttribute("fill", C_cl);
-            }
-            else if (key[x]=="G"){SVGObj.textContent = key[x];
-                SVGObj.setAttribute("fill", G_cl);
-            }
-            else if (key[x]=="N"){SVGObj.textContent = key[x];
-                SVGObj.setAttribute("fill", N_cl);
-            }
-            else if (key[x]=="-"){SVGObj.textContent = key[x];
-                SVGObj.setAttribute("fill", N_cl);
-            }
-            SVGObj.setAttribute("x", 120+12*(x-xfrom+10));
-            SVGObj.setAttribute("text-anchor", "middle");
-            SVGObj.setAttribute("pointer-events","none");
-            svg.appendChild(SVGObj); 
+                svg.appendChild(SVGObj); 
             }
         }
         
         var image_loc = 0;
         for (let x=xfrom-10; x<xto-10; x++){
             if (x>0){
-            //draw insert:
-            SVGObj= document.createElementNS(svgns, "rect");
-            if ('ACTG'.includes(key[x+region_analyse*2])){
-                if (image_loc == 0){
-                    const line = document.createElementNS(NS, "line");
-                    // Set line attributes to make it vertical
-                    line.setAttribute("x1", 120+12*(x-xfrom+10)-18);
-                    line.setAttribute("y1", ysize+delypos-14);
-                    line.setAttribute("x2", 120+12*(x-xfrom+10)-18);
-                    line.setAttribute("y2", ysize+delypos+20);
-                    line.setAttribute("stroke", "blue");
-                    line.setAttribute("stroke-width", "3");
-                    svg.appendChild(line);
-                    image_loc =1;
+                //draw insert:
+                SVGObj= document.createElementNS(svgns, "rect");
+                if ('ACTG'.includes(key[x+region_analyse*2])){
+                    if (image_loc == 0){
+                        const line = document.createElementNS(NS, "line");
+                        // Set line attributes to make it vertical
+                        line.setAttribute("x1", 120+12*(x-xfrom+10)-18);
+                        line.setAttribute("y1", ysize+delypos-14);
+                        line.setAttribute("x2", 120+12*(x-xfrom+10)-18);
+                        line.setAttribute("y2", ysize+delypos+20);
+                        line.setAttribute("stroke", "blue");
+                        line.setAttribute("stroke-width", "3");
+                        svg.appendChild(line);
+                        image_loc =1;
+                    }
+                    if (duplication1[0]){
+                        SVGObj.setAttribute("fill", "rgb(255,255,0");
+                    }
+                    else{
+                        SVGObj.setAttribute("fill", "rgb(255,255,255");
+                    }
+                    SVGObj.style.stroke=T_cl;
+                    SVGObj.setAttribute("x", 120+12*(x-xfrom+9)-4);
+                    SVGObj.setAttribute("y", ysize+delypos+4);
+                    SVGObj.setAttribute("width", "12");
+                    SVGObj.setAttribute("height", "12");
+                    SVGObj.setAttribute("text-anchor", "middle");
+                    SVGObj.setAttribute("pointer-events","none");
+                    svg.appendChild(SVGObj);
                 }
-                if (duplication1[0]){
-                    SVGObj.setAttribute("fill", "rgb(255,255,0");
-                }
-                else{
-                    SVGObj.setAttribute("fill", "rgb(255,255,255");
-                }
-                SVGObj.style.stroke=T_cl;
-                SVGObj.setAttribute("x", 120+12*(x-xfrom+9)-4);
-                SVGObj.setAttribute("y", ysize+delypos+4);
-                SVGObj.setAttribute("width", "12");
-                SVGObj.setAttribute("height", "12");
+
+                SVGObj= document.createElementNS(NS,"text");
+                SVGObj.setAttribute("x", 120+12*(x-xfrom+9)+1);
+                SVGObj.setAttribute("y", ysize+delypos+15);
+                SVGObj.setAttribute("font-size", "13");
+                SVGObj.setAttribute("fill", N_cl);
+                SVGObj.textContent = key[x+region_analyse*2];
                 SVGObj.setAttribute("text-anchor", "middle");
                 SVGObj.setAttribute("pointer-events","none");
                 svg.appendChild(SVGObj);
-            }
-
-            SVGObj= document.createElementNS(NS,"text");
-            SVGObj.setAttribute("x", 120+12*(x-xfrom+9)+1);
-            SVGObj.setAttribute("y", ysize+delypos+15);
-            SVGObj.setAttribute("font-size", "13");
-            SVGObj.setAttribute("fill", N_cl);
-            SVGObj.textContent = key[x+region_analyse*2];
-            SVGObj.setAttribute("text-anchor", "middle");
-            SVGObj.setAttribute("pointer-events","none");
-            svg.appendChild(SVGObj);
             }
         }
 
@@ -3797,7 +3833,7 @@ function PlotAlignment(id, locus){
         }
         
         SVGObj= document.createElementNS(NS,"text");
-        SVGObj.setAttribute("x", 5);
+        SVGObj.setAttribute("x", 1);
         SVGObj.setAttribute("y", ysize+delypos);
         SVGObj.setAttribute("font-size", "14");
         SVGObj.textContent += "GROUP " +id1;
@@ -3894,7 +3930,6 @@ function PlotAlignment_bulk(barcode, locus, bulk_threshold = bulk_threshold){
     var strokew = "0.5";
     svg.setAttribute("height", svgHeight);
 
-
     svg.addEventListener("mousedown", AlignmentMouseDown, false);
     svg.addEventListener("mousemove", AlignmentMouseMove_bulk, false);
     svg.addEventListener("mouseup", AlignmentMouseUp, false);
@@ -3907,29 +3942,6 @@ function PlotAlignment_bulk(barcode, locus, bulk_threshold = bulk_threshold){
     var delypos=20, delyshift=60;
 
     //bc, readsum:
-    var SVGObj= document.createElementNS(NS,"text");
-    SVGObj.setAttribute("x", 40);
-    SVGObj.setAttribute("y", ysize+delypos);
-    SVGObj.setAttribute("font-size", "16");
-    SVGObj.setAttribute("font-weight", "600");
-    SVGObj.textContent = "SUMMARY: Gene: "+document.getElementsByName("GeneName")[0].value+"   |   File "+GetWellPos(barcode)+": "+files_name[barcode];
-    svg.appendChild(SVGObj);
-    delypos+=30;
-
-    SVGObj= document.createElementNS(NS,"text");
-    SVGObj.setAttribute("x", 40);
-    SVGObj.setAttribute("y", ysize+delypos);
-    SVGObj.setAttribute("font-size", "16");
-    SVGObj.textContent = "Total aligned reads in bulk: " + sum_bulk +"   |  Outframe indel: " +summary_track[barcode][4]+ " READS, (" +(summary_track[barcode][4]*100/sum_bulk).toFixed(2)+"%)" +"   |  Inframe indel: " +summary_track[barcode][3]+ " READS, (" +(summary_track[barcode][3]*100/sum_bulk).toFixed(2)+"%)";
-    svg.appendChild(SVGObj);
-    delypos+=30;
-    SVGObj= document.createElementNS(NS,"text");
-    SVGObj.setAttribute("x", 40);
-    SVGObj.setAttribute("y", ysize+delypos);
-    SVGObj.setAttribute("font-size", "16");
-    SVGObj.textContent = "targetingOligo reads: " + summary_track[barcode][1] +"   |  No indel: " +summary_track[barcode][2] +" READS, (" +(summary_track[barcode][2]*100/sum_bulk).toFixed(2)+"%)" +"   | Read ambigous: " +summary_track[barcode][5] //+"   | Not aligned to interested region: " +summary_track[barcode][6];
-    svg.appendChild(SVGObj);
-
     delypos+=delyshift;
 
       // Legend RIMA2
@@ -4047,7 +4059,7 @@ function PlotAlignment_bulk(barcode, locus, bulk_threshold = bulk_threshold){
 
     //reference:
     SVGObj= document.createElementNS(NS,"text");
-    SVGObj.setAttribute("x", 5);
+    SVGObj.setAttribute("x", 1);
     SVGObj.setAttribute("y", ysize+delypos+20);
     SVGObj.setAttribute("font-size", "13");
     SVGObj.textContent += "REFERENCE 5'->3'";
@@ -4204,63 +4216,65 @@ function PlotAlignment_bulk(barcode, locus, bulk_threshold = bulk_threshold){
         // }
         // else {
             for (let x=xfrom-10; x<xto-10; x++){
-            //draw main track:
-            if ((key[x]==locus[BreakPoint-region_analyse+x])||(key[x]=='N')||(key[x]=='-')||(typeof(key[x])=='undefined')){
-                if ((duplication1[0])&&(x>=duplication1[1])&&(x<(duplication1[1]+duplication1[2]))){
+                //draw main track:
+                if ((key[x]==locus[BreakPoint-region_analyse+x])||(key[x]=='N')||(key[x]=='-')||(typeof(key[x])=='undefined')){
+                    if ((duplication1[0])&&(x>=duplication1[1])&&(x<(duplication1[1]+duplication1[2]))){
+                        SVGObj= document.createElementNS(svgns, "rect");
+                        SVGObj.setAttribute("fill", "rgb(255,255,0");
+                        SVGObj.style.stroke=T_cl;
+                        SVGObj.setAttribute("x", 120+12*(x-xfrom+10)-5);
+                        SVGObj.setAttribute("y", ysize+delypos-10);
+                        SVGObj.setAttribute("width", "12");
+                        SVGObj.setAttribute("height", "12");
+                        SVGObj.setAttribute("text-anchor", "middle");
+                        SVGObj.setAttribute("pointer-events","none");
+                        svg.appendChild(SVGObj);
+                        }
+                    SVGObj= document.createElementNS(NS, "text");
+                    SVGObj.setAttribute("font-weight", "400");
+                }
+                else if ("ACTB".includes(key[x])){
                     SVGObj= document.createElementNS(svgns, "rect");
-                    SVGObj.setAttribute("fill", "rgb(255,255,0");
-                    SVGObj.style.stroke=T_cl;
-                    SVGObj.setAttribute("x", 120+12*(x-xfrom+10)-5);
+                    SVGObj.style.stroke=N_cl;
+                    SVGObj.setAttribute("x", 115+12*(x-xfrom+10));
                     SVGObj.setAttribute("y", ysize+delypos-10);
-                    SVGObj.setAttribute("width", "12");
-                    SVGObj.setAttribute("height", "12");
+                    SVGObj.setAttribute("width", "11");
+                    SVGObj.setAttribute("height", "11");
+                    SVGObj.setAttribute("fill", "rgb(255,255,255");
                     SVGObj.setAttribute("text-anchor", "middle");
                     SVGObj.setAttribute("pointer-events","none");
                     svg.appendChild(SVGObj);
-                    }
+                    SVGObj= document.createElementNS(NS, "text");
+                    SVGObj.setAttribute("font-weight", "600");
+                }
                 SVGObj= document.createElementNS(NS, "text");
-                SVGObj.setAttribute("font-weight", "400");
-            }
-            else {
-                SVGObj= document.createElementNS(svgns, "rect");
-                SVGObj.style.stroke=N_cl;
                 SVGObj.setAttribute("x", 115+12*(x-xfrom+10));
-                SVGObj.setAttribute("y", ysize+delypos-10);
-                SVGObj.setAttribute("width", "11");
-                SVGObj.setAttribute("height", "11");
-                SVGObj.setAttribute("fill", "rgb(255,255,255");
+                SVGObj.setAttribute("font-weight", "400");
+                SVGObj.setAttribute("y", ysize+delypos);
+                SVGObj.setAttribute("font-size", "13");
+
+                if (key[x]=="T"){SVGObj.textContent = key[x];
+                    SVGObj.setAttribute("fill", T_cl);
+                }
+                else if (key[x]=="A"){SVGObj.textContent = key[x];
+                    SVGObj.setAttribute("fill", A_cl);
+                }
+                else if (key[x]=="C"){SVGObj.textContent = key[x];
+                    SVGObj.setAttribute("fill", C_cl);
+                }
+                else if (key[x]=="G"){SVGObj.textContent = key[x];
+                    SVGObj.setAttribute("fill", G_cl);
+                }
+                else if (key[x]=="N"){SVGObj.textContent = key[x];
+                    SVGObj.setAttribute("fill", N_cl);
+                }
+                else if (key[x]=="-"){SVGObj.textContent = key[x];
+                    SVGObj.setAttribute("fill", N_cl);
+                }
+                SVGObj.setAttribute("x", 120+12*(x-xfrom+10));
                 SVGObj.setAttribute("text-anchor", "middle");
                 SVGObj.setAttribute("pointer-events","none");
-                svg.appendChild(SVGObj);
-                SVGObj= document.createElementNS(NS, "text");
-                SVGObj.setAttribute("font-weight", "600");
-            }
-            
-            SVGObj.setAttribute("y", ysize+delypos);
-            SVGObj.setAttribute("font-size", "13");
-
-            if (key[x]=="T"){SVGObj.textContent = key[x];
-                SVGObj.setAttribute("fill", T_cl);
-            }
-            else if (key[x]=="A"){SVGObj.textContent = key[x];
-                SVGObj.setAttribute("fill", A_cl);
-            }
-            else if (key[x]=="C"){SVGObj.textContent = key[x];
-                SVGObj.setAttribute("fill", C_cl);
-            }
-            else if (key[x]=="G"){SVGObj.textContent = key[x];
-                SVGObj.setAttribute("fill", G_cl);
-            }
-            else if (key[x]=="N"){SVGObj.textContent = key[x];
-                SVGObj.setAttribute("fill", N_cl);
-            }
-            else if (key[x]=="-"){SVGObj.textContent = key[x];
-                SVGObj.setAttribute("fill", N_cl);
-            }
-            SVGObj.setAttribute("x", 120+12*(x-xfrom+10));
-            SVGObj.setAttribute("text-anchor", "middle");
-            SVGObj.setAttribute("pointer-events","none");
-            svg.appendChild(SVGObj); 
+                svg.appendChild(SVGObj); 
             }
         // }
         
@@ -4327,7 +4341,7 @@ function PlotAlignment_bulk(barcode, locus, bulk_threshold = bulk_threshold){
         }
         
         SVGObj= document.createElementNS(NS,"text");
-        SVGObj.setAttribute("x", 5);
+        SVGObj.setAttribute("x", 1);
         SVGObj.setAttribute("y", ysize+delypos);
         SVGObj.setAttribute("font-size", "14");
         SVGObj.textContent += "GROUP " +id1;
@@ -4627,7 +4641,7 @@ function PlotAlignment_off(gene_i) {
 
     //reference:
     SVGObj= document.createElementNS(NS,"text");
-    SVGObj.setAttribute("x", 5);
+    SVGObj.setAttribute("x", 1);
     SVGObj.setAttribute("y", ysize+delypos+20);
     SVGObj.setAttribute("font-size", "13");
     SVGObj.textContent += "REFERENCE 5'->3'";
@@ -4857,7 +4871,7 @@ function PlotAlignment_off(gene_i) {
         }
         
         SVGObj= document.createElementNS(NS,"text");
-        SVGObj.setAttribute("x", 5);
+        SVGObj.setAttribute("x", 1);
         SVGObj.setAttribute("y", ysize+delypos);
         SVGObj.setAttribute("font-size", "14");
         SVGObj.textContent += "GROUP " +id1;
@@ -5089,7 +5103,7 @@ function FindGRNA(gene) {
     
     var table = "";
 
-    if (gene.length >= 2)
+    if (gene.length >= 3)
     {
         //correct upper / lower case mouse / human:
         var geneUpperCase = gene.toUpperCase();
@@ -5683,6 +5697,8 @@ const A_cl = "rgb(0,150,0)"
 const C_cl ="rgb(0,0,255)"
 const G_cl = "rgb(200, 100, 0)"
 const N_cl = "rgb(0, 0, 0)"
+const KI_1 = "rgb(154, 34, 93)"
+const KI_2 = "rgb(31, 89, 143)"
 
 //Using local files
 var CRISPRlib = ""
