@@ -135,7 +135,7 @@ div.selector {
                                 Home
                             </a>
                         </li>
-                        <li class="nav-item mt-1", onclick="TabClicked(2);">
+                        <!-- <li class="nav-item mt-1", onclick="TabClicked(2);">
                             <a  class="nav-link">
                                 <i class="fas fa-solid fa-cogs iconsMenu"></i>
                                 Use Crisprnano v2           
@@ -146,7 +146,7 @@ div.selector {
                                 <i class="fas fa-solid fa-pen iconsMenu"></i>
                                 How to cite
                             </a>
-                        </li>
+                        </li> -->
                         <li class="nav-item ml-2 mr-2 mt-1 " onclick="TabClicked(3)">
                             <a class="nav-link">
                                 <i class="fas fa-solid fa-question iconsMenu"></i>
@@ -174,6 +174,8 @@ div.selector {
                                 <button type="button"  name="result" class="btn btn-info" onclick="TabClicked(1);">RESULTS</button>
                                 <button type="button"  name="bulkview_result" class="btn btn-info" onclick="TabClicked(4);">BULK/SINGLE CLONE VIEWER</button>
                                 <button type="button"  name="offtarget_result" class="btn btn-info" onclick="TabClicked(5);">OFF-TARGET ANALYSIS</button>
+                                <button type="button"  name="result" class="btn btn-info" onclick="TabClicked(2);">MANUAL</button>
+
                                 <button type="button"  name="result" class="btn btn-info" onclick="TabClicked(6);">TEST DATA</button>
                             </div>
                         </div>
@@ -335,7 +337,7 @@ div.selector {
                 <a style="font-style: italic;">
                     CRISPRnano website is free and open to all users and there is no login required.<br>
                     To use CRISPRnano, you must enable JavaScript on your web browser.<br>
-                    If you want to use CRISPRnano offline, please download </a><a href="https://iufduesseldorf-my.sharepoint.com/:u:/g/personal/thach_nguyen_iuf-duesseldorf_de/EeZRZlyFP31Gu-s-w57wlfEB42anCiwxbXRms_U_GAekpQ?e=YxlI2v"> the offline html file here.</a> <br>
+                    <!-- If you want to use CRISPRnano offline, please download </a><a href="https://iufduesseldorf-my.sharepoint.com/:u:/g/personal/thach_nguyen_iuf-duesseldorf_de/EeZRZlyFP31Gu-s-w57wlfEB42anCiwxbXRms_U_GAekpQ?e=YxlI2v"> the offline html file here.</a> <br> -->
                     <br>
                 <a style="font-style: italic;"> (*) Mandatory 
                 <br>
@@ -354,8 +356,8 @@ div.selector {
             <br>
             <b>About:</b>
             <br>
-            <br>CRISPRnano is a javascript-based program that was developed for rapid deep sequencing based genotyping of nuclease edited cell clones.  
-            CRISPRnano supports noisy Oxford Nanopore but also Next Generation Sequencing (NGS) reads such as Illumina and PacBio or Sanger Sequencing. <br> <br>
+            <br>CRISPRnano is a JavaScript-based program that was developed for rapid deep sequencing based genotyping of nuclease edited cell clones.  
+            CRISPRnano supports noisy Oxford Nanopore but also Next Generation Sequencing (NGS) data such as Illumina and PacBio or Sanger Sequencing. <br> <br>
             CRISPRnano was developed by Dr. Thach Nguyen in the group of Dr. Andrea Rossi (GEMD lab) at Leibniz Research Institute for Environmental Medicine. The template web interface, data input, output are developed based on the template of Outknocker http://www.outknocker.org/. 
             <br>
             <br>
@@ -373,55 +375,49 @@ div.selector {
 
         <div id="manual" style="position:center; top:80px; display: none;">
             <br>
-            <br>
+            
             <h3>CRISPRnano manual</h3>
-            CRISPRnano v2 is a javascript-based program that was developed for rapid deep sequencing based genotyping of nuclease edited cell clones. CRISPRnano supports noisy Oxford Nanopore but also Next Generation Sequencing (NGS) reads such as Illumina, PacBio, or classic Sanger Sequencing.<br><br>
-            <b>Input data:</b>
-            <br>
-            <br>CRISPRnano analyzes FASTQ output files from ONT, NGS, or Sanger systems.
-            CRISPRnano webserver analyzes multiple samples and supports up to 96 FASTQ files at the time.
-            We recommend a file's size smaller than 200MB. Please, make sure that the correct ordering is applied in the file browser.
-            The file allocation to individual pie charts can be verified by the numbers given at alignment track.
-            Our data contains multiple small FASTQ files.  FASTQ files can be concatenated using command <b>cat</b> under Linux or <b>type</b> under Windows environment.<br>
-            On Linux terminal:<br>
-            $ cat /path/to/fastq/files/*.fastq &gt; /your/new/location/output.fastq<br>
-            On Window command prompt (path symbol is different):<br>
-            $ type \path\to\fastq\files\*.fastq&gt; \your\new\location\output.fastq<br>
-            <b> Data type:</b>
-            <br>
-            <br>
-            <b>Reference sequences</b> 
-            <br>
-            CRISPRnano can load
-            Reference amplicon length should be in the range of 200-350 bases (based on your library preparation), with the nuclease target site located roughly in the middle. The reference sequence of your gene of interest can be retrieved from <a href="http://ftp.ensembl.org/pub/release-105/fasta/homo_sapiens/dna/"> Ensembl database</a>. <br><br>
-
-            <b>Nuclease Target Site</b> 
-            <br>
-            The Nuclease Target Site sequence (CRISPR, TALEN, ZINC-Finger, etc.) has to be in the same orientation as the reference sequence above. The Nuclease Target Site is briefly checked if it is contained in Reference genome<br><br>
+            CRISPRnano v2 is a JavaScript-based program that was developed for rapid deep sequencing-based genotyping of nuclease edited cell clones. CRISPRnano supports noisy Oxford Nanopore but also Next Generation Sequencing (NGS) data such as Illumina, PacBio, or classic Sanger Sequencing.
+            <p><mark>Detailed manual illustration in the pdf file below</mark></p>
             
-            <b>Interested region and Offset centre</b> 
+            <p><b>Input data:</b><br>
+            CRISPRnano webserver analyzes FASTQ output files from ONT, NGS, PacBio or Sanger systems.
+            It analyzes multiple samples and currently supports up to 96 FASTQ files at the time.
+            Please(!), make sure that the correct fils order is applied in the file browser.
+            The file allocation to individual pie charts can be verified by the filename given at alignment track.</p>
+            <p><b> Data type:</b> <br>
+                Dependant on the sequencing datatype, the website will re-update the default parameters optimized for each datatype</p>
+            <p><b>Reference sequences, Gene name and gRNA</b> <br>
+            The reference sequence can be fetched from the genename (GENE SYMBOL in ENSEMBL) automatically. The recommended gRNA will be load when the genename is given.
+            If you want to use your customized reference, please leave the Gene Name blank.</p>
+            <p><b>Nuclease Target Site/gRNA</b> <br>
+            The Nuclease Target site/gRNA is briefly checked if it is located within the reference genome.</p>
+            <p><b>Interested region</b> <br>
+            For ONT reads, it is recommended to use 90 bp predicted DNA lesion. Larger regions are prone to false positive indels. 
+            Larger regions (total of 100-160 bp) can be safely used with Illumina reads. </p>
+            <p><b>Targeting mutagenesis oligonucleotide</b> 
             <br>
-            For ONT reads, it is recommended to use -/+15 bases around the predicted DNA lesion. Larger regions are prone to false positive indels. 
-            Larger regions (total of 200-250 bp) can be safely used with Illumina reads. You can drag and drop the central point of the predicted double strand break in the genomic sequence to the left or to the right. Default 0 is double strand breaking point.<br><br>
+            Donor oligonucleotide sequence is used to introduce a site-specific genomic modification. </p>
             
-            <b>Targeting mutagenesis oligonucleotide</b> 
-            <br>
-            Donor oligonucleotide sequence is used to introduce a site specific genomic modification. 
-            The sequence entered should be in the same orientation as the amplicon sequence. <br><br>
-            <b>Indel Threshold</b> 
+            <p></p><b>Indel Threshold</b> 
             <br>
             The Indel Threshold percentage determines at what relative occurrence an individual indel mutation is considered as a unique allele of the respective clone analyzed, and is thus displayed in the alignment list. 
             Low threshold values can result in false positive allele calling due to sequencing errors, 
             whereas high threshold values result in false negative allele calling. Values in between 0 - 100 % can be entered. We recommend using 5% for ONT reads and 2% for Illumina reads (the default is set to 5%).  <br><br>
-            
-            <b>Code Availability </b> 
+        </p><br><b>Full manual: </b>
+            <iframe src="./crisprnano2/manual.pdf" width="80%" height="2000px"></iframe>
+
+            <!-- <b>Code Availability </b> 
             <br>
             The source code for CRISPRnano is available at <a href="https://github.com/thachnguyen/CRISPRnano">https://github.com/thachnguyen/CRISPRnano</a> <br><br>
             
             <b>Test data </b> 
             <br>
-            The test data for CRISPRnano is available at <a href="https://iufduesseldorf-my.sharepoint.com/:u:/g/personal/thach_nguyen_iuf-duesseldorf_de/ER4kM3RQaRJLiltUCpcT2iMBiEvGvs3u2NiDTdtSPBLE1Q?e=8FEAJc">our test sample.</a><br><br>
-            <b>
+            The lightweight test data for CRISPRnano2 is available at <a href="https://iufduesseldorf-my.sharepoint.com/:u:/g/personal/thach_nguyen_iuf-duesseldorf_de/ERPO_Y-8hg5Pq8KZv-OVNucBR211XB3UxcmxhzkBW8_gjg?e=K0tCeg">Lightweight Test Data.</a><br><br>
+            
+                <br>
+                The full test data for CRISPRnano2 is available at <a href="https://iufduesseldorf-my.sharepoint.com/:u:/g/personal/thach_nguyen_iuf-duesseldorf_de/EV2AyPDA7lJKn9sXQPjLQR4B2WFcFEsO8vW8zqc2Uorr0g?e=tmPv6y">Full Test Data.</a><br><br>
+                <b>
                 Browser compatibility
             </b>
             <table style="width:100%">
@@ -457,7 +453,7 @@ div.selector {
                     <td>122.0.6261.128</td>
                     <td>n/a</td>
                 </tr>
-                </tbody></table>
+                </tbody></table> -->
             
         </div>
 
@@ -472,8 +468,11 @@ div.selector {
             
             <b>Test data </b> 
             <br>
-            The test data for CRISPRnano is available at <a href="https://iufduesseldorf-my.sharepoint.com/:u:/g/personal/thach_nguyen_iuf-duesseldorf_de/ER4kM3RQaRJLiltUCpcT2iMBiEvGvs3u2NiDTdtSPBLE1Q?e=8FEAJc">our test sample.</a><br><br>
+            The lightweight test data for CRISPRnano2 is available at <a href="https://iufduesseldorf-my.sharepoint.com/:u:/g/personal/thach_nguyen_iuf-duesseldorf_de/ERPO_Y-8hg5Pq8KZv-OVNucBR211XB3UxcmxhzkBW8_gjg?e=K0tCeg">Lightweight Test Data.</a><br><br>
             <b>
+                <br>
+                The full test data for CRISPRnano2 is available at <a href="https://iufduesseldorf-my.sharepoint.com/:u:/g/personal/thach_nguyen_iuf-duesseldorf_de/EV2AyPDA7lJKn9sXQPjLQR4B2WFcFEsO8vW8zqc2Uorr0g?e=tmPv6y">Full Test Data.</a><br><br>
+                <b>
                 Browser compatibility
             </b>
             <table style="width:100%">
@@ -488,7 +487,7 @@ div.selector {
                 <tr>
                     <td>Linux</td>
                     <td>Ubuntu 20.04</td>
-                    <td>Version 99.0.4844.51</td>
+                    <td>Version 131.0.6778.108</td>
                     <td>98.0</td>
                     <td>n/a</td>
                     <td>n/a</td>
@@ -496,7 +495,7 @@ div.selector {
                 <tr>
                     <td>MacOS</td>
                     <td>Monterey</td>
-                    <td>Version 99.0.4844.51</td>
+                    <td>Version 131.0.6778.108</td>
                     <td>98.0</td>
                     <td>n/a</td>
                     <td>15.3 </td>
@@ -504,7 +503,7 @@ div.selector {
                 <tr>
                     <td>Windows</td>
                     <td>10</td>
-                    <td>Version 99.0.4844.51</td>
+                    <td>Version 131.0.6778.108</td>
                     <td>98.0</td>
                     <td>99.0.115039</td>
                     <td>n/a</td>
@@ -569,7 +568,7 @@ div.selector {
                     <br>
                     
                     <input type="text" class="form-control" size="40" name="GeneName_list" id="GeneName_list" value="" onchange="checkOccurrence(); getFastaSequence_list();">
-                    <small class="text-muted">Off-target analysis will check up to 4 genes in a single run</small>
+                    <small class="text-muted">Off-target analysis will check up to 4 other genes in a single run</small>
     
                     <br>
                     <button id="toggleButton" class="btn btn-sm btn-light brd">List of offset sgRNA:</button>
@@ -1745,12 +1744,6 @@ function FileReceived_off() {
         setTimeout("ReadNextFileChunk_off();",10);
     }
 
-    // if (gene_id < gene_list.length && gene_id<4) {
-    
-    // } 
-    // else {
-    
-    // }
 }
 
 function ReadNextFileChunk() {
@@ -2861,7 +2854,7 @@ function DrawPie_off()
         if (summary_track_off[barcode][7] > maxsum) maxsum = summary_track_off[barcode][7];
     }
     
-    for (var barcode=0; barcode<4; barcode++) {
+    for (var barcode=0; barcode<5; barcode++) {
         var sum = 0;
         var gene_i = barcode;
         var inf_indel1 = Array(6)
@@ -4233,7 +4226,7 @@ function PlotAlignment_bulk(barcode, locus, bulk_threshold = bulk_threshold){
                     SVGObj= document.createElementNS(NS, "text");
                     SVGObj.setAttribute("font-weight", "400");
                 }
-                else if ("ACTB".includes(key[x])){
+                else if ("ACTG".includes(key[x])){
                     SVGObj= document.createElementNS(svgns, "rect");
                     SVGObj.style.stroke=N_cl;
                     SVGObj.setAttribute("x", 115+12*(x-xfrom+10));
@@ -4925,7 +4918,6 @@ function LoadData(){
             sum_track[i] = 0;
             summary_track[i] = Array(9); 
         }
-        //alert(window.location.hash.substr(1));
         var store_data = atob(window.location.hash.substr(1));
         store_data = JSON.parse(store_data)
         //Update GUI and variables
@@ -5450,14 +5442,15 @@ function Start2(){
     gene_list = document.getElementsByName("GeneName_list")[0].value.split(',')
     rightbs = document.getElementsByName("RightBS")[0].value.replace(/[\s\n]+/g, '').toUpperCase(); // sgRNA seq
     region_analyse = (0.5*document.getElementsByName("region_analyse")[0].value).toFixed(0);
+    gene_list.unshift(document.getElementsByName("GeneName")[0].value)
 
     //reset all varibles
-    for (var i=0; i<4; i++){
+    for (var i=0; i<5; i++){
         sum_track_off[i] = 0;
         summary_track_off[i] = Array(8); 
     }
-    AlignmentPrecalc_off = new Array(4);
-    for (let i=0; i<4; i++) {
+    AlignmentPrecalc_off = new Array(5);
+    for (let i=0; i<5; i++) {
         aln_dict_off[i] = {}
         aln_dict_fil_off[i] = {}
     }
@@ -5473,10 +5466,15 @@ function Start2(){
         alert("No target site was entered. Please enter a valid sequence");
         return;
     }
-    locus_list1[0] = document.getElementById("sgRNA1").value;
-    locus_list1[1] = document.getElementById("sgRNA2").value;
-    locus_list1[2] = document.getElementById("sgRNA3").value;
-    locus_list1[3] = document.getElementById("sgRNA4").value;
+    if (!locus_list.includes(locus)){
+        locus_list.unshift(locus)
+    }
+
+    locus_list1[0] = document.getElementById("RightBS").value.replace(/[\s\n]+/g, '').toUpperCase();
+    locus_list1[1] = document.getElementById("sgRNA1").value.replace(/[\s\n]+/g, '').toUpperCase();
+    locus_list1[2] = document.getElementById("sgRNA2").value.replace(/[\s\n]+/g, '').toUpperCase();
+    locus_list1[3] = document.getElementById("sgRNA3").value.replace(/[\s\n]+/g, '').toUpperCase();
+    locus_list1[4] = document.getElementById("sgRNA4").value.replace(/[\s\n]+/g, '').toUpperCase();
 
     for (let i = 0; i<locus_list.length; i++){
         // if (locus_list1[i]==""){
@@ -5658,22 +5656,22 @@ var region_analyse = 80;
 var CurrentAlignment_off = 0;
 var CurrentAlignment = 0;
 
-var AlignmentPrecalc_off = new Array(4);
+var AlignmentPrecalc_off = new Array(5);
 var AlignmentPrecalc_bulk
 var locus_list = [];
 var locus_list1 = []; // gene unique regions
 
-var sum_track_off = Array(4)
-var summary_track_off = Array(4)
+var sum_track_off = Array(5)
+var summary_track_off = Array(5)
 
 //raw aligned dictionary off target
-var aln_dict_off = Array(4);
+var aln_dict_off = Array(5);
 //filtered aligned dictionary off target
-var aln_dict_fil_off = Array(4)
+var aln_dict_fil_off = Array(5)
 
-var RightBsPos_off = [0, 0, 0, 0];
-var BreakPoint_off = [0, 0, 0, 0]
-var sum_track_off = Array(4)
+var RightBsPos_off = [0, 0, 0, 0, 0];
+var BreakPoint_off = [0, 0, 0, 0, 0]
+var sum_track_off = Array(5)
 
 var RestFromLastChunk = "";
 var chunksize = 128*1024;
