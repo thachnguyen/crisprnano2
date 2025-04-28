@@ -157,7 +157,7 @@ div.selector {
                 </div>
             </nav>
             <div class="d-flex justify-content-center mt-3">
-                <img id="titleIndex" width="60%" src="./crisprnano2/CRISPRnano2.png">
+                <img id="titleIndex" width="60%" src="./crisprnano2/CRISPRnano21.png">
             </div>
      
         <div class="row">
@@ -285,7 +285,10 @@ div.selector {
                 </div> 
                 </div>
                 <h3 >Optional parameters</h3>
-                <small id='optional_para' class="text-muted">Click to expand</small>
+                <small id="optional_para" class="text-muted">
+                    <img src="crisprnano2/expand.jpg" alt="icon" style="width:16px; height:16px; vertical-align:middle; margin-right:5px;">
+                    Click to expand
+                  </small>
                 <div id = "optional_para_Container" class="hidden">
                 <div class="row">
                         <div class = "col-sm">
@@ -3606,32 +3609,57 @@ function PlotAlignment(id, locus){
             for (let x=xfrom-10; x<xto-10; x++){
             //draw main track:
                 if (Object.keys(no_indel_arr[id])[0][x]==Object.keys(no_indel_arr[id])[1][x]){
-                    SVGObj= document.createElementNS(NS, "text");
-                    SVGObj.setAttribute("y", ysize+delypos);
-                    SVGObj.setAttribute("font-size", "13");
-                    SVGObj.setAttribute("font-weight", "400");
+
+                    SVGObj= document.createElementNS(svgns, "rect");
                     if (key[x]=="T"){SVGObj.textContent = key[x];
-                        SVGObj.setAttribute("fill", T_cl);
+                        SVGObj.setAttribute("fill", "rgb(204,163,255)");
+
                     }
                     else if (key[x]=="A"){SVGObj.textContent = key[x];
-                        SVGObj.setAttribute("fill", A_cl);
+                        SVGObj.setAttribute("fill", "rgb(100, 240, 100)");
                     }
                     else if (key[x]=="C"){SVGObj.textContent = key[x];
-                        SVGObj.setAttribute("fill", C_cl);
+                        SVGObj.setAttribute("fill", "rgb(250, 156, 28)");
                     }
                     else if (key[x]=="G"){SVGObj.textContent = key[x];
-                        SVGObj.setAttribute("fill", G_cl);
+                        SVGObj.setAttribute("fill", "rgb(222, 255, 0)");
                     }
                     else if (key[x]=="N"){SVGObj.textContent = key[x];
                         SVGObj.setAttribute("fill", N_cl);
                     }
                     else if (key[x]=="-"){SVGObj.textContent = key[x];
-                        SVGObj.setAttribute("fill", "rgb(0,0,0");
+                        SVGObj.setAttribute("fill", "rgb(255,255,255");
                     }
+                    SVGObj.style.stroke="rgb(255,255,255";
+                    SVGObj.setAttribute("x", 120+12*(x-xfrom+10)-5);
+                    SVGObj.setAttribute("y", ysize+delypos-10);
+                    SVGObj.setAttribute("width", "12");
+                    SVGObj.setAttribute("height", "12");
+                    SVGObj.setAttribute("text-anchor", "middle");
+                    SVGObj.setAttribute("pointer-events","none");
+                    svg.appendChild(SVGObj);
+                    SVGObj= document.createElementNS(NS, "text");
+                    SVGObj.setAttribute("y", ysize+delypos);
+                    SVGObj.setAttribute("font-size", "13");
+                    SVGObj.setAttribute("font-weight", "400");
+                    SVGObj.textContent = key[x];
+                    SVGObj.setAttribute("fill", N_cl);
                     SVGObj.setAttribute("x", 120+12*(x-xfrom+10));
                     SVGObj.setAttribute("text-anchor", "middle");
                     SVGObj.setAttribute("pointer-events","none");
                     svg.appendChild(SVGObj);
+                    SVGObj= document.createElementNS(NS, "text");
+                    SVGObj.setAttribute("y", ysize+delypos);
+                    SVGObj.setAttribute("font-size", "13");
+                    SVGObj.setAttribute("font-weight", "400");
+                    SVGObj.textContent = key[x];
+                    SVGObj.setAttribute("fill", N_cl);
+                    SVGObj.setAttribute("x", 120+12*(x-xfrom+10));
+                    SVGObj.setAttribute("text-anchor", "middle");
+                    SVGObj.setAttribute("pointer-events","none");
+                    svg.appendChild(SVGObj);
+
+
                 }
                 else {
                     var fontsize1 = 4+ Math.floor(13*no_indel_arr[id][Object.keys(no_indel_arr[id])[0]]/(no_indel_arr[id][Object.keys(no_indel_arr[id])[0]]+no_indel_arr[id][Object.keys(no_indel_arr[id])[1]]))

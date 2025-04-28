@@ -543,6 +543,9 @@ div.selector {
                     <label class="btn btn-secondary" onclick="SaveReport();">
                        Indel Excel
                     </label>
+                    <label class="btn btn-secondary" onclick="SaveReportcsv1();">
+                        SNV full
+                    </label>
                     <label class="btn btn-secondary" onclick="SaveReportcsv();">
                        Indel CSV
                     </label>
@@ -1596,6 +1599,8 @@ function FileReceived() {
     } else {
         DrawPie();
         DrawPie_rima();
+        var end_time = new Date()
+        run_time = end_time - start_time
     }
     }
 
@@ -3133,15 +3138,14 @@ function SelectClone_off(barcode) {
     else alert("No data available for the selected barcode.");
 }
 
-function GetWellPos(i)
-{
+function GetWellPos(i) {
     var ABC = "ABCDEFGHIJKL";
     return ABC[Math.floor(i/12)] + ((i%12)+1);
 }
 
 //Prepare Alignment function that summaries static variable for plot:
 
-function Pre_PlotAlignment(id, locus){
+function Pre_PlotAlignment(id, locus) {
     //compute number of aligned read
     // check genotype
     // remove low entry
@@ -3167,13 +3171,13 @@ function Pre_PlotAlignment(id, locus){
     summary_track[id][8] = 0;
 
     for (let key in aln_dict[id]){
-        if ((aln_dict[id][key][1]!=8)&&(aln_dict[id][key][0]>(1*MutationThreshold*sum_track[id]/100))&&(key.split('\n')[0].trim().length>region_analyse*2-4)){
+        if ((aln_dict[id][key][1]!=8)&&(aln_dict[id][key][0]>(1*MutationThreshold*sum_track[id]/100))&&(key.split('\n')[0].trim().length>region_analyse*2-4)) {
             aln_dict_fil[id][key] = aln_dict[id][key][0];
         }
     }
     // assign new dictionary base on the RTT score
     var validate_ins
-    if (rtt!=''){
+    if (rtt!='') {
         //for reupdate RTT
         var ins_arr = []
         for (let key in aln_dict_fil[id]){
@@ -3263,10 +3267,13 @@ function Pre_PlotAlignment(id, locus){
     summary_track[id][4] = out_indel[id];
     summary_track[id][7] = no_indel[id]+inf_indel[id]+out_indel[id]+targetingOligo[id] + summary_track[id][6] + summary_track[id][8];
     if (summary_track[id][7]>0) {
-        summary_track_select[id+1] =  [GetWellPos(id), (summary_track[id][1]/summary_track[id][7]*100).toFixed(2), (summary_track[id][2]/summary_track[id][7]*100).toFixed(2), (summary_track[id][3]/summary_track[id][7]*100).toFixed(2), (summary_track[id][4]/summary_track[id][7]*100).toFixed(2),(summary_track[id][6]*100/summary_track[id][7]).toFixed(2),(summary_track[id][8]*100/summary_track[id][7]).toFixed(2) , summary_track[id][7]]
+        summary_track_select[id+1] = [GetWellPos(id), (summary_track[id][1]/summary_track[id][7]*100).toFixed(2), (summary_track[id][2]/summary_track[id][7]*100).toFixed(2), (summary_track[id][3]/summary_track[id][7]*100).toFixed(2), (summary_track[id][4]/summary_track[id][7]*100).toFixed(2),(summary_track[id][6]*100/summary_track[id][7]).toFixed(2),(summary_track[id][8]*100/summary_track[id][7]).toFixed(2) , summary_track[id][7]]
     }
     else {
-        summary_track_select[id+1] =  [GetWellPos(id), summary_track[id][1],  summary_track[id][2], summary_track[id][3], summary_track[id][4],0, 0 ,summary_track[id][7]]
+        summary_track_select[id+1] = [GetWellPos(id), summary_track[id][1],  summary_track[id][2], summary_track[id][3], summary_track[id][4],0, 0 ,summary_track[id][7]]
+    }
+    for (let key in aln_dict_fil[id]) {
+        summary_track_select1.push([id, key, (aln_dict[id][key][0]*100/summary_track[id][7]).toFixed(2)])
     }
 
     // check genotype
@@ -3374,8 +3381,7 @@ function PlotAlignment(id, locus){
             aln_dict_bulk_1[key] = aln_dict_fil[id][key];
         }
     }
-    aln_dict_fil[id] = aln_dict_bulk_1
-
+    aln_dict_fil[id] = aln_dict_bulk_1;
     var svg = document.getElementById("SVGmut");
     var NS="http://www.w3.org/2000/svg";
     var svgns = "http://www.w3.org/2000/svg";
@@ -5017,6 +5023,40 @@ function SaveReportcsv() {
     a.click();
 }
 
+function SaveReportcsv1() {
+    const now = new Date();
+    var config_data = "# Analysis on: " + now.toString()+"\n";
+    config_data += "# Gene: " +document.getElementsByName("GeneName")[0].value +"\n";
+    config_data += "# sgRNA:" + rightbs +"\n";
+    config_data += "# Referfence: " + locus +"\n";
+    config_data += "# Target Oligo: " + targetingOligo1 +"\n";
+    config_data += "# RTT: " + rtt +"\n";
+    config_data += "# Desired Edit: " + d_edit +"\n";
+    config_data += "# Partial Edit: " + p_edit +"\n";
+    config_data += "# Region Analyser: " + 2*region_analyse +"\n";
+    config_data += "# Indel Threshold: " + MutationThreshold +"\n";
+    config_data += "# Phred Threshold: " + PhredThreshold +"\n";
+    config_data += "# Run time: " + run_time +"\n";
+
+    const csvContent = config_data + summary_track_select1.map(row => row.join(";")).join("\n\n");
+    var bb = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+    var a = document.createElement('a');
+    var ML_mode = document.getElementById('run_mode').checked;
+    if (ML_mode){
+        a.download = document.getElementsByName("GeneName")[0].value+"_ML.csv";
+    }
+    else{
+        a.download = document.getElementsByName("GeneName")[0].value+".csv";
+    }
+    
+    a.href = window.URL.createObjectURL(bb);
+    a.textContent = 'Click here to save';
+    a.dataset.downloadurl = ['text/plain', a.download, a.href].join(':');
+    document.getElementById("save").appendChild(a);
+    a.click();
+}
+
+
 function SaveSVGAlignment()
 {
     var svg = document.getElementById("DIV_alignment");
@@ -5338,6 +5378,7 @@ function myFunction10() {
 
 function Start(){
     document.getElementById("progress").style.display = '';
+    start_time = new Date()
     //Reset all variables
     files_name = []
     for (var i=0; i<96; i++) {
@@ -5648,6 +5689,9 @@ var sum_track = Array(96)
 var summary_track = Array(96)
 var summary_track_select = Array(97)
 summary_track_select[0] = ["Sample", "%Oligo (KI)", "% WT", "% In-frame", "% Out-frame", "% Desired Edit","% Partial Edit",  "# Total Aligned Read"]
+var summary_track_select1 = Array()
+summary_track_select1[0] = ["Sample", "Genotype", "Count"]
+
 var phred_array = Array(96)
 var length_array = Array(96)
 var region_analyse = 80;
@@ -5697,6 +5741,9 @@ const G_cl = "rgb(200, 100, 0)"
 const N_cl = "rgb(0, 0, 0)"
 const KI_1 = "rgb(154, 34, 93)"
 const KI_2 = "rgb(31, 89, 143)"
+
+var start_time
+var run_time
 
 //Using local files
 var CRISPRlib = ""

@@ -464,7 +464,7 @@ div.selector {
             
             <b>Code Availability </b> 
             <br>
-            The source code for CRISPRnano is available at <a href="https://github.com/thachnguyen/CRISPRnano">https://github.com/thachnguyen/CRISPRnano</a> <br><br>
+            The source code for CRISPRnano is available at <a href="https://github.com/thachnguyen/CRISPRnano2">https://github.com/thachnguyen/CRISPRnano2</a> <br><br>
             
             <b>Test data </b> 
             <br>
@@ -590,6 +590,15 @@ div.selector {
                     <input type="submit" name="submit" value="START OFFTARGET ANALYZER " class="btn btn-sm btn-light brd" id="submit" onclick="Start2();">
                     <br>
                     <br>
+                    <div class="column">
+                        <p>(Optional) Drag the slider to the left or right to change the Indel threshold</p>
+                    <div class="slidecontainer">
+                        <input type="range" min="0.2" max="50" value="2" class="slider" id="myRange" oninput="this.nextElementSibling.value = this.value">
+                        <p>Indel threshold: <span id="indel_threshold_var"></span> 
+                        </p>
+                        <br> <br><br>
+                      </div>
+                    </div> 
    
                     <div id="progress1" style="display:none; padding: 10px; border: 10px solid #CCC; background: #EEE; width:80%; position:absolute; top:40%;left:0%">
                     </div>
@@ -816,6 +825,7 @@ function bsa_gen_score_matrix(n, a, b){
  *
  * @return query profile. It is a two-dimensional integer matrix.
  */
+ 
 function bsa_gen_query_profile(_s, _m, table){
     var s = typeof _s == 'string'? bsg_enc_seq(_s, table) : _s;
     var qp = [], matrix;
@@ -845,6 +855,7 @@ function bsa_gen_query_profile(_s, _m, table){
     * higher 28 bits keeps the length and lower 4 bits the operation in order of
     * "MIDNSH".
     */
+
 function bsa_align(target, query, matrix, gapsc, is_local) {
 	// convert bases to integers
 	var t = bsg_enc_seq(target, bst_nt5);
@@ -1273,7 +1284,7 @@ function FileReceived() {
 
         if (readlen >10) {
             if (length_array[id].hasOwnProperty(readlen)){
-                length_array[id][readlen]+=1
+                length_array[id][readlen] += 1
             }
             else {
                 length_array[id][readlen] = 1
@@ -1584,7 +1595,7 @@ function FileReceived() {
     CurrentFileChunk++;
 
     if ((CurrentFileChunk)*chunksize >= files[CurrentFileId].size) {
-            Pre_PlotAlignment(id, locus)
+            Pre_PlotAlignment(id, locus, MutationThreshold)
             PlotAlignment(id, locus)
             CurrentFileId++;
             CurrentFileChunk = 0;
@@ -2989,7 +3000,7 @@ function DrawPie_off()
         var imageElement = document.createElementNS(NS, "image");
         imageElement.setAttribute("x", midx-15);
         imageElement.setAttribute("y", midy+250);
-        if (summary_track_off[gene_i][7] <5 || divide_zero(summary_track_off[gene_i][4]*100,summary_track_off[gene_i][7])< 2){
+        if (gene_i ==0 || summary_track_off[gene_i][7] <5 || divide_zero(summary_track_off[gene_i][4]*100,summary_track_off[gene_i][7])< 2){
         imageElement.setAttribute("href", "crisprnano2/OK.ico");
         imageElement.setAttribute("width", 40); // Set the width of the image
         imageElement.setAttribute("height", 40); // Set the height of the image 
@@ -3141,7 +3152,7 @@ function GetWellPos(i)
 
 //Prepare Alignment function that summaries static variable for plot:
 
-function Pre_PlotAlignment(id, locus){
+function Pre_PlotAlignment(id, locus, MutationThreshold){
     //compute number of aligned read
     // check genotype
     // remove low entry
@@ -4965,7 +4976,7 @@ function LoadData(){
                     delete aln_dict[id][key]
                 }
             }            
-            Pre_PlotAlignment(id, locus);
+            Pre_PlotAlignment(id, locus, MutationThreshold);
             PlotAlignment(id, locus);
             //Update for wrong encoding entries
         }
@@ -5582,6 +5593,29 @@ var bst_nt5 = [
     4, 4, 4, 4,  4, 4, 4, 4,  4, 4, 4, 4,  4, 4, 4, 4,
     4, 4, 4, 4,  4, 4, 4, 4,  4, 4, 4, 4,  4, 4, 4, 4
 ];
+
+var slider = document.getElementById("myRange");
+var output = document.getElementById("indel_threshold_var");
+output.innerHTML = slider.value;
+
+slider.oninput = function() {
+    output.innerHTML = this.value;
+    MutationThreshold = 1*this.value;
+    for (let id=0;id <96;id++){
+        for (let key in aln_dict[id]){
+            if ((aln_dict[id][key][1]!=8)&&(aln_dict[id][key][0]>(1*MutationThreshold*sum_track[id]/100))&&(key.split('\n')[0].trim().length>region_analyse*2-4)){
+                aln_dict_fil[id][key] = aln_dict[id][key][0];
+                }
+            }            
+            Pre_PlotAlignment(id, locus, MutationThreshold);
+            PlotAlignment(id, locus);
+            //Update for wrong encoding entries
+        }
+        DrawPie();
+        DrawPie_rima();
+        SelectClone(0);
+}
+
 
 function binQualityScores(qualityScores, resolution) {
             const bins = new Array(Math.ceil(40 / resolution)).fill(0);

@@ -1254,7 +1254,8 @@ function FileReceived() {
         if (cursor4 >= origlen) break;
         else cursor = cursor4+1;
 
-        var read = original.slice(cursor1+1,cursor2); 
+        var read = original.slice(cursor1+1,cursor2);
+        read = ReverseComplement(read) 
         var phred = original.slice(cursor3+1,cursor4); 
         var readlen = read.length;
         var aln_type;
@@ -5357,9 +5358,7 @@ function Start(){
     p_edit = document.getElementsByName("p_edit")[0].value.replace(/[\s\n-]+/g, '').toUpperCase(); //partial edit
 
     //Check 3 times locus
-    if (locus == ''){
-        locus = document.getElementsByName("Locus")[0].value.replace(/[\s\n]+/g, '').toUpperCase(); //reference sequence
-    }
+    locus = document.getElementsByName("Locus")[0].value.replace(/[\s\n]+/g, '').toUpperCase(); //reference sequence
 
     if (locus==''){
         getFastaSequence();

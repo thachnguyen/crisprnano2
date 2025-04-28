@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Multi FASTQ Interleaver</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      text-align: center;
+      padding: 30px;
+    }
+    .upload-section {
+      margin-bottom: 30px;
+    }
+    input[type="file"] {
+      display: block;
+      margin: 10px auto;
+    }
+    ul {
+      list-style: none;
+      padding: 0;
+    }
+    li {
+      margin: 4px 0;
+    }
+    button {
+      margin-top: 30px;
+      padding: 10px 20px;
+      font-size: 16px;
+    }
+    .matched {
+      margin-top: 20px;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Multi FASTQ Interleaver</h1>
+
+  <div class="upload-section">
+    <label><strong>Select R1 files</strong></label>
+    <input type="file" id="input-r1" multiple accept=".fastq,.fq" />
+    <ul id="r1-list"></ul>
+  </div>
+
+  <div class="upload-section">
+    <label><strong>Select R2 files</strong></label>
+    <input type="file" id="input-r2" multiple accept=".fastq,.fq" />
+    <ul id="r2-list"></ul>
+  </div>
+
+  <div class="matched" id="matched-status">No matched pairs</div>
+
+  <button id="process-btn" disabled>Download Interleaved Files</button>
+
+  <script>
+    const inputR1 = document.getElementById('input-r1');
+    const inputR2 = document.getElementById('input-r2');
+    const r1List = document.getElementById('r1-list');
+    const r2List = document.getElementById('r2-list');
+    const status = document.getElementById('matched-status');
+    const processBtn = document.getElementById('process-btn');
+
+    let filesR1 = {};
+    let filesR2 = {};
+
+    function extractSampleName(filename, readType) {
+      // e.g., sample_S1_L001_R1_001.fastq => sample_S1_L001
+      return filename.replace(new RegExp(`_R${readType}_?\\d*\\.f(ast)?q$`, 'i'), '');
+    }
+
+    function handleFiles(fileList, type) {
+      const fileMap = {};
+      const ul = type === 1 ? r1List : r2List;
+      ul.innerHTML = '';
+
+      [...fileList].forEach(file => {
+        const key = extractSampleName(file.name, type);
+        if (key) {
+          fileMap[key] = file;
+          const li = document.createElement('li');
+          li.textContent = `${key} (${file.name})`;
+          ul.appendChild(li);
+        }
+      });
+
+      if (type === 1) filesR1 = fileMap;
+      else filesR2 = fileMap;
+
+      updateMatchedStatus();
+    }
+
+    function updateMatchedStatus() {
+      const matched = Object.keys(filesR1).filter(k => filesR2[k]);
+      status.textContent = matched.length
+        ? `Matched pairs: ${matched.length}`
+        : 'No matched pairs';
+      processBtn.disabled = matched.length === 0;
+    }
+
+    inputR1.addEventListener('change', () => handleFiles(inputR1.files, 1));
+    inputR2.addEventListener('change', () => handleFiles(inputR2.files, 2));
+
+    processBtn.addEventListener('click', async () => {
+      const matched = Object.keys(filesR1).filter(k => filesR2[k]);
+
+      for (const key of matched) {
+        const r1Text = await filesR1[key].text();
+        const r2Text = await filesR2[key].text();
+
+        const r1Lines = r1Text.trim().split('\n');
+        const r2Lines = r2Text.trim().split('\n');
+
+        const interleaved = [];
+        for (let i = 0; i + 3 < r1Lines.length && i + 3 < r2Lines.length; i += 4) {
+          interleaved.push(
+            r1Lines[i], r1Lines[i + 1], r1Lines[i + 2], r1Lines[i + 3],
+            r2Lines[i], r2Lines[i + 1], r2Lines[i + 2], r2Lines[i + 3]
+          );
+        }
+
+        const blob = new Blob([interleaved.join('\n')], { type: 'text/plain' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `${key}_interleaved.fastq`;
+        a.click();
+        URL.revokeObjectURL(url);
+      }
+    });
+  </script>
+</body>
+</html>
