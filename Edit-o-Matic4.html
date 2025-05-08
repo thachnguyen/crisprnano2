@@ -1197,9 +1197,9 @@ function FileReceived() {
             targetingOligo1 = score_oligo_ref_fw[0]>=score_oligo_ref_rv[0] ? targetingOligo1: ReverseComplement(targetingOligo1)
         }
 
+
     while (true) {
         var cursor1 = cursor;
-        var oli_aligned = false
         while (++cursor1<origlen && original[cursor1] != "\n");
         var cursor2 = cursor1+1;
         while (++cursor2<origlen && original[cursor2] != "\n");
@@ -1240,15 +1240,13 @@ function FileReceived() {
         if (gcContent[id].hasOwnProperty(gcContent_1)){
             gcContent[id][gcContent_1]+=1
         }
-        else {
-            gcContent[id][gcContent_1] = 1
+        else { gcContent[id][gcContent_1] = 1
         }
         
         if ((mean_phred > PhredThreshold)&&(CurrentFileChunk<2)){ 
             if (targetingOligo1 !=""){
                 var index_oli_read = read.search(targetingOligo1);
                 var index_oli_read2 = ReverseComplement(read).search(targetingOligo1);
-                var oli_aligned = false
                 if ((index_oli_read!=-1)||(index_oli_read2!=-1)){
                     aln_type = 7;
                     // remove this part in knockin, speed up the program
@@ -1256,25 +1254,37 @@ function FileReceived() {
                         var rst = bsa_align(locus, read, [ms, mms], [gapo, gape], is_local=true);
                         if (rst[0] < (region_analyse/2)){
                             try{
-                            read = ReverseComplement(read);
-                            rst = bsa_align(locus, read, [ms, mms], [gapo, gape], is_local=true);
+                                read = ReverseComplement(read);
+                                rst = bsa_align(locus, read, [ms, mms], [gapo, gape], is_local=true);
                             }
                             catch (error){}
                         }
-                        var str_oli = ''
                         var fmt1 = bsa_cigar2gaps_breakpoint(locus, read, rst[1], rst[2], BreakPoint-region_analyse*1, BreakPoint + region_analyse*1);
                         var fmt = fmt1[0]
-                        aln_type = fmt1[1]
                         str_oli += fmt[0] + '\n';
                         str_oli += fmt[1] + '\n';
                         oli_aligned = true
-                        aln_dict[id][str_oli] = Array(2)
-                        aln_dict[id][str_oli][0] = 1
-                        aln_dict[id][str_oli][1] = aln_type
+                        if (aln_dict[id].hasOwnProperty(str_oli)){
+                            aln_dict[id][str_oli][0]+=1
+                        }
+                        else {
+                            aln_dict[id][str_oli] = Array(2)
+                            aln_dict[id][str_oli][0] = 1
+                            aln_dict[id][str_oli][1] = aln_type
+                        }
+
+                        
                     }
                     else {
-                        aln_dict[id][str_oli][0]+=1
-                    } 
+                        if (aln_dict[id].hasOwnProperty(str_oli)){
+                            aln_dict[id][str_oli][0]+=1
+                        }
+                        else {
+                            aln_dict[id][str_oli] = Array(2)
+                            aln_dict[id][str_oli][0] = 1
+                            aln_dict[id][str_oli][1] = aln_type
+                        }
+                        }
                 }
                 else {
                     //Check WT manually, speed up
@@ -1369,7 +1379,6 @@ function FileReceived() {
                             }
                         }
                     }
-
                     if (aln_type !=0){
                         if (aln_dict[id].hasOwnProperty(str1)){
                             aln_dict[id][str1][0]+=1
@@ -1406,66 +1415,45 @@ function FileReceived() {
         else if (mean_phred > PhredThreshold){           
             if (targetingOligo1 !=""){
                 var index_oli_read = read.search(targetingOligo1);
-                if (index_oli_read!=-1){
+                var index_oli_read2 = ReverseComplement(read).search(targetingOligo1);
+                if ((index_oli_read!=-1)||(index_oli_read2!=-1)){
                     aln_type = 7;
                     // remove this part in knockin, speed up the program
-                    var str1 = ''
-                    str1 += read.substring(index_oli_read- oligo_index, index_oli_read- oligo_index + region_analyse*2)+ '\n'+ '\n';
-                    if (aln_dict[id].hasOwnProperty(str1)){
-                        aln_dict[id][str1][0]+=1
+                    if (!oli_aligned){
+                        var rst = bsa_align(locus, read, [ms, mms], [gapo, gape], is_local=true);
+                        if (rst[0] < (region_analyse/2)){
+                            try{
+                            read = ReverseComplement(read);
+                            rst = bsa_align(locus, read, [ms, mms], [gapo, gape], is_local=true);
+                            }
+                            catch (error){}
+                        }
+                        var fmt1 = bsa_cigar2gaps_breakpoint(locus, read, rst[1], rst[2], BreakPoint-region_analyse*1, BreakPoint + region_analyse*1);
+                        var fmt = fmt1[0]
+                        str_oli += fmt[0] + '\n';
+                        str_oli += fmt[1] + '\n';
+                        oli_aligned = true
+                        if (aln_dict[id].hasOwnProperty(str_oli)){
+                            aln_dict[id][str_oli][0]+=1
+                        }
+                        else {
+                            aln_dict[id][str_oli] = Array(2)
+                            aln_dict[id][str_oli][0] = 1
+                            aln_dict[id][str_oli][1] = aln_type
+                        }
+                        
                     }
                     else {
-                        aln_dict[id][str1] = Array(2)
-                        aln_dict[id][str1][0] = 1
-                        aln_dict[id][str1][1] = aln_type
-                    }
-                    }
-                else {
-                    index_oli_read = ReverseComplement(read).search(targetingOligo1);
-                    if (index_oli_read!=-1){
-                        read = ReverseComplement(read)
-                        aln_type = 7;
-                    // remove this part in knockin, speed up the program
-                        var str1 = ''
-                        str1 += read.substring(index_oli_read- oligo_index, index_oli_read- oligo_index + region_analyse*2)+ '\n'+ '\n';
-                        if (aln_dict[id].hasOwnProperty(str1)){
-                            aln_dict[id][str1][0]+=1
+                        if (aln_dict[id].hasOwnProperty(str_oli)){
+                            aln_dict[id][str_oli][0]+=1
                         }
                         else {
-                            aln_dict[id][str1] = Array(2)
-                            aln_dict[id][str1][0] = 1
-                            aln_dict[id][str1][1] = aln_type
+                            aln_dict[id][str_oli] = Array(2)
+                            aln_dict[id][str_oli][0] = 1
+                            aln_dict[id][str_oli][1] = aln_type
                         }
-                    }
-
-                    //Check WT manually, speed up
-                    else if (read.includes(locus.substring(BreakPoint-region_analyse*1, BreakPoint + region_analyse*1))){
-                        aln_type = 1;
-                    // remove this part in knockin, speed up the program
-                        var str1 = ''
-                        str1 += locus.substring(BreakPoint-region_analyse*1, BreakPoint + region_analyse*1)+ '\n'+ '\n';
-                        if (aln_dict[id].hasOwnProperty(str1)){
-                            aln_dict[id][str1][0]+=1
                         }
-                        else {
-                            aln_dict[id][str1] = Array(2)
-                            aln_dict[id][str1][0] = 1
-                            aln_dict[id][str1][1] = aln_type
-                        }
-                    }
-                    else if (read.includes(ReverseComplement(locus.substring(BreakPoint-region_analyse*1, BreakPoint + region_analyse*1)))){
-                        aln_type = 1;
-                        var str1 = ''
-                        str1 += locus.substring(BreakPoint-region_analyse*1, BreakPoint + region_analyse*1)+ '\n'+ '\n';
-                        if (aln_dict[id].hasOwnProperty(str1)){
-                            aln_dict[id][str1][0]+=1
-                        }
-                        else {
-                            aln_dict[id][str1] = Array(2)
-                            aln_dict[id][str1][0] = 1
-                            aln_dict[id][str1][1] = aln_type
-                        }
-                    }
+                }
                     
                     else if (!prime_mode){
                         if (read.includes(locus_check1)||ReverseComplement(read).includes(locus_check1)||read.includes(locus_check2)||ReverseComplement(read).includes(locus_check2)){// UPDATE v2.0 checking 4 posiblities of read, threshold score =region_analyse+10 
@@ -1532,7 +1520,7 @@ function FileReceived() {
                 }           
             }
         }
-        }
+        
     RestFromLastChunk = original.substr(cursor);
     reader.result = "";
     reader = "";
@@ -1552,7 +1540,8 @@ function FileReceived() {
         DrawPie();
         DrawPie_rima();
     }
-    }
+}
+    
 
 function FileReceived_off() {
     var original = RestFromLastChunk+reader.result;
@@ -3556,16 +3545,14 @@ function PlotAlignment(id, locus){
                 }
             }
         }
-        
+        // Draw HET for no indel
         if (aln_dict[id][key][1]==1 && (Object.keys(no_indel_arr[id]).length >1)){
             for (let x=xfrom-10; x<xto-10; x++){
             //draw main track:
                 if (Object.keys(no_indel_arr[id])[0][x]==Object.keys(no_indel_arr[id])[1][x]){
-
                     SVGObj= document.createElementNS(svgns, "rect");
                     if (key[x]=="T"){SVGObj.textContent = key[x];
                         SVGObj.setAttribute("fill", "rgb(204,163,255)");
-
                     }
                     else if (key[x]=="A"){SVGObj.textContent = key[x];
                         SVGObj.setAttribute("fill", "rgb(100, 240, 100)");
@@ -3611,7 +3598,7 @@ function PlotAlignment(id, locus){
                     SVGObj.setAttribute("pointer-events","none");
                     svg.appendChild(SVGObj);
                 }
-                else {
+                else if (typeof(Object.keys(no_indel_arr[0])[1][x])!="undefined"){
                     var fontsize1 = 4+ Math.floor(13*no_indel_arr[id][Object.keys(no_indel_arr[id])[0]]/(no_indel_arr[id][Object.keys(no_indel_arr[id])[0]]+no_indel_arr[id][Object.keys(no_indel_arr[id])[1]]))
                     var fontsize2 = 4+ Math.floor(13*no_indel_arr[id][Object.keys(no_indel_arr[id])[1]]/(no_indel_arr[id][Object.keys(no_indel_arr[id])[0]]+no_indel_arr[id][Object.keys(no_indel_arr[id])[1]]))
                     SVGObj= document.createElementNS(NS, "text");
@@ -3698,10 +3685,9 @@ function PlotAlignment(id, locus){
                     SVGObj.setAttribute("font-weight", "400");
                 }
                 else if ('ACTGN'.includes(key[x])){
-                                        SVGObj= document.createElementNS(svgns, "rect");
+                    SVGObj= document.createElementNS(svgns, "rect");
                     if (key[x]=="T"){SVGObj.textContent = key[x];
                         SVGObj.setAttribute("fill", "rgb(204,163,255)");
-
                     }
                     else if (key[x]=="A"){SVGObj.textContent = key[x];
                         SVGObj.setAttribute("fill", "rgb(100, 240, 100)");
@@ -5676,6 +5662,8 @@ var out_indel_arr = Array(96)
 var targetingOligo = Array(96)
 var targetingOligo_arr = Array(96)
 var rima_hist_all = Array(96)
+var oli_aligned = false 
+var str_oli = ''
 
 const T_cl = "rgb(255,0,0)"
 const A_cl = "rgb(0,150,0)"
