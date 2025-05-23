@@ -177,6 +177,8 @@ div.selector {
                                 <button type="button"  name="result" class="btn btn-info" onclick="TabClicked(2);">MANUAL</button>
 
                                 <button type="button"  name="result" class="btn btn-info" onclick="TabClicked(6);">TEST DATA</button>
+                                <button type="button"  name="version" class="btn btn-info" onclick="TabClicked(9);">VERSION</button>
+
                             </div>
                         </div>
                     </div>
@@ -469,11 +471,66 @@ div.selector {
             
             <b>Code Availability </b> 
             <br>
-            The source code for CRISPRnano is available at <a href="https://github.com/thachnguyen/CRISPRnano2">https://github.com/thachnguyen/CRISPRnano2</a> <br><br>
+            The source code for Edit-o-Matic is available at <a href="https://github.com/thachnguyen/CRISPRnano2">https://github.com/thachnguyen/CRISPRnano2</a> <br><br>
             
             <b>Test data </b> 
             <br>
-            The lightweight test data for CRISPRnano2 is available at <a href="https://iufduesseldorf-my.sharepoint.com/:u:/g/personal/thach_nguyen_iuf-duesseldorf_de/ERPO_Y-8hg5Pq8KZv-OVNucBR211XB3UxcmxhzkBW8_gjg?e=K0tCeg">Lightweight Test Data.</a><br><br>
+            The lightweight test data for Edit-o-Matic is available at <a href="https://iufduesseldorf-my.sharepoint.com/:u:/g/personal/thach_nguyen_iuf-duesseldorf_de/ERPO_Y-8hg5Pq8KZv-OVNucBR211XB3UxcmxhzkBW8_gjg?e=K0tCeg">Lightweight Test Data.</a><br><br>
+            <b>
+                <br>
+                The full test data for Edit-o-Matic is available at <a href="https://iufduesseldorf-my.sharepoint.com/:u:/g/personal/thach_nguyen_iuf-duesseldorf_de/EV2AyPDA7lJKn9sXQPjLQR4B2WFcFEsO8vW8zqc2Uorr0g?e=tmPv6y">Full Test Data.</a><br><br>
+                <b>
+                Browser compatibility
+            </b>
+            <table style="width:100%">
+                <tbody><tr>
+                    <td>OS</td>
+                    <td>Version</td>
+                    <td>Chrome</td>
+                    <td>Firefox</td>
+                    <td>Microsoft Edge</td>
+                    <td>Safari</td>
+                </tr>
+                <tr>
+                    <td>Linux</td>
+                    <td>Ubuntu 20.04</td>
+                    <td>Version 131.0.6778.108</td>
+                    <td>98.0</td>
+                    <td>n/a</td>
+                    <td>n/a</td>
+                </tr>
+                <tr>
+                    <td>MacOS</td>
+                    <td>Monterey</td>
+                    <td>Version 131.0.6778.108</td>
+                    <td>98.0</td>
+                    <td>n/a</td>
+                    <td>15.3 </td>
+                </tr>
+                <tr>
+                    <td>Windows</td>
+                    <td>10</td>
+                    <td>Version 131.0.6778.108</td>
+                    <td>98.0</td>
+                    <td>99.0.115039</td>
+                    <td>n/a</td>
+                </tr>
+                </tbody></table>
+            
+        </div>
+
+        <div id="version_note" style="position:center; top:80px; display: none;">
+            <br>
+            <br>
+            <h3>VERSION NOTE</h3>
+            
+            <b>Code Availability </b> 
+            <br>
+            The source code for Edit-o-Matic is available at <a href="https://github.com/thachnguyen/Edit-o-Matic">https://github.com/thachnguyen/Edit-o-Matic</a> <br><br>
+            
+            <b>Test data </b> 
+            <br>
+            The lightweight test data for Edit-o-Matic is available at <a href="https://iufduesseldorf-my.sharepoint.com/:u:/g/personal/thach_nguyen_iuf-duesseldorf_de/ERPO_Y-8hg5Pq8KZv-OVNucBR211XB3UxcmxhzkBW8_gjg?e=K0tCeg">Lightweight Test Data.</a><br><br>
             <b>
                 <br>
                 The full test data for CRISPRnano2 is available at <a href="https://iufduesseldorf-my.sharepoint.com/:u:/g/personal/thach_nguyen_iuf-duesseldorf_de/EV2AyPDA7lJKn9sXQPjLQR4B2WFcFEsO8vW8zqc2Uorr0g?e=tmPv6y">Full Test Data.</a><br><br>
@@ -516,7 +573,6 @@ div.selector {
                 </tbody></table>
             
         </div>
-
         <div id="results" style="position:center; top:80px; display: none;">
             <div class="column">
                 <div class="btn-group btn-group-lg mr-3" role="group" id="result_pie" >
@@ -1125,6 +1181,8 @@ function TabClicked(i)
     else document.getElementById("testdata").style.display = "none";
     if (i==1||i==7) document.getElementById("SVGpie").style.display = "";
     else document.getElementById("SVGpie").style.display = "none";
+    if (i==9) document.getElementById("version_note").style.display = "";
+    else document.getElementById("version_note").style.display = "none";
     if (i==8) document.getElementById("SVGpie_rima").style.display = "";
     else document.getElementById("SVGpie_rima").style.display = "none";
 

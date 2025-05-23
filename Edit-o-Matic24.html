@@ -3685,10 +3685,22 @@ function PlotAlignment(id, locus){
                     SVGObj.setAttribute("font-weight", "400");
                 }
                 else if ('ACTGN'.includes(key[x])){
-                                        SVGObj= document.createElementNS(svgns, "rect");
+                    SVGObj= document.createElementNS(svgns, "rect");
+                    SVGObj.style.stroke=N_cl;
+                    SVGObj.setAttribute("x", 115+12*(x-xfrom+10));
+                    SVGObj.setAttribute("y", ysize+delypos-10);
+                    SVGObj.setAttribute("width", "11");
+                    SVGObj.setAttribute("height", "11");
+                    SVGObj.setAttribute("fill", "rgb(255,255,255");
+                    SVGObj.setAttribute("text-anchor", "middle");
+                    SVGObj.setAttribute("pointer-events","none");
+                    svg.appendChild(SVGObj);
+                    SVGObj= document.createElementNS(NS, "text");
+                    SVGObj.setAttribute("font-weight", "600");
+                }
+                SVGObj= document.createElementNS(svgns, "rect");
                     if (key[x]=="T"){SVGObj.textContent = key[x];
                         SVGObj.setAttribute("fill", "rgb(204,163,255)");
-
                     }
                     else if (key[x]=="A"){SVGObj.textContent = key[x];
                         SVGObj.setAttribute("fill", "rgb(100, 240, 100)");
@@ -3733,8 +3745,6 @@ function PlotAlignment(id, locus){
                     SVGObj.setAttribute("text-anchor", "middle");
                     SVGObj.setAttribute("pointer-events","none");
                     svg.appendChild(SVGObj);
-                }
-
             }
         }
         
