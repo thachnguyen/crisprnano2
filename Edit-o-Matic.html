@@ -177,8 +177,6 @@ div.selector {
                                 <button type="button"  name="result" class="btn btn-info" onclick="TabClicked(2);">MANUAL</button>
 
                                 <button type="button"  name="result" class="btn btn-info" onclick="TabClicked(6);">TEST DATA</button>
-                                <button type="button"  name="version" class="btn btn-info" onclick="TabClicked(9);">VERSION</button>
-
                             </div>
                         </div>
                     </div>
@@ -192,37 +190,43 @@ div.selector {
                     <label>
                         FASTQ Files (*): 
                     </label> 
-                    <br><input type="file" id="files" class="form-control" name="files[]" multiple="">
                     <!-- <small class="text-muted">Uncompressed FASTQ output files from Illumina, ONT or PacBio. Make sure that the correct ordering is applied in the file browser. The file allocation to individual pie charts can be verified by the numbers given at alignment track.</small> -->
                 </div>
                 <div class = "col-sm">
                     <label>Data type:</label>
+                    <!-- <small class="text-muted">Window size & indel rate parameter will be automatically adjusted</small> -->
+                </div>
+                <div class = "col-sm">
+                    <label>Maximum expected genotype (ML mode only): </label> 
+        
+                </div>
+                </div>
+                <div class="row">
+                    <div class = "col-sm">
+                    <input type="file" id="files" class="form-control" name="files[]" multiple="">
+                    </div>
+                    <div class = "col-sm">
                     <select id="mySelect" onchange="setValue()" class="form-control">
                         <option value="illu">Illumina</option>
                         <option value="ont">Nanopore</option>
                         <option value="pacbio">PacBio or Nanopore Duplex</option>
                     </select>
-                    <!-- <small class="text-muted">Window size & indel rate parameter will be automatically adjusted</small> -->
-                </div>
-                <div class = "col-sm">
-                    <label>Maximum expected genotype (ML mode only): </label> 
-                    <input type="text" size="30" class="form-control" id= "ML_genotype" name="ML_genotype" value="10" onchange="checkValue();">
-                    <div class="form-check">
-                        <input class="form-check-input" type="checkbox" value="" id="run_mode" checked>
-                        <label class="form-check-label">
-                          BOOSTING mode<br>
-                          <small class="text-muted">Use machine learning classification model, faster but less accurate</small>
-                        </label>
                     </div>
-        
+                    <div class = "col-sm">
+                        <input type="text" size="30" class="form-control" id= "ML_genotype" name="ML_genotype" value="10" onchange="checkValue();">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" value="" id="run_mode" checked>
+                            <label class="form-check-label">
+                              BOOSTING mode<br>
+                              <small class="text-muted">Use machine learning classification model, faster but less accurate</small>
+                            </label>
+                        </div>
+                        </div>
                 </div>
-                </div>
-                <br>
+
                 <div class="row">
                 <div class = "col-sm">
                     <label>Gene Name:</label>
-                    <input type="text" class="form-control" size="40" name="GeneName" id = "GeneName" value="" oninput="FindGRNA(this.value);" onchange="getFastaSequence()" placeholder="e.g. AHR" onblur="setTimeout('Hide_auto_complete();',500);">
-                    <div id="gene_auto_complete" class="selector" style="display:none;"></div>
                     <!-- <small class="text-muted">This will list all recommended Genes and coding region gRNAs (support Human and Mouse only). Gene names are from <a href="https://crisprnano.de/genename.txt">this </a> list. You can select the interest pair. If Gene name is blank, the customized reference sequence must be given or system will search by given sgRNA. </a></small><br> -->
                 </div>
                 <div class = "col-sm">
@@ -230,61 +234,84 @@ div.selector {
                     <div class="popup" onclick="myFunction4()">(? Click here!)
                         <span class="popuptext" id="help4">In this field the nuclease target site is entered. In Prime Editing analyser, this is pegRNA. Click again to close</span>
                     </div>
-                    <br><input type="text" class="form-control" size="40" name="RightBS" id = "RightBS" value="">
-                    <small class="text-muted">NOTE: this is pegRNA for Prime Editing Mode</small>
 
                 </div>
                 <div class = "col-sm">
                     <label> Targeting mutagenesis oligonucleotide (Knock-in), OR Base Editing:</label>  
-                    <input type="text" class="form-control" size="40" id="TargetingOligo" name="TargetingOligo" value="">
-                    <!-- <small class="text-muted"> Donor oligonucleotide sequence used to introduce a site specific genomic modification. The sequence entered should be in the same orientation as the amplicon sequence.</small> -->
-                    <div class="row">
-                        <div class = "col-sm">
-                            <div class="form-check">
-                                <input class="form-check-input" type="checkbox" value="" id="prime_editing">
-                                <small class="text-muted">
-                                Knockin-only mode (exclude INDEL)
-                                </small>
-                            </div>
-                        </div>
-                        <div class = "col-sm">
-                            <div class="form-check">
-                                <input class="form-check-input" type="checkbox" value="" id="HA">
-                                <small class="text-muted">
-                                Non-homology end joining KI
-                                </small>
-                            </div>
-                        </div>
+
                     </div>
 
                 </div>
+                </div>
+
+                <div class="row">
+                    <div class = "col-sm">
+                        <input type="text" class="form-control" size="40" name="GeneName" id = "GeneName" value="" oninput="FindGRNA(this.value);" onchange="getFastaSequence()" placeholder="e.g. AHR" onblur="setTimeout('Hide_auto_complete();',500);">
+                        <div id="gene_auto_complete" class="selector" style="display:none;"></div>
+                    </div>
+                    <div class = "col-sm">
+                        <input type="text" class="form-control" size="40" name="RightBS" id = "RightBS" value="">
+                        <small class="text-muted">NOTE: this is pegRNA for Prime Editing Mode</small>
+                    </div>
+                    <div class = "col-sm">
+                        <input type="text" class="form-control" size="40" id="TargetingOligo" name="TargetingOligo" value="">
+                        <!-- <small class="text-muted"> Donor oligonucleotide sequence used to introduce a site specific genomic modification. The sequence entered should be in the same orientation as the amplicon sequence.</small> -->
+                        <div class="row">
+                            <div class = "col-sm">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" value="" id="prime_editing">
+                                    <small class="text-muted">
+                                    Knockin-only mode (exclude INDEL)
+                                    </small>
+                                </div>
+                            </div>
+                            <div class = "col-sm">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" value="" id="HA">
+                                    <small class="text-muted">
+                                    Non-homology end joining KI
+                                    </small>
+                                </div>
+                            </div>
+
+                    </div>
                 </div>
                 <div class="hidden" id = "optional_para_Container_PE">
                     <h3>Extra options for Prime Editing</h3>
                 <div class="row">   
                     <div class = "col-sm">
                         <label>Reverse Transcription Template (RTT)  </label>
-                        <input type="text" size="30" class="form-control" id = "RTT" name="RTT" ><br>
                         <!-- <small class="text-muted">RTT (optional) is secondary guide for insertion track</small> -->
                     </div>
                     <div class = "col-sm">
                         <div class = "col-sm">
                             <label>Scaffold  </label>
-                            <input type="text" size="30" class="form-control" id = "scaffold" name="scaffold" ><br>
                             <!-- <small class="text-muted">Scaffold (optional) is extra guide for quantified insertion track</small> -->
                         </div>
                     </div>
                     <div class = "col-sm">
                         <label>Desired Edit  </label>
-                        <input type="text" size="30" class="form-control" id = "d_edit" name="d_edit" ><br>
                         <!-- <small class="text-muted">Desired edit sequence (optional) is extra guide for annotate genotype</small> -->
                     </div>
                     <div class = "col-sm">
                         <label>Partial Edit  </label>
-                        <input type="text" size="30" class="form-control" id = "p_edit" name="p_edit" ><br>
                         <!-- <small class="text-muted">Partial edit sequence (optional) is extra guide for annotate genotype</small> -->
                     </div>
-                </div> 
+                </div>
+                <div class="row">   
+                    <div class = "col-sm">
+                        <input type="text" size="30" class="form-control" id = "RTT" name="RTT" >
+                    </div>
+                    <div class = "col-sm">
+                        <input type="text" size="30" class="form-control" id = "scaffold" name="scaffold" >
+                    </div>
+                    <div class = "col-sm">
+                        <input type="text" size="30" class="form-control" id = "d_edit" name="d_edit" >
+                    </div>
+                    <div class = "col-sm">
+                        <input type="text" size="30" class="form-control" id = "p_edit" name="p_edit" >
+                    </div>
+                </div>
                 </div>
                 <h3 >Optional parameters</h3>
                 <small id="optional_para" class="text-muted">
@@ -293,7 +320,6 @@ div.selector {
                     <img src="crisprnano2/expand.jpg" alt="icon" style="width:36px; height:36px; vertical-align:middle; margin-right:5px;">  
                 </small>
                 <br>
-
                 <div id = "optional_para_Container" class="hidden">
                 <div class="row">
                         <div class = "col-sm">
@@ -301,10 +327,6 @@ div.selector {
                             <div class="popup" onclick="myFunction3()">(? Click here!)
                                 <span class="popuptext" id="help3">Reference amplicon length should be in the range of 200-300 bases with the nuclease target site located roughly in the middle. You can get the reference from Ensembl link below. Click again to close</span>
                             </div>
-                            <br><input type="text" class="form-control" size="30" id="locus" name="Locus" value=""> 
-                            <small class="text-muted">
-                                (if genename given, leave it blank):  
-                            </small>
 
                         </div>
                         <div class = "col-sm">
@@ -312,23 +334,34 @@ div.selector {
                             <div class="popup" onclick="myFunction5()">(? Click here!)
                                 <span class="popuptext" id="help5"> For ONT reads, it is recommended to use -/+15 bases around the predicted DNA lesion. Larger regions are prone to false positive indels. Larger regions (total of 200-250 bp) can be safely used with Illumina reads. You can drag and drop the central point of the predicted double strand break in the genomic sequence to the left or to the right. Default value 0 is double strand breaking point- Crisprnano will use the first index of sgRNA mapped on reference. Click again to close</span>
                             </div>
-                            <br><input type="text" size="30" name="region_analyse" id="region_analyse" value="120" class="form-control" onchange="checkValue();"><br>
                         </div>
                         <div class = "col-sm">
                             <label>Indel Threshold [%]: </label>
                             <div class="popup" onclick="myFunction9()">(? Click here!)
                                 <span class="popuptext" id="help9">The Indel Threshold determines at what relative occurrence an individual indel mutation is considered as a unique allele of the respective clone analyzed, and is thus displayed in the alignment list. Low threshold values can result in false positive allele calling due to sequencing errors, whereas high threshold values result in false negative allele calling. Values in between 0 - 100 % can be entered. We recommend to use 5% for ONT reads and 2% for Illumina reads (default is set to 5%). Click again to close.</span>
                             </div> 
-                            <br><input type="text" size="30" class="form-control" id= "allelethreshold" name="MutationThreshold" value="2" onchange="checkValue();"><br>
                         </div>
                         <div class = "col-sm">
                             <label>Phred Threshold: </label>
                             <div class="popup" onclick="myFunction10()">(? Click here!)
                                 <span class="popuptext" id="help10">The Quality threshold determine the minimum filter base, For Illumina it should be >20, For ONT it should be >10, Click again to close.</span>
-                            </div> 
-                            <br><input type="text" size="30" class="form-control" id = "phredthreshold" name="Phred" value="20" onchange="checkValue();"><br>
-                        
-
+                            </div>                         
+                        </div>
+                    </div>
+                    <div class="row">   
+                        <div class = "col-sm">
+                            <input type="text" class="form-control" size="30" id="locus" name="Locus" value=""> 
+                            <small class="text-muted">(if genename given, leave it blank):  
+                            </small>
+                        </div>
+                        <div class = "col-sm">
+                            <input type="text" size="30" name="region_analyse" id="region_analyse" value="120" class="form-control" onchange="checkValue();"><br>
+                        </div>
+                        <div class = "col-sm">
+                            <input type="text" size="30" class="form-control" id= "allelethreshold" name="MutationThreshold" value="2" onchange="checkValue();"><br>
+                        </div>
+                        <div class = "col-sm">
+                        <input type="text" size="30" class="form-control" id = "phredthreshold" name="Phred" value="20" onchange="checkValue();"><br>
                         </div>
                     </div>
 
@@ -357,6 +390,7 @@ div.selector {
                 Question: thach.nguyen**(replace with email symbol)**iuf-duesseldorf.de
             </small>
             </div>
+        
         
         <div id="about" style="position:center; top:80px; display: none;">
             <br>
@@ -471,66 +505,11 @@ div.selector {
             
             <b>Code Availability </b> 
             <br>
-            The source code for Edit-o-Matic is available at <a href="https://github.com/thachnguyen/CRISPRnano2">https://github.com/thachnguyen/CRISPRnano2</a> <br><br>
+            The source code for CRISPRnano is available at <a href="https://github.com/thachnguyen/CRISPRnano2">https://github.com/thachnguyen/CRISPRnano2</a> <br><br>
             
             <b>Test data </b> 
             <br>
-            The lightweight test data for Edit-o-Matic is available at <a href="https://iufduesseldorf-my.sharepoint.com/:u:/g/personal/thach_nguyen_iuf-duesseldorf_de/ERPO_Y-8hg5Pq8KZv-OVNucBR211XB3UxcmxhzkBW8_gjg?e=K0tCeg">Lightweight Test Data.</a><br><br>
-            <b>
-                <br>
-                The full test data for Edit-o-Matic is available at <a href="https://iufduesseldorf-my.sharepoint.com/:u:/g/personal/thach_nguyen_iuf-duesseldorf_de/EV2AyPDA7lJKn9sXQPjLQR4B2WFcFEsO8vW8zqc2Uorr0g?e=tmPv6y">Full Test Data.</a><br><br>
-                <b>
-                Browser compatibility
-            </b>
-            <table style="width:100%">
-                <tbody><tr>
-                    <td>OS</td>
-                    <td>Version</td>
-                    <td>Chrome</td>
-                    <td>Firefox</td>
-                    <td>Microsoft Edge</td>
-                    <td>Safari</td>
-                </tr>
-                <tr>
-                    <td>Linux</td>
-                    <td>Ubuntu 20.04</td>
-                    <td>Version 131.0.6778.108</td>
-                    <td>98.0</td>
-                    <td>n/a</td>
-                    <td>n/a</td>
-                </tr>
-                <tr>
-                    <td>MacOS</td>
-                    <td>Monterey</td>
-                    <td>Version 131.0.6778.108</td>
-                    <td>98.0</td>
-                    <td>n/a</td>
-                    <td>15.3 </td>
-                </tr>
-                <tr>
-                    <td>Windows</td>
-                    <td>10</td>
-                    <td>Version 131.0.6778.108</td>
-                    <td>98.0</td>
-                    <td>99.0.115039</td>
-                    <td>n/a</td>
-                </tr>
-                </tbody></table>
-            
-        </div>
-
-        <div id="version_note" style="position:center; top:80px; display: none;">
-            <br>
-            <br>
-            <h3>VERSION NOTE</h3>
-            
-            <b>Code Availability </b> 
-            <br>
-            The source code for Edit-o-Matic is available at <a href="https://github.com/thachnguyen/Edit-o-Matic">https://github.com/thachnguyen/Edit-o-Matic</a> <br><br>
-            
-            <b>Test data </b> 
-            <br>
-            The lightweight test data for Edit-o-Matic is available at <a href="https://iufduesseldorf-my.sharepoint.com/:u:/g/personal/thach_nguyen_iuf-duesseldorf_de/ERPO_Y-8hg5Pq8KZv-OVNucBR211XB3UxcmxhzkBW8_gjg?e=K0tCeg">Lightweight Test Data.</a><br><br>
+            The lightweight test data for CRISPRnano2 is available at <a href="https://iufduesseldorf-my.sharepoint.com/:u:/g/personal/thach_nguyen_iuf-duesseldorf_de/ERPO_Y-8hg5Pq8KZv-OVNucBR211XB3UxcmxhzkBW8_gjg?e=K0tCeg">Lightweight Test Data.</a><br><br>
             <b>
                 <br>
                 The full test data for CRISPRnano2 is available at <a href="https://iufduesseldorf-my.sharepoint.com/:u:/g/personal/thach_nguyen_iuf-duesseldorf_de/EV2AyPDA7lJKn9sXQPjLQR4B2WFcFEsO8vW8zqc2Uorr0g?e=tmPv6y">Full Test Data.</a><br><br>
@@ -573,6 +552,7 @@ div.selector {
                 </tbody></table>
             
         </div>
+
         <div id="results" style="position:center; top:80px; display: none;">
             <div class="column">
                 <div class="btn-group btn-group-lg mr-3" role="group" id="result_pie" >
@@ -1181,8 +1161,6 @@ function TabClicked(i)
     else document.getElementById("testdata").style.display = "none";
     if (i==1||i==7) document.getElementById("SVGpie").style.display = "";
     else document.getElementById("SVGpie").style.display = "none";
-    if (i==9) document.getElementById("version_note").style.display = "";
-    else document.getElementById("version_note").style.display = "none";
     if (i==8) document.getElementById("SVGpie_rima").style.display = "";
     else document.getElementById("SVGpie_rima").style.display = "none";
 
@@ -1297,13 +1275,13 @@ function FileReceived() {
     var ML_genotype= 1*document.getElementsByName("ML_genotype")[0].value;
 
     //check target oligo in reference or reverse ref
+    //check target oligo in reference or reverse ref
     if (targetingOligo1 !=""){
             var score_oligo_ref_fw = bsa_align(locus.substring(BreakPoint-region_analyse*1, BreakPoint + region_analyse*1), targetingOligo1, [ms, mms], [gapo, gape], is_local=true); 
             var score_oligo_ref_rv = bsa_align(locus.substring(BreakPoint-region_analyse*1, BreakPoint + region_analyse*1), ReverseComplement(targetingOligo1), [ms, mms], [gapo, gape], is_local=true);
             var oligo_index = score_oligo_ref_fw[0]>=score_oligo_ref_rv[0] ? score_oligo_ref_fw[1] : score_oligo_ref_rv[1]
             targetingOligo1 = score_oligo_ref_fw[0]>=score_oligo_ref_rv[0] ? targetingOligo1: ReverseComplement(targetingOligo1)
         }
-
     while (true) {
         var cursor1 = cursor;
         while (++cursor1<origlen && original[cursor1] != "\n");
@@ -1349,106 +1327,113 @@ function FileReceived() {
         else {
             gcContent[id][gcContent_1] = 1
         }
-        
-        if ((mean_phred > PhredThreshold)&&(CurrentFileChunk<2)){ 
-            if (targetingOligo1 !=""){
-                var index_oli_read = read.search(targetingOligo1);
-                if (index_oli_read!=-1){
-                    aln_type = 7;
-                    // remove this part in knockin, speed up the program
-                    var str1 = ''
-                    str1 += read.substring(index_oli_read- oligo_index, index_oli_read- oligo_index + region_analyse*2)+ '\n'+ '\n';
-                    if (aln_dict[id].hasOwnProperty(str1)){
-                        aln_dict[id][str1][0]+=1
-                    }
-                    else {
-                        aln_dict[id][str1] = Array(2)
-                        aln_dict[id][str1][0] = 1
-                        aln_dict[id][str1][1] = aln_type
-                    }
-                }
-                else {
-                    index_oli_read = ReverseComplement(read).search(targetingOligo1);
-                    if (index_oli_read!=-1){
-                        read = ReverseComplement(read)
-                        aln_type = 7;
-                    // remove this part in knockin, speed up the program
-                        var str1 = ''
-                        str1 += read.substring(index_oli_read- oligo_index, index_oli_read- oligo_index + region_analyse*2)+ '\n'+ '\n';
-                        if (aln_dict[id].hasOwnProperty(str1)){
-                            aln_dict[id][str1][0]+=1
-                        }
-                        else {
-                            aln_dict[id][str1] = Array(2)
-                            aln_dict[id][str1][0] = 1
-                            aln_dict[id][str1][1] = aln_type
-                        }
-                    }
+        var index_oli_read = -1;
+        var index_oli_read1 = -1;
+        if (targetingOligo1 !=""){
+                index_oli_read = read.search(targetingOligo1);
+                index_oli_read1 = ReverseComplement(read).search(targetingOligo1);
+            }
 
-                    //Check WT manually, speed up
-                    else if (read.includes(locus.substring(BreakPoint-region_analyse*1, BreakPoint + region_analyse*1))){
-                        aln_type = 1;
-                    // remove this part in knockin, speed up the program
-                        var str1 = ''
-                        str1 += locus.substring(BreakPoint-region_analyse*1, BreakPoint + region_analyse*1)+ '\n'+ '\n';
-                        if (aln_dict[id].hasOwnProperty(str1)){
-                            aln_dict[id][str1][0]+=1
-                        }
-                        else {
-                            aln_dict[id][str1] = Array(2)
-                            aln_dict[id][str1][0] = 1
-                            aln_dict[id][str1][1] = aln_type
-                        }
-                    }
-                    else if (read.includes(ReverseComplement(locus.substring(BreakPoint-region_analyse*1, BreakPoint + region_analyse*1)))){
-                        aln_type = 1;
-                        var str1 = ''
-                        str1 += locus.substring(BreakPoint-region_analyse*1, BreakPoint + region_analyse*1)+ '\n'+ '\n';
-                        if (aln_dict[id].hasOwnProperty(str1)){
-                            aln_dict[id][str1][0]+=1
-                        }
-                        else {
-                            aln_dict[id][str1] = Array(2)
-                            aln_dict[id][str1][0] = 1
-                            aln_dict[id][str1][1] = aln_type
-                        }
-                    }
+        if ((mean_phred > PhredThreshold)&&(CurrentFileChunk<2)){ 
+            // if (targetingOligo1 !=""){
+            //     var index_oli_read = read.search(targetingOligo1);
+            //     var index_oli_read1 = ReverseComplement(read).search(targetingOligo1);
+            //     if (index_oli_read!=-1){
+            //         aln_type = 7;
+            //         // remove this part in knockin, speed up the program
+            //         var str1 = ''
+            //         str1 += read.substring(index_oli_read- oligo_index, index_oli_read- oligo_index + region_analyse*2)+ '\n'+ '\n';
+            //         if (aln_dict[id].hasOwnProperty(str1)){
+            //             aln_dict[id][str1][0]+=1
+            //         }
+            //         else {
+            //             aln_dict[id][str1] = Array(2)
+            //             aln_dict[id][str1][0] = 1
+            //             aln_dict[id][str1][1] = aln_type
+            //         }
+            //     }
+            //     else {
+            //         index_oli_read = ReverseComplement(read).search(targetingOligo1);
+            //         if (index_oli_read!=-1){
+            //             read = ReverseComplement(read)
+            //             aln_type = 7;
+            //         // remove this part in knockin, speed up the program
+            //             var str1 = ''
+            //             str1 += read.substring(index_oli_read- oligo_index, index_oli_read- oligo_index + region_analyse*2)+ '\n'+ '\n';
+            //             if (aln_dict[id].hasOwnProperty(str1)){
+            //                 aln_dict[id][str1][0]+=1
+            //             }
+            //             else {
+            //                 aln_dict[id][str1] = Array(2)
+            //                 aln_dict[id][str1][0] = 1
+            //                 aln_dict[id][str1][1] = aln_type
+            //             }
+            //         }
+
+            //         //Check WT manually, speed up
+            //         else if (read.includes(locus.substring(BreakPoint-region_analyse*1, BreakPoint + region_analyse*1))){
+            //             aln_type = 1;
+            //         // remove this part in knockin, speed up the program
+            //             var str1 = ''
+            //             str1 += locus.substring(BreakPoint-region_analyse*1, BreakPoint + region_analyse*1)+ '\n'+ '\n';
+            //             if (aln_dict[id].hasOwnProperty(str1)){
+            //                 aln_dict[id][str1][0]+=1
+            //             }
+            //             else {
+            //                 aln_dict[id][str1] = Array(2)
+            //                 aln_dict[id][str1][0] = 1
+            //                 aln_dict[id][str1][1] = aln_type
+            //             }
+            //         }
+            //         else if (read.includes(ReverseComplement(locus.substring(BreakPoint-region_analyse*1, BreakPoint + region_analyse*1)))){
+            //             aln_type = 1;
+            //             var str1 = ''
+            //             str1 += locus.substring(BreakPoint-region_analyse*1, BreakPoint + region_analyse*1)+ '\n'+ '\n';
+            //             if (aln_dict[id].hasOwnProperty(str1)){
+            //                 aln_dict[id][str1][0]+=1
+            //             }
+            //             else {
+            //                 aln_dict[id][str1] = Array(2)
+            //                 aln_dict[id][str1][0] = 1
+            //                 aln_dict[id][str1][1] = aln_type
+            //             }
+            //         }
                     
-                    else if (!prime_mode){
-                        if (read.includes(locus_check1)||ReverseComplement(read).includes(locus_check1)||read.includes(locus_check2)||ReverseComplement(read).includes(locus_check2)){// UPDATE v2.0 checking 4 posiblities of read, threshold score =region_analyse+10 
-                            var rst = bsa_align(locus, read, [ms, mms], [gapo, gape], is_local=true);
-                            if (rst[0] < (region_analyse*1)){
-                                try{
-                                read = ReverseComplement(read);
-                                rst = bsa_align(locus, read, [ms, mms], [gapo, gape], is_local=true);
-                                }
-                                catch (error){}
-                            }
-                            var str1 = ''
-                            var fmt1 = bsa_cigar2gaps_breakpoint(locus, read, rst[1], rst[2], BreakPoint-region_analyse*1, BreakPoint + region_analyse*1);
-                            var fmt = fmt1[0]
-                            aln_type = fmt1[1]
-                            // var str2_arr = fmt[0].split('-')
-                            str1 += fmt[0] + '\n';
-                            str1 += fmt[1] + '\n';
-                            //aggregate aln track into dictionary
-                            // if (containsAny(locus, str2_arr)||containsAny(ReverseComplement(locus), str2_arr)){
-                            if (aln_type !=0){
-                                if (aln_dict[id].hasOwnProperty(str1)){
-                                    aln_dict[id][str1][0]+=1
-                                }
-                                else {
-                                    aln_dict[id][str1] = Array(2)
-                                    aln_dict[id][str1][0] = 1
-                                    aln_dict[id][str1][1] = aln_type
-                                }
-                            }
-                        }           
-                    }
-                }
-            } 
-            else {
-                if (read.includes(locus_check1)||ReverseComplement(read).includes(locus_check1)||read.includes(locus_check2)||ReverseComplement(read).includes(locus_check2)){// UPDATE v2.0 checking 4 posiblities of read, threshold score =region_analyse+10 
+            //         else if (!prime_mode){
+            //             if (read.includes(locus_check1)||ReverseComplement(read).includes(locus_check1)||read.includes(locus_check2)||ReverseComplement(read).includes(locus_check2)){// UPDATE v2.0 checking 4 posiblities of read, threshold score =region_analyse+10 
+            //                 var rst = bsa_align(locus, read, [ms, mms], [gapo, gape], is_local=true);
+            //                 if (rst[0] < (region_analyse*1)){
+            //                     try{
+            //                     read = ReverseComplement(read);
+            //                     rst = bsa_align(locus, read, [ms, mms], [gapo, gape], is_local=true);
+            //                     }
+            //                     catch (error){}
+            //                 }
+            //                 var str1 = ''
+            //                 var fmt1 = bsa_cigar2gaps_breakpoint(locus, read, rst[1], rst[2], BreakPoint-region_analyse*1, BreakPoint + region_analyse*1);
+            //                 var fmt = fmt1[0]
+            //                 aln_type = fmt1[1]
+            //                 // var str2_arr = fmt[0].split('-')
+            //                 str1 += fmt[0] + '\n';
+            //                 str1 += fmt[1] + '\n';
+            //                 //aggregate aln track into dictionary
+            //                 // if (containsAny(locus, str2_arr)||containsAny(ReverseComplement(locus), str2_arr)){
+            //                 if (aln_type !=0){
+            //                     if (aln_dict[id].hasOwnProperty(str1)){
+            //                         aln_dict[id][str1][0]+=1
+            //                     }
+            //                     else {
+            //                         aln_dict[id][str1] = Array(2)
+            //                         aln_dict[id][str1][0] = 1
+            //                         aln_dict[id][str1][1] = aln_type
+            //                     }
+            //                 }
+            //             }           
+            //         }
+            //     }
+            // } 
+
+            if (read.includes(locus_check1)||ReverseComplement(read).includes(locus_check1)||read.includes(locus_check2)||ReverseComplement(read).includes(locus_check2)){// UPDATE v2.0 checking 4 posiblities of read, threshold score =region_analyse+10 
                     var rst = bsa_align(locus, read, [ms, mms], [gapo, gape], is_local=true);
                     if (rst[0] < (region_analyse/2)){
                         try{
@@ -1461,6 +1446,10 @@ function FileReceived() {
                     var fmt1 = bsa_cigar2gaps_breakpoint(locus, read, rst[1], rst[2], BreakPoint-region_analyse*1, BreakPoint + region_analyse*1);
                     var fmt = fmt1[0]
                     aln_type = fmt1[1]
+                    if (index_oli_read != -1|| index_oli_read1 != -1){
+                        aln_type = 7;
+                    }
+
                     str1 += fmt[0] + '\n';
                     str1 += fmt[1] + '\n';
 
@@ -1489,7 +1478,7 @@ function FileReceived() {
                         }
                     }
                 }           
-            }
+            
         }
         
         else if (ML_mode &&(mean_phred > PhredThreshold)){
@@ -3665,169 +3654,97 @@ function PlotAlignment(id, locus){
             }
         }
         
-        if (aln_dict[id][key][1]==1){
+        if (aln_dict[id][key][1]==1 && (Object.keys(no_indel_arr[id]).length >1)){
             for (let x=xfrom-10; x<xto-10; x++){
-                //draw main track:
-                if (Object.keys(no_indel_arr[id]).length >1){
-                    if (Object.keys(no_indel_arr[id])[0][x]==Object.keys(no_indel_arr[id])[1][x]){
-                        SVGObj= document.createElementNS(svgns, "rect");
-                        if (key[x]=="T"){SVGObj.textContent = key[x];
-                            SVGObj.setAttribute("fill", "rgb(204,163,255)");
-                        }
-                        else if (key[x]=="A"){SVGObj.textContent = key[x];
-                            SVGObj.setAttribute("fill", "rgb(100, 240, 100)");
-                        }
-                        else if (key[x]=="C"){SVGObj.textContent = key[x];
-                            SVGObj.setAttribute("fill", "rgb(250, 156, 28)");
-                        }
-                        else if (key[x]=="G"){SVGObj.textContent = key[x];
-                            SVGObj.setAttribute("fill", "rgb(222, 255, 0)");
-                        }
-                        else if (key[x]=="N"){SVGObj.textContent = key[x];
-                            SVGObj.setAttribute("fill", N_cl);
-                        }
-                        else if (key[x]=="-"){SVGObj.textContent = key[x];
-                            SVGObj.setAttribute("fill", "rgb(255,255,255");
-                        }
-                        SVGObj.style.stroke="rgb(255,255,255";
-                        SVGObj.setAttribute("x", 120+12*(x-xfrom+10)-5);
-                        SVGObj.setAttribute("y", ysize+delypos-10);
-                        SVGObj.setAttribute("width", "12");
-                        SVGObj.setAttribute("height", "12");
-                        SVGObj.setAttribute("text-anchor", "middle");
-                        SVGObj.setAttribute("pointer-events","none");
-                        svg.appendChild(SVGObj);
-                        SVGObj= document.createElementNS(NS, "text");
-                        SVGObj.setAttribute("y", ysize+delypos);
-                        SVGObj.setAttribute("font-size", "13");
-                        SVGObj.setAttribute("font-weight", "400");
-                        SVGObj.textContent = key[x];
-                        SVGObj.setAttribute("fill", N_cl);
-                        SVGObj.setAttribute("x", 120+12*(x-xfrom+10));
-                        SVGObj.setAttribute("text-anchor", "middle");
-                        SVGObj.setAttribute("pointer-events","none");
-                        svg.appendChild(SVGObj);
-                        SVGObj= document.createElementNS(NS, "text");
-                        SVGObj.setAttribute("y", ysize+delypos);
-                        SVGObj.setAttribute("font-size", "13");
-                        SVGObj.setAttribute("font-weight", "400");
-                        SVGObj.textContent = key[x];
-                        SVGObj.setAttribute("fill", N_cl);
-                        SVGObj.setAttribute("x", 120+12*(x-xfrom+10));
-                        SVGObj.setAttribute("text-anchor", "middle");
-                        SVGObj.setAttribute("pointer-events","none");
-                        svg.appendChild(SVGObj);
-                    }
-                    else if (typeof(Object.keys(no_indel_arr[0])[1][x])!="undefined"){
-                        var fontsize1 = 4+ Math.floor(13*no_indel_arr[id][Object.keys(no_indel_arr[id])[0]]/(no_indel_arr[id][Object.keys(no_indel_arr[id])[0]]+no_indel_arr[id][Object.keys(no_indel_arr[id])[1]]))
-                        var fontsize2 = 4+ Math.floor(13*no_indel_arr[id][Object.keys(no_indel_arr[id])[1]]/(no_indel_arr[id][Object.keys(no_indel_arr[id])[0]]+no_indel_arr[id][Object.keys(no_indel_arr[id])[1]]))
-                        SVGObj= document.createElementNS(NS, "text");
-                        SVGObj.setAttribute("x", 120+12*(x-xfrom+10));
-                        SVGObj.setAttribute("y", ysize+delypos-5);
-                        SVGObj.setAttribute("font-size", fontsize1);
-                        SVGObj.setAttribute("font-weight", "600");
-                        if (Object.keys(no_indel_arr[id])[0][x]=="T"){SVGObj.setAttribute("fill", T_cl);
-                        }
-                        else if (Object.keys(no_indel_arr[id])[0][x]=="A"){SVGObj.setAttribute("fill", A_cl);
-                        }
-                        else if (Object.keys(no_indel_arr[id])[0][x]=="C"){SVGObj.setAttribute("fill", C_cl);
-                        }
-                        else if (Object.keys(no_indel_arr[id])[0][x]=="G"){SVGObj.setAttribute("fill", G_cl);
-                        }
-                        else if (Object.keys(no_indel_arr[id])[0][x]=="N"){SVGObj.setAttribute("fill", N_cl);
-                        }
-
-                        SVGObj.textContent = Object.keys(no_indel_arr[id])[0][x];
-                        SVGObj.setAttribute("text-anchor", "middle");
-                        SVGObj.setAttribute("pointer-events","none");
-                        svg.appendChild(SVGObj);
-
-                        SVGObj= document.createElementNS(NS, "text");
-                        SVGObj.setAttribute("x", 120+12*(x-xfrom+10));
-                        SVGObj.setAttribute("y", ysize+delypos+5);
-                        SVGObj.setAttribute("font-size", fontsize2);
-                        SVGObj.setAttribute("font-weight", "600");
-
-                        if (Object.keys(no_indel_arr[id])[1][x]=="T"){SVGObj.setAttribute("fill", T_cl);
-                        }
-                        else if (Object.keys(no_indel_arr[id])[1][x]=="A"){SVGObj.setAttribute("fill", A_cl);
-                        }
-                        else if (Object.keys(no_indel_arr[id])[1][x]=="C"){SVGObj.setAttribute("fill", C_cl);
-                        }
-                        else if (Object.keys(no_indel_arr[id])[1][x]=="G"){SVGObj.setAttribute("fill", G_cl);
-                        }
-                        else if (Object.keys(no_indel_arr[id])[1][x]=="N"){SVGObj.setAttribute("fill", N_cl);
-                        }
-                        SVGObj.textContent = Object.keys(no_indel_arr[id])[1][x];
-                        SVGObj.setAttribute("text-anchor", "middle");
-                        SVGObj.setAttribute("pointer-events","none");
-                        svg.appendChild(SVGObj);
-
-                        SVGObj= document.createElementNS(NS, "text");
-                        SVGObj.setAttribute("y", ysize+delypos+25);
-                        SVGObj.setAttribute("font-size", 8);
-                        SVGObj.setAttribute("font-weight", "400");
-                        SVGObj.textContent = no_indel_arr[id][Object.keys(no_indel_arr[id])[1]] + " "+Object.keys(no_indel_arr[id])[1][x]
-                        SVGObj.setAttribute("x", 120+12*(x-xfrom+10));
-                        SVGObj.setAttribute("text-anchor", "middle");
-                        SVGObj.setAttribute("pointer-events","none");
-                        svg.appendChild(SVGObj);
-
-                        SVGObj= document.createElementNS(NS, "text");
-                        SVGObj.setAttribute("y", ysize+delypos+15);
-                        SVGObj.setAttribute("font-size", 8);
-                        SVGObj.setAttribute("font-weight", "400");
-                        SVGObj.textContent = no_indel_arr[id][Object.keys(no_indel_arr[id])[0]] + " " +Object.keys(no_indel_arr[id])[0][x]
-                        SVGObj.setAttribute("x", 120+12*(x-xfrom+10));
-                        SVGObj.setAttribute("text-anchor", "middle");
-                        SVGObj.setAttribute("pointer-events","none");
-                        svg.appendChild(SVGObj);
-                    }
-                }
-                else{
-                    SVGObj= document.createElementNS(svgns, "rect");
+            //draw main track:
+                if (Object.keys(no_indel_arr[id])[0][x]==Object.keys(no_indel_arr[id])[1][x]){
+                    SVGObj= document.createElementNS(NS, "text");
+                    SVGObj.setAttribute("y", ysize+delypos);
+                    SVGObj.setAttribute("font-size", "13");
+                    SVGObj.setAttribute("font-weight", "1200");
                     if (key[x]=="T"){SVGObj.textContent = key[x];
-                        SVGObj.setAttribute("fill", "rgb(204,163,255)");
+                        SVGObj.setAttribute("fill", T_cl);
                     }
                     else if (key[x]=="A"){SVGObj.textContent = key[x];
-                        SVGObj.setAttribute("fill", "rgb(100, 240, 100)");
+                        SVGObj.setAttribute("fill", A_cl);
                     }
                     else if (key[x]=="C"){SVGObj.textContent = key[x];
-                        SVGObj.setAttribute("fill", "rgb(250, 156, 28)");
+                        SVGObj.setAttribute("fill", C_cl);
                     }
                     else if (key[x]=="G"){SVGObj.textContent = key[x];
-                        SVGObj.setAttribute("fill", "rgb(222, 255, 0)");
+                        SVGObj.setAttribute("fill", G_cl);
                     }
                     else if (key[x]=="N"){SVGObj.textContent = key[x];
                         SVGObj.setAttribute("fill", N_cl);
                     }
                     else if (key[x]=="-"){SVGObj.textContent = key[x];
-                        SVGObj.setAttribute("fill", "rgb(255,255,255");
+                        SVGObj.setAttribute("fill", "rgb(0,0,0");
                     }
-                    SVGObj.style.stroke="rgb(255,255,255";
-                    SVGObj.setAttribute("x", 120+12*(x-xfrom+10)-5);
-                    SVGObj.setAttribute("y", ysize+delypos-10);
-                    SVGObj.setAttribute("width", "12");
-                    SVGObj.setAttribute("height", "12");
-                    SVGObj.setAttribute("text-anchor", "middle");
-                    SVGObj.setAttribute("pointer-events","none");
-                    svg.appendChild(SVGObj);
-                    SVGObj= document.createElementNS(NS, "text");
-                    SVGObj.setAttribute("y", ysize+delypos);
-                    SVGObj.setAttribute("font-size", "13");
-                    SVGObj.setAttribute("font-weight", "400");
-                    SVGObj.textContent = key[x];
-                    SVGObj.setAttribute("fill", N_cl);
                     SVGObj.setAttribute("x", 120+12*(x-xfrom+10));
                     SVGObj.setAttribute("text-anchor", "middle");
                     SVGObj.setAttribute("pointer-events","none");
                     svg.appendChild(SVGObj);
+                }
+                else {
+                    var fontsize1 = 4+ Math.floor(13*no_indel_arr[id][Object.keys(no_indel_arr[id])[0]]/(no_indel_arr[id][Object.keys(no_indel_arr[id])[0]]+no_indel_arr[id][Object.keys(no_indel_arr[id])[1]]))
+                    var fontsize2 = 4+ Math.floor(13*no_indel_arr[id][Object.keys(no_indel_arr[id])[1]]/(no_indel_arr[id][Object.keys(no_indel_arr[id])[0]]+no_indel_arr[id][Object.keys(no_indel_arr[id])[1]]))
                     SVGObj= document.createElementNS(NS, "text");
-                    SVGObj.setAttribute("y", ysize+delypos);
-                    SVGObj.setAttribute("font-size", "13");
-                    SVGObj.setAttribute("font-weight", "400");
-                    SVGObj.textContent = key[x];
-                    SVGObj.setAttribute("fill", N_cl);
+                    SVGObj.setAttribute("x", 120+12*(x-xfrom+10));
+                    SVGObj.setAttribute("y", ysize+delypos-5);
+                    SVGObj.setAttribute("font-size", fontsize1);
+                    SVGObj.setAttribute("font-weight", "1200");
+                    if (Object.keys(no_indel_arr[id])[0][x]=="T"){SVGObj.setAttribute("fill", T_cl);
+                    }
+                    else if (Object.keys(no_indel_arr[id])[0][x]=="A"){SVGObj.setAttribute("fill", A_cl);
+                    }
+                    else if (Object.keys(no_indel_arr[id])[0][x]=="C"){SVGObj.setAttribute("fill", C_cl);
+                    }
+                    else if (Object.keys(no_indel_arr[id])[0][x]=="G"){SVGObj.setAttribute("fill", G_cl);
+                    }
+                    else if (Object.keys(no_indel_arr[id])[0][x]=="N"){SVGObj.setAttribute("fill", N_cl);
+                    }
+
+                    SVGObj.textContent = Object.keys(no_indel_arr[id])[0][x];
+                    SVGObj.setAttribute("text-anchor", "middle");
+                    SVGObj.setAttribute("pointer-events","none");
+                    svg.appendChild(SVGObj);
+
+                    SVGObj= document.createElementNS(NS, "text");
+                    SVGObj.setAttribute("x", 120+12*(x-xfrom+10));
+                    SVGObj.setAttribute("y", ysize+delypos+5);
+                    SVGObj.setAttribute("font-size", fontsize2);
+                    SVGObj.setAttribute("font-weight", "1200");
+
+                    if (Object.keys(no_indel_arr[id])[1][x]=="T"){SVGObj.setAttribute("fill", T_cl);
+                    }
+                    else if (Object.keys(no_indel_arr[id])[1][x]=="A"){SVGObj.setAttribute("fill", A_cl);
+                    }
+                    else if (Object.keys(no_indel_arr[id])[1][x]=="C"){SVGObj.setAttribute("fill", C_cl);
+                    }
+                    else if (Object.keys(no_indel_arr[id])[1][x]=="G"){SVGObj.setAttribute("fill", G_cl);
+                    }
+                    else if (Object.keys(no_indel_arr[id])[1][x]=="N"){SVGObj.setAttribute("fill", N_cl);
+                    }
+                    SVGObj.textContent = Object.keys(no_indel_arr[id])[1][x];
+                    SVGObj.setAttribute("text-anchor", "middle");
+                    SVGObj.setAttribute("pointer-events","none");
+                    svg.appendChild(SVGObj);
+
+                    SVGObj= document.createElementNS(NS, "text");
+                    SVGObj.setAttribute("y", ysize+delypos+25);
+                    SVGObj.setAttribute("font-size", 8);
+                    SVGObj.setAttribute("font-weight", "1200");
+                    SVGObj.textContent = no_indel_arr[id][Object.keys(no_indel_arr[id])[1]] + " "+Object.keys(no_indel_arr[id])[1][x]
+                    SVGObj.setAttribute("x", 120+12*(x-xfrom+10));
+                    SVGObj.setAttribute("text-anchor", "middle");
+                    SVGObj.setAttribute("pointer-events","none");
+                    svg.appendChild(SVGObj);
+
+                    SVGObj= document.createElementNS(NS, "text");
+                    SVGObj.setAttribute("y", ysize+delypos+15);
+                    SVGObj.setAttribute("font-size", 8);
+                    SVGObj.setAttribute("font-weight", "1200");
+                    SVGObj.textContent = no_indel_arr[id][Object.keys(no_indel_arr[id])[0]] + " " +Object.keys(no_indel_arr[id])[0][x]
                     SVGObj.setAttribute("x", 120+12*(x-xfrom+10));
                     SVGObj.setAttribute("text-anchor", "middle");
                     SVGObj.setAttribute("pointer-events","none");
@@ -3852,7 +3769,7 @@ function PlotAlignment(id, locus){
                         svg.appendChild(SVGObj);
                         }
                     SVGObj= document.createElementNS(NS, "text");
-                    SVGObj.setAttribute("font-weight", "400");
+                    SVGObj.setAttribute("font-weight", "1200");
                 }
                 else if ('ACTGN'.includes(key[x])){
                     SVGObj= document.createElementNS(svgns, "rect");
@@ -3868,53 +3785,34 @@ function PlotAlignment(id, locus){
                     SVGObj= document.createElementNS(NS, "text");
                     SVGObj.setAttribute("font-weight", "600");
                 }
-                SVGObj= document.createElementNS(svgns, "rect");
-                    if (key[x]=="T"){SVGObj.textContent = key[x];
-                        SVGObj.setAttribute("fill", "rgb(204,163,255)");
-                    }
-                    else if (key[x]=="A"){SVGObj.textContent = key[x];
-                        SVGObj.setAttribute("fill", "rgb(100, 240, 100)");
-                    }
-                    else if (key[x]=="C"){SVGObj.textContent = key[x];
-                        SVGObj.setAttribute("fill", "rgb(250, 156, 28)");
-                    }
-                    else if (key[x]=="G"){SVGObj.textContent = key[x];
-                        SVGObj.setAttribute("fill", "rgb(222, 255, 0)");
-                    }
-                    else if (key[x]=="N"){SVGObj.textContent = key[x];
-                        SVGObj.setAttribute("fill", N_cl);
-                    }
-                    else if (key[x]=="-"){SVGObj.textContent = key[x];
-                        SVGObj.setAttribute("fill", "rgb(255,255,255");
-                    }
-                    SVGObj.style.stroke="rgb(255,255,255";
-                    SVGObj.setAttribute("x", 120+12*(x-xfrom+10)-5);
-                    SVGObj.setAttribute("y", ysize+delypos-10);
-                    SVGObj.setAttribute("width", "12");
-                    SVGObj.setAttribute("height", "12");
-                    SVGObj.setAttribute("text-anchor", "middle");
-                    SVGObj.setAttribute("pointer-events","none");
-                    svg.appendChild(SVGObj);
-                    SVGObj= document.createElementNS(NS, "text");
-                    SVGObj.setAttribute("y", ysize+delypos);
-                    SVGObj.setAttribute("font-size", "13");
-                    SVGObj.setAttribute("font-weight", "400");
-                    SVGObj.textContent = key[x];
+                SVGObj= document.createElementNS(NS, "text");
+                SVGObj.setAttribute("font-weight", "1200");
+                SVGObj.setAttribute("x", 115+12*(x-xfrom+10));
+                SVGObj.setAttribute("y", ysize+delypos);
+                SVGObj.setAttribute("font-size", "13");
+
+                if (key[x]=="T"){SVGObj.textContent = key[x];
+                    SVGObj.setAttribute("fill", T_cl);
+                }
+                else if (key[x]=="A"){SVGObj.textContent = key[x];
+                    SVGObj.setAttribute("fill", A_cl);
+                }
+                else if (key[x]=="C"){SVGObj.textContent = key[x];
+                    SVGObj.setAttribute("fill", C_cl);
+                }
+                else if (key[x]=="G"){SVGObj.textContent = key[x];
+                    SVGObj.setAttribute("fill", G_cl);
+                }
+                else if (key[x]=="N"){SVGObj.textContent = key[x];
                     SVGObj.setAttribute("fill", N_cl);
-                    SVGObj.setAttribute("x", 120+12*(x-xfrom+10));
-                    SVGObj.setAttribute("text-anchor", "middle");
-                    SVGObj.setAttribute("pointer-events","none");
-                    svg.appendChild(SVGObj);
-                    SVGObj= document.createElementNS(NS, "text");
-                    SVGObj.setAttribute("y", ysize+delypos);
-                    SVGObj.setAttribute("font-size", "13");
-                    SVGObj.setAttribute("font-weight", "400");
-                    SVGObj.textContent = key[x];
+                }
+                else if (key[x]=="-"){SVGObj.textContent = key[x];
                     SVGObj.setAttribute("fill", N_cl);
-                    SVGObj.setAttribute("x", 120+12*(x-xfrom+10));
-                    SVGObj.setAttribute("text-anchor", "middle");
-                    SVGObj.setAttribute("pointer-events","none");
-                    svg.appendChild(SVGObj);
+                }
+                SVGObj.setAttribute("x", 120+12*(x-xfrom+10));
+                SVGObj.setAttribute("text-anchor", "middle");
+                SVGObj.setAttribute("pointer-events","none");
+                svg.appendChild(SVGObj); 
             }
         }
         
@@ -5843,6 +5741,8 @@ var out_indel_arr = Array(96)
 var targetingOligo = Array(96)
 var targetingOligo_arr = Array(96)
 var rima_hist_all = Array(96)
+var oli_aligned = false 
+var str_oli = ''
 
 const T_cl = "rgb(255,0,0)"
 const A_cl = "rgb(0,150,0)"
