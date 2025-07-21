@@ -17,20 +17,20 @@
   user-select: none;
 }
 div.selector {
-    background-color: rgba(255, 255, 255, 0.95);
-    position: absolute;
-    padding: 20px;
-    line-height: 25px;
-            }
-button {
-    background: none;
-    background-color: rgba(38,170,220, 0.3);
-    border: none;
-    border-radius: 3px;
-    margin-top: 3px;
-    padding: 3px;
-    font-size: 12;
-}
+                    background-color: rgba(255, 255, 255, 0.95);
+                    position: absolute;
+                    padding: 20px;
+                    line-height: 25px;
+                }
+                button {
+                    background: none;
+                    background-color: rgba(38,170,220, 0.3);
+                    border: none;
+                    border-radius: 3px;
+                    margin-top: 3px;
+                    padding: 3px;
+                    font-size: 12;
+                }
 .hidden {
       display: none;
     }
@@ -41,16 +41,16 @@ button {
 /* The actual popup */
 .popup .popuptext {
   visibility: hidden;
-  width: 400px;
-  background-color: rgb(191, 185, 245);
+  width: 460px;
+  background-color: rgb(173, 211, 201);
   color: #fff;
-  text-align: left;
+  text-align: center;
   border-radius: 6px;
-  padding: 8px 1;
+  padding: 8px 0;
   position: absolute;
   z-index: 1;
   bottom: 125%;
-  left: 10%;
+  left: 50%;
   margin-left: -80px;
 }
 
@@ -91,11 +91,6 @@ button {
             /* border: 1px solid black; Optional: Add border for visual separation */
             /* box-sizing: border-box; Include border and padding in width */
         }
-        .box1 {
-            margin-left: 1%; /* Adjust margin between boxes */
-            /* border: 1px solid black; Optional: Add border for visual separation */
-            /* box-sizing: border-box; Include border and padding in width */
-        }    
     </style>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.0/xlsx.full.min.js"></script>
     <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
@@ -175,13 +170,13 @@ button {
                                 <button type="button"  name="setup" class="btn btn-info" onclick="TabClicked(0);">GENERAL ANALYZER</button>
                                 <button type="button"  id="setup_PE" class="btn btn-info">PRIME EDITING ANALYZER</button>
                                 <div id="save" style="display:none">test</div>
+
                                 <button type="button"  name="result" class="btn btn-info" onclick="TabClicked(1);">RESULTS</button>
                                 <button type="button"  name="bulkview_result" class="btn btn-info" onclick="TabClicked(4);">BULK/SINGLE CLONE VIEWER</button>
                                 <button type="button"  name="offtarget_result" class="btn btn-info" onclick="TabClicked(5);">OFF-TARGET ANALYSIS</button>
                                 <button type="button"  name="result" class="btn btn-info" onclick="TabClicked(2);">MANUAL</button>
+
                                 <button type="button"  name="result" class="btn btn-info" onclick="TabClicked(6);">TEST DATA</button>
-                                <button type="button"  name="version" class="btn btn-info" onclick="TabClicked(9);">VERSION</button>
-                                <button type="button"  name="version" class="btn btn-info" onclick="TabClicked(9);">UTILIIES</button>
                             </div>
                         </div>
                     </div>
@@ -195,47 +190,37 @@ button {
                     <label>
                         FASTQ Files (*): 
                     </label> 
+                    <br><input type="file" id="files" class="form-control" name="files[]" multiple="">
                     <!-- <small class="text-muted">Uncompressed FASTQ output files from Illumina, ONT or PacBio. Make sure that the correct ordering is applied in the file browser. The file allocation to individual pie charts can be verified by the numbers given at alignment track.</small> -->
                 </div>
                 <div class = "col-sm">
-                    <label>Data type:</label>                    <div class="popup" onclick="myFunction1()">(? Click here!)
-                        <span class="popuptext" id="help1">  <strong>Illumina:</strong> Very high base accuracy.<br>
-                              <strong>Nanopore:</strong> Moderate accuracy, error-prone at the base level.<br>
-                              <strong>Nanopore/PacBio Duplex:</strong> High accuracy, comparable to Illumina. Click again to close</span>
-                    </div>
-                    <!-- <small class="text-muted">Window size & indel rate parameter will be automatically adjusted</small> -->
-                </div>
-                <div class = "col-sm">
-                    <label>Maximum expected genotype (ML mode only): </label> 
-        
-                </div>
-                </div>
-                <div class="row">
-                    <div class = "col-sm">
-                    <input type="file" id="files" class="form-control" name="files[]" multiple="">
-                    </div>
-                    <div class = "col-sm">
+                    <label>Data type:</label>
                     <select id="mySelect" onchange="setValue()" class="form-control">
                         <option value="illu">Illumina</option>
                         <option value="ont">Nanopore</option>
                         <option value="pacbio">PacBio or Nanopore Duplex</option>
                     </select>
-                    </div>
-                    <div class = "col-sm">
-                        <input type="text" size="30" class="form-control" id= "ML_genotype" name="ML_genotype" value="10" onchange="checkValue();">
-                        <div class="form-check">
-                            <input class="form-check-input" type="checkbox" value="" id="run_mode" checked>
-                            <label class="form-check-label">
-                              BOOSTING mode<br>
-                              <small class="text-muted">Use machine learning classification model, faster but less accurate</small>
-                            </label>
-                        </div>
-                        </div>
+                    <!-- <small class="text-muted">Window size & indel rate parameter will be automatically adjusted</small> -->
                 </div>
-
+                <div class = "col-sm">
+                    <label>Maximum expected genotype (ML mode only): </label> 
+                    <input type="text" size="30" class="form-control" id= "ML_genotype" name="ML_genotype" value="10" onchange="checkValue();">
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" value="" id="run_mode" checked>
+                        <label class="form-check-label">
+                          BOOSTING mode<br>
+                          <small class="text-muted">Use machine learning classification model, faster but less accurate</small>
+                        </label>
+                    </div>
+        
+                </div>
+                </div>
+                <br>
                 <div class="row">
                 <div class = "col-sm">
                     <label>Gene Name:</label>
+                    <input type="text" class="form-control" size="40" name="GeneName" id = "GeneName" value="" oninput="FindGRNA(this.value);" onchange="getFastaSequence()" placeholder="e.g. AHR" onblur="setTimeout('Hide_auto_complete();',500);">
+                    <div id="gene_auto_complete" class="selector" style="display:none;"></div>
                     <!-- <small class="text-muted">This will list all recommended Genes and coding region gRNAs (support Human and Mouse only). Gene names are from <a href="https://crisprnano.de/genename.txt">this </a> list. You can select the interest pair. If Gene name is blank, the customized reference sequence must be given or system will search by given sgRNA. </a></small><br> -->
                 </div>
                 <div class = "col-sm">
@@ -243,98 +228,64 @@ button {
                     <div class="popup" onclick="myFunction4()">(? Click here!)
                         <span class="popuptext" id="help4">In this field the nuclease target site is entered. In Prime Editing analyser, this is pegRNA. Click again to close</span>
                     </div>
+                    <br><input type="text" class="form-control" size="40" name="RightBS" id = "RightBS" value="">
+                    <small class="text-muted">NOTE: this is pegRNA for Prime Editing Mode</small>
 
                 </div>
                 <div class = "col-sm">
-                    <label> Insertion Sequence (for HDR / PE / BE)</label>  
-                    <div class="popup" onclick="myFunction2()">(? Click here!)
-                        <span class="popuptext" id="help2"><b>Advance features, please use Prime editing Analyzer</b><br>
-                            <b>Edit Type:</b><br>
-                              <strong> Targeted Mutagenesis Oligonucleotide:</strong> Uses a repair template to introduce precise changes at the target site (e.g., via HDR). <br>
-                              <strong> Prime Editing:</strong> Introduces small insertions, deletions, or substitutions using a pegRNA and reverse transcriptase—no double-strand break needed.<br>
-                              <strong> Base Editing:</strong> Directly converts one base to another (e.g., C→T or A→G) without cutting DNA or using a template. 
-                         
-                            Click again to close</span>
-                    </div>
-                    </div>
-                </div>
-                
-                <div class="row">
-                    <div class = "col-sm">
-                        <input type="text" class="form-control" size="40" name="GeneName" id = "GeneName" value="" oninput="FindGRNA(this.value);" onchange="getFastaSequence()" placeholder="e.g. AHR" onblur="setTimeout('Hide_auto_complete();',500);">
-                        <div id="gene_auto_complete" class="selector" style="display:none;"></div>
-                    </div>
-                    <div class = "col-sm">
-                        <input type="text" class="form-control" size="40" name="RightBS" id = "RightBS" value="">
-                        <small class="text-muted">NOTE: this is pegRNA for Prime Editing Mode</small>
-                    </div>
-                    <div class = "col-sm">
-                        <input type="text" class="form-control" size="40" id="TargetingOligo" name="TargetingOligo" value="">
-                        <!-- <small class="text-muted"> Donor oligonucleotide sequence used to introduce a site specific genomic modification. The sequence entered should be in the same orientation as the amplicon sequence.</small> -->
-                        <div class="row">
-                            <div class = "col-sm">
-                                <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" value="" id="prime_editing">
-                                    <small class="text-muted">
-                                    Knockin-only mode (exclude INDEL)
-                                    </small>
-                                </div>
+                    <label> Targeting mutagenesis oligonucleotide (Knock-in), OR Base Editing:</label>  
+                    <input type="text" class="form-control" size="40" id="TargetingOligo" name="TargetingOligo" value="">
+                    <!-- <small class="text-muted"> Donor oligonucleotide sequence used to introduce a site specific genomic modification. The sequence entered should be in the same orientation as the amplicon sequence.</small> -->
+                    <div class="row">
+                        <div class = "col-sm">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" value="" id="prime_editing">
+                                <small class="text-muted">
+                                Knockin-only mode (exclude INDEL)
+                                </small>
                             </div>
-                            <div class = "col-sm">
-                                <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" value="" id="HA">
-                                    <small class="text-muted">
-                                    Non-homology end joining KI
-                                    </small>
-                                </div>
+                        </div>
+                        <div class = "col-sm">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" value="" id="HA">
+                                <small class="text-muted">
+                                Non-homology end joining KI
+                                </small>
                             </div>
+                        </div>
+                    </div>
 
-                    </div>
+                </div>
                 </div>
                 <div class="hidden" id = "optional_para_Container_PE">
                     <h3>Extra options for Prime Editing</h3>
                 <div class="row">   
                     <div class = "col-sm">
                         <label>Reverse Transcription Template (RTT)  </label>
+                        <input type="text" size="30" class="form-control" id = "RTT" name="RTT" ><br>
                         <!-- <small class="text-muted">RTT (optional) is secondary guide for insertion track</small> -->
                     </div>
                     <div class = "col-sm">
                         <div class = "col-sm">
                             <label>Scaffold  </label>
+                            <input type="text" size="30" class="form-control" id = "scaffold" name="scaffold" ><br>
                             <!-- <small class="text-muted">Scaffold (optional) is extra guide for quantified insertion track</small> -->
                         </div>
                     </div>
                     <div class = "col-sm">
                         <label>Desired Edit  </label>
+                        <input type="text" size="30" class="form-control" id = "d_edit" name="d_edit" ><br>
                         <!-- <small class="text-muted">Desired edit sequence (optional) is extra guide for annotate genotype</small> -->
                     </div>
                     <div class = "col-sm">
                         <label>Partial Edit  </label>
+                        <input type="text" size="30" class="form-control" id = "p_edit" name="p_edit" ><br>
                         <!-- <small class="text-muted">Partial edit sequence (optional) is extra guide for annotate genotype</small> -->
                     </div>
-                </div>
-                <div class="row">   
-                    <div class = "col-sm">
-                        <input type="text" size="30" class="form-control" id = "RTT" name="RTT" >
-                    </div>
-                    <div class = "col-sm">
-                        <input type="text" size="30" class="form-control" id = "scaffold" name="scaffold" >
-                    </div>
-                    <div class = "col-sm">
-                        <input type="text" size="30" class="form-control" id = "d_edit" name="d_edit" >
-                    </div>
-                    <div class = "col-sm">
-                        <input type="text" size="30" class="form-control" id = "p_edit" name="p_edit" >
-                    </div>
-                </div>
+                </div> 
                 </div>
                 <h3 >Optional parameters</h3>
-                <small id="optional_para" class="text-muted">
-                    
-                    Click to expand
-                    <img src="crisprnano2/expand.jpg" alt="icon" style="width:36px; height:36px; vertical-align:middle; margin-right:5px;">  
-                </small>
-                <br>
+                <small id='optional_para' class="text-muted">Click to expand</small>
                 <div id = "optional_para_Container" class="hidden">
                 <div class="row">
                         <div class = "col-sm">
@@ -342,6 +293,10 @@ button {
                             <div class="popup" onclick="myFunction3()">(? Click here!)
                                 <span class="popuptext" id="help3">Reference amplicon length should be in the range of 200-300 bases with the nuclease target site located roughly in the middle. You can get the reference from Ensembl link below. Click again to close</span>
                             </div>
+                            <br><input type="text" class="form-control" size="30" id="locus" name="Locus" value=""> 
+                            <small class="text-muted">
+                                (if genename given, leave it blank):  
+                            </small>
 
                         </div>
                         <div class = "col-sm">
@@ -349,34 +304,23 @@ button {
                             <div class="popup" onclick="myFunction5()">(? Click here!)
                                 <span class="popuptext" id="help5"> For ONT reads, it is recommended to use -/+15 bases around the predicted DNA lesion. Larger regions are prone to false positive indels. Larger regions (total of 200-250 bp) can be safely used with Illumina reads. You can drag and drop the central point of the predicted double strand break in the genomic sequence to the left or to the right. Default value 0 is double strand breaking point- Crisprnano will use the first index of sgRNA mapped on reference. Click again to close</span>
                             </div>
+                            <br><input type="text" size="30" name="region_analyse" id="region_analyse" value="120" class="form-control" onchange="checkValue();"><br>
                         </div>
                         <div class = "col-sm">
                             <label>Indel Threshold [%]: </label>
                             <div class="popup" onclick="myFunction9()">(? Click here!)
                                 <span class="popuptext" id="help9">The Indel Threshold determines at what relative occurrence an individual indel mutation is considered as a unique allele of the respective clone analyzed, and is thus displayed in the alignment list. Low threshold values can result in false positive allele calling due to sequencing errors, whereas high threshold values result in false negative allele calling. Values in between 0 - 100 % can be entered. We recommend to use 5% for ONT reads and 2% for Illumina reads (default is set to 5%). Click again to close.</span>
                             </div> 
+                            <br><input type="text" size="30" class="form-control" id= "allelethreshold" name="MutationThreshold" value="2" onchange="checkValue();"><br>
                         </div>
                         <div class = "col-sm">
                             <label>Phred Threshold: </label>
                             <div class="popup" onclick="myFunction10()">(? Click here!)
                                 <span class="popuptext" id="help10">The Quality threshold determine the minimum filter base, For Illumina it should be >20, For ONT it should be >10, Click again to close.</span>
-                            </div>                         
-                        </div>
-                    </div>
-                    <div class="row">   
-                        <div class = "col-sm">
-                            <input type="text" class="form-control" size="30" id="locus" name="Locus" value=""> 
-                            <small class="text-muted">(if genename given, leave it blank):  
-                            </small>
-                        </div>
-                        <div class = "col-sm">
-                            <input type="text" size="30" name="region_analyse" id="region_analyse" value="120" class="form-control" onchange="checkValue();"><br>
-                        </div>
-                        <div class = "col-sm">
-                            <input type="text" size="30" class="form-control" id= "allelethreshold" name="MutationThreshold" value="1" onchange="checkValue();"><br>
-                        </div>
-                        <div class = "col-sm">
-                        <input type="text" size="30" class="form-control" id = "phredthreshold" name="Phred" value="20" onchange="checkValue();"><br>
+                            </div> 
+                            <br><input type="text" size="30" class="form-control" id = "phredthreshold" name="Phred" value="20" onchange="checkValue();"><br>
+                        
+
                         </div>
                     </div>
 
@@ -406,8 +350,7 @@ button {
             </small>
             </div>
         
-        </div>
-    </div>
+        
         <div id="about" style="position:center; top:80px; display: none;">
             <br>
             <br>
@@ -463,6 +406,55 @@ button {
             whereas high threshold values result in false negative allele calling. Values in between 0 - 100 % can be entered. We recommend using 5% for ONT reads and 2% for Illumina reads (the default is set to 5%).  <br><br>
         </p><br><b>Full manual: </b>
             <iframe src="./crisprnano2/manual.pdf" width="80%" height="2000px"></iframe>
+
+            <!-- <b>Code Availability </b> 
+            <br>
+            The source code for CRISPRnano is available at <a href="https://github.com/thachnguyen/CRISPRnano">https://github.com/thachnguyen/CRISPRnano</a> <br><br>
+            
+            <b>Test data </b> 
+            <br>
+            The lightweight test data for CRISPRnano2 is available at <a href="https://iufduesseldorf-my.sharepoint.com/:u:/g/personal/thach_nguyen_iuf-duesseldorf_de/ERPO_Y-8hg5Pq8KZv-OVNucBR211XB3UxcmxhzkBW8_gjg?e=K0tCeg">Lightweight Test Data.</a><br><br>
+            
+                <br>
+                The full test data for CRISPRnano2 is available at <a href="https://iufduesseldorf-my.sharepoint.com/:u:/g/personal/thach_nguyen_iuf-duesseldorf_de/EV2AyPDA7lJKn9sXQPjLQR4B2WFcFEsO8vW8zqc2Uorr0g?e=tmPv6y">Full Test Data.</a><br><br>
+                <b>
+                Browser compatibility
+            </b>
+            <table style="width:100%">
+                <tbody><tr>
+                    <td>OS</td>
+                    <td>Version</td>
+                    <td>Chrome</td>
+                    <td>Firefox</td>
+                    <td>Microsoft Edge</td>
+                    <td>Safari</td>
+                </tr>
+                <tr>
+                    <td>Linux</td>
+                    <td>Ubuntu 20.04</td>
+                    <td>Version 122.0.6261.128</td>
+                    <td>125.0</td>
+                    <td>n/a</td>
+                    <td>n/a</td>
+                </tr>
+                <tr>
+                    <td>MacOS</td>
+                    <td>Monterey</td>
+                    <td>Version 122.0.6261.128</td>
+                    <td>125.0</td>
+                    <td>n/a</td>
+                    <td>15.3 </td>
+                </tr>
+                <tr>
+                    <td>Windows</td>
+                    <td>10</td>
+                    <td>Version 122.0.6261.128</td>
+                    <td>98.0</td>
+                    <td>122.0.6261.128</td>
+                    <td>n/a</td>
+                </tr>
+                </tbody></table> -->
+            
         </div>
 
         <div id="testdata" style="position:center; top:80px; display: none;">
@@ -520,7 +512,7 @@ button {
             
         </div>
 
-        <div id="results" class="box1" style="position:center; top:80px; right:20px; display: none;">
+        <div id="results" style="position:center; top:80px; display: none;">
             <div class="column">
                 <div class="btn-group btn-group-lg mr-3" role="group" id="result_pie" >
                     <button type="button" class="btn btn-sm btn-light brd" name="setup" onclick="TabClicked(7)">GENOTYPE</button>
@@ -704,7 +696,7 @@ function setValue() {
     }
     else {
         document.getElementsByName('region_analyse')[0].value = "120";
-        document.getElementsByName("MutationThreshold")[0].value = '1'
+        document.getElementsByName("MutationThreshold")[0].value = '2'
         document.getElementsByName("Phred")[0].value = '20'
         bulk_threshold = 0.5;
     } 
@@ -781,14 +773,6 @@ function AlignmentMouseUp(evt) {
  *
  * @return an integer array
  */
-
-function Check_PolyN(seq){
-    // ONT data only!
-    // check insertion or deletion close to polyN
-    
-}
-
-
 
 function bsg_enc_seq(seq, table){
     if (table == null) return null;
@@ -1250,13 +1234,13 @@ function FileReceived() {
     var ML_genotype= 1*document.getElementsByName("ML_genotype")[0].value;
 
     //check target oligo in reference or reverse ref
-    //check target oligo in reference or reverse ref
     if (targetingOligo1 !=""){
             var score_oligo_ref_fw = bsa_align(locus.substring(BreakPoint-region_analyse*1, BreakPoint + region_analyse*1), targetingOligo1, [ms, mms], [gapo, gape], is_local=true); 
             var score_oligo_ref_rv = bsa_align(locus.substring(BreakPoint-region_analyse*1, BreakPoint + region_analyse*1), ReverseComplement(targetingOligo1), [ms, mms], [gapo, gape], is_local=true);
             var oligo_index = score_oligo_ref_fw[0]>=score_oligo_ref_rv[0] ? score_oligo_ref_fw[1] : score_oligo_ref_rv[1]
             targetingOligo1 = score_oligo_ref_fw[0]>=score_oligo_ref_rv[0] ? targetingOligo1: ReverseComplement(targetingOligo1)
         }
+
     while (true) {
         var cursor1 = cursor;
         while (++cursor1<origlen && original[cursor1] != "\n");
@@ -1302,113 +1286,106 @@ function FileReceived() {
         else {
             gcContent[id][gcContent_1] = 1
         }
-        var index_oli_read = -1;
-        var index_oli_read1 = -1;
-        if (targetingOligo1 !=""){
-                index_oli_read = read.search(targetingOligo1);
-                index_oli_read1 = ReverseComplement(read).search(targetingOligo1);
-            }
-
+        
         if ((mean_phred > PhredThreshold)&&(CurrentFileChunk<2)){ 
-            // if (targetingOligo1 !=""){
-            //     var index_oli_read = read.search(targetingOligo1);
-            //     var index_oli_read1 = ReverseComplement(read).search(targetingOligo1);
-            //     if (index_oli_read!=-1){
-            //         aln_type = 7;
-            //         // remove this part in knockin, speed up the program
-            //         var str1 = ''
-            //         str1 += read.substring(index_oli_read- oligo_index, index_oli_read- oligo_index + region_analyse*2)+ '\n'+ '\n';
-            //         if (aln_dict[id].hasOwnProperty(str1)){
-            //             aln_dict[id][str1][0]+=1
-            //         }
-            //         else {
-            //             aln_dict[id][str1] = Array(2)
-            //             aln_dict[id][str1][0] = 1
-            //             aln_dict[id][str1][1] = aln_type
-            //         }
-            //     }
-            //     else {
-            //         index_oli_read = ReverseComplement(read).search(targetingOligo1);
-            //         if (index_oli_read!=-1){
-            //             read = ReverseComplement(read)
-            //             aln_type = 7;
-            //         // remove this part in knockin, speed up the program
-            //             var str1 = ''
-            //             str1 += read.substring(index_oli_read- oligo_index, index_oli_read- oligo_index + region_analyse*2)+ '\n'+ '\n';
-            //             if (aln_dict[id].hasOwnProperty(str1)){
-            //                 aln_dict[id][str1][0]+=1
-            //             }
-            //             else {
-            //                 aln_dict[id][str1] = Array(2)
-            //                 aln_dict[id][str1][0] = 1
-            //                 aln_dict[id][str1][1] = aln_type
-            //             }
-            //         }
+            if (targetingOligo1 !=""){
+                var index_oli_read = read.search(targetingOligo1);
+                if (index_oli_read!=-1){
+                    aln_type = 7;
+                    // remove this part in knockin, speed up the program
+                    var str1 = ''
+                    str1 += read.substring(index_oli_read- oligo_index, index_oli_read- oligo_index + region_analyse*2)+ '\n'+ '\n';
+                    if (aln_dict[id].hasOwnProperty(str1)){
+                        aln_dict[id][str1][0]+=1
+                    }
+                    else {
+                        aln_dict[id][str1] = Array(2)
+                        aln_dict[id][str1][0] = 1
+                        aln_dict[id][str1][1] = aln_type
+                    }
+                }
+                else {
+                    index_oli_read = ReverseComplement(read).search(targetingOligo1);
+                    if (index_oli_read!=-1){
+                        read = ReverseComplement(read)
+                        aln_type = 7;
+                    // remove this part in knockin, speed up the program
+                        var str1 = ''
+                        str1 += read.substring(index_oli_read- oligo_index, index_oli_read- oligo_index + region_analyse*2)+ '\n'+ '\n';
+                        if (aln_dict[id].hasOwnProperty(str1)){
+                            aln_dict[id][str1][0]+=1
+                        }
+                        else {
+                            aln_dict[id][str1] = Array(2)
+                            aln_dict[id][str1][0] = 1
+                            aln_dict[id][str1][1] = aln_type
+                        }
+                    }
 
-            //         //Check WT manually, speed up
-            //         else if (read.includes(locus.substring(BreakPoint-region_analyse*1, BreakPoint + region_analyse*1))){
-            //             aln_type = 1;
-            //         // remove this part in knockin, speed up the program
-            //             var str1 = ''
-            //             str1 += locus.substring(BreakPoint-region_analyse*1, BreakPoint + region_analyse*1)+ '\n'+ '\n';
-            //             if (aln_dict[id].hasOwnProperty(str1)){
-            //                 aln_dict[id][str1][0]+=1
-            //             }
-            //             else {
-            //                 aln_dict[id][str1] = Array(2)
-            //                 aln_dict[id][str1][0] = 1
-            //                 aln_dict[id][str1][1] = aln_type
-            //             }
-            //         }
-            //         else if (read.includes(ReverseComplement(locus.substring(BreakPoint-region_analyse*1, BreakPoint + region_analyse*1)))){
-            //             aln_type = 1;
-            //             var str1 = ''
-            //             str1 += locus.substring(BreakPoint-region_analyse*1, BreakPoint + region_analyse*1)+ '\n'+ '\n';
-            //             if (aln_dict[id].hasOwnProperty(str1)){
-            //                 aln_dict[id][str1][0]+=1
-            //             }
-            //             else {
-            //                 aln_dict[id][str1] = Array(2)
-            //                 aln_dict[id][str1][0] = 1
-            //                 aln_dict[id][str1][1] = aln_type
-            //             }
-            //         }
+                    //Check WT manually, speed up
+                    else if (read.includes(locus.substring(BreakPoint-region_analyse*1, BreakPoint + region_analyse*1))){
+                        aln_type = 1;
+                    // remove this part in knockin, speed up the program
+                        var str1 = ''
+                        str1 += locus.substring(BreakPoint-region_analyse*1, BreakPoint + region_analyse*1)+ '\n'+ '\n';
+                        if (aln_dict[id].hasOwnProperty(str1)){
+                            aln_dict[id][str1][0]+=1
+                        }
+                        else {
+                            aln_dict[id][str1] = Array(2)
+                            aln_dict[id][str1][0] = 1
+                            aln_dict[id][str1][1] = aln_type
+                        }
+                    }
+                    else if (read.includes(ReverseComplement(locus.substring(BreakPoint-region_analyse*1, BreakPoint + region_analyse*1)))){
+                        aln_type = 1;
+                        var str1 = ''
+                        str1 += locus.substring(BreakPoint-region_analyse*1, BreakPoint + region_analyse*1)+ '\n'+ '\n';
+                        if (aln_dict[id].hasOwnProperty(str1)){
+                            aln_dict[id][str1][0]+=1
+                        }
+                        else {
+                            aln_dict[id][str1] = Array(2)
+                            aln_dict[id][str1][0] = 1
+                            aln_dict[id][str1][1] = aln_type
+                        }
+                    }
                     
-            //         else if (!prime_mode){
-            //             if (read.includes(locus_check1)||ReverseComplement(read).includes(locus_check1)||read.includes(locus_check2)||ReverseComplement(read).includes(locus_check2)){// UPDATE v2.0 checking 4 posiblities of read, threshold score =region_analyse+10 
-            //                 var rst = bsa_align(locus, read, [ms, mms], [gapo, gape], is_local=true);
-            //                 if (rst[0] < (region_analyse*1)){
-            //                     try{
-            //                     read = ReverseComplement(read);
-            //                     rst = bsa_align(locus, read, [ms, mms], [gapo, gape], is_local=true);
-            //                     }
-            //                     catch (error){}
-            //                 }
-            //                 var str1 = ''
-            //                 var fmt1 = bsa_cigar2gaps_breakpoint(locus, read, rst[1], rst[2], BreakPoint-region_analyse*1, BreakPoint + region_analyse*1);
-            //                 var fmt = fmt1[0]
-            //                 aln_type = fmt1[1]
-            //                 // var str2_arr = fmt[0].split('-')
-            //                 str1 += fmt[0] + '\n';
-            //                 str1 += fmt[1] + '\n';
-            //                 //aggregate aln track into dictionary
-            //                 // if (containsAny(locus, str2_arr)||containsAny(ReverseComplement(locus), str2_arr)){
-            //                 if (aln_type !=0){
-            //                     if (aln_dict[id].hasOwnProperty(str1)){
-            //                         aln_dict[id][str1][0]+=1
-            //                     }
-            //                     else {
-            //                         aln_dict[id][str1] = Array(2)
-            //                         aln_dict[id][str1][0] = 1
-            //                         aln_dict[id][str1][1] = aln_type
-            //                     }
-            //                 }
-            //             }           
-            //         }
-            //     }
-            // } 
-
-            if (read.includes(locus_check1)||ReverseComplement(read).includes(locus_check1)||read.includes(locus_check2)||ReverseComplement(read).includes(locus_check2)){// UPDATE v2.0 checking 4 posiblities of read, threshold score =region_analyse+10 
+                    else if (!prime_mode){
+                        if (read.includes(locus_check1)||ReverseComplement(read).includes(locus_check1)||read.includes(locus_check2)||ReverseComplement(read).includes(locus_check2)){// UPDATE v2.0 checking 4 posiblities of read, threshold score =region_analyse+10 
+                            var rst = bsa_align(locus, read, [ms, mms], [gapo, gape], is_local=true);
+                            if (rst[0] < (region_analyse*1)){
+                                try{
+                                read = ReverseComplement(read);
+                                rst = bsa_align(locus, read, [ms, mms], [gapo, gape], is_local=true);
+                                }
+                                catch (error){}
+                            }
+                            var str1 = ''
+                            var fmt1 = bsa_cigar2gaps_breakpoint(locus, read, rst[1], rst[2], BreakPoint-region_analyse*1, BreakPoint + region_analyse*1);
+                            var fmt = fmt1[0]
+                            aln_type = fmt1[1]
+                            // var str2_arr = fmt[0].split('-')
+                            str1 += fmt[0] + '\n';
+                            str1 += fmt[1] + '\n';
+                            //aggregate aln track into dictionary
+                            // if (containsAny(locus, str2_arr)||containsAny(ReverseComplement(locus), str2_arr)){
+                            if (aln_type !=0){
+                                if (aln_dict[id].hasOwnProperty(str1)){
+                                    aln_dict[id][str1][0]+=1
+                                }
+                                else {
+                                    aln_dict[id][str1] = Array(2)
+                                    aln_dict[id][str1][0] = 1
+                                    aln_dict[id][str1][1] = aln_type
+                                }
+                            }
+                        }           
+                    }
+                }
+            } 
+            else {
+                if (read.includes(locus_check1)||ReverseComplement(read).includes(locus_check1)||read.includes(locus_check2)||ReverseComplement(read).includes(locus_check2)){// UPDATE v2.0 checking 4 posiblities of read, threshold score =region_analyse+10 
                     var rst = bsa_align(locus, read, [ms, mms], [gapo, gape], is_local=true);
                     if (rst[0] < (region_analyse/2)){
                         try{
@@ -1421,10 +1398,6 @@ function FileReceived() {
                     var fmt1 = bsa_cigar2gaps_breakpoint(locus, read, rst[1], rst[2], BreakPoint-region_analyse*1, BreakPoint + region_analyse*1);
                     var fmt = fmt1[0]
                     aln_type = fmt1[1]
-                    if (index_oli_read != -1|| index_oli_read1 != -1){
-                        aln_type = 7;
-                    }
-
                     str1 += fmt[0] + '\n';
                     str1 += fmt[1] + '\n';
 
@@ -1453,7 +1426,7 @@ function FileReceived() {
                         }
                     }
                 }           
-            
+            }
         }
         
         else if (ML_mode &&(mean_phred > PhredThreshold)){
@@ -3016,15 +2989,10 @@ function DrawPie_off()
         var imageElement = document.createElementNS(NS, "image");
         imageElement.setAttribute("x", midx-15);
         imageElement.setAttribute("y", midy+250);
-        if (gene_i !=0 &&summary_track_off[gene_i][7] <5){
-            imageElement.setAttribute("href", "crisprnano2/question.svg");
-            imageElement.setAttribute("width", 40); // Set the width of the image
-            imageElement.setAttribute("height", 40); // Set the height of the image 
-        }
-        else if (gene_i ==0 || divide_zero(summary_track_off[gene_i][4]*100,summary_track_off[gene_i][7])< 2){
-            imageElement.setAttribute("href", "crisprnano2/OK.ico");
-            imageElement.setAttribute("width", 40); // Set the width of the image
-            imageElement.setAttribute("height", 40); // Set the height of the image 
+        if (gene_i ==0 || summary_track_off[gene_i][7] <5 || divide_zero(summary_track_off[gene_i][4]*100,summary_track_off[gene_i][7])< 2){
+        imageElement.setAttribute("href", "crisprnano2/OK.ico");
+        imageElement.setAttribute("width", 40); // Set the width of the image
+        imageElement.setAttribute("height", 40); // Set the height of the image 
         }
         else {
             imageElement.setAttribute("href", "crisprnano2/warning.png"); // Set the path to your image file
@@ -3763,7 +3731,7 @@ function PlotAlignment(id, locus){
                     SVGObj.setAttribute("pointer-events","none");
                     svg.appendChild(SVGObj);
                     SVGObj= document.createElementNS(NS, "text");
-                    SVGObj.setAttribute("font-weight", "600");
+                    SVGObj.setAttribute("font-weight", "1200");
                 }
                 SVGObj= document.createElementNS(NS, "text");
                 SVGObj.setAttribute("font-weight", "1200");
@@ -4256,7 +4224,7 @@ function PlotAlignment_bulk(barcode, locus, bulk_threshold = bulk_threshold){
                         svg.appendChild(SVGObj);
                         }
                     SVGObj= document.createElementNS(NS, "text");
-                    SVGObj.setAttribute("font-weight", "800");
+                    SVGObj.setAttribute("font-weight", "400");
                 }
                 else if ("ACTG".includes(key[x])){
                     SVGObj= document.createElementNS(svgns, "rect");
@@ -4270,11 +4238,11 @@ function PlotAlignment_bulk(barcode, locus, bulk_threshold = bulk_threshold){
                     SVGObj.setAttribute("pointer-events","none");
                     svg.appendChild(SVGObj);
                     SVGObj= document.createElementNS(NS, "text");
-                    SVGObj.setAttribute("font-weight", "800");
+                    SVGObj.setAttribute("font-weight", "600");
                 }
                 SVGObj= document.createElementNS(NS, "text");
                 SVGObj.setAttribute("x", 115+12*(x-xfrom+10));
-                SVGObj.setAttribute("font-weight", "800");
+                SVGObj.setAttribute("font-weight", "400");
                 SVGObj.setAttribute("y", ysize+delypos);
                 SVGObj.setAttribute("font-size", "13");
 
@@ -4708,7 +4676,7 @@ function PlotAlignment_off(gene_i) {
                 SVGObj= document.createElementNS(NS, "text");
                     SVGObj.setAttribute("y", ysize+delypos);
                     SVGObj.setAttribute("font-size", "13");
-                    SVGObj.setAttribute("font-weight", "800");
+                    SVGObj.setAttribute("font-weight", "400");
                     if (key[x]=="T"){SVGObj.textContent = key[x];
                         SVGObj.setAttribute("fill", T_cl);
                     }
@@ -4739,7 +4707,7 @@ function PlotAlignment_off(gene_i) {
                 SVGObj= document.createElementNS(NS, "text");
                 SVGObj.setAttribute("y", ysize+delypos+fontsize1-5);
                 SVGObj.setAttribute("font-size", fontsize1);
-                SVGObj.setAttribute("font-weight", "800");
+                SVGObj.setAttribute("font-weight", "600");
 
                 if (Object.keys(no_indel_arr)[0][x]=="T"){SVGObj.setAttribute("fill", T_cl);
                 }
@@ -4762,7 +4730,7 @@ function PlotAlignment_off(gene_i) {
                 SVGObj= document.createElementNS(NS, "text");
                 SVGObj.setAttribute("y", ysize+delypos+15);
                 SVGObj.setAttribute("font-size", 8);
-                SVGObj.setAttribute("font-weight", "800");
+                SVGObj.setAttribute("font-weight", "400");
                 SVGObj.textContent = no_indel_arr[Object.keys(no_indel_arr)[1]] + " "+Object.keys(no_indel_arr)[1][x]
                 SVGObj.setAttribute("x", 120+12*(x-xfrom+10));
                 SVGObj.setAttribute("text-anchor", "middle");
@@ -4772,7 +4740,7 @@ function PlotAlignment_off(gene_i) {
                 SVGObj= document.createElementNS(NS, "text");
                 SVGObj.setAttribute("y", ysize+delypos+25);
                 SVGObj.setAttribute("font-size", 8);
-                SVGObj.setAttribute("font-weight", "800");
+                SVGObj.setAttribute("font-weight", "400");
                 SVGObj.textContent = no_indel_arr[Object.keys(no_indel_arr)[0]] + " " +Object.keys(no_indel_arr)[0][x]
                 SVGObj.setAttribute("x", 120+12*(x-xfrom+10));
                 SVGObj.setAttribute("text-anchor", "middle");
@@ -4782,7 +4750,7 @@ function PlotAlignment_off(gene_i) {
                 SVGObj= document.createElementNS(NS, "text");
                 SVGObj.setAttribute("y", ysize+delypos-5);
                 SVGObj.setAttribute("font-size", fontsize2);
-                SVGObj.setAttribute("font-weight", "800");
+                SVGObj.setAttribute("font-weight", "600");
 
                 if (Object.keys(no_indel_arr)[1][x]=="T"){SVGObj.setAttribute("fill", T_cl);
                 }
@@ -4809,7 +4777,7 @@ function PlotAlignment_off(gene_i) {
             //draw main track:
             if ((key[x]==locus_list[barcode][BreakPoint-region_analyse+x])||(key[x]=='N')||(key[x]=='-')||(typeof(key[x])=='undefined')){
                 SVGObj= document.createElementNS(NS, "text");
-                SVGObj.setAttribute("font-weight", "800");
+                SVGObj.setAttribute("font-weight", "400");
             }
             else {
                 SVGObj= document.createElementNS(svgns, "rect");
@@ -4823,7 +4791,7 @@ function PlotAlignment_off(gene_i) {
                 SVGObj.setAttribute("pointer-events","none");
                 svg.appendChild(SVGObj);
                 SVGObj= document.createElementNS(NS, "text");
-                SVGObj.setAttribute("font-weight", "800");
+                SVGObj.setAttribute("font-weight", "600");
             }
             
             SVGObj.setAttribute("y", ysize+delypos);
@@ -5721,8 +5689,6 @@ var out_indel_arr = Array(96)
 var targetingOligo = Array(96)
 var targetingOligo_arr = Array(96)
 var rima_hist_all = Array(96)
-var oli_aligned = false 
-var str_oli = ''
 
 const T_cl = "rgb(255,0,0)"
 const A_cl = "rgb(0,150,0)"

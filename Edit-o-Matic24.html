@@ -1,3 +1,4 @@
+
 <html>
     <head>
     <style>
@@ -3533,15 +3534,15 @@ function PlotAlignment(id, locus){
         if (rima_class=='MH-del'||rima_class=='other EJ (MH-del 1bp)') { 
             for (let x=xfrom-40; x<xto+10; x++){
                 if (((x >= micro_homology_data[1]-xfrom+10)&&(x < micro_homology_data[1]-xfrom+10 + micro_homology_data[0].length))||((x >= micro_homology_data[2]-xfrom+10)&&(x < micro_homology_data[2]-xfrom+10 + micro_homology_data[0].length))){
-                        SVGObj= document.createElementNS(svgns, "rect");
-                        SVGObj.setAttribute("x", 120+12*(x)-5);
-                        SVGObj.setAttribute("y", ysize+delypos-10);
-                        SVGObj.setAttribute("width", "11");
-                        SVGObj.setAttribute("height", "11");
-                        SVGObj.setAttribute("fill", "rgb(0,255,255");
-                        SVGObj.setAttribute("text-anchor", "middle");
-                        SVGObj.setAttribute("pointer-events","none");
-                        svg.appendChild(SVGObj);
+                    SVGObj= document.createElementNS(svgns, "rect");
+                    SVGObj.setAttribute("x", 120+12*(x)-5);
+                    SVGObj.setAttribute("y", ysize+delypos-10);
+                    SVGObj.setAttribute("width", "11");
+                    SVGObj.setAttribute("height", "11");
+                    SVGObj.setAttribute("fill", "rgb(0,255,255");
+                    SVGObj.setAttribute("text-anchor", "middle");
+                    SVGObj.setAttribute("pointer-events","none");
+                    svg.appendChild(SVGObj);
                 }
             }
         }
@@ -3673,8 +3674,8 @@ function PlotAlignment(id, locus){
                         SVGObj= document.createElementNS(svgns, "rect");
                         SVGObj.setAttribute("fill", "rgb(255,255,0");
                         SVGObj.style.stroke=T_cl;
-                        SVGObj.setAttribute("x", 120+12*(x-xfrom+10)-5);
-                        SVGObj.setAttribute("y", ysize+delypos-10);
+                        SVGObj.setAttribute("x", 120+12*(x-xfrom+10)-4);
+                        SVGObj.setAttribute("y", ysize+delypos-9);
                         SVGObj.setAttribute("width", "12");
                         SVGObj.setAttribute("height", "12");
                         SVGObj.setAttribute("text-anchor", "middle");
@@ -3686,11 +3687,11 @@ function PlotAlignment(id, locus){
                 }
                 else if ('ACTGN'.includes(key[x])){
                     SVGObj= document.createElementNS(svgns, "rect");
-                    SVGObj.style.stroke=N_cl;
+                    SVGObj.style.stroke=T_cl;
                     SVGObj.setAttribute("x", 115+12*(x-xfrom+10));
-                    SVGObj.setAttribute("y", ysize+delypos-10);
-                    SVGObj.setAttribute("width", "11");
-                    SVGObj.setAttribute("height", "11");
+                    SVGObj.setAttribute("y", ysize+delypos-12);
+                    SVGObj.setAttribute("width", "12");
+                    SVGObj.setAttribute("height", "16");
                     SVGObj.setAttribute("fill", "rgb(255,255,255");
                     SVGObj.setAttribute("text-anchor", "middle");
                     SVGObj.setAttribute("pointer-events","none");
@@ -3775,6 +3776,7 @@ function PlotAlignment(id, locus){
                     SVGObj.style.stroke=T_cl;
                     SVGObj.setAttribute("x", 120+12*(x-xfrom+9)-4);
                     SVGObj.setAttribute("y", ysize+delypos+4);
+                    //ins
                     SVGObj.setAttribute("width", "12");
                     SVGObj.setAttribute("height", "12");
                     SVGObj.setAttribute("text-anchor", "middle");
@@ -4660,7 +4662,7 @@ function PlotAlignment_off(gene_i) {
                 SVGObj= document.createElementNS(NS, "text");
                     SVGObj.setAttribute("y", ysize+delypos);
                     SVGObj.setAttribute("font-size", "13");
-                    SVGObj.setAttribute("font-weight", "400");
+                    SVGObj.setAttribute("font-weight", "800");
                     if (key[x]=="T"){SVGObj.textContent = key[x];
                         SVGObj.setAttribute("fill", T_cl);
                     }
@@ -4691,7 +4693,7 @@ function PlotAlignment_off(gene_i) {
                 SVGObj= document.createElementNS(NS, "text");
                 SVGObj.setAttribute("y", ysize+delypos+fontsize1-5);
                 SVGObj.setAttribute("font-size", fontsize1);
-                SVGObj.setAttribute("font-weight", "600");
+                SVGObj.setAttribute("font-weight", "800");
 
                 if (Object.keys(no_indel_arr)[0][x]=="T"){SVGObj.setAttribute("fill", T_cl);
                 }
@@ -4714,7 +4716,7 @@ function PlotAlignment_off(gene_i) {
                 SVGObj= document.createElementNS(NS, "text");
                 SVGObj.setAttribute("y", ysize+delypos+15);
                 SVGObj.setAttribute("font-size", 8);
-                SVGObj.setAttribute("font-weight", "400");
+                SVGObj.setAttribute("font-weight", "800");
                 SVGObj.textContent = no_indel_arr[Object.keys(no_indel_arr)[1]] + " "+Object.keys(no_indel_arr)[1][x]
                 SVGObj.setAttribute("x", 120+12*(x-xfrom+10));
                 SVGObj.setAttribute("text-anchor", "middle");
@@ -4724,7 +4726,7 @@ function PlotAlignment_off(gene_i) {
                 SVGObj= document.createElementNS(NS, "text");
                 SVGObj.setAttribute("y", ysize+delypos+25);
                 SVGObj.setAttribute("font-size", 8);
-                SVGObj.setAttribute("font-weight", "400");
+                SVGObj.setAttribute("font-weight", "800");
                 SVGObj.textContent = no_indel_arr[Object.keys(no_indel_arr)[0]] + " " +Object.keys(no_indel_arr)[0][x]
                 SVGObj.setAttribute("x", 120+12*(x-xfrom+10));
                 SVGObj.setAttribute("text-anchor", "middle");
@@ -4734,7 +4736,7 @@ function PlotAlignment_off(gene_i) {
                 SVGObj= document.createElementNS(NS, "text");
                 SVGObj.setAttribute("y", ysize+delypos-5);
                 SVGObj.setAttribute("font-size", fontsize2);
-                SVGObj.setAttribute("font-weight", "600");
+                SVGObj.setAttribute("font-weight", "800");
 
                 if (Object.keys(no_indel_arr)[1][x]=="T"){SVGObj.setAttribute("fill", T_cl);
                 }
@@ -4761,7 +4763,7 @@ function PlotAlignment_off(gene_i) {
             //draw main track:
             if ((key[x]==locus_list[barcode][BreakPoint-region_analyse+x])||(key[x]=='N')||(key[x]=='-')||(typeof(key[x])=='undefined')){
                 SVGObj= document.createElementNS(NS, "text");
-                SVGObj.setAttribute("font-weight", "400");
+                SVGObj.setAttribute("font-weight", "800");
             }
             else {
                 SVGObj= document.createElementNS(svgns, "rect");
@@ -4775,7 +4777,7 @@ function PlotAlignment_off(gene_i) {
                 SVGObj.setAttribute("pointer-events","none");
                 svg.appendChild(SVGObj);
                 SVGObj= document.createElementNS(NS, "text");
-                SVGObj.setAttribute("font-weight", "600");
+                SVGObj.setAttribute("font-weight", "800");
             }
             
             SVGObj.setAttribute("y", ysize+delypos);
