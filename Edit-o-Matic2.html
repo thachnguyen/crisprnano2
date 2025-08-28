@@ -351,6 +351,42 @@ button {
                         <input type="text" size="30" class="form-control" id = "p_edit" name="p_edit" >
                     </div>
                 </div>
+                    <h4>Additional options for Prime Editing</h4>
+                <div class="row">   
+                    <div class = "col-sm">
+                        <label>Prefix Reverse Transcription Template (RTT)  </label>
+                        <!-- <small class="text-muted">RTT (optional) is secondary guide for insertion track</small> -->
+                    </div>
+                    <div class = "col-sm">
+                        <div class = "col-sm">
+                            <label>Main part Reverse Transcription Template (RTT)  </label>
+                            <!-- <small class="text-muted">Scaffold (optional) is extra guide for quantified insertion track</small> -->
+                        </div>
+                    </div>
+                    <div class = "col-sm">
+                        <label>Suffix Reverse Transcription Template (RTT)  </label>
+                        <!-- <small class="text-muted">Desired edit sequence (optional) is extra guide for annotate genotype</small> -->
+                    </div>
+                    <div class = "col-sm">
+                        <label>Primer Binding Site (PBS)  </label>
+                        <!-- <small class="text-muted">Partial edit sequence (optional) is extra guide for annotate genotype</small> -->
+                    </div>
+                </div>
+                <div class="row">   
+                    <div class = "col-sm">
+                        <input type="text" size="30" class="form-control" id = "preRTT" name="preRTT" >
+                    </div>
+                    <div class = "col-sm">
+                        <input type="text" size="30" class="form-control" id = "mainRTT" name="mainRTT" >
+                    </div>
+                    <div class = "col-sm">
+                        <input type="text" size="30" class="form-control" id = "sufRTT" name="sufRTT" >
+                    </div>
+                    <div class = "col-sm">
+                        <input type="text" size="30" class="form-control" id = "PBS" name="PBS" >
+                    </div>
+                </div>
+
                 </div>
                 <h3 >Optional parameters</h3>
                 <small id="optional_para" class="text-muted">
@@ -1356,12 +1392,6 @@ function FileReceived() {
         else {
             gcContent[id][gcContent_1] = 1
         }
-        var index_oli_read = -1;
-        var index_oli_read1 = -1;
-        if (targetingOligo1 !=""){
-                index_oli_read = read.search(targetingOligo1);
-                index_oli_read1 = ReverseComplement(read).search(targetingOligo1);
-            }
 
         if ((mean_phred > PhredThreshold)&&(CurrentFileChunk<2)){ 
             // if (targetingOligo1 !=""){
@@ -1462,7 +1492,8 @@ function FileReceived() {
             //     }
             // } 
 
-            if (read.includes(locus_check1)||ReverseComplement(read).includes(locus_check1)||read.includes(locus_check2)||ReverseComplement(read).includes(locus_check2)){// UPDATE v2.0 checking 4 posiblities of read, threshold score =region_analyse+10 
+            if (read.includes(locus_check1)||ReverseComplement(read).includes(locus_check1)||read.includes(locus_check2)||ReverseComplement(read).includes(locus_check2)){// UPDATE v2.0 checking 4 posiblities of read, threshold score =region_analyse+10
+                 
                     var rst = bsa_align(locus, read, [ms, mms], [gapo, gape], is_local=true);
                     if (rst[0] < (region_analyse/2)){
                         try{
