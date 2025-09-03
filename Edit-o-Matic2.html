@@ -29,7 +29,7 @@ button {
     border-radius: 3px;
     margin-top: 3px;
     padding: 3px;
-    font-size: 12;
+    font-size: 12px;
 }
 .hidden {
       display: none;
@@ -46,7 +46,7 @@ button {
   color: #fff;
   text-align: left;
   border-radius: 6px;
-  padding: 8px 1;
+  padding: 8px 1px;
   position: absolute;
   z-index: 1;
   bottom: 125%;
@@ -138,18 +138,6 @@ button {
                                 Home
                             </a>
                         </li>
-                        <!-- <li class="nav-item mt-1", onclick="TabClicked(2);">
-                            <a  class="nav-link">
-                                <i class="fas fa-solid fa-cogs iconsMenu"></i>
-                                Use Crisprnano v2           
-                            </a>
-                        </li>
-                        <li class="nav-item ml-2 mr-2 mt-1",  onclick="TabClicked(2);">
-                            <a class="nav-link">
-                                <i class="fas fa-solid fa-pen iconsMenu"></i>
-                                How to cite
-                            </a>
-                        </li> -->
                         <li class="nav-item ml-2 mr-2 mt-1 " onclick="TabClicked(3)">
                             <a class="nav-link">
                                 <i class="fas fa-solid fa-question iconsMenu"></i>
@@ -208,7 +196,6 @@ button {
                     <div class="popup" onclick="myFunction11()">(? Click here!)
                         <span class="popuptext" id="help11">We implemented a machine learning-assisted binary decision tree (BD tree) classifier, which enables rapid classification of sequencing reads while preserving high genotyping accuracy across diverse genome editing applications and sequencing platforms. We don't recommend to use machine learning mode if the indel is far away from cutting site  , Click again to close</span>
                     </div>
-        
                 </div>
                 </div>
                 <div class="row">
@@ -269,7 +256,6 @@ button {
                 </div>
                 
                 <div class="row">
-                    <!-- Gene Name (half size) -->
                     <div class="col-sm-2">
                       <input type="text" class="form-control" 
                              name="GeneName" id="GeneName"
@@ -280,7 +266,6 @@ button {
                       <div id="gene_auto_complete" class="selector" style="display:none;"></div>
                     </div>
                   
-                    <!-- Library Select (half size) -->
                     <div class="col-sm-2">
                       <select id="lib_Select" class="form-control">
                         <option value="Lib Tkov">Toronto KnockOut (TKO) CRISPR Library - Version 3</option>
@@ -289,12 +274,10 @@ button {
                       </select>
                     </div>
                   
-                    <!-- RightBS (full) -->
                     <div class="col-sm-4">
                       <input type="text" class="form-control" name="RightBS" id="RightBS" value="">
                     </div>
                   
-                    <!-- Targeting Oligo (full) -->
                     <div class="col-sm-4">
                       <input type="text" class="form-control" id="TargetingOligo" name="TargetingOligo" value="">
                       <div class="row mt-2">
@@ -320,7 +303,6 @@ button {
                 <div class="row">   
                     <div class = "col-sm">
                         <label>Reverse Transcription Template (RTT)  </label>
-                        <!-- <small class="text-muted">RTT (optional) is secondary guide for insertion track</small> -->
                     </div>
                     <div class = "col-sm">
                         <div class = "col-sm">
@@ -439,16 +421,11 @@ button {
                         <div class = "col-sm">
                             <input type="text" size="30" class="form-control" id = "phredthreshold" name="Phred" value="20" onchange="checkValue();"><br>
                         </div>
-
-
                     </div>
-
-
-
                 </div>
                 <br>
                 <div class="row">
-                    <input type="submit" name="submit" value="SUBMIT" style="position:center" class="btn btn-primary btn-lg" id="submit" onclick="Start();">
+                    <input type="submit" name="submit" value="SUBMIT" style="position:relative" class="btn btn-primary btn-lg" id="submit" onclick="Start();">
                     <div id="progress" style="display:none; padding: 10px; border: 10px solid #CCC; background: #EEE; width:40%; position:absolute; top:50%;left:40%">
                     </div>
                 </div>
@@ -460,12 +437,10 @@ button {
                     To use Edit-o-Matic, you must enable JavaScript on your web browser.<br>
                     <!-- If you want to use CRISPRnano offline, please download </a><a href="https://iufduesseldorf-my.sharepoint.com/:u:/g/personal/thach_nguyen_iuf-duesseldorf_de/EeZRZlyFP31Gu-s-w57wlfEB42anCiwxbXRms_U_GAekpQ?e=YxlI2v"> the offline html file here.</a> <br> -->
                     <br>
-                <a style="font-style: italic;"> (*) Mandatory 
-
+                <a style="font-style: italic;"> (*) Mandatory <br>
                 Question: thach.nguyen**(replace with email symbol)**iuf-duesseldorf.de
             </small>
             </div>
-        
         </div>
     </div>
         <div id="about" style="position:center; top:80px; display: none;">
@@ -741,13 +716,9 @@ button {
 
 //check input gene offtarget genes list
 function checkOccurrence() {
-    // Get the input value
     const inputValue = document.getElementById('GeneName_list').value;
-    // Define the target string to check occurrence
     const targetString = ','; 
-    // Count the occurrences of the target string in the input
     const occurrenceCount = (inputValue.match(new RegExp(targetString, 'gi')) || []).length;
-    // Check if the occurrence count is greater than 4,
     if (occurrenceCount > 3) {
     alert(`Error: we only support maximum 4 off-target genes.`);
     }
@@ -756,7 +727,6 @@ function checkOccurrence() {
 // Get the input value and check their conditions
 function checkValue() {
     const region_analyse1 = document.getElementsByName('region_analyse')[0].value;
-    // Define the target string to check occurrence
     const MutationThreshold1 = document.getElementsByName("MutationThreshold")[0].value;
     const phred = document.getElementsByName("Phred")[0].value;
     const ML_genotype = document.getElementsByName("ML_genotype")[0].value;
@@ -777,6 +747,8 @@ function checkValue() {
         document.getElementsByName('ML_genotype')[0].value = "10";
     } 
 }
+
+var bulk_threshold = 1; // Declare bulk_threshold globally
 
 function setValue() {
     // Get the input value
@@ -869,12 +841,10 @@ function AlignmentMouseUp(evt) {
  */
 
 function Check_PolyN(seq){
+    //TODO: for annotation
     // ONT data only!
     // check insertion or deletion close to polyN
-    
 }
-
-
 
 function bsg_enc_seq(seq, table){
     if (table == null) return null;
@@ -1053,8 +1023,7 @@ function bsa_align(target, query, matrix, gapsc, is_local) {
 	return [score, start_i, cigar];
 }
 
-function bsa_cigar2gaps(target, query, start, cigar)
-{
+function bsa_cigar2gaps(target, query, start, cigar){
 	var oq = '', ot = '', mid = '', lq = 0, lt = start;
 	for (var k = 0; k < cigar.length; ++k) {
 		var op = cigar[k]&0xf, len = cigar[k]>>4;
@@ -1392,108 +1361,16 @@ function FileReceived() {
         else {
             gcContent[id][gcContent_1] = 1
         }
+        var index_oli_read = -1;
+        var index_oli_read1 = -1;
+        if (targetingOligo1 !=""){
+                index_oli_read = read.search(targetingOligo1);
+                index_oli_read1 = ReverseComplement(read).search(targetingOligo1);
+            }
 
         if ((mean_phred > PhredThreshold)&&(CurrentFileChunk<2)){ 
-            // if (targetingOligo1 !=""){
-            //     var index_oli_read = read.search(targetingOligo1);
-            //     var index_oli_read1 = ReverseComplement(read).search(targetingOligo1);
-            //     if (index_oli_read!=-1){
-            //         aln_type = 7;
-            //         // remove this part in knockin, speed up the program
-            //         var str1 = ''
-            //         str1 += read.substring(index_oli_read- oligo_index, index_oli_read- oligo_index + region_analyse*2)+ '\n'+ '\n';
-            //         if (aln_dict[id].hasOwnProperty(str1)){
-            //             aln_dict[id][str1][0]+=1
-            //         }
-            //         else {
-            //             aln_dict[id][str1] = Array(2)
-            //             aln_dict[id][str1][0] = 1
-            //             aln_dict[id][str1][1] = aln_type
-            //         }
-            //     }
-            //     else {
-            //         index_oli_read = ReverseComplement(read).search(targetingOligo1);
-            //         if (index_oli_read!=-1){
-            //             read = ReverseComplement(read)
-            //             aln_type = 7;
-            //         // remove this part in knockin, speed up the program
-            //             var str1 = ''
-            //             str1 += read.substring(index_oli_read- oligo_index, index_oli_read- oligo_index + region_analyse*2)+ '\n'+ '\n';
-            //             if (aln_dict[id].hasOwnProperty(str1)){
-            //                 aln_dict[id][str1][0]+=1
-            //             }
-            //             else {
-            //                 aln_dict[id][str1] = Array(2)
-            //                 aln_dict[id][str1][0] = 1
-            //                 aln_dict[id][str1][1] = aln_type
-            //             }
-            //         }
 
-            //         //Check WT manually, speed up
-            //         else if (read.includes(locus.substring(BreakPoint-region_analyse*1, BreakPoint + region_analyse*1))){
-            //             aln_type = 1;
-            //         // remove this part in knockin, speed up the program
-            //             var str1 = ''
-            //             str1 += locus.substring(BreakPoint-region_analyse*1, BreakPoint + region_analyse*1)+ '\n'+ '\n';
-            //             if (aln_dict[id].hasOwnProperty(str1)){
-            //                 aln_dict[id][str1][0]+=1
-            //             }
-            //             else {
-            //                 aln_dict[id][str1] = Array(2)
-            //                 aln_dict[id][str1][0] = 1
-            //                 aln_dict[id][str1][1] = aln_type
-            //             }
-            //         }
-            //         else if (read.includes(ReverseComplement(locus.substring(BreakPoint-region_analyse*1, BreakPoint + region_analyse*1)))){
-            //             aln_type = 1;
-            //             var str1 = ''
-            //             str1 += locus.substring(BreakPoint-region_analyse*1, BreakPoint + region_analyse*1)+ '\n'+ '\n';
-            //             if (aln_dict[id].hasOwnProperty(str1)){
-            //                 aln_dict[id][str1][0]+=1
-            //             }
-            //             else {
-            //                 aln_dict[id][str1] = Array(2)
-            //                 aln_dict[id][str1][0] = 1
-            //                 aln_dict[id][str1][1] = aln_type
-            //             }
-            //         }
-                    
-            //         else if (!prime_mode){
-            //             if (read.includes(locus_check1)||ReverseComplement(read).includes(locus_check1)||read.includes(locus_check2)||ReverseComplement(read).includes(locus_check2)){// UPDATE v2.0 checking 4 posiblities of read, threshold score =region_analyse+10 
-            //                 var rst = bsa_align(locus, read, [ms, mms], [gapo, gape], is_local=true);
-            //                 if (rst[0] < (region_analyse*1)){
-            //                     try{
-            //                     read = ReverseComplement(read);
-            //                     rst = bsa_align(locus, read, [ms, mms], [gapo, gape], is_local=true);
-            //                     }
-            //                     catch (error){}
-            //                 }
-            //                 var str1 = ''
-            //                 var fmt1 = bsa_cigar2gaps_breakpoint(locus, read, rst[1], rst[2], BreakPoint-region_analyse*1, BreakPoint + region_analyse*1);
-            //                 var fmt = fmt1[0]
-            //                 aln_type = fmt1[1]
-            //                 // var str2_arr = fmt[0].split('-')
-            //                 str1 += fmt[0] + '\n';
-            //                 str1 += fmt[1] + '\n';
-            //                 //aggregate aln track into dictionary
-            //                 // if (containsAny(locus, str2_arr)||containsAny(ReverseComplement(locus), str2_arr)){
-            //                 if (aln_type !=0){
-            //                     if (aln_dict[id].hasOwnProperty(str1)){
-            //                         aln_dict[id][str1][0]+=1
-            //                     }
-            //                     else {
-            //                         aln_dict[id][str1] = Array(2)
-            //                         aln_dict[id][str1][0] = 1
-            //                         aln_dict[id][str1][1] = aln_type
-            //                     }
-            //                 }
-            //             }           
-            //         }
-            //     }
-            // } 
-
-            if (read.includes(locus_check1)||ReverseComplement(read).includes(locus_check1)||read.includes(locus_check2)||ReverseComplement(read).includes(locus_check2)){// UPDATE v2.0 checking 4 posiblities of read, threshold score =region_analyse+10
-                 
+            if (read.includes(locus_check1)||ReverseComplement(read).includes(locus_check1)||read.includes(locus_check2)||ReverseComplement(read).includes(locus_check2)){// UPDATE v2.0 checking 4 posiblities of read, threshold score =region_analyse+10 
                     var rst = bsa_align(locus, read, [ms, mms], [gapo, gape], is_local=true);
                     if (rst[0] < (region_analyse/2)){
                         try{
@@ -1514,13 +1391,13 @@ function FileReceived() {
                     str1 += fmt[1] + '\n';
 
                     // new aln_type for desired edit and partial edit
-                    if ((p_edit!='')||(d_edit!='')){
-                        if (d_edit!=''&&(read.includes(d_edit)||read.includes(ReverseComplement(d_edit)))){
+                    if ((p_edit)||(d_edit)){
+                        if (d_edit&&(read.includes(d_edit)||read.includes(ReverseComplement(d_edit)))){
                             if (fmt[1].trim()==""){
                                 aln_type = 9;
                             }
                         }
-                        else if (p_edit!=''&&(read.includes(p_edit)||read.includes(ReverseComplement(p_edit)))){
+                        else if (p_edit&&(read.includes(p_edit)||read.includes(ReverseComplement(p_edit)))){
                             if (fmt[1].trim()==""){
                                 aln_type = 10;
                             }
@@ -3291,13 +3168,13 @@ function Pre_PlotAlignment(id, locus){
     }
     // assign new dictionary base on the RTT score
     var validate_ins
-    if (rtt!=''){
+    if (rtt){
         //for reupdate RTT
         var ins_arr = []
         for (let key in aln_dict_fil[id]){
             if (key.split('\n')[1].trim().length>5){
                 validate_ins = Check_ins_RTT(key, buff_size=5)
-                if (typeof validate_ins[3]!== "undefined"){
+                if (validate_ins[0]&&typeof validate_ins[3]!== "undefined"){
                     aln_dict_fil[id][validate_ins[3]]= aln_dict_fil[id][key]
                     aln_dict[id][validate_ins[3]]= aln_dict[id][key]
                     delete aln_dict[id][key]
@@ -3307,19 +3184,19 @@ function Pre_PlotAlignment(id, locus){
             }
         }
         var insertion_pos = findMostPopular(ins_arr)
-        // for (let key in aln_dict_fil[id]){
-        //     if (key.split('\n')[1].trim().length>0){
-        //         validate_ins = Check_ins_RTT2(key, insertion_pos)
-
-        //         if (typeof validate_ins[3]!== "undefined"){
-        //             aln_dict_fil[id][validate_ins[3]]= aln_dict_fil[id][key]
-        //             aln_dict[id][validate_ins[3]]= aln_dict[id][key]
-        //             delete aln_dict[id][key]
-        //             delete aln_dict_fil[id][key]
-        //         }
-            
-        //     }
-        // }  
+        for (let key in aln_dict_fil[id]){
+            if (key.split('\n')[1].trim().length>0){
+                validate_ins = Check_ins_RTT2(key, insertion_pos)
+                if (validate_ins[0]){
+                    if (typeof validate_ins[3]!== "undefined"){
+                        aln_dict_fil[id][validate_ins[3]]= aln_dict_fil[id][key]
+                        aln_dict[id][validate_ins[3]]= aln_dict[id][key]
+                        delete aln_dict[id][key]
+                        delete aln_dict_fil[id][key]
+                    }
+                }
+            }
+        }  
     }
     no_indel[id] = 0; 
     no_indel_arr[id] = []
@@ -3443,7 +3320,7 @@ function PlotAlignment(id, locus){
         //aggregate WT
         var micro_homology_data = Check_RIMA(key)
         var duplication1 = Check_duplication(key)
-        if (micro_homology_data[0]!=''){
+        if (micro_homology_data[0]){
             rima_class = 'other EJ (MH-del 1bp)'
             if (micro_homology_data[0].length>=2){
                 rima_class = 'MH-del'
@@ -3684,7 +3561,7 @@ function PlotAlignment(id, locus){
         //aggregate WT
         var micro_homology_data = Check_RIMA(key)
         var duplication1 = Check_duplication(key)
-        if (micro_homology_data[0]!=''){
+        if (micro_homology_data[0]){
             rima_class = 'other EJ (MH-del 1bp)'
             if (micro_homology_data[0].length>=2){
                 rima_class = 'MH-del'
@@ -3821,7 +3698,12 @@ function PlotAlignment(id, locus){
         else {
             for (let x=xfrom-10; x<xto-10; x++){
                 //draw main track:
-                if ((key[x]==locus[BreakPoint-region_analyse+x])||(key[x]=='N')||(key[x]=='-')||(typeof(key[x])=='undefined')){
+                if (
+                    (x >= 0 && x < key.length && (BreakPoint-region_analyse+x) >= 0 && (BreakPoint-region_analyse+x) < locus.length && key[x] == locus[BreakPoint-region_analyse+x])
+                    || (key[x] == 'N')
+                    || (key[x] == '-')
+                    || (typeof(key[x]) == 'undefined')
+                ){
                     if ((duplication1[0])&&(x>=duplication1[1])&&(x<(duplication1[1]+duplication1[2]))){
                         SVGObj= document.createElementNS(svgns, "rect");
                         SVGObj.setAttribute("fill", "rgb(255,255,0");
@@ -4194,7 +4076,7 @@ function PlotAlignment_bulk(barcode, locus, bulk_threshold = bulk_threshold){
         var micro_homology_data = Check_RIMA(key)
         var duplication1 = Check_duplication(key)
         var rima_class = 'other EJ'
-        if (micro_homology_data[0]!=''){
+        if (micro_homology_data[0]){
             rima_class = 'other EJ (MH-del 1bp)'
             if (micro_homology_data[0].length>=2){
                 rima_class = 'MH-del';
@@ -4222,110 +4104,6 @@ function PlotAlignment_bulk(barcode, locus, bulk_threshold = bulk_threshold){
             }
         }
         
-        // if (aln_dict[id][key][1]==1 && (Object.keys(no_indel_arr[barcode]).length ==2)){
-        //     for (let x=xfrom-10; x<xto-10; x++){
-        //     //draw main track:
-        //     if (Object.keys(no_indel_arr[barcode])[0][x]==Object.keys(no_indel_arr[barcode])[1][x]){
-        //         SVGObj= document.createElementNS(NS, "text");
-        //         SVGObj.setAttribute("y", ysize+delypos);
-        //         SVGObj.setAttribute("font-size", "13");
-        //         SVGObj.setAttribute("font-weight", "400");
-        //         if (key[x]=="T"){SVGObj.textContent = key[x];
-        //             SVGObj.setAttribute("fill", T_cl);
-        //         }
-        //         else if (key[x]=="A"){SVGObj.textContent = key[x];
-        //             SVGObj.setAttribute("fill", A_cl);
-        //         }
-        //         else if (key[x]=="C"){SVGObj.textContent = key[x];
-        //             SVGObj.setAttribute("fill", C_cl);
-        //         }
-        //         else if (key[x]=="G"){SVGObj.textContent = key[x];
-        //             SVGObj.setAttribute("fill", G_cl);
-        //         }
-        //         else if (key[x]=="N"){SVGObj.textContent = key[x];
-        //             SVGObj.setAttribute("fill", N_cl);
-        //         }
-        //         else if (key[x]=="-"){SVGObj.textContent = key[x];
-        //             SVGObj.setAttribute("fill", "rgb(0,0,0");
-        //         }
-        //         SVGObj.setAttribute("x", 120+12*(x-xfrom+10));
-        //         SVGObj.setAttribute("text-anchor", "middle");
-        //         SVGObj.setAttribute("pointer-events","none");
-        //         svg.appendChild(SVGObj);
-        //     }
-        //     else {
-        //         var fontsize1 = 2+ Math.floor(13*no_indel_arr[barcode][Object.keys(no_indel_arr[barcode])[0]]/(no_indel_arr[barcode][Object.keys(no_indel_arr[barcode])[0]]+no_indel_arr[barcode][Object.keys(no_indel_arr[barcode])[1]]))
-        //         var fontsize2 = 2+ Math.floor(13*no_indel_arr[barcode][Object.keys(no_indel_arr[barcode])[1]]/(no_indel_arr[barcode][Object.keys(no_indel_arr[barcode])[0]]+no_indel_arr[barcode][Object.keys(no_indel_arr[barcode])[1]]))
-
-        //         SVGObj= document.createElementNS(NS, "text");
-        //         SVGObj.setAttribute("y", ysize+delypos+fontsize1-5);
-        //         SVGObj.setAttribute("font-size", fontsize1);
-        //         SVGObj.setAttribute("font-weight", "600");
-
-        //         if (Object.keys(no_indel_arr[barcode])[0][x]=="T"){SVGObj.setAttribute("fill", T_cl);
-        //         }
-        //         else if (Object.keys(no_indel_arr[barcode])[0][x]=="A"){SVGObj.setAttribute("fill", A_cl);
-        //         }
-        //         else if (Object.keys(no_indel_arr[barcode])[0][x]=="C"){SVGObj.setAttribute("fill", C_cl);
-        //         }
-        //         else if (Object.keys(no_indel_arr[barcode])[0][x]=="G"){SVGObj.setAttribute("fill", G_cl);
-        //         }
-        //         else if (Object.keys(no_indel_arr[barcode])[0][x]=="N"){SVGObj.setAttribute("fill", N_cl);
-        //         }
-        //         else if (Object.keys(no_indel_arr[barcode])[0][x]=="-"){SVGObj.setAttribute("fill", N_cl);
-        //         }
-        //         SVGObj.textContent = Object.keys(no_indel_arr)[0][x];
-        //         SVGObj.setAttribute("x", 120+12*(x-xfrom+10));
-        //         SVGObj.setAttribute("text-anchor", "middle");
-        //         SVGObj.setAttribute("pointer-events","none");
-        //         svg.appendChild(SVGObj);
-
-        //         SVGObj= document.createElementNS(NS, "text");
-        //         SVGObj.setAttribute("y", ysize+delypos+15);
-        //         SVGObj.setAttribute("font-size", 8);
-        //         SVGObj.setAttribute("font-weight", "400");
-        //         SVGObj.textContent = no_indel_arr[barcode][Object.keys(no_indel_arr[barcode])[1]] + " "+Object.keys(no_indel_arr[barcode])[1][x]
-        //         SVGObj.setAttribute("x", 120+12*(x-xfrom+10));
-        //         SVGObj.setAttribute("text-anchor", "middle");
-        //         SVGObj.setAttribute("pointer-events","none");
-        //         svg.appendChild(SVGObj);
-
-        //         SVGObj= document.createElementNS(NS, "text");
-        //         SVGObj.setAttribute("y", ysize+delypos+25);
-        //         SVGObj.setAttribute("font-size", 8);
-        //         SVGObj.setAttribute("font-weight", "400");
-        //         SVGObj.textContent = no_indel_arr[barcode][Object.keys(no_indel_arr[barcode])[0]] + " " +Object.keys(no_indel_arr[barcode])[0][x]
-        //         SVGObj.setAttribute("x", 120+12*(x-xfrom+10));
-        //         SVGObj.setAttribute("text-anchor", "middle");
-        //         SVGObj.setAttribute("pointer-events","none");
-        //         svg.appendChild(SVGObj);
-
-        //         SVGObj= document.createElementNS(NS, "text");
-        //         SVGObj.setAttribute("y", ysize+delypos-5);
-        //         SVGObj.setAttribute("font-size", fontsize2);
-        //         SVGObj.setAttribute("font-weight", "600");
-
-        //         if (Object.keys(no_indel_arr[barcode])[1][x]=="T"){SVGObj.setAttribute("fill", T_cl);
-        //         }
-        //         else if (Object.keys(no_indel_arr[barcode])[1][x]=="A"){SVGObj.setAttribute("fill", A_cl);
-        //         }
-        //         else if (Object.keys(no_indel_arr[barcode])[1][x]=="C"){SVGObj.setAttribute("fill", C_cl);
-        //         }
-        //         else if (Object.keys(no_indel_arr[barcode])[1][x]=="G"){SVGObj.setAttribute("fill", G_cl);
-        //         }
-        //         else if (Object.keys(no_indel_arr[barcode])[1][x]=="N"){SVGObj.setAttribute("fill", N_cl);
-        //         }
-        //         else if (Object.keys(no_indel_arr[barcode])[1][x]=="-"){SVGObj.setAttribute("fill", "rgb(0,0,0");
-        //         }
-        //         SVGObj.textContent = Object.keys(no_indel_arr[barcode])[1][x];
-        //         SVGObj.setAttribute("x", 120+12*(x-xfrom+10));
-        //         SVGObj.setAttribute("text-anchor", "middle");
-        //         SVGObj.setAttribute("pointer-events","none");
-        //         svg.appendChild(SVGObj);
-        //     }
-        // }
-        // }
-        // else {
             for (let x=xfrom-10; x<xto-10; x++){
                 //draw main track:
                 if ((key[x]==locus[BreakPoint-region_analyse+x])||(key[x]=='N')||(key[x]=='-')||(typeof(key[x])=='undefined')){
@@ -5331,7 +5109,7 @@ function Check_duplication(sequence_seq){
     const insertion = sequence_seq.split('\n')[1]
     const insertion_trim = insertion.trim()
     var index_in = 0
-    if (insertion_trim !=''){
+    if (insertion_trim ){
         index_in = insertion.indexOf(insertion_trim)
         duplicate = (main_track.substring(index_in, index_in+insertion_trim.length)==insertion.substring(index_in, index_in+insertion_trim.length)||main_track.substring(index_in-insertion_trim.length, index_in)==insertion.substring(index_in, index_in+insertion_trim.length))
     }
@@ -5355,7 +5133,7 @@ function Check_ins_RTT(sequence_seq, buff_size = 5){
     var ins_new
     var rtt_ins =""
     var fmt
-    if (insertion_trim !=''){
+    if (insertion_trim ){
         index_in = insertion.indexOf(insertion_trim)
         if (index_in >buff_size && index_in< (main_track.length -buff_size)){
             var insertion_buff =  main_track.slice(index_in-buff_size, index_in) + insertion_trim + main_track.slice(index_in, index_in +buff_size)
@@ -5377,7 +5155,7 @@ function Check_ins_RTT(sequence_seq, buff_size = 5){
                 rtt_ins = fmt[1]
                 var index_ins_gap = index_in - ins_new.search(/[A-Z]/);
                 //update the dictionary with new insertion position
-                seq_new = main_track +'\n'+  ''.padStart(index_ins_gap + rst[1]- buff_size, ' ') + ins_new  + ''.padStart((main_track.length - (index_ins_gap + rst[1]- buff_size +ins_new.length)), ' ') +'\n'+ ''.padStart(index_ins_gap + rst1[1]- buff_size -2, ' ') +'(RTT)  ' + rtt_ins  + ''.padStart((main_track.length - (index_ins_gap + rst1[1]- buff_size +ins_new.length)), ' ') +'\n'
+                seq_new = main_track +'\n'+  ''.padStart(index_ins_gap + rst[1]- buff_size, ' ') + ins_new  + ''.padStart((main_track.length - (index_ins_gap + rst[1]- buff_size +ins_new.length)), ' ') +'\n'+ ''.padStart(index_ins_gap + rst[1]- buff_size -7, ' ') +'(RTT)  ' + rtt_ins  + ''.padStart((main_track.length - (index_ins_gap + rst[1]- buff_size +ins_new.length)), ' ') +'\n'
                 }
             }
         catch (error){}
@@ -5402,7 +5180,7 @@ function Check_ins_RTT2(sequence_seq, common_post){
     var insertion_buff
     var buff_size = 5
     var index_ins_gap 
-    if (insertion_trim !=''){
+    if (insertion_trim){
         index_in = insertion.indexOf(insertion_trim)
         var insertion_buff =  main_track.slice(index_in-5, index_in) + insertion_trim + main_track.slice(index_in, index_in +5)
         if (index_in <common_post){
@@ -5552,6 +5330,40 @@ function Start(){
         document.getElementById("progress").style.display = 'Please check the input form';
         return
     }
+
+    //Get advanced PE 
+    if ((preRTT == '')||(mainRTT == '')||(sufRTT == '')||(pbs == '')){
+        preRTT = document.getElementsByName("preRTT")[0].value.replace(/[\s\n]+/g, '').toUpperCase(); // preRTT seq  
+        mainRTT = document.getElementsByName("mainRTT")[0].value.replace(/[\s\n]+/g, '').toUpperCase(); // mainRTT seq  
+        sufRTT = document.getElementsByName("sufRTT")[0].value.replace(/[\s\n]+/g, '').toUpperCase(); // sufRTT seq  
+        pbs = document.getElementsByName("PBS")[0].value.replace(/[\s\n]+/g, '').toUpperCase(); // PBS seq  
+    }
+    //TODO: Add validation function later
+    if ((preRTT)&&((sufRTT)||(pbs))){
+        var pre_rtt_index = locus.search(preRTT)
+        var pre_rtt_index_rv = locus.search(ReverseComplement(preRTT))
+        if (pre_rtt_index==-1&&pre_rtt_index_rv==-1){
+            alert('PreRTT not found, please check your preRTT input')
+        }
+        else if (pre_rtt_index==-1){
+            preRTT = ReverseComplement(preRTT)
+            pre_rtt_index = pre_rtt_index_rv
+        } 
+        // Use pbs
+        if (pbs){
+            var pbs_index = locus.search(pbs)
+            var pbs_index_rv = locus.search(ReverseComplement(pbs))
+            if (pbs_index==-1&&pbs_index_rv==-1){
+                alert('PBS not found, please check your PBS input')
+            }
+            else if (pbs_index==-1){
+                pbs = ReverseComplement(pbs)
+                pbs_index = pbs_index_rv
+            } 
+            locus_pe = locus.substring(0, pre_rtt_index) + locus.substring(pbs_index, locus.length)
+            locus = locus_pe
+        }
+    }
     
     //check other field 
     if (region_analyse*1>80){
@@ -5631,39 +5443,7 @@ function Start2(){
     locus_list1[4] = document.getElementById("sgRNA4").value.replace(/[\s\n]+/g, '').toUpperCase();
 
     for (let i = 0; i<locus_list.length; i++){
-        // if (locus_list1[i]==""){
-        //     var rst = bsa_align(locus_list[i], rightbs, [ms, mms], [gapo, gape], is_local=true);
-        //     if (rst[0]<(rightbs.length/2)){
-        //         rst = bsa_align(ReverseComplement(locus_list[i]), rightbs, [ms, mms], [gapo, gape], is_local=true);
-        //         if (rst[0]<(rightbs.length/2)){
-        //             alert("The target site was not found in the given OFF-TARGET reference gene ("+ gene_list[i] +"). Please enter a valid gene name");
-        //         }
-        //         else {
-        //         RightBsPos_off[i] = rst[1];
-        //         locus_list1[i] = ReverseComplement(locus_list[i]).substring(RightBsPos_off[i] -region_analyse*1-30, RightBsPos_off[i] -region_analyse*1)
-        //         locus_list[i] = ReverseComplement(locus_list[i]).substring(RightBsPos_off[i] -region_analyse*1, RightBsPos_off[i] + rightbs.length +region_analyse*1)
-        //         }
-        //     }   
-        //     else {
-        //         RightBsPos_off[i] = rst[1];
-        //         locus_list1[i] = locus_list[i].substring(RightBsPos_off[i] -region_analyse*1-30, RightBsPos_off[i] -region_analyse*1)
-        //         locus_list[i] = locus_list[i].substring(RightBsPos_off[i] -region_analyse*1, RightBsPos_off[i] + 20 +region_analyse*1)
-        //     }
-        //     //Update new index
-        //     var rst = bsa_align(locus_list[i], rightbs, [ms, mms], [gapo, gape], is_local=true);
-        //     if (rst[0]<(rightbs.length-3)){
-        //         rst = bsa_align(ReverseComplement(locus_list[i]), rightbs, [ms, mms], [gapo, gape], is_local=true);
-        //         if (rst[0]<(rightbs.length-3)){
-        //             RightBsPos_off[i] = rst[1];
-        //         }
-        //     }   
-        //     else {
-        //         RightBsPos_off[i] = rst[1];
-        //         BreakPoint_off[i] = RightBsPos_off[i] + 20
-        //     }
-        // }
 
-        // else{
         if (locus_list[i].includes(locus_list1[i])){
             RightBsPos_off[i] = locus_list[i].indexOf(locus_list1[i])
             BreakPoint_off[i] = RightBsPos_off[i] +10
@@ -5779,6 +5559,13 @@ var aln_dict_fil = Array(96)
 
 var AlignmentPrecalc
 var locus = '';
+// modified locus for advanced Prime Editing workflow!
+var locus_pe = '';
+var preRTT = '';
+var mainRTT = '';
+var sufRTT = '';
+var pbs = '';
+
 var targetingOligo1 = ''; // KI sequence
 var locus_check1 = ''; //adaptive ref pair
 var locus_check2 = ''; //adaptive ref
@@ -5856,7 +5643,6 @@ const KI_2 = "rgb(31, 89, 143)"
 //Using local files
 var CRISPRlib = ""
 var sglib;
-var dbVersion = 1.0;
 
 const toggleButton = document.getElementById('toggleButton');
 const sgRNAContainer = document.getElementById('sgRNAContainer');
