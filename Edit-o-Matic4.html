@@ -1248,8 +1248,7 @@ function TabClicked(i)
 var ks_comp = {'A':'T','C':'G','G':'C','T':'A','M':'K','K':'M','Y':'R','R':'Y','V':'B','B':'V','H':'D','D':'H',
 			   'a':'t','c':'g','g':'c','t':'a','m':'k','k':'m','y':'r','r':'y','v':'b','b':'v','h':'d','d':'h'};
 
-function ReverseComplement(s)
-{
+function ReverseComplement(s){
 	var i, t = '';
 	for (i = 0; i < s.length; ++i) {
 		var c = s.charAt(s.length - 1 - i);
@@ -1406,17 +1405,25 @@ function FileReceived() {
 
         // const index_l = read.indexOf(anchor_fwl) || read.indexOf(anchor_rvr); 
         // const index_r = read.indexOf(anchor_fwr) || read.indexOf(anchor_rvl); 
-        const index_l = fuzzyIndexOf(read, anchor_fwl, max_mismatch) || fuzzyIndexOf(read, anchor_rvr, max_mismatch) 
-        const index_r = fuzzyIndexOf(read, anchor_fwr, max_mismatch) || fuzzyIndexOf(read, anchor_rvl, max_mismatch) 
-
+        var index_l = fuzzyIndexOf(read, anchor_fwl, max_mismatch)
+        var index_r = fuzzyIndexOf(read, anchor_fwr, max_mismatch)
+        if (index_l===-1 && index_r===-1){
+            index_l = fuzzyIndexOf(read, anchor_rvr, max_mismatch)
+            index_r = fuzzyIndexOf(read, anchor_rvl, max_mismatch)
+            if (index_l!==-1 && index_r!==-1){
+                read = ReverseComplement(read);
+                index_l = fuzzyIndexOf(read, anchor_fwl, max_mismatch)
+                index_r = fuzzyIndexOf(read, anchor_fwr, max_mismatch)
+            }
+        } 
+ 
         if (mean_phred > PhredThreshold){                      
-            if (index_l!==-1 && index_r!=-1) { 
+            if (index_l!==-1 && index_r!==-1) { 
                 if (index_l < index_r){
                     read = read.substring(index_l, index_r + anchor_size) ;
                 }
                 else {
                     read = read.substring(index_r, index_l + anchor_size) ;
-                    read = ReverseComplement(read);
                 }
                 // check if already aligned
                 if (!aln_dict_lib[id].hasOwnProperty(read)) {
@@ -1425,29 +1432,29 @@ function FileReceived() {
                     const fmt1 = bsa_cigar2gaps_breakpoint(locus, read, rst[1], rst[2], BreakPoint-region_analyse*1, BreakPoint + region_analyse*1);
                     const fmt = fmt1[0]
                     aln_type = fmt1[1]
+                    if (index_oli_read != -1|| index_oli_read1 != -1){
+                        aln_type = 7;
+                    }
+                    // new aln_type for desired edit and partial edit
+                    else if ((p_edit)||(d_edit)){
+                        if (d_edit&&(read.includes(d_edit)||read.includes(ReverseComplement(d_edit))||d_edit.includes(ReverseComplement(read))||d_edit.includes(read))){
+                            aln_type = 9;
+                        }
+                        else if (p_edit&&(read.includes(p_edit)||read.includes(ReverseComplement(p_edit))||p_edit.includes(ReverseComplement(read))||p_edit.includes(read))){
+                            aln_type = 10;
+                        }
+                    }
                     // var str2_arr = fmt[0].split('-')
                     str1 += fmt[0] + '\n';
                     str1 += fmt[1] + '\n';
                     if (aln_type !=0){
                         if (aln_dict[id].hasOwnProperty(str1)){
                             aln_dict[id][str1][0]+=1
+                            //update genotype for PE analysis
                         }
                         else {
                             aln_dict[id][str1] = Array(2)
                             aln_dict[id][str1][0] = 1
-
-                            if (index_oli_read != -1|| index_oli_read1 != -1){
-                                aln_type = 7;
-                            }
-                            // new aln_type for desired edit and partial edit
-                            if ((p_edit)||(d_edit)){
-                                if (d_edit&&(read.includes(d_edit)||read.includes(ReverseComplement(d_edit)))){
-                                    aln_type = 9;
-                                }
-                                else if (p_edit&&(read.includes(p_edit)||read.includes(ReverseComplement(p_edit)))){
-                                    aln_type = 10;
-                                }
-                            }
                             aln_dict[id][str1][1] = aln_type
                         }
                     }
@@ -1461,7 +1468,6 @@ function FileReceived() {
                     }
                 }                    
             }           
-            
         }
     }
     RestFromLastChunk = original.substr(cursor);
@@ -1472,6 +1478,10 @@ function FileReceived() {
     if ((CurrentFileChunk)*chunksize >= files[CurrentFileId].size) {
         Pre_PlotAlignment(id)
         PlotAlignment(id)
+        if (locus_pe){
+            //Must restore locus PE again for each step
+            locus = locus_pe;
+        }
         CurrentFileId++;
         CurrentFileChunk = 0;
         RestFromLastChunk = "";
@@ -1482,17 +1492,20 @@ function FileReceived() {
     } else {
         DrawPie();
         DrawPie_rima();
+        //restore locus if changed at the end of PE
+        locus = locus_backup;
+        runtime = performance.now() -startTime
     }
-    }
+}
 
 function FileReceived_off() {
     var original = RestFromLastChunk+reader.result;
     var cursor = 0, origlen = original.length;
     // alignment parameter for affine score DP algorithms 
-    var ms = 1 // match score
-    var mms = -1 //mismatch score
-    var gapo = -4  // gap open score
-    var gape = -1  // gap extent score
+    const ms = 1 // match score
+    const mms = -1 //mismatch score
+    const gapo = -4  // gap open score
+    const gape = -1  // gap extent score
     // var id = CurrentFileId;
     while (true) {
         var cursor1 = cursor;
@@ -2784,7 +2797,27 @@ function Pre_PlotAlignment(id){
             var key3 = key.split('\n')[1];
             var key4 = key.split('\n')[2];
             var key5 = key3
+            const firstDeletionSize = seq => {
+                seq = String(seq); // ensure it's a string
+                const match = seq.match(/-+/);
+                return match ? match[0].length : 0;
+            };
             if (key2 == locus.substring(pre_rtt_index + preRTT.length, pbs_index)){
+                if (firstDeletionSize(key1.substring(0, key3.search(key2)))==0&&firstDeletionSize(key1.substring(key3.search(key2)+key2.length, key1.length))==0){
+                    aln_dict[id][key][1] = 1; // WT
+                }
+                else if (firstDeletionSize(key1.substring(0, key3.search(key2)))%3==0&&firstDeletionSize(key1.substring(key3.search(key2)+key2.length, key1.length))==0){
+                    aln_dict[id][key][1] = 2; // in frame indel
+                }
+                else if (firstDeletionSize(key1.substring(0, key3.search(key2))==0)&&firstDeletionSize(key1.substring(key3.search(key2)+key2.length, key1.length))%3==0){
+                    aln_dict[id][key][1] = 2; // outframe indel
+                }
+                else if (firstDeletionSize(key1.substring(0, key3.search(key2)))==0&&firstDeletionSize(key1.substring(key3.search(key2)+key2.length, key1.length))%3!=0){
+                    aln_dict[id][key][1] = 3; // outframe indel
+                }
+                else if (firstDeletionSize(key1.substring(0, key3.search(key2)))%3!=0&&firstDeletionSize(key1.substring(key3.search(key2)+key2.length, key1.length))==0){
+                    aln_dict[id][key][1] = 3; // in frame indel
+                }
                 key1 = key1.substring(0, key3.search(key2)) + locus.substring(pre_rtt_index + preRTT.length, pbs_index) + key1.substring(key3.search(key2), key1.length-key2.length)+ "\n";
                 key5 = "\n"
                 key4 = "\n"
@@ -4181,7 +4214,7 @@ function PlotAlignment_off(gene_i) {
 
 //Save HTML, all the required variables store in BLOB and load later
 function SaveProject() {
-    var aln_data = {genename: document.getElementsByName("GeneName")[0].value, BreakPoint: BreakPoint , files_name:files_name, region_analyse: region_analyse,  RightBsPos: RightBsPos, locus: locus, rightbs: rightbs, rtt: rtt, targetingOligo1: targetingOligo1 ,d_edit: d_edit, p_edit: p_edit, MutationThreshold: MutationThreshold, PhredThreshold: PhredThreshold,
+    var aln_data = {genename: document.getElementsByName("GeneName")[0].value, BreakPoint: BreakPoint , files_name:files_name, region_analyse: region_analyse,  RightBsPos: RightBsPos, locus: locus, pre_rtt_index: pre_rtt_index, pbs_index: pbs_index, preRTT: preRTT, sufRTT: sufRTT, rightbs: rightbs, rtt: rtt, targetingOligo1: targetingOligo1 ,d_edit: d_edit, p_edit: p_edit, MutationThreshold: MutationThreshold, PhredThreshold: PhredThreshold,
     aln_dict: aln_dict, aln_dict_fil: aln_dict_fil, aln_dict_off: aln_dict_off,aln_dict_fil_off: aln_dict_fil_off,phred_array: phred_array, gcContent: gcContent, length_array:length_array}
     var blob = new Blob([JSON.stringify(aln_data)], { type: 'application/json'});  
     var reader = new window.FileReader();
@@ -4216,6 +4249,8 @@ function LoadData(){
         store_data = JSON.parse(store_data)
         //Update GUI and variables
         BreakPoint = store_data.BreakPoint;
+        pre_rtt_index = store_data.pre_rtt_index;
+        pbs_index = store_data.pbs_index;
         files_name = store_data.files_name;
         RightBsPos = store_data.RightBsPos;
         MutationThreshold = store_data.MutationThreshold;
@@ -4290,6 +4325,8 @@ function SaveReport() {
 function SaveReportcsv() {
     const now = new Date();
     var config_data = "# Analysis on: " + now.toString()+"\n";
+    config_data += "# Run time: " + runtime.toFixed(3) +" miliseconds\n";
+    config_data += runtime.toFixed(3) +"\n";
     config_data += "# Gene: " +document.getElementsByName("GeneName")[0].value +"\n";
     config_data += "# sgRNA:" + rightbs +"\n";
     config_data += "# Referfence: " + locus +"\n";
@@ -4512,10 +4549,10 @@ function Check_ins_RTT(sequence_seq, buff_size = 5){
     // This function will check the insertion track expand it to the both site of insertion position then use global alignment to RTT, 
     // if there is better matching, shift the cutting site to the maximum point
     // Update the new aligment entry to the alignment dictionary
-    var ms = 1 // match score
-    var mms = -1//mismatch score
-    var gapo = -3  // gap open score
-    var gape = -1  // gap extent score
+    const ms = 1 // match score
+    const mms = -1//mismatch score
+    const gapo = -3  // gap open score
+    const gape = -1  // gap extent score
     var shifted = false
     const main_track = sequence_seq.split('\n')[0]
     const insertion = sequence_seq.split('\n')[1]
@@ -4557,10 +4594,10 @@ function Check_ins_RTT(sequence_seq, buff_size = 5){
 
 function Check_ins_RTT2(sequence_seq, common_post){
     // This function will check the insertion track again base on the RTT shifted position
-    var ms = 1 // match score
-    var mms = -1//mismatch score
-    var gapo = -3  // gap open score
-    var gape = -1  // gap extent score
+    const ms = 1 // match score
+    const mms = -1//mismatch score
+    const gapo = -3  // gap open score
+    const gape = -1  // gap extent score
     const main_track = sequence_seq.split('\n')[0]
     const insertion = sequence_seq.split('\n')[1]
     const insertion_trim = insertion.replace(/-/g, "").replace(/\s+/g, "")
@@ -4622,6 +4659,8 @@ function toggleHelp(id) {
 
 function Start(){
     document.getElementById("progress").style.display = '';
+    startTime = performance.now()
+
     //Reset all variables
     files_name = []
     for (var i=0; i<96; i++) {
@@ -4780,10 +4819,10 @@ function Start2(){
     }
 
     //Score of OFF target reference
-    var ms = 1 // match score
-    var mms = -1 //mismatch score
-    var gapo = -2  // gap open score
-    var gape = -1  // gap extent score
+    // var ms = 1 // match score
+    // var mms = -1 //mismatch score
+    // var gapo = -2  // gap open score
+    // var gape = -1  // gap extent score
 
     //Find Target site in the reference sequence/locus:
     if (rightbs.length == 0){
@@ -5013,13 +5052,14 @@ const G_cl = "rgb(200, 100, 0)"
 const N_cl = "rgb(0, 0, 0)"
 const KI_1 = "rgb(154, 34, 93)"
 const KI_2 = "rgb(31, 89, 143)"
-
+var runtime
+var startTime
 var anchor_fwr
 var anchor_fwl
 var anchor_rvr
 var anchor_rvl
 const anchor_size = 10
-const max_mismatch = 2
+const max_mismatch = 1
 
 //Using local files
 var CRISPRlib = ""
