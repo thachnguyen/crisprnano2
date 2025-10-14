@@ -355,7 +355,7 @@ div.selector {
                         </small>
                     </div>
                     <div class = "col-sm">
-                        <input type="text" size="30" name="region_analyse" id="region_analyse" value="100" class="form-control" onchange="checkValue();"><br>
+                        <input type="text" size="30" name="region_analyse" id="region_analyse" value="90" class="form-control" onchange="checkValue();"><br>
                     </div>
                     <div class = "col-sm">
                         <input type="text" size="30" class="form-control" id= "allelethreshold" name="MutationThreshold" value="1" onchange="checkValue();"><br>
@@ -544,12 +544,13 @@ div.selector {
                 <label class="btn btn-secondary" onclick="SaveReportcsv();">
                     Indel CSV
                 </label>
+
                 <label class="btn btn-secondary" onclick="SaveSVGAlignment();">
-                        Alignment (.svg)
-                    </label>
-                    <label class="btn btn-secondary" onclick="PrintSVG();">
-                        Print PIE
-                    </label>
+                    Alignment (.svg)
+                </label>
+                <label class="btn btn-secondary" onclick="PrintSVG();">
+                    Print PIE
+                </label>
                 </div> 
             <h3>SECONDARY ANALYSIS</h3> 
             <div class="form-check form-switch">
@@ -588,6 +589,21 @@ div.selector {
                 <input type="submit" name="submit" value="START OFFTARGET ANALYZER " class="btn btn-sm btn-light brd" id="submit" onclick="Start2();">
                 <br>
                 <br>
+                <h4>UP/DOWN Analysis (optional)</h4>    
+                List Reference Clone (separate by ,):
+                <div class="popup" onclick="toggleHelp(8)">(? Click here!)
+                    <span class="popuptext" id="help8">Name of the reference clone seperate by , . Click to close.</span>
+                </div>
+                <br>
+                <input type="text" class="form-control" size="40" name="Ref_list" id="Ref_list" value="A1, B1, C1" onchange="checkOccurrence(); getFastaSequence_list();">
+                <br>
+
+            <div class="btn-group btn-group-toggle" data-toggle="buttons">
+
+                <label class="btn btn-secondary" onclick="SaveRatio();">
+                    Up/Down editing CSV
+                </label>
+                </div> 
 
                 <div id="progress1" style="display:none; padding: 10px; border: 10px solid #CCC; background: #EEE; width:80%; position:absolute; top:40%;left:0%">
                 </div>
@@ -674,7 +690,7 @@ function checkValue() {
     }
     if (region_analyse1*1 > 160||region_analyse1*1<60) {
         alert('System only support region size from 60-160 bp');
-        document.getElementsByName('region_analyse')[0].value = "100";
+        document.getElementsByName('region_analyse')[0].value = "90";
     } 
     // if (ML_genotype*1 > 20||ML_genotype*1<2) {
     //     alert('System only support maximum genotype between 2 to 20');
@@ -689,13 +705,13 @@ function setValue() {
     // Define the target string to check occurrence
     var mySelect = document.getElementById('mySelect');
     if (mySelect.value == 'ont'){
-        document.getElementsByName('region_analyse')[0].value = "90";
+        document.getElementsByName('region_analyse')[0].value = "80";
         document.getElementsByName("MutationThreshold")[0].value = '5'
         document.getElementsByName("Phred")[0].value = '10'
         bulk_threshold = 1;
     }
     else {
-        document.getElementsByName('region_analyse')[0].value = "100";
+        document.getElementsByName('region_analyse')[0].value = "90";
         document.getElementsByName("MutationThreshold")[0].value = '1'
         document.getElementsByName("Phred")[0].value = '20'
         bulk_threshold = 0.5;
@@ -1337,8 +1353,8 @@ function FileReceived() {
     var cursor = 0, origlen = original.length;
     // alignment parameter for affine score DP algorithms 
     const ms = 1 // match score
-    const mms = -1//mismatch score
-    const gapo = -4  // gap open score
+    const mms = -1// mismatch score
+    const gapo = -2  // gap open score
     const gape = -1  // gap extent score
     var id = CurrentFileId;
     targetingOligo1 = getSeq("TargetingOligo"); //TargetingOligo
@@ -2723,8 +2739,47 @@ function GetWellPos(i) {
     return ABC[Math.floor(i/12)] + ((i%12)+1);
 }
 
-//Prepare Alignment function that summaries static variable for plot:
+//function to validate input format like A1, B2, C3
 
+function validateInput(input) {
+    const parts = input.split(",").map(p => p.trim());
+    const validLetters = /^[A-L]$/;
+    const validNumbers = /^(?:[1-9]|1[0-2])$/;
+
+    for (const part of parts) {
+        const match = part.match(/^([A-L])(\d{1,2})$/);
+        if (!match) {
+        alert('Input is wrong. Please use format like A1, B2, C3');
+            return false;
+        }
+        const [, letter, number] = match;
+        if (!validLetters.test(letter) || !validNumbers.test(number)) {
+            alert('Input is wrong. Please use format like A1, B2, C3');
+        return false;
+        }
+    }
+    return true;
+}
+
+// return index from input like A1, B2, C3
+function GetWellIndex(pos) {
+    const ABC = "ABCDEFGHIJKL";
+    const match = pos.match(/^([A-L])(\d{1,2})$/);
+    if (!match) throw new Error("Invalid format. Use like A1 or B12");
+
+    const [, letter, numStr] = match;
+    const row = ABC.indexOf(letter);
+    const col = parseInt(numStr, 10) - 1;
+
+    if (row < 0 || col < 0 || col >= 12) {
+        throw new Error("Out of range. Must be A–L and 1–12");
+    }
+
+    return row * 12 + col;
+}
+
+
+//Prepare Alignment function that summaries static variable for plot:
 function Pre_PlotAlignment(id){
     //compute number of aligned read
     // check genotype
@@ -4214,7 +4269,7 @@ function PlotAlignment_off(gene_i) {
 
 //Save HTML, all the required variables store in BLOB and load later
 function SaveProject() {
-    var aln_data = {genename: document.getElementsByName("GeneName")[0].value, BreakPoint: BreakPoint , files_name:files_name, region_analyse: region_analyse,  RightBsPos: RightBsPos, locus: locus, pre_rtt_index: pre_rtt_index, pbs_index: pbs_index, preRTT: preRTT, sufRTT: sufRTT, pbs: pbs, rightbs: rightbs, rtt: rtt, targetingOligo1: targetingOligo1 ,d_edit: d_edit, p_edit: p_edit, MutationThreshold: MutationThreshold, PhredThreshold: PhredThreshold,
+    var aln_data = {genename: document.getElementsByName("GeneName")[0].value, BreakPoint: BreakPoint , files_name:files_name, region_analyse: region_analyse,  RightBsPos: RightBsPos, locus: locus, pre_rtt_index: pre_rtt_index, pbs_index: pbs_index, preRTT: preRTT, sufRTT: sufRTT, rightbs: rightbs, rtt: rtt, targetingOligo1: targetingOligo1 ,d_edit: d_edit, p_edit: p_edit, MutationThreshold: MutationThreshold, PhredThreshold: PhredThreshold,
     aln_dict: aln_dict, aln_dict_fil: aln_dict_fil, aln_dict_off: aln_dict_off,aln_dict_fil_off: aln_dict_fil_off,phred_array: phred_array, gcContent: gcContent, length_array:length_array}
     var blob = new Blob([JSON.stringify(aln_data)], { type: 'application/json'});  
     var reader = new window.FileReader();
@@ -4251,9 +4306,6 @@ function LoadData(){
         BreakPoint = store_data.BreakPoint;
         pre_rtt_index = store_data.pre_rtt_index;
         pbs_index = store_data.pbs_index;
-        preRTT = store_data.preRTT;
-        sufRTT = store_data.sufRTT;
-        pbs = store_data.pbs;
         files_name = store_data.files_name;
         RightBsPos = store_data.RightBsPos;
         MutationThreshold = store_data.MutationThreshold;
@@ -4326,6 +4378,32 @@ function SaveReport() {
 }
 
 function SaveReportcsv() {
+    const now = new Date();
+    var config_data = "# Analysis on: " + now.toString()+"\n";
+    config_data += "# Run time: " + runtime.toFixed(3) +" miliseconds\n";
+    config_data += runtime.toFixed(3) +"\n";
+    config_data += "# Gene: " +document.getElementsByName("GeneName")[0].value +"\n";
+    config_data += "# sgRNA:" + rightbs +"\n";
+    config_data += "# Referfence: " + locus +"\n";
+    config_data += "# Target Oligo: " + targetingOligo1 +"\n";
+    config_data += "# RTT: " + rtt +"\n";
+    config_data += "# Desired Edit: " + d_edit +"\n";
+    config_data += "# Partial Edit: " + p_edit +"\n";
+    config_data += "# Region Analyser: " + 2*region_analyse +"\n";
+    config_data += "# Indel Threshold: " + MutationThreshold +"\n";
+    config_data += "# Phred Threshold: " + PhredThreshold +"\n";
+    const csvContent = config_data + summary_track_select.map(row => row.join("\t")).join("\n");
+    var bb = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+    var a = document.createElement('a');
+    a.download = document.getElementsByName("GeneName")[0].value+".csv";
+    a.href = window.URL.createObjectURL(bb);
+    a.textContent = 'Click here to save';
+    a.dataset.downloadurl = ['text/plain', a.download, a.href].join(':');
+    document.getElementById("save").appendChild(a);
+    a.click();
+}
+
+function SaveRatio() {
     const now = new Date();
     var config_data = "# Analysis on: " + now.toString()+"\n";
     config_data += "# Run time: " + runtime.toFixed(3) +" miliseconds\n";
@@ -5061,7 +5139,7 @@ var anchor_fwr
 var anchor_fwl
 var anchor_rvr
 var anchor_rvl
-const anchor_size = 10
+const anchor_size = 13
 const max_mismatch = 1
 
 //Using local files
