@@ -1,4 +1,4 @@
-<!-- //backup 18/9 -->
+<!-- //backup 18/9 V1-->
 <html>
     <head>
 <style>
@@ -531,12 +531,12 @@ div.selector {
 
     <div id="version" style="position:center; top:80px; display: none;">
         <br>
-        <h3>Reference:</h3>
+        <!-- <h3>Reference:</h3>
         Nguyen, T., Ramachandran, H., Martins, S., Krutmann, J. and Rossi, A., 2022. Identification of genome edited cells using CRISPRnano. Nucleic Acids Research.<br>
         <br>
         Nguyen T.,, Ramachandran H.,, Binder S., Vykhlyantseva I., Krutmann J., Miccio A., Staerk C., Brusson M., Kontarakis Z., and Rossi A.
         Edit-o-Matic: A Streamlined Platform for Analyzing Prime and Other Genome Editing Outcomes
-        <br>
+        <br> -->
         <br>
         The detail commit version is available at <a href="https://github.com/thachnguyen/crisprnano2/commits/main/">Version history</a> <br><br>
         
@@ -548,51 +548,50 @@ div.selector {
     <div id="results"  class="box1" style="position:center; top:80px; display: none;">
         <div class="column">
             <div class="btn-group btn-group-lg mr-3" role="group" id="barcode" >
-                <button type="button" class="btn btn-sm btn-light brd" name="setup" onclick="TabClicked(7)">Barcode 1</button>
-                <button type="button" class="btn btn-sm btn-light brd" onclick="TabClicked(8)">Barcode 2</button>
-                <button type="button" class="btn btn-sm btn-light brd" name="setup" onclick="TabClicked(7)">Barcode 3</button>
-                <button type="button" class="btn btn-sm btn-light brd" onclick="TabClicked(8)">Barcode 4</button>
+                <button type="button" class="btn btn-sm btn-light brd" onclick="TabClicked(11)">Barcode 1</button>
+                <button type="button" class="btn btn-sm btn-light brd" onclick="TabClicked(12)">Barcode 2</button>
+                <button type="button" class="btn btn-sm btn-light brd" onclick="TabClicked(13)">Barcode 3</button>
+                <button type="button" class="btn btn-sm btn-light brd" onclick="TabClicked(14)">Barcode 4</button>
             </div>
             <br>
             <br>
             <div class="btn-group btn-group-lg mr-3" role="group" id="result_pie" >
-                <button type="button" class="btn btn-sm btn-light brd" name="setup" onclick="TabClicked(7)">GENOTYPE</button>
+                <button type="button" class="btn btn-sm btn-light brd" onclick="TabClicked(7)">GENOTYPE</button>
                 <button type="button" class="btn btn-sm btn-light brd" onclick="TabClicked(8)">RIMA</button>
             </div>
             <br>
             <br>
             <div id="DIV_piecharts" > 
                 <!-- //</div>style="position: absolute; left: 20px; top: 160px; display: none;"> -->
-                <svg id="SVGpie0" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="900" height="520">
-                </svg>
-                <svg id="SVGpie1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="900" height="520">
-                </svg>
-                <svg id="SVGpie2" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="900" height="520">
-                </svg>
-                <svg id="SVGpie3" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="900" height="520">
-                </svg>
+                <div><svg id="SVGpie0" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="900" height="520">
+                </svg></div>
+                <div><svg id="SVGpie1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="900" height="520" style="display: none;">
+                </svg></div>
+                <div><svg id="SVGpie2" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="900" height="520" style="display: none;">
+                </svg></div>
+                <div><svg id="SVGpie3" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="900" height="520" style="display: none;">
+                </svg></div>
             </div>
             <div id="DIV_piecharts_rima">
-            <svg id="SVGpie_rima0" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="900" height="520" style="display: none;">
-            </svg>
-            <svg id="SVGpie_rima1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="900" height="520" style="display: none;">
-            </svg>
-            <svg id="SVGpie_rima2" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="900" height="520" style="display: none;">
-            </svg>
-            <svg id="SVGpie_rima3" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="900" height="520" style="display: none;">
-            </svg>
+                <div><svg id="SVGpie_rima0" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="900" height="520" style="display: none;">
+                </svg></div>
+                <div><svg id="SVGpie_rima1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="900" height="520" style="display: none;">
+                </svg></div>
+                <div><svg id="SVGpie_rima2" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="900" height="520" style="display: none;">
+                </svg></div>
+                <div><svg id="SVGpie_rima3" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="900" height="520" style="display: none;">
+                </svg></div>
             </div>
             <div id="DIV_alignment">
-                <svg id="SVGmut0" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="1600" height="5000">
-                </svg>
-                <svg id="SVGmut1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="1600" height="5000">
-                </svg>
-                <svg id="SVGmut2" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="1600" height="5000">
-                </svg>
-                <svg id="SVGmut3" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="1600" height="5000">
-                </svg>
+                <div><svg id="SVGmut0" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="1600" height="5000" style="display: none;">
+                </svg></div>
+                <div><svg id="SVGmut1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="1600" height="5000" style="display: none;">
+                </svg></div>
+                <div><svg id="SVGmut2" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="1600" height="5000" style="display: none;">
+                </svg></div>
+                <div><svg id="SVGmut3" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="1600" height="5000" style="display: none;">
+                </svg></div>
             </div>
-
         </div>
         <div class="column" style="position:  absolute; left: 1000px;">
             <div class="btn-group btn-group-toggle" data-toggle="buttons">
@@ -793,7 +792,7 @@ function AlignmentMouseMove(evt) {
         AlignmentStartPos -= shift;
         if (AlignmentStartPos < -1*region_analyse) AlignmentStartPos = -1*region_analyse;
         if (AlignmentStartPos > 1*region_analyse) AlignmentStartPos = 1*region_analyse;
-        PlotAlignment(CurrentAlignment);
+        PlotAlignment(bc, CurrentAlignment);
         AlignmentLastX = x;
     }
     return false;
@@ -1173,11 +1172,10 @@ function bsa_cigar2gaps_breakpoint(target, query, start, cigar, bkp1, bkp2){
     return [[oq.substr(bkp1-start, bkp2-bkp1), oq1.substr(bkp1-start, bkp2-bkp1)], aln_type, gap_len];
 }
 
-function TabClicked(i)
-{
+function TabClicked(i){
     if (i==0) document.getElementById("setup").style.display = "";
     else document.getElementById("setup").style.display = "none";
-    if (i==1||i ==7||i ==8) document.getElementById("results").style.display = "";
+    if (i==1||i ==7||i ==8||i==11||i ==12||i ==13|| i ==14) document.getElementById("results").style.display = "";
     else document.getElementById("results").style.display = "none";
 
     if (i==2) document.getElementById("manual").style.display = "";
@@ -1191,21 +1189,94 @@ function TabClicked(i)
 
     if (i==5) document.getElementById("offtarget_view").style.display = "";
     else document.getElementById("offtarget_view").style.display = "none";
+
     if (i==6) document.getElementById("testdata").style.display = "";
     else document.getElementById("testdata").style.display = "none";
-    if (i==1||i==7) document.getElementById("SVGpie0").style.display = "";
-    else document.getElementById("SVGpie0").style.display = "none";
-    if (i==8) document.getElementById("SVGpie_rima0").style.display = "";
-    else document.getElementById("SVGpie_rima0").style.display = "none";
+
+    if (i==1||i==7){ 
+        for (var j=0;j<4;j++){
+            if (j!=bc) {
+                document.getElementById("SVGpie"+j.toString()).style.display = "none";
+                document.getElementById("SVGmut"+j.toString()).style.display = "none";
+            }
+            document.getElementById("SVGpie_rima"+j.toString()).style.display = "none";
+        }
+        document.getElementById("SVGpie"+bc.toString()).style.display = "";
+        document.getElementById("SVGmut"+bc.toString()).style.display = "";
+    }
+
+    if (i==8){ 
+        for (var j=0;j<4;j++){
+            if (j!=bc) {
+                document.getElementById("SVGpie_rima"+j.toString()).style.display = "none";
+                document.getElementById("SVGmut"+j.toString()).style.display = "";
+            }
+            document.getElementById("SVGpie"+j.toString()).style.display = "none";
+        }
+        document.getElementById("SVGpie_rima"+bc.toString()).style.display = "";
+        document.getElementById("SVGmut"+bc.toString()).style.display = "";
+    }
+    else {
+        document.getElementById("SVGpie_rima"+bc.toString()).style.display = "none";
+    }
+
     if (i==9) document.getElementById("Utility").style.display = "";
     else document.getElementById("Utility").style.display = "none";
     if (i==10) document.getElementById("version").style.display = "";
     else document.getElementById("version").style.display = "none";
+    if (i==11) {
+        bc = 0; 
+        for (var j=0;j<4;j++){
+            if (j!=bc) {
+                document.getElementById("SVGpie"+j.toString()).style.display = "none";
+                document.getElementById("SVGmut"+j.toString()).style.display = "none";
+            }
+            document.getElementById("SVGpie_rima"+j.toString()).style.display = "none";        
+        }
+        document.getElementById("SVGpie"+bc.toString()).style.display = "";
+        document.getElementById("SVGmut"+bc.toString()).style.display = "";
+    }
 
+    if (i==12) {
+        bc = 1; 
+        for (var j=0;j<4;j++){
+            if (j!=bc) {
+                document.getElementById("SVGpie"+j.toString()).style.display = "none";
+                document.getElementById("SVGmut"+j.toString()).style.display = "none";
+            }
+            document.getElementById("SVGpie_rima"+j.toString()).style.display = "none";        
+        }
+        document.getElementById("SVGpie"+bc.toString()).style.display = "";
+        document.getElementById("SVGmut"+bc.toString()).style.display = "";
+    }
+
+    if (i==13) {
+        bc = 2; 
+        for (var j=0;j<4;j++){
+            if (j!=bc) {
+                document.getElementById("SVGpie"+j.toString()).style.display = "none";
+                document.getElementById("SVGmut"+j.toString()).style.display = "none";
+            }
+            document.getElementById("SVGpie_rima"+j.toString()).style.display = "none";        
+        }
+        document.getElementById("SVGpie"+bc.toString()).style.display = "";
+        document.getElementById("SVGmut"+bc.toString()).style.display = "";
+    }
+    
+    if (i==14) {
+        bc = 3; 
+        for (var j=0;j<4;j++){
+            if (j!=bc) {
+                document.getElementById("SVGpie"+j.toString()).style.display = "none";
+                document.getElementById("SVGmut"+j.toString()).style.display = "none";
+            }
+            document.getElementById("SVGpie_rima"+j.toString()).style.display = "none";        
+        }
+        document.getElementById("SVGpie"+bc.toString()).style.display = "";
+        document.getElementById("SVGmut"+bc.toString()).style.display = "";
+    }
     document.getElementById("progress").style.display = "none";
     document.getElementById("progress1").style.display = "none";
-
-    currenttab = i;
 }
 
 //reverse comp function
@@ -1450,7 +1521,6 @@ function FileReceived() {
         CurrentFileChunk = 0;
         RestFromLastChunk = "";
     }
-
     if (CurrentFileId < files[bc].length && CurrentFileId<96) {
         setTimeout("ReadNextFileChunk();",0);
     } 
@@ -1459,14 +1529,16 @@ function FileReceived() {
         CurrentFileId = 0;
         CurrentFileChunk = 0;
         RestFromLastChunk = "";
-        setTimeout("ReadNextFileChunk();",0);
+        if (CurrentFileId < files[bc].length && CurrentFileId<96) {
+            setTimeout("ReadNextFileChunk();",0);
+        }
     }
-    else {
+    else if (bc == 3){
         for (let bc1 =0; bc1<4; bc1++){
             DrawPie(bc1);
             DrawPie_rima(bc1);
         }
-        //restore locus if changed at the end of PE
+    //restore locus if changed at the end of PE
         locus = locus_backup;
         runtime = performance.now() -startTime
     }
@@ -1565,8 +1637,13 @@ function FileReceived_off() {
 function ReadNextFileChunk() {
     reader = new FileReader();
     reader.onload = FileReceived;
-    reader.readAsText(files[bc][CurrentFileId].slice(CurrentFileChunk*chunksize, (CurrentFileChunk+1)*chunksize));
-    document.getElementById('progress').innerHTML = "File bc"+bc+ "/" +(CurrentFileId+1)+": "+ (CurrentFileChunk*chunksize/1000000).toFixed(2)+ " MB / "+Math.round(files[bc][CurrentFileId].size/1000000)+" MB processed. Please keep this window open and don't switch to other tabs in your web browser!";
+    try{
+        reader.readAsText(files[bc][CurrentFileId].slice(CurrentFileChunk*chunksize, (CurrentFileChunk+1)*chunksize));
+        document.getElementById('progress').innerHTML = "File: barcode "+(bc +1)+ " / " +(CurrentFileId+1)+": "+ (CurrentFileChunk*chunksize/1000000).toFixed(2)+ " MB / "+Math.round(files[bc][CurrentFileId].size/1000000)+" MB processed. Please keep this window open and don't switch to other tabs in your web browser!";
+    }
+    catch (error){
+        alert('An unexpected error occurred during file reading: ' + error.message);        
+    }
 }
 
 function ReadNextFileChunk_off(){
@@ -1681,8 +1758,8 @@ function DrawPie(bc, active_barcode = 0) {
     });
     if (active_barcode === barcode) t.setAttribute("fill", "rgb(16, 126, 204)");
 
-    if (!genotype[barcode]) t.textContent = GetWellPos(barcode);
-    else t.textContent = `${GetWellPos(barcode)} (${genotype[barcode]})`;
+    if (!genotype[bc][barcode]) t.textContent = GetWellPos(barcode);
+    else t.textContent = `${GetWellPos(barcode)} (${genotype[bc][barcode]})`;
     svg.appendChild(t);
   }
 
@@ -2670,7 +2747,7 @@ function SelectClone(barcode) {
         }
     } 
     else if (AlignmentPrecalc[bc][barcode]) {
-        document.getElementById("DIV_alignment").innerHTML = AlignmentPrecalc[bc][barcode];
+        document.getElementById("SVGmut"+bc.toString()).innerHTML = AlignmentPrecalc[bc][barcode];
         CurrentAlignment = barcode;
         AlignmentStartPos = 0;
         PlotAlignment(bc, barcode);
@@ -3014,7 +3091,7 @@ function PlotAlignment(bc,id){
 
     // Summary lines (exact content/format as original)
     makeText({ x: 40, y: ysize + delypos, "font-size": "16", "font-weight": "600" },
-        "SUMMARY: Gene: " + document.getElementsByName("GeneName")[0].value + "   |   File " + GetWellPos(bc,id) + ": " + files_name[bc][id]);
+        "SUMMARY: Gene: " + document.getElementsByName("GeneName")[0].value + "   |   File " + GetWellPos(id) + ": " + files_name[bc][id]);
     delypos += 30;
 
     makeText({ x: 40, y: ysize + delypos, "font-size": "16" },
@@ -3294,7 +3371,7 @@ function PlotAlignment(bc,id){
     }
 
     // preserve alignment HTML snapshot like original
-    AlignmentPrecalc[bc][id] = document.getElementById("DIV_alignment").innerHTML;
+    AlignmentPrecalc[bc][id] = document.getElementById("SVGmut"+bc.toString()).innerHTML;
 }
 
 
@@ -4301,12 +4378,12 @@ function LoadData(){
                         delete aln_dict[bc1][id][key]
                     }
                 }            
-                Pre_PlotAlignment(bc,id);
-                PlotAlignment(bc,id);
+                Pre_PlotAlignment(bc1,id);
+                PlotAlignment(bc1,id);
                 //Update for wrong encoding entries
             }
-            DrawPie(bc);
-            DrawPie_rima(bc);
+            DrawPie(bc1);
+            DrawPie_rima(bc1);
         }
         SelectClone(0);
         window.location.hash = "";
@@ -5012,7 +5089,7 @@ function fuzzyIndexOf(haystack, needle, maxMismatches, start = 0) {
         return -1
     }
 
-var currenttab = 0;
+var bc = 0;
 TabClicked(0);
 
 var RightBsPos=0;
@@ -5047,7 +5124,6 @@ var files = [[],[],[],[]];
 var files_name = [[],[],[],[]]
 var reader;
 var CurrentFileId;
-var bc;
 var CurrentFileId_off;
 var MutationThreshold = 0.1
 var BreakPoint;
