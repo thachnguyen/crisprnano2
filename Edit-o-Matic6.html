@@ -257,6 +257,12 @@ div.selector {
                     </div>
                 </div>
                 <div class="col-sm-4">
+                    <label>Nuclease enzyme: </label>
+                    <div class="popup" onclick="toggleHelp(4)">(? Click here!)
+                        <span class="popuptext" id="help4">
+                            Your choice of nuclease enzyme affects the PAM recognition site and the position of the DNA cut relative to the gRNA binding site.
+                        </span>
+                    </div>
                 </div>
             </div>
             
@@ -284,7 +290,10 @@ div.selector {
                 </div>
                 
                 <div class="col-sm-4">
-
+                    <select id="gRNA_type" onchange="check_gRNA()" class="form-control">
+                        <option value="cas9">cas9/SpCas9</option>
+                        <option value="cas12">cas12/Cpf1</option>
+                    </select>
                 </div>
                 </div>
                 
@@ -772,6 +781,18 @@ function setValue() {
         bulk_threshold = 0.5;
     } 
 }
+
+function check_gRNA() {
+    // Get the input value
+    // Define the target string to check occurrence
+    var mySelect = document.getElementById('gRNA_type');
+    if (mySelect.value == 'cas12'){
+    }
+    else {
+
+    } 
+}
+
 //Drag and interactive
 
 var AlignmentDragging = false, AlignmentLastX, AlignmentLastY, AlignmentStartPos = 0;
@@ -1172,113 +1193,69 @@ function bsa_cigar2gaps_breakpoint(target, query, start, cigar, bkp1, bkp2){
     return [[oq.substr(bkp1-start, bkp2-bkp1), oq1.substr(bkp1-start, bkp2-bkp1)], aln_type, gap_len];
 }
 
-function TabClicked(i){
-    if (i==0) document.getElementById("setup").style.display = "";
-    else document.getElementById("setup").style.display = "none";
-    if (i==1||i ==7||i ==8||i==11||i ==12||i ==13|| i ==14) document.getElementById("results").style.display = "";
-    else document.getElementById("results").style.display = "none";
+function TabClicked(i) {
+    const show = id => document.getElementById(id).style.display = "";
+    const hide = id => document.getElementById(id).style.display = "none";
+    const ids = ["setup", "results", "manual", "about", "bulkview_result", "offtarget_view", "testdata", "Utility", "version"];
 
-    if (i==2) document.getElementById("manual").style.display = "";
-    else document.getElementById("manual").style.display = "none";
+    // hide all first
+    ids.forEach(hide);
 
-    if (i==3) document.getElementById("about").style.display = "";
-    else document.getElementById("about").style.display = "none";
+    // show based on tab index
+    if (i === 0) show("setup");
+    if ([1, 7, 8, 11, 12, 13, 14].includes(i)) show("results");
+    if (i === 2) show("manual");
+    if (i === 3) show("about");
+    if (i === 4) show("bulkview_result");
+    if (i === 5) show("offtarget_view");
+    if (i === 6) show("testdata");
+    if (i === 9) show("Utility");
+    if (i === 10) show("version");
 
-    if (i==4) document.getElementById("bulkview_result").style.display = "";
-    else document.getElementById("bulkview_result").style.display = "none";
-
-    if (i==5) document.getElementById("offtarget_view").style.display = "";
-    else document.getElementById("offtarget_view").style.display = "none";
-
-    if (i==6) document.getElementById("testdata").style.display = "";
-    else document.getElementById("testdata").style.display = "none";
-    
-
-    if (i==1||i==7){ 
-        for (var j=0;j<4;j++){
-            if (j!=bc) {
-                document.getElementById("SVGpie"+j.toString()).style.display = "none";
-                document.getElementById("SVGmut"+j.toString()).style.display = "none";
-            }
-            document.getElementById("SVGpie_rima"+j.toString()).style.display = "none";
+    // handle SVG visibility
+    const setSVG = (pie, mut, rima) => {
+        for (let j = 0; j < 4; j++) {
+            document.getElementById(`SVGpie${j}`).style.display = pie(j);
+            document.getElementById(`SVGmut${j}`).style.display = mut(j);
+            document.getElementById(`SVGpie_rima${j}`).style.display = rima(j);
         }
-        document.getElementById("SVGpie"+bc.toString()).style.display = "";
-        document.getElementById("SVGmut"+bc.toString()).style.display = "";
+    };
+
+    // normal result view
+    if (i === 1 || i === 7) {
+        setSVG(
+            j => j === bc ? "" : "none",
+            j => j === bc ? "" : "none",
+            () => "none"
+        );
     }
 
-    if (i==8){ 
-        for (var j=0;j<4;j++){
-            if (j!=bc) {
-                document.getElementById("SVGpie_rima"+j.toString()).style.display = "none";
-                document.getElementById("SVGmut"+j.toString()).style.display = "";
-            }
-            document.getElementById("SVGpie"+j.toString()).style.display = "none";
-        }
-        document.getElementById("SVGpie_rima"+bc.toString()).style.display = "";
-        document.getElementById("SVGmut"+bc.toString()).style.display = "";
-    }
-    else {
-        document.getElementById("SVGpie_rima"+bc.toString()).style.display = "none";
+    // rima result view
+    else if (i === 8) {
+        setSVG(
+            () => "none",
+            () => "",
+            j => j === bc ? "" : "none"
+        );
     }
 
-    if (i==9) document.getElementById("Utility").style.display = "";
-    else document.getElementById("Utility").style.display = "none";
-    if (i==10) document.getElementById("version").style.display = "";
-    else document.getElementById("version").style.display = "none";
-    if (i==11) {
-        bc = 0; 
-        for (var j=0;j<4;j++){
-            if (j!=bc) {
-                document.getElementById("SVGpie"+j.toString()).style.display = "none";
-                document.getElementById("SVGmut"+j.toString()).style.display = "none";
-            }
-            document.getElementById("SVGpie_rima"+j.toString()).style.display = "none";        
-        }
-        document.getElementById("SVGpie"+bc.toString()).style.display = "";
-        document.getElementById("SVGmut"+bc.toString()).style.display = "";
+    // switch bc views (11–14)
+    else if ([11, 12, 13, 14].includes(i)) {
+        bc = i - 11;
+        setSVG(
+            j => j === bc ? "" : "none",
+            j => j === bc ? "" : "none",
+            () => "none"
+        );
+    } else {
+        hide(`SVGpie_rima${bc}`);
     }
 
-    if (i==12) {
-        bc = 1; 
-        for (var j=0;j<4;j++){
-            if (j!=bc) {
-                document.getElementById("SVGpie"+j.toString()).style.display = "none";
-                document.getElementById("SVGmut"+j.toString()).style.display = "none";
-            }
-            document.getElementById("SVGpie_rima"+j.toString()).style.display = "none";        
-        }
-        document.getElementById("SVGpie"+bc.toString()).style.display = "";
-        document.getElementById("SVGmut"+bc.toString()).style.display = "";
-    }
-
-    if (i==13) {
-        bc = 2; 
-        for (var j=0;j<4;j++){
-            if (j!=bc) {
-                document.getElementById("SVGpie"+j.toString()).style.display = "none";
-                document.getElementById("SVGmut"+j.toString()).style.display = "none";
-            }
-            document.getElementById("SVGpie_rima"+j.toString()).style.display = "none";        
-        }
-        document.getElementById("SVGpie"+bc.toString()).style.display = "";
-        document.getElementById("SVGmut"+bc.toString()).style.display = "";
-    }
-    
-    if (i==14) {
-        bc = 3; 
-        for (var j=0;j<4;j++){
-            if (j!=bc) {
-                document.getElementById("SVGpie"+j.toString()).style.display = "none";
-                document.getElementById("SVGmut"+j.toString()).style.display = "none";
-            }
-            document.getElementById("SVGpie_rima"+j.toString()).style.display = "none";        
-        }
-        document.getElementById("SVGpie"+bc.toString()).style.display = "";
-        document.getElementById("SVGmut"+bc.toString()).style.display = "";
-    }
-    document.getElementById("progress").style.display = "none";
-    document.getElementById("progress1").style.display = "none";
+    // hide progress bars
+    hide("progress");
+    hide("progress1");
 }
+
 
 //reverse comp function
 var ks_comp = {'A':'T','C':'G','G':'C','T':'A','M':'K','K':'M','Y':'R','R':'Y','V':'B','B':'V','H':'D','D':'H',
@@ -4303,7 +4280,7 @@ function SaveProject() {
     reader.onloadend = function(){
         base64data = reader.result;
         base64data = base64data.split(",")[1]; //remove header
-        var html = "<meta http-equiv='refresh' content='0; url=https://crisprnano.de/Edit-o-Matic3.html#"+base64data+"'>";
+        var html = "<meta http-equiv='refresh' content='0; url=https://crisprnano.de/Edit-o-Matic6.html#"+base64data+"'>";
         html += "<html><body>"+document.getElementById("DIV_piecharts").innerHTML+"</body></html>";
         var blob2 = new Blob([html], {type: 'text/plain'});
         var a = document.createElement('a');
@@ -4951,12 +4928,6 @@ function Start2(){
         aln_dict_off[i] = {}
         aln_dict_fil_off[i] = {}
     }
-
-    //Score of OFF target reference
-    // var ms = 1 // match score
-    // var mms = -1 //mismatch score
-    // var gapo = -2  // gap open score
-    // var gape = -1  // gap extent score
 
     //Find Target site in the reference sequence/locus:
     if (rightbs.length == 0){
