@@ -1,4 +1,4 @@
-<!-- version = "v1_6" -->
+<!-- version = "v_1_2" -->
 <html>
     <head>
 <style>
@@ -91,6 +91,8 @@ div.selector {
   <link rel="stylesheet" href="./crisprnano2/stylesQuery.css">
 
 </head>
+
+
 <body>
     <nav class="navbar sticky-top navbar-expand-sm navbar-light">
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarToggler11" aria-controls="navbarToggler11" aria-expanded="false" aria-label="Toggle navigation">
@@ -99,7 +101,7 @@ div.selector {
         <div class="collapse navbar-collapse" id="navbarToggler11">
             <ul class="navbar-nav  ml-auto">
                 <li class="nav-item mt-1">
-                         <a id="editomaticLink" class="nav-link">
+                        <a id="editomaticLink" class="nav-link">
                                 <i class="fas fa-solid fa-user iconsMenu"></i>
                                 Home
                             </a>
@@ -158,30 +160,15 @@ div.selector {
                 <!-- <small class="text-muted">Window size & indel rate parameter will be automatically adjusted</small> -->
             </div>
             <div class = "col-sm">
-                <label>Insertion Sequence (for HDR / PE / BE)</label>  
-                <div class="popup" onclick="toggleHelp(2)">(? Click here!)
-                    <span class="popuptext" id="help2">
-                        <b>Advance features, please use Prime editing Analyzer</b><br>
-                        <b>Edit Type:</b><br>
-                        • <strong>Targeted Mutagenesis Oligonucleotide:</strong> Uses a repair template to introduce precise changes.<br>
-                        • <strong>Prime Editing:</strong> Introduces small insertions, deletions, or substitutions.<br>
-                        • <strong>Base Editing:</strong> Directly converts one base to another.<br>
-                        Click again to close
-                    </span>
-                </div>
-                <!-- <label>Maximum expected genotype (ML mode only): </label> 
+                <label>Maximum expected genotype (ML mode only): </label> 
                 <div class="popup" onclick="toggleHelp(11)">(? Click here!)
                     <span class="popuptext" id="help11">We implemented a machine learning-assisted binary decision tree (BD tree) classifier, which enables rapid classification of sequencing reads while preserving high genotyping accuracy across diverse genome editing applications and sequencing platforms. We don't recommend to use machine learning mode if the indel is far away from cutting site  , Click again to close</span>
-                </div> -->
+                </div>
             </div>
             </div>
             <div class="row">
                 <div class = "col-sm">
-                <input type="file" id="files0" accept=".fastq,.fq" class="form-control" name="files[]" multiple="">
-                <small id="optional_barcode" class="text-muted">
-                More barcode! >> Click to expand
-                <img src="crisprnano2/expand.jpg" alt="icon" style="width:36px; height:36px; vertical-align:middle; margin-right:5px;">  
-                </small>
+                <input type="file" id="files" accept=".fastq,.fq" class="form-control" name="files[]" multiple="">
                 </div>
                 <div class = "col-sm">
                 <select id="mySelect" onchange="setValue()" class="form-control">
@@ -191,53 +178,17 @@ div.selector {
                 </select>
                 </div>
                 <div class = "col-sm">
-                    <input type="text" class="form-control" id="TargetingOligo" name="TargetingOligo" value="">
-                    <div class="row mt-2">
-                    <div class="col-sm-4">
-                        <div class="form-check">
-                        <input class="form-check-input" type="checkbox" id="HA">
-                        <small class="text-muted">Non-homology end joining KI</small>
-                        </div>
-                    </div>
-                    </div>
-                    <!-- <input type="text" size="30" class="form-control" id= "ML_genotype" name="ML_genotype" value="10" onchange="checkValue();">
+                    <input type="text" size="30" class="form-control" id= "ML_genotype" name="ML_genotype" value="10" onchange="checkValue();">
                     <div class="form-check">
-                    </div> -->
-
-                </div>
+                        <input class="form-check-input" type="checkbox" value="" id="run_mode" checked>
+                        <label class="form-check-label">
+                            BOOSTING mode<br>
+                            <small class="text-muted">Use machine learning classification model, faster but less accurate</small>
+                        </label>
+                    </div>
+                    </div>
             </div>
 
-            <div id = "optional_barcode_Container" class="hidden">
-                <div class="row">
-                    <div class = "col-sm">
-                        <label>
-                            Barcode 2: 
-                        </label> 
-                    </div>
-                    <div class = "col-sm">
-                        <label>
-                            Barcode 3: 
-                        </label> 
-                    </div>
-                    <div class = "col-sm">
-                        <label>
-                            Barcode 4: 
-                        </label> 
-                    </div>
-                </div>
-            <div class="row">
-                <div class = "col-sm">
-                <input type="file" id="files1" accept=".fastq,.fq" class="form-control" name="files[]" multiple="">
-                </div>
-                <div class = "col-sm">
-                <input type="file" id="files2" accept=".fastq,.fq" class="form-control" name="files[]" multiple="">
-                </div>
-                <div class = "col-sm">
-                <input type="file" id="files3" accept=".fastq,.fq" class="form-control" name="files[]" multiple="">
-                </div>
-            </div>
-            <br>
-            </div>
             <div class="row">
                 <div class="col-sm-2">
                     <label>Gene Name:</label>
@@ -256,11 +207,17 @@ div.selector {
                         </span>
                     </div>
                 </div>
+            
                 <div class="col-sm-4">
-                    <label>Nuclease enzyme: </label>
-                    <div class="popup" onclick="toggleHelp(4)">(? Click here!)
-                        <span class="popuptext" id="help4">
-                            Your choice of nuclease enzyme affects the PAM recognition site and the position of the DNA cut relative to the gRNA binding site.
+                    <label>Insertion Sequence (for HDR / PE / BE)</label>  
+                    <div class="popup" onclick="toggleHelp(2)">(? Click here!)
+                        <span class="popuptext" id="help2">
+                            <b>Advance features, please use Prime editing Analyzer</b><br>
+                            <b>Edit Type:</b><br>
+                            • <strong>Targeted Mutagenesis Oligonucleotide:</strong> Uses a repair template to introduce precise changes.<br>
+                            • <strong>Prime Editing:</strong> Introduces small insertions, deletions, or substitutions.<br>
+                            • <strong>Base Editing:</strong> Directly converts one base to another.<br>
+                            Click again to close
                         </span>
                     </div>
                 </div>
@@ -290,10 +247,21 @@ div.selector {
                 </div>
                 
                 <div class="col-sm-4">
-                    <select id="gRNA_type" onchange="check_gRNA()" class="form-control">
-                        <option value="cas9">cas9/SpCas9</option>
-                        <option value="cas12">cas12/Cpf1</option>
-                    </select>
+                    <input type="text" class="form-control" id="TargetingOligo" name="TargetingOligo" value="">
+                    <div class="row mt-2">
+                    <div class="col-sm-6">
+                        <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="prime_editing">
+                        <small class="text-muted">Knockin-only mode (exclude INDEL)</small>
+                        </div>
+                    </div>
+                    <div class="col-sm-4">
+                        <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="HA">
+                        <small class="text-muted">Non-homology end joining KI</small>
+                        </div>
+                    </div>
+                    </div>
                 </div>
                 </div>
                 
@@ -304,6 +272,7 @@ div.selector {
                 <div class = "col-sm">
                     <label>Reverse Transcription Template (RTT)  </label>
                 </div>
+
                 <div class = "col-sm">
                     <label>Desired Edit  </label>
                     <!-- <small class="text-muted">Desired edit sequence (optional) is extra guide for annotate genotype</small> -->
@@ -399,7 +368,7 @@ div.selector {
                         </small>
                     </div>
                     <div class = "col-sm">
-                        <input type="text" size="30" name="region_analyse" id="region_analyse" value="90" class="form-control" onchange="checkValue();"><br>
+                        <input type="text" size="30" name="region_analyse" id="region_analyse" value="100" class="form-control" onchange="checkValue();"><br>
                     </div>
                     <div class = "col-sm">
                         <input type="text" size="30" class="form-control" id= "allelethreshold" name="MutationThreshold" value="1" onchange="checkValue();"><br>
@@ -428,6 +397,7 @@ div.selector {
         </small>
         </div>
     </div>
+
 </div>
     <div id="about" style="position:center; top:80px; display: none;">
         <br>
@@ -538,53 +508,15 @@ div.selector {
         Fastq concentation files is available at <a href="https://www.crisprnano.de/concat_list.html"> Concatenation list for pairend read files.</a><br><br>
     </div>
 
-    <div id="version" style="position: absolute; left: 10px; top: 450px; display: none;">
+    <div id="version" style="position:center; top:80px; display: none;">
         <br>
-        <!-- <h3>Reference:</h3>
+        <h3>Reference:</h3>
         Nguyen, T., Ramachandran, H., Martins, S., Krutmann, J. and Rossi, A., 2022. Identification of genome edited cells using CRISPRnano. Nucleic Acids Research.<br>
         <br>
         Nguyen T.,, Ramachandran H.,, Binder S., Vykhlyantseva I., Krutmann J., Miccio A., Staerk C., Brusson M., Kontarakis Z., and Rossi A.
         Edit-o-Matic: A Streamlined Platform for Analyzing Prime and Other Genome Editing Outcomes
-        <br> -->
         <br>
-        <h3>Version history:</h3>
-        Current version: <b>1.6</b> <br>
-        Released date: <b>14 th November 2025</b> 
-        Major updates: <br>
-        - Support cas9/cas12 <br>
-        - Highlight single/double strand breaking point <br><br>
-
-        Previous version: <a href="https://crisprnano.de/Edit-o-Matic_v1.5.html"><b>1.5</b></a> <br>
-        Released date: <b>30th October 2025</b> <br>
-        Major updates: <br>
-        - Upgrade to 4 x 96 samples​ <br>    
-        - Enhanced user interface for better usability <br>
-        - Added new features/tab for data visualization <br><br>  
-
-        Previous version: <a href="https://crisprnano.de/Edit-o-Matic_v1.4.html"><b>1.4</b> </a><br>
-        Released date: <b>17th October 2025</b> <br>
-        Major updates: <br>
-        - Different fold change of editing effective (excel/csv files)​ <br> <br> 
-
-        Previous version: <a href="https://crisprnano.de/Edit-o-Matic_v1.3.html"> <b>1.3</b> </a> <br>
-        Released date: <b>20th September 2025</b> <br>
-        Major updates: <br>
-        - One time aligner: aligning and storing strategy version ( x 8-12 faster)​​ <br> <br>
-
-        Previous version: <a href="https://crisprnano.de/Edit-o-Matic_v1.2.html"><b>1.2</b> </a> <br>
-        Released date: <b>17th September 2025</b> <br>
-        Major updates: <br>
-        - Applying pair anchors both read and reference version (x 1.5 faster)​​ <br> <br>
-
-        Previous version: <a href="https://crisprnano.de/Edit-o-Matic_v1.1.html"><b>1.1</b></a> <br>
-        Released date: <b>3rd September 2025</b> <br>
-        Major updates: <br>
-        - Working version of Advance Prime Editing, support preset prefix/suffix RTT, PBS, Desired and Partial Edit​​​ <br>
-        - Quantify Desired/partial edit efficiency <br><br>
-        
-        
-
-
+        <br>
         The detail commit version is available at <a href="https://github.com/thachnguyen/crisprnano2/commits/main/">Version history</a> <br><br>
         
         <h4>Legacy </h4> 
@@ -594,51 +526,26 @@ div.selector {
 
     <div id="results"  class="box1" style="position:center; top:80px; display: none;">
         <div class="column">
-            <div class="btn-group btn-group-lg mr-3" role="group" id="barcode" >
-                <button type="button" class="btn btn-sm btn-light brd" onclick="TabClicked(11)">Barcode 1</button>
-                <button type="button" class="btn btn-sm btn-light brd" onclick="TabClicked(12)">Barcode 2</button>
-                <button type="button" class="btn btn-sm btn-light brd" onclick="TabClicked(13)">Barcode 3</button>
-                <button type="button" class="btn btn-sm btn-light brd" onclick="TabClicked(14)">Barcode 4</button>
-            </div>
-            <br>
-            <br>
             <div class="btn-group btn-group-lg mr-3" role="group" id="result_pie" >
-                <button type="button" class="btn btn-sm btn-light brd" onclick="TabClicked(7)">GENOTYPE</button>
+                <button type="button" class="btn btn-sm btn-light brd" name="setup" onclick="TabClicked(7)">GENOTYPE</button>
                 <button type="button" class="btn btn-sm btn-light brd" onclick="TabClicked(8)">RIMA</button>
             </div>
             <br>
             <br>
             <div id="DIV_piecharts" > 
                 <!-- //</div>style="position: absolute; left: 20px; top: 160px; display: none;"> -->
-                <div><svg id="SVGpie0" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="900" height="520">
-                </svg></div>
-                <div><svg id="SVGpie1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="900" height="520" style="display: none;">
-                </svg></div>
-                <div><svg id="SVGpie2" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="900" height="520" style="display: none;">
-                </svg></div>
-                <div><svg id="SVGpie3" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="900" height="520" style="display: none;">
-                </svg></div>
+                <svg id="SVGpie" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="900" height="520">
+                </svg>
             </div>
             <div id="DIV_piecharts_rima">
-                <div><svg id="SVGpie_rima0" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="900" height="520" style="display: none;">
-                </svg></div>
-                <div><svg id="SVGpie_rima1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="900" height="520" style="display: none;">
-                </svg></div>
-                <div><svg id="SVGpie_rima2" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="900" height="520" style="display: none;">
-                </svg></div>
-                <div><svg id="SVGpie_rima3" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="900" height="520" style="display: none;">
-                </svg></div>
+            <svg id="SVGpie_rima" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="900" height="520" style="display: none;">
+                </svg>
             </div>
             <div id="DIV_alignment">
-                <div><svg id="SVGmut0" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="1600" height="5000" style="display: none;">
-                </svg></div>
-                <div><svg id="SVGmut1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="1600" height="5000" style="display: none;">
-                </svg></div>
-                <div><svg id="SVGmut2" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="1600" height="5000" style="display: none;">
-                </svg></div>
-                <div><svg id="SVGmut3" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="1600" height="5000" style="display: none;">
-                </svg></div>
+                <svg id="SVGmut" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="1600" height="5000">
+                </svg>
             </div>
+
         </div>
         <div class="column" style="position:  absolute; left: 1000px;">
             <div class="btn-group btn-group-toggle" data-toggle="buttons">
@@ -651,13 +558,12 @@ div.selector {
                 <label class="btn btn-secondary" onclick="SaveReportcsv();">
                     Indel CSV
                 </label>
-
                 <label class="btn btn-secondary" onclick="SaveSVGAlignment();">
-                    Alignment (.svg)
-                </label>
-                <label class="btn btn-secondary" onclick="PrintSVG();">
-                    Print PIE
-                </label>
+                        Alignment (.svg)
+                    </label>
+                    <label class="btn btn-secondary" onclick="PrintSVG();">
+                        Print PIE
+                    </label>
                 </div> 
             <h3>SECONDARY ANALYSIS</h3> 
             <div class="form-check form-switch">
@@ -696,21 +602,6 @@ div.selector {
                 <input type="submit" name="submit" value="START OFFTARGET ANALYZER " class="btn btn-sm btn-light brd" id="submit" onclick="Start2();">
                 <br>
                 <br>
-                <h4>UP/DOWN Analysis (optional)</h4>    
-                List Reference Clone (separate by ,):
-                <div class="popup" onclick="toggleHelp(8)">(? Click here!)
-                    <span class="popuptext" id="help8">Name of the reference clone seperate by , . Click to close.</span>
-                </div>
-                <br>
-                <input type="text" class="form-control" size="40" name="Ref_list" id="Ref_list" value="A1, B1, C1" onchange="parseWellPositions();">
-                <br>
-
-            <div class="btn-group btn-group-toggle" data-toggle="buttons">
-
-                <label class="btn btn-secondary" onclick="SaveRatio();">
-                    Up/Down editing CSV
-                </label>
-                </div> 
 
                 <div id="progress1" style="display:none; padding: 10px; border: 10px solid #CCC; background: #EEE; width:80%; position:absolute; top:40%;left:0%">
                 </div>
@@ -761,7 +652,7 @@ div.selector {
             </svg>
         </div>
     </div>
-        <footer style="text-align:center; padding:10px; font-family:sans-serif; font-size:14px; color:#555;">
+                    <footer style="text-align:center; padding:10px; font-family:sans-serif; font-size:14px; color:#555;">
     <span style="
         background:#eaeaea;
         border-radius:8px;
@@ -797,6 +688,7 @@ function checkValue() {
     const region_analyse1 = document.getElementsByName('region_analyse')[0].value;
     const MutationThreshold1 = document.getElementsByName("MutationThreshold")[0].value;
     const phred = document.getElementsByName("Phred")[0].value;
+    const ML_genotype = document.getElementsByName("ML_genotype")[0].value;
     if (MutationThreshold1*1 > 100||MutationThreshold1*1<0.2) {
         alert('Please check the Mutation threshold again, supported range 0.2-100%');
         document.getElementsByName("MutationThreshold")[0].value = '2';
@@ -807,7 +699,11 @@ function checkValue() {
     }
     if (region_analyse1*1 > 160||region_analyse1*1<60) {
         alert('System only support region size from 60-160 bp');
-        document.getElementsByName('region_analyse')[0].value = "90";
+        document.getElementsByName('region_analyse')[0].value = "100";
+    } 
+    if (ML_genotype*1 > 20||ML_genotype*1<2) {
+        alert('System only support maximum genotype between 2 to 20');
+        document.getElementsByName('ML_genotype')[0].value = "10";
     } 
 }
 
@@ -818,30 +714,18 @@ function setValue() {
     // Define the target string to check occurrence
     var mySelect = document.getElementById('mySelect');
     if (mySelect.value == 'ont'){
-        document.getElementsByName('region_analyse')[0].value = "80";
+        document.getElementsByName('region_analyse')[0].value = "90";
         document.getElementsByName("MutationThreshold")[0].value = '5'
         document.getElementsByName("Phred")[0].value = '10'
         bulk_threshold = 1;
     }
     else {
-        document.getElementsByName('region_analyse')[0].value = "90";
+        document.getElementsByName('region_analyse')[0].value = "100";
         document.getElementsByName("MutationThreshold")[0].value = '1'
         document.getElementsByName("Phred")[0].value = '20'
         bulk_threshold = 0.5;
     } 
 }
-
-function check_gRNA() {
-    // Get the input value
-    // Define the target string to check occurrence
-    var mySelect = document.getElementById('gRNA_type');
-    if (mySelect.value == 'cas12'){
-    }
-    else {
-
-    } 
-}
-
 //Drag and interactive
 
 var AlignmentDragging = false, AlignmentLastX, AlignmentLastY, AlignmentStartPos = 0;
@@ -862,7 +746,7 @@ function AlignmentMouseMove(evt) {
         AlignmentStartPos -= shift;
         if (AlignmentStartPos < -1*region_analyse) AlignmentStartPos = -1*region_analyse;
         if (AlignmentStartPos > 1*region_analyse) AlignmentStartPos = 1*region_analyse;
-        PlotAlignment(bc, CurrentAlignment);
+        PlotAlignment(CurrentAlignment);
         AlignmentLastX = x;
     }
     return false;
@@ -1123,6 +1007,114 @@ function bsa_cigar2gaps(target, query, start, cigar){
 	return [ot, oq, mid];
 }
 
+function bsa_align_and_extract(target, query, matrix, gapsc, is_local) {
+    // --- Setup ---
+    var t = bsg_enc_seq(target, bst_nt5);
+    var qp = bsa_gen_query_profile(query, matrix, bst_nt5);
+    var qlen = qp[0].length;
+
+    var max_len = Math.max(qlen, t.length);
+    var w = true;
+    var len_diff = Math.abs(t.target - qlen);
+    w = w > len_diff ? w : len_diff;
+
+    var gapo, gape;
+    if (typeof gapsc == 'number') gapo = 0, gape = gapsc > 0 ? gapsc : -gapsc;
+    else gapo = Math.abs(gapsc[0]), gape = Math.abs(gapsc[1]);
+    var gapoe = gapo + gape;
+
+    var NEG_INF = -0x40000000;
+    var H = [], E = [], z = [], score, max = 0, end_i = -1, end_j = -1;
+    if (is_local) {
+        for (var j = 0; j <= qlen; ++j) H[j] = E[j] = 0;
+    } else {
+        H[0] = 0; E[0] = -gapoe - gapoe;
+        for (var j = 1; j <= qlen; ++j) {
+            if (j >= w) H[j] = E[j] = NEG_INF;
+            else H[j] = -(gapoe + gape * (j - 1)), E[j] = -(gapoe + gapoe + gape * j);
+        }
+    }
+
+    // --- DP ---
+    for (var i = 0; i < t.length; ++i) {
+        var h1 = 0, f = 0, m = 0, mj = -1;
+        var qpi = qp[t[i]];
+        z[i] = [];
+        var beg = i > w ? i - w : 0;
+        var end = i + w + 1 < qlen ? i + w + 1 : qlen;
+        if (!is_local) {
+            h1 = beg > 0 ? NEG_INF : -(gapoe + gape * i);
+            f  = beg > 0 ? NEG_INF : -(gapoe + gapoe + gape * i);
+        }
+        for (var j = beg; j < end; ++j) {
+            var e = E[j], h = H[j], d;
+            H[j] = h1;
+            h += qpi[j];
+            d = h >= e ? 0 : 1;
+            h = h >= e ? h : e;
+            d = h >= f ? d : 2;
+            h = h >= f ? h : f;
+            d = !is_local || h > 0 ? d : 1<<6;
+            h1 = h;
+            mj = m > h ? mj : j;
+            m = m > h ? m : h;
+            h -= gapoe;
+            h = !is_local || h > 0 ? h : 0;
+            e -= gape;
+            d |= e > h ? 1<<2 : 0;
+            e = e > h ? e : h;
+            E[j] = e;
+            f -= gape;
+            d |= f > h ? 2<<4 : 0;
+            f = f > h ? f : h;
+            z[i][j] = d;
+        }
+        H[end] = h1, E[end] = is_local ? 0 : NEG_INF;
+        if (m > max) max = m, end_i = i, end_j = mj;
+    }
+    if (is_local && max == 0) return null;
+    score = is_local ? max : H[qlen];
+
+    // --- Backtrack + Extract alignment track directly ---
+    var oq = '', ot = '', oq1 = '';
+    var aln_type = 0, gap_len = 0;
+    var i = end_i, k = end_j, which = 0;
+
+    while (i >= 0 && k >= 0) {
+        var tmp = z[i][k];
+        which = tmp >> (which << 1) & 3;
+        if (which == 0 && tmp>>6) break;
+        if (which == 0) which = tmp & 3;
+
+        if (which == 0) { // match
+            oq = query[k] + oq;
+            ot = target[i] + ot;
+            oq1 = "\xa0" + oq1;
+            --i; --k;
+            if (aln_type==0) aln_type=1;
+        } 
+        else if (which == 1) { // deletion in query (gap in query, consume target)
+            oq = "-" + oq;
+            ot = target[i] + ot;
+            oq1 = "\xa0" + oq1;
+            --i;
+            gap_len++;
+            aln_type = (gap_len%3==0) ? 2 : 3;
+        } 
+        else { // insertion in query
+            oq = query[k] + oq;
+            ot = "-" + ot;
+            oq1 = query[k] + oq1;
+            --k;
+            gap_len++;
+            aln_type = (gap_len%3==0) ? 2 : 3;
+        }
+    }
+
+    return { score, oq, ot, oq1, aln_type, gap_len };
+}
+
+
 // generate cigar to gap in breakpoint windows, bkp11, bkp22 is offset interest region of ref wrt gap add-in ref 
 function bsa_cigar2gaps_breakpoint(target, query, start, cigar, bkp1, bkp2){
     var oq = '', ot = '', oq1 = '', lq = 0, lt = start;
@@ -1242,75 +1234,47 @@ function bsa_cigar2gaps_breakpoint(target, query, start, cigar, bkp1, bkp2){
     return [[oq.substr(bkp1-start, bkp2-bkp1), oq1.substr(bkp1-start, bkp2-bkp1)], aln_type, gap_len];
 }
 
-function TabClicked(i) {
-    const show = id => document.getElementById(id).style.display = "";
-    const hide = id => document.getElementById(id).style.display = "none";
-    const ids = ["setup", "results", "manual", "about", "bulkview_result", "offtarget_view", "testdata", "Utility", "version"];
+function TabClicked(i)
+{
+    if (i==0) document.getElementById("setup").style.display = "";
+    else document.getElementById("setup").style.display = "none";
+    if (i==1||i ==7||i ==8) document.getElementById("results").style.display = "";
+    else document.getElementById("results").style.display = "none";
 
-    // hide all first
-    ids.forEach(hide);
+    if (i==2) document.getElementById("manual").style.display = "";
+    else document.getElementById("manual").style.display = "none";
 
-    // show based on tab index
-    if (i === 0) show("setup");
-    if ([1, 7, 8, 11, 12, 13, 14].includes(i)) show("results");
-    if (i === 2) show("manual");
-    if (i === 3) show("about");
-    if (i === 4) show("bulkview_result");
-    if (i === 5) show("offtarget_view");
-    if (i === 6) show("testdata");
-    if (i === 9) show("Utility");
-    if (i === 10) show("version");
+    if (i==3) document.getElementById("about").style.display = "";
+    else document.getElementById("about").style.display = "none";
 
-    // handle SVG visibility
-    const setSVG = (pie, mut, rima) => {
-        for (let j = 0; j < 4; j++) {
-            document.getElementById(`SVGpie${j}`).style.display = pie(j);
-            document.getElementById(`SVGmut${j}`).style.display = mut(j);
-            document.getElementById(`SVGpie_rima${j}`).style.display = rima(j);
-        }
-    };
+    if (i==4) document.getElementById("bulkview_result").style.display = "";
+    else document.getElementById("bulkview_result").style.display = "none";
 
-    // normal result view
-    if (i === 1 || i === 7) {
-        setSVG(
-            j => j === bc ? "" : "none",
-            j => j === bc ? "" : "none",
-            () => "none"
-        );
-    }
+    if (i==5) document.getElementById("offtarget_view").style.display = "";
+    else document.getElementById("offtarget_view").style.display = "none";
+    if (i==6) document.getElementById("testdata").style.display = "";
+    else document.getElementById("testdata").style.display = "none";
+    if (i==1||i==7) document.getElementById("SVGpie").style.display = "";
+    else document.getElementById("SVGpie").style.display = "none";
+    if (i==8) document.getElementById("SVGpie_rima").style.display = "";
+    else document.getElementById("SVGpie_rima").style.display = "none";
+    if (i==9) document.getElementById("Utility").style.display = "";
+    else document.getElementById("Utility").style.display = "none";
+    if (i==10) document.getElementById("version").style.display = "";
+    else document.getElementById("version").style.display = "none";
 
-    // rima result view
-    else if (i === 8) {
-        setSVG(
-            () => "none",
-            () => "",
-            j => j === bc ? "" : "none"
-        );
-    }
+    document.getElementById("progress").style.display = "none";
+    document.getElementById("progress1").style.display = "none";
 
-    // switch bc views (11–14)
-    else if ([11, 12, 13, 14].includes(i)) {
-        bc = i - 11;
-        setSVG(
-            j => j === bc ? "" : "none",
-            j => j === bc ? "" : "none",
-            () => "none"
-        );
-    } else {
-        hide(`SVGpie_rima${bc}`);
-    }
-
-    // hide progress bars
-    hide("progress");
-    hide("progress1");
+    currenttab = i;
 }
-
 
 //reverse comp function
 var ks_comp = {'A':'T','C':'G','G':'C','T':'A','M':'K','K':'M','Y':'R','R':'Y','V':'B','B':'V','H':'D','D':'H',
 			   'a':'t','c':'g','g':'c','t':'a','m':'k','k':'m','y':'r','r':'y','v':'b','b':'v','h':'d','d':'h'};
 
-function ReverseComplement(s){
+function ReverseComplement(s)
+{
 	var i, t = '';
 	for (i = 0; i < s.length; ++i) {
 		var c = s.charAt(s.length - 1 - i);
@@ -1399,13 +1363,15 @@ function FileReceived() {
     var cursor = 0, origlen = original.length;
     // alignment parameter for affine score DP algorithms 
     const ms = 1 // match score
-    const mms = -1// mismatch score
-    const gapo = -2  // gap open score
+    const mms = -1//mismatch score
+    const gapo = -4  // gap open score
     const gape = -1  // gap extent score
     var id = CurrentFileId;
-
     targetingOligo1 = getSeq("TargetingOligo"); //TargetingOligo
     PhredThreshold = 1*document.getElementsByName("Phred")[0].value;
+    var prime_mode = document.getElementById('prime_editing').checked;
+    var ML_mode = document.getElementById('run_mode').checked;
+    var ML_genotype= 1*document.getElementsByName("ML_genotype")[0].value;
 
     //check target oligo in reference or reverse ref
     if (targetingOligo1 !=""){
@@ -1437,157 +1403,279 @@ function FileReceived() {
             mean_phred = mean_phred + phred.charCodeAt(pos)-33;
         }
         mean_phred = (mean_phred/readlen).toFixed(1);
-        if (phred_array[bc][id].hasOwnProperty(mean_phred)) {
-            phred_array[bc][id][mean_phred]+=1
+        if (phred_array[id].hasOwnProperty(mean_phred)){
+            phred_array[id][mean_phred]+=1
         }
         else {
-            phred_array[bc][id][mean_phred] = 1
+            phred_array[id][mean_phred] = 1
         }
 
         if (readlen >10) {
-            if (length_array[bc][id].hasOwnProperty(readlen)){
-                length_array[bc][id][readlen]+=1
+            if (length_array[id].hasOwnProperty(readlen)){
+                length_array[id][readlen]+=1
             }
             else {
-                length_array[bc][id][readlen] = 1
+                length_array[id][readlen] = 1
             }
         }
         var gcContent_1 = calculateGCContent(read).toFixed(1)
-        if (gcContent[bc][id].hasOwnProperty(gcContent_1)){
-            gcContent[bc][id][gcContent_1]+=1
+        if (gcContent[id].hasOwnProperty(gcContent_1)){
+            gcContent[id][gcContent_1]+=1
         }
         else {
-            gcContent[bc][id][gcContent_1] = 1
+            gcContent[id][gcContent_1] = 1
         }
         var index_oli_read = -1;
         var index_oli_read1 = -1;
-        if (targetingOligo1 !="") {
-            index_oli_read = read.search(targetingOligo1);
-            index_oli_read1 = ReverseComplement(read).search(targetingOligo1);
-        }
-
-        // const index_l = read.indexOf(anchor_fwl) || read.indexOf(anchor_rvr); 
-        // const index_r = read.indexOf(anchor_fwr) || read.indexOf(anchor_rvl); 
-        var index_l = fuzzyIndexOf(read, anchor_fwl, max_mismatch)
-        var index_r = fuzzyIndexOf(read, anchor_fwr, max_mismatch)
-        if (index_l===-1 && index_r===-1){
-            index_l = fuzzyIndexOf(read, anchor_rvr, max_mismatch)
-            index_r = fuzzyIndexOf(read, anchor_rvl, max_mismatch)
-            if (index_l!==-1 && index_r!==-1){
-                read = ReverseComplement(read);
-                index_l = fuzzyIndexOf(read, anchor_fwl, max_mismatch)
-                index_r = fuzzyIndexOf(read, anchor_fwr, max_mismatch)
+        if (targetingOligo1 !=""){
+                index_oli_read = read.search(targetingOligo1);
+                index_oli_read1 = ReverseComplement(read).search(targetingOligo1);
             }
-        } 
- 
-        if (mean_phred > PhredThreshold){                      
-            if (index_l!==-1 && index_r!==-1) { 
+
+        const index_l = read.indexOf(anchor_fwl) || read.indexOf(anchor_rvr); 
+        const index_r = read.indexOf(anchor_fwr) || read.indexOf(anchor_rvl); 
+
+        if ((mean_phred > PhredThreshold)&&(CurrentFileChunk<2)){
+            if (index_l!==-1 && index_r!=-1){// UPDATE v2.0 checking 4 posiblities of read, threshold score =region_analyse+10 
                 if (index_l < index_r){
                     read = read.substring(index_l, index_r + anchor_size) ;
                 }
-                else {
+                else{
                     read = read.substring(index_r, index_l + anchor_size) ;
+                    read = ReverseComplement(read);
                 }
-                // check if already aligned
-                if (!aln_dict_lib[bc][id].hasOwnProperty(read)) {
-                    var str1 = ''
-                    const rst = bsa_align(locus, read, [ms, mms], [gapo, gape], is_local=true);
-                    const fmt1 = bsa_cigar2gaps_breakpoint(locus, read, rst[1], rst[2], BreakPoint-region_analyse*1, BreakPoint + region_analyse*1);
-                    const fmt = fmt1[0]
-                    aln_type = fmt1[1]
-                    if (index_oli_read != -1|| index_oli_read1 != -1){
-                        aln_type = 7;
-                    }
-                    // new aln_type for desired edit and partial edit
-                    else if ((p_edit)||(d_edit)){
-                        if (d_edit&&(read.includes(d_edit)||read.includes(ReverseComplement(d_edit))||d_edit.includes(ReverseComplement(read))||d_edit.includes(read))){
+                read = read.substring(index_l, index_r + anchor_size) ;
+                var rst = bsa_align(locus, read, [ms, mms], [gapo, gape], is_local=true);
+                var str1 = ''
+                var fmt1 = bsa_cigar2gaps_breakpoint(locus, read, rst[1], rst[2], BreakPoint-region_analyse*1, BreakPoint + region_analyse*1);
+                var fmt = fmt1[0]
+                aln_type = fmt1[1]
+                if (index_oli_read != -1|| index_oli_read1 != -1){
+                    aln_type = 7;
+                }
+
+                str1 += fmt[0] + '\n';
+                str1 += fmt[1] + '\n';
+
+                // new aln_type for desired edit and partial edit
+                if ((p_edit)||(d_edit)){
+                    if (d_edit&&(read.includes(d_edit)||read.includes(ReverseComplement(d_edit)))){
+                        if (fmt[1].trim()==""){
                             aln_type = 9;
                         }
-                        else if (p_edit&&(read.includes(p_edit)||read.includes(ReverseComplement(p_edit))||p_edit.includes(ReverseComplement(read))||p_edit.includes(read))){
+                    }
+                    else if (p_edit&&(read.includes(p_edit)||read.includes(ReverseComplement(p_edit)))){
+                        if (fmt[1].trim()==""){
                             aln_type = 10;
                         }
                     }
+                }
+
+                if (aln_type !=0){
+                    if (aln_dict[id].hasOwnProperty(str1)){
+                        aln_dict[id][str1][0]+=1
+                    }
+                    else {
+                        aln_dict[id][str1] = Array(2)
+                        aln_dict[id][str1][0] = 1
+                        aln_dict[id][str1][1] = aln_type
+                    }
+                }
+            }           
+        }
+        
+        else if (ML_mode &&(mean_phred > PhredThreshold)){
+            if (CurrentFileChunk==2){
+                aln_dict_ML[CurrentFileId] = []
+                let entries = Object.entries(aln_dict[CurrentFileId]);
+                entries.sort((a, b) => b[1][0] - a[1][0]);
+                let top10Dict = Object.fromEntries(entries.slice(0, ML_genotype));
+                for (let key in top10Dict){
+                    aln_dict_ML[CurrentFileId][KeytoSeq(key)[0]] = KeytoSeq(key)[1]
+                }
+            }
+            else {
+                for (let key in aln_dict_ML[CurrentFileId]){
+                    if (read.includes(key)||read.includes(ReverseComplement(key))){
+                        let key1 = aln_dict_ML[CurrentFileId][key]
+                        aln_dict[CurrentFileId][key1][0]+=1;
+                    }
+                } 
+            } 
+        }
+        else if (mean_phred > PhredThreshold){           
+            if (targetingOligo1 !=""){
+                var index_oli_read = read.search(targetingOligo1);
+                if (index_oli_read!=-1){
+                    aln_type = 7;
+                    // remove this part in knockin, speed up the program
+                    var str1 = ''
+                    str1 += read.substring(index_oli_read- oligo_index, index_oli_read- oligo_index + region_analyse*2)+ '\n'+ '\n';
+                    if (aln_dict[id].hasOwnProperty(str1)){
+                        aln_dict[id][str1][0]+=1
+                    }
+                    else {
+                        aln_dict[id][str1] = Array(2)
+                        aln_dict[id][str1][0] = 1
+                        aln_dict[id][str1][1] = aln_type
+                    }
+                }
+                else {
+                    index_oli_read = ReverseComplement(read).search(targetingOligo1);
+                    if (index_oli_read!=-1){
+                        read = ReverseComplement(read)
+                        aln_type = 7;
+                    // remove this part in knockin, speed up the program
+                        var str1 = ''
+                        str1 += read.substring(index_oli_read- oligo_index, index_oli_read- oligo_index + region_analyse*2)+ '\n'+ '\n';
+                        if (aln_dict[id].hasOwnProperty(str1)){
+                            aln_dict[id][str1][0]+=1
+                        }
+                        else {
+                            aln_dict[id][str1] = Array(2)
+                            aln_dict[id][str1][0] = 1
+                            aln_dict[id][str1][1] = aln_type
+                        }
+                    }
+
+                    //Check WT manually, speed up
+                    else if (read.includes(locus.substring(BreakPoint-region_analyse*1, BreakPoint + region_analyse*1))){
+                        aln_type = 1;
+                    // remove this part in knockin, speed up the program
+                        var str1 = ''
+                        str1 += locus.substring(BreakPoint-region_analyse*1, BreakPoint + region_analyse*1)+ '\n'+ '\n';
+                        if (aln_dict[id].hasOwnProperty(str1)){
+                            aln_dict[id][str1][0]+=1
+                        }
+                        else {
+                            aln_dict[id][str1] = Array(2)
+                            aln_dict[id][str1][0] = 1
+                            aln_dict[id][str1][1] = aln_type
+                        }
+                    }
+                    else if (read.includes(ReverseComplement(locus.substring(BreakPoint-region_analyse*1, BreakPoint + region_analyse*1)))){
+                        aln_type = 1;
+                        var str1 = ''
+                        str1 += locus.substring(BreakPoint-region_analyse*1, BreakPoint + region_analyse*1)+ '\n'+ '\n';
+                        if (aln_dict[id].hasOwnProperty(str1)){
+                            aln_dict[id][str1][0]+=1
+                        }
+                        else {
+                            aln_dict[id][str1] = Array(2)
+                            aln_dict[id][str1][0] = 1
+                            aln_dict[id][str1][1] = aln_type
+                        }
+                    }
+                    
+                    else if (!prime_mode){
+                        if (index_l!==-1 && index_r!=-1){// UPDATE v2.0 checking 4 posiblities of read, threshold score =region_analyse+10 
+                            if (index_l < index_r){
+                                read = read.substring(index_l, index_r + anchor_size) ;
+                            }
+                            else{
+                                read = read.substring(index_r, index_l + anchor_size) ;
+                                read = ReverseComplement(read);
+                            }                            
+                            var rst = bsa_align(locus, read, [ms, mms], [gapo, gape], is_local=true);
+                            // if (rst[0] < (region_analyse/2)){
+                            //     try{
+                            //     read = ReverseComplement(read);
+                            //     rst = bsa_align(locus, read, [ms, mms], [gapo, gape], is_local=true);
+                            //     }
+                            //     catch (error){}
+                            // }
+                            var str1 = ''
+                            var fmt1 = bsa_cigar2gaps_breakpoint(locus, read, rst[1], rst[2], BreakPoint-region_analyse*1, BreakPoint + region_analyse*1);
+                            var fmt = fmt1[0]
+                            aln_type = fmt1[1]
+                            // var str2_arr = fmt[0].split('-')
+                            str1 += fmt[0] + '\n';
+                            str1 += fmt[1] + '\n';
+                            //aggregate aln track into dictionary
+                            // if (containsAny(locus, str2_arr)||containsAny(ReverseComplement(locus), str2_arr)){
+                            if (aln_type !=0){
+                                if (aln_dict[id].hasOwnProperty(str1)){
+                                    aln_dict[id][str1][0]+=1
+                                }
+                                else {
+                                    aln_dict[id][str1] = Array(2)
+                                    aln_dict[id][str1][0] = 1
+                                    aln_dict[id][str1][1] = aln_type
+                                }
+                            }
+                        }           
+                    }
+                }
+            } 
+            else {
+                if (index_l!==-1 && index_r!=-1){ 
+                    if (index_l < index_r){
+                        read = read.substring(index_l, index_r + anchor_size) ;
+                    }
+                    else{
+                        read = read.substring(index_r, index_l + anchor_size) ;
+                        read = ReverseComplement(read);
+                    }                    
+                    var rst = bsa_align(locus, read, [ms, mms], [gapo, gape], is_local=true);
+                    // if (rst[0] < (region_analyse/2)){
+                    //     try{
+                    //         read = ReverseComplement(read);
+                    //         rst = bsa_align(locus, read, [ms, mms], [gapo, gape], is_local=true);
+                    //     }
+                    //     catch (error){}
+                    // }
+                    var str1 = ''
+                    var fmt1 = bsa_cigar2gaps_breakpoint(locus, read, rst[1], rst[2], BreakPoint-region_analyse*1, BreakPoint + region_analyse*1);
+                    var fmt = fmt1[0]
+                    aln_type = fmt1[1]
                     // var str2_arr = fmt[0].split('-')
                     str1 += fmt[0] + '\n';
                     str1 += fmt[1] + '\n';
+                    //aggregate aln track into dictionary
+                    // if (containsAny(locus, str2_arr)||containsAny(ReverseComplement(locus), str2_arr)){
                     if (aln_type !=0){
-                        if (aln_dict[bc][id].hasOwnProperty(str1)){
-                            aln_dict[bc][id][str1][0]+=1
-                            //update genotype for PE analysis
+                        if (aln_dict[id].hasOwnProperty(str1)){
+                            aln_dict[id][str1][0]+=1
                         }
                         else {
-                            aln_dict[bc][id][str1] = Array(2)
-                            aln_dict[bc][id][str1][0] = 1
-                            aln_dict[bc][id][str1][1] = aln_type
+                            aln_dict[id][str1] = Array(2)
+                            aln_dict[id][str1][0] = 1
+                            aln_dict[id][str1][1] = aln_type
                         }
                     }
-                    aln_dict_lib[bc][id][read] = str1
-                }
-                else {
-                    try{
-                        aln_dict[bc][id][aln_dict_lib[bc][id][read]][0]+=1
-                    }
-                    catch (error){
-                    }
-                }                    
-            }           
+                }           
+            }
         }
-    }
+        }
     RestFromLastChunk = original.substr(cursor);
     reader.result = "";
     reader = "";
     CurrentFileChunk++;
-    if (files[bc].length >0) {
-        if ((CurrentFileChunk)*chunksize >= files[bc][CurrentFileId].size) {
-            Pre_PlotAlignment(bc,id)
-            PlotAlignment(bc,id)
-            if (locus_pe){
-                //Must restore locus PE again for each step
-                locus = locus_pe;
-            }
-            CurrentFileId++;
-            CurrentFileChunk = 0;
-            RestFromLastChunk = "";
-        }
-    }
 
-    if (CurrentFileId < files[bc].length && CurrentFileId<96) {
-        setTimeout("ReadNextFileChunk();",0);
-    } 
-    else if (bc <3 && !(CurrentFileId < files[bc].length && CurrentFileId<96)){
-        bc++;
-        CurrentFileId = 0;
+    if ((CurrentFileChunk)*chunksize >= files[CurrentFileId].size) {
+        Pre_PlotAlignment(id)
+        PlotAlignment(id)
+        CurrentFileId++;
         CurrentFileChunk = 0;
         RestFromLastChunk = "";
-        if (files[bc].length >0) {
-            setTimeout("ReadNextFileChunk();",0);
-        } 
-        else {
-            for (let bc1 =0; bc1<4; bc1++){
-                DrawPie(bc1);
-                DrawPie_rima(bc1);
-            }
-        }
     }
-    else if (bc == 3){
-        for (let bc1 =0; bc1<4; bc1++){
-            DrawPie(bc1);
-            DrawPie_rima(bc1);
-        }
-    //restore locus if changed at the end of PE
-        locus = locus_backup;
-        runtime = performance.now() -startTime
+
+    if (CurrentFileId < files.length && CurrentFileId<96) {
+        setTimeout("ReadNextFileChunk();",0);
+    } else {
+        DrawPie();
+        DrawPie_rima();
     }
-}
+    }
 
 function FileReceived_off() {
     var original = RestFromLastChunk+reader.result;
     var cursor = 0, origlen = original.length;
     // alignment parameter for affine score DP algorithms 
-    const ms = 1 // match score
-    const mms = -1 //mismatch score
-    const gapo = -4  // gap open score
-    const gape = -1  // gap extent score
+    var ms = 1 // match score
+    var mms = -1 //mismatch score
+    var gapo = -4  // gap open score
+    var gape = -1  // gap extent score
     // var id = CurrentFileId;
     while (true) {
         var cursor1 = cursor;
@@ -1673,13 +1761,8 @@ function FileReceived_off() {
 function ReadNextFileChunk() {
     reader = new FileReader();
     reader.onload = FileReceived;
-    try{
-        reader.readAsText(files[bc][CurrentFileId].slice(CurrentFileChunk*chunksize, (CurrentFileChunk+1)*chunksize));
-        document.getElementById('progress').innerHTML = "File: barcode "+(bc +1)+ " / " +(CurrentFileId+1)+": "+ (CurrentFileChunk*chunksize/1000000).toFixed(2)+ " MB / "+Math.round(files[bc][CurrentFileId].size/1000000)+" MB processed. Please keep this window open and don't switch to other tabs in your web browser!";
-    }
-    catch (error){
-        // alert('An unexpected error occurred during file reading: ' + error.message);        
-    }
+    reader.readAsText(files[CurrentFileId].slice(CurrentFileChunk*chunksize, (CurrentFileChunk+1)*chunksize));
+    document.getElementById('progress').innerHTML = "File "+(CurrentFileId+1)+": "+ (CurrentFileChunk*chunksize/1000000).toFixed(2)+ " MB / "+Math.round(files[CurrentFileId].size/1000000)+" MB processed. Please keep this window open and don't switch to other tabs in your web browser!";
 }
 
 function ReadNextFileChunk_off(){
@@ -1719,8 +1802,8 @@ function addSlice(svgEl, angle, value, denom, fill, cx, cy, r) {
   return angle;
 }
 
-function DrawPie(bc, active_barcode = 0) {
-  const svg = document.getElementById("SVGpie"+bc.toString());
+function DrawPie(active_barcode = 0) {
+  const svg = document.getElementById("SVGpie");
   TabClicked(1);
 
   // reset svg and listener (same behavior as original)
@@ -1733,7 +1816,7 @@ function DrawPie(bc, active_barcode = 0) {
   // --- compute maximum summary for scale (same as original) ---
   let maxsum = 0;
   for (let b = 0; b < 96; b++) {
-    if (summary_track[bc][b][7] > maxsum) maxsum = summary_track[bc][b][7];
+    if (summary_track[b][7] > maxsum) maxsum = summary_track[b][7];
   }
 
   // --- draw 96 small pies (same layout & order as original) ---
@@ -1744,9 +1827,9 @@ function DrawPie(bc, active_barcode = 0) {
     let p_edit1 = 0, d_edit1 = 0;
 
     // classify indels (uses aln_dict_fil and per-barcode values like original)
-    for (let key in aln_dict_fil[bc][barcode]) {
-      const t = aln_dict[bc][barcode][key][1];
-      const cnt = aln_dict_fil[bc][barcode][key];
+    for (let key in aln_dict_fil[barcode]) {
+      const t = aln_dict[barcode][key][1];
+      const cnt = aln_dict_fil[barcode][key];
       if (t === 2) {
         for (let i = 0; i < 6; i++) if (!inf_indel1[i]) { inf_indel1[i] = cnt; sum += cnt; break; }
       } else if (t === 3) {
@@ -1758,18 +1841,18 @@ function DrawPie(bc, active_barcode = 0) {
       }
     }
 
-    sum += summary_track[bc][barcode][2] + summary_track[bc][barcode][1];
+    sum += summary_track[barcode][2] + summary_track[barcode][1];
 
     // same size/position calculation as original
     const size = 24 * Math.sqrt(sum / maxsum || 0);
     const midx = (barcode % 12) * 50 + 25;
     const midy = Math.floor(barcode / 12) * 65 + 25;
 
-    if (summary_track[bc][barcode][7] > 0) {
+    if (summary_track[barcode][7] > 0) {
       let angle = -Math.PI / 2;
 
       // wt
-      angle = addSlice(svg, angle, summary_track[bc][barcode][2], sum, "rgb(200,200,200)", midx, midy, size);
+      angle = addSlice(svg, angle, summary_track[barcode][2], sum, "rgb(200,200,200)", midx, midy, size);
 
       // in-frame indels (6 slots)
       for (let i = 0; i < 6; i++) angle = addSlice(svg, angle, inf_indel1[i], sum, BLAU[i], midx, midy, size);
@@ -1779,12 +1862,12 @@ function DrawPie(bc, active_barcode = 0) {
 
       // desired & partial (only drawn if global p_edit/d_edit set — same logic as original)
       if (p_edit !== "" || d_edit !== "") {
-        angle = addSlice(svg, angle, summary_track[bc][barcode][6], sum, "rgb(156, 39, 176)", midx, midy, size);
-        angle = addSlice(svg, angle, summary_track[bc][barcode][8], sum, "rgb(198, 255, 0)", midx, midy, size);
+        angle = addSlice(svg, angle, summary_track[barcode][6], sum, "rgb(156, 39, 176)", midx, midy, size);
+        angle = addSlice(svg, angle, summary_track[barcode][8], sum, "rgb(198, 255, 0)", midx, midy, size);
       }
 
       // targeting oligo
-      addSlice(svg, angle, summary_track[bc][barcode][1], sum, "rgb(0,232,30)", midx, midy, size);
+      addSlice(svg, angle, summary_track[barcode][1], sum, "rgb(0,232,30)", midx, midy, size);
     }
 
     // center text (highlight active barcode just like original)
@@ -1794,8 +1877,8 @@ function DrawPie(bc, active_barcode = 0) {
     });
     if (active_barcode === barcode) t.setAttribute("fill", "rgb(16, 126, 204)");
 
-    if (!genotype[bc][barcode]) t.textContent = GetWellPos(barcode);
-    else t.textContent = `${GetWellPos(barcode)} (${genotype[bc][barcode]})`;
+    if (!genotype[barcode]) t.textContent = GetWellPos(barcode);
+    else t.textContent = `${GetWellPos(barcode)} (${genotype[barcode]})`;
     svg.appendChild(t);
   }
 
@@ -1840,8 +1923,8 @@ function DrawPie(bc, active_barcode = 0) {
 }
 
 
-function DrawPie_rima(bc) {
-  const svg = document.getElementById("SVGpie_rima"+bc.toString());
+function DrawPie_rima() {
+  const svg = document.getElementById("SVGpie_rima");
   TabClicked(1);
   // reset svg
   while (svg.lastChild) svg.removeChild(svg.lastChild);
@@ -1863,14 +1946,14 @@ function DrawPie_rima(bc) {
   // find max sum for scaling
   let maxsum = 0;
   for (let b = 0; b < 96; b++) {
-    if (summary_track[bc][b][7] > maxsum) maxsum = summary_track[bc][b][7];
+    if (summary_track[b][7] > maxsum) maxsum = summary_track[b][7];
   }
 
   for (let b = 0; b < 96; b++) {
     const midx = (b % 12) * 50 + 25;
     const midy = Math.floor(b / 12) * 65 + 25;
-    if (summary_track[bc][b][7] > 0) {
-      const values = rima_hist_all[bc][b];
+    if (summary_track[b][7] > 0) {
+      const values = rima_hist_all[b];
       const sum = values.reduce((a, v) => a + v, 0);
       const size = 24 * Math.sqrt(sum / maxsum);
       let angle = -Math.PI / 2;
@@ -1968,7 +2051,7 @@ function DrawPie_bulk() {
     }
 
     for (let key in aln_dict_bulk){
-        if (aln_dict[bc][barcode][key][1] == 2){
+        if (aln_dict[barcode][key][1] == 2){
             for (let i=0; i <6; i++){
                 if (inf_indel1[i]==0){
                     inf_indel1[i]=aln_dict_bulk[key];
@@ -1976,7 +2059,7 @@ function DrawPie_bulk() {
                     break;
                 }
             }
-        } else if (aln_dict[bc][barcode][key][1] == 3){
+        } else if (aln_dict[barcode][key][1] == 3){
             for (let i=0; i <6; i++){
                 if (out_indel1[i]==0){
                     out_indel1[i]=aln_dict_bulk[key];
@@ -1991,13 +2074,13 @@ function DrawPie_bulk() {
         sum_bulk += aln_dict_bulk[key]
     }
 
-    sum += summary_track[bc][barcode][2]+ summary_track[barcode][1]
+    sum += summary_track[barcode][2]+ summary_track[barcode][1]
 
-    if (summary_track[bc][barcode][7] > 0) {
+    if (summary_track[barcode][7] > 0) {
         //wt:
         var angle = -3.1415/2;
         var lastangle = angle;
-        angle+=2*3.1415*0.995*summary_track[bc][barcode][2]/sum;
+        angle+=2*3.1415*0.995*summary_track[barcode][2]/sum;
         //SVG:
         var startx = size*Math.cos(lastangle);
         var starty = size*Math.sin(lastangle);
@@ -2047,7 +2130,7 @@ function DrawPie_bulk() {
            // desired edit
         if (p_edit!=""||d_edit!=""){
             lastangle = angle;
-            angle+=2*3.1415*0.995*summary_track[bc][barcode][6]/sum;
+            angle+=2*3.1415*0.995*summary_track[barcode][6]/sum;
             var startx = size*Math.cos(lastangle);
             var starty = size*Math.sin(lastangle);
             var plusx = size*(Math.cos(angle)-Math.cos(lastangle));
@@ -2062,7 +2145,7 @@ function DrawPie_bulk() {
 
             // partial edit
             lastangle = angle;
-            angle+=2*3.1415*0.995*summary_track[bc][barcode][8]/sum;
+            angle+=2*3.1415*0.995*summary_track[barcode][8]/sum;
             var startx = size*Math.cos(lastangle);
             var starty = size*Math.sin(lastangle);
             var plusx = size*(Math.cos(angle)-Math.cos(lastangle));
@@ -2077,7 +2160,7 @@ function DrawPie_bulk() {
         }
         // targetingOligo
         lastangle = angle;
-        angle+=2*3.1415*0.995*summary_track[bc][barcode][1]/sum;
+        angle+=2*3.1415*0.995*summary_track[barcode][1]/sum;
         startx = size*Math.cos(lastangle);
         starty = size*Math.sin(lastangle);
         plusx = size*(Math.cos(angle)-Math.cos(lastangle));
@@ -2195,7 +2278,7 @@ function DrawPie_bulk() {
     SVGObj.setAttribute("x", midx+80);
     SVGObj.setAttribute("y", midy+42);
     SVGObj.setAttribute("font-size", "12");
-    SVGObj.textContent = "in-frame indels: "+ summary_track[bc][barcode][3]+ " READS, ("+summary_track_select[bc*96+barcode+1][3]+ " %)";
+    SVGObj.textContent = "in-frame indels: "+ summary_track[barcode][3]+ " READS, ("+summary_track_select[barcode+1][3]+ " %)";
     svg.appendChild(SVGObj);
 
     SVGObj= document.createElementNS(NS,"text");
@@ -2214,7 +2297,7 @@ function DrawPie_bulk() {
     SVGObj.setAttribute("x", midx+190);
     SVGObj.setAttribute("y", midy+62)
     SVGObj.setAttribute("font-size", "12");
-    SVGObj.textContent = summary_track[bc][barcode][4]+ " READS, (" +summary_track_select[bc*96+barcode+1][4]+ " %)";
+    SVGObj.textContent = summary_track[barcode][4]+ " READS, (" +summary_track_select[barcode+1][4]+ " %)";
     svg.appendChild(SVGObj);
 
     SVGObj= document.createElementNS(NS,"text");
@@ -2223,7 +2306,7 @@ function DrawPie_bulk() {
     SVGObj.setAttribute("x", midx+80);
     SVGObj.setAttribute("y", midy+82)
     SVGObj.setAttribute("font-size", "12");
-    SVGObj.textContent = "no indel: "+ summary_track[bc][barcode][2] +" READS, (" + summary_track_select[bc*96+barcode+1][2]+ " %)";
+    SVGObj.textContent = "no indel: "+ summary_track[barcode][2] +" READS, (" + summary_track_select[barcode+1][2]+ " %)";
     svg.appendChild(SVGObj);
     SVGObj= document.createElementNS(NS,"text");
     SVGObj.setAttribute("font-family", "sans-serif");
@@ -2231,7 +2314,7 @@ function DrawPie_bulk() {
     SVGObj.setAttribute("x", midx+80);
     SVGObj.setAttribute("y", midy+102);
     SVGObj.setAttribute("font-size", "12");
-    SVGObj.textContent = "targeted mutagenesis (KI): "+ summary_track[bc][barcode][1] +" READS, (" +summary_track_select[bc*96+barcode+1][1]+ " %)";
+    SVGObj.textContent = "targeted mutagenesis (KI): "+ summary_track[barcode][1] +" READS, (" +summary_track_select[barcode+1][1]+ " %)";
     svg.appendChild(SVGObj);
     if (p_edit !=""||d_edit!=""){
         SVGObj= document.createElementNS(NS,"text");
@@ -2240,7 +2323,7 @@ function DrawPie_bulk() {
         SVGObj.setAttribute("x", midx+80);
         SVGObj.setAttribute("y", midy+122);
         SVGObj.setAttribute("font-size", "12");
-        SVGObj.textContent = "DESIRED edit: " +(summary_track[bc][barcode][6]*100/summary_track[bc][barcode][7]).toFixed(2)+"%" ;
+        SVGObj.textContent = "DESIRED edit: " +(summary_track[barcode][6]*100/summary_track[barcode][7]).toFixed(2)+"%" ;
         svg.appendChild(SVGObj);
         SVGObj= document.createElementNS(NS,"text");
         SVGObj.setAttribute("font-family", "sans-serif");
@@ -2248,7 +2331,7 @@ function DrawPie_bulk() {
         SVGObj.setAttribute("x", midx+80);
         SVGObj.setAttribute("y", midy+142);
         SVGObj.setAttribute("font-size", "12");
-        SVGObj.textContent = "PARTIAL edit: " +(summary_track[bc][barcode][8]*100/summary_track[bc][barcode][7]).toFixed(2)+"%";
+        SVGObj.textContent = "PARTIAL edit: " +(summary_track[barcode][8]*100/summary_track[barcode][7]).toFixed(2)+"%";
         svg.appendChild(SVGObj);
     }
 
@@ -2259,9 +2342,9 @@ function DrawPie_bulk() {
     lastangle = angle;
     midx = 100;
     midy = 100;
-    const rima_sum = rima_hist_all[bc][barcode][0]+rima_hist_all[bc][barcode][1]+rima_hist_all[bc][barcode][2]+rima_hist_all[bc][barcode][3]+rima_hist_all[bc][barcode][4]
+    const rima_sum = rima_hist_all[barcode][0]+rima_hist_all[barcode][1]+rima_hist_all[barcode][2]+rima_hist_all[barcode][3]+rima_hist_all[barcode][4]
     // MH-Del
-    angle+=2*3.1415*0.995*rima_hist_all[bc][barcode][0]/rima_sum;
+    angle+=2*3.1415*0.995*rima_hist_all[barcode][0]/rima_sum;
     //SVG:
     var startx = size*Math.cos(lastangle);
     var starty = size*Math.sin(lastangle);
@@ -2277,7 +2360,7 @@ function DrawPie_bulk() {
 
     // NHEJ
     lastangle = angle;
-    angle+=2*3.1415*0.995*rima_hist_all[bc][barcode][1]/rima_sum;
+    angle+=2*3.1415*0.995*rima_hist_all[barcode][1]/rima_sum;
     startx = size*Math.cos(lastangle);
     starty = size*Math.sin(lastangle);
     plusx = size*(Math.cos(angle)-Math.cos(lastangle));
@@ -2292,7 +2375,7 @@ function DrawPie_bulk() {
 
     // Other EJ
     lastangle = angle;
-    angle+=2*3.1415*0.995*rima_hist_all[bc][barcode][2]/rima_sum;
+    angle+=2*3.1415*0.995*rima_hist_all[barcode][2]/rima_sum;
     startx = size*Math.cos(lastangle);
     starty = size*Math.sin(lastangle);
     plusx = size*(Math.cos(angle)-Math.cos(lastangle));
@@ -2306,7 +2389,7 @@ function DrawPie_bulk() {
     svg.appendChild(SVGObj);
 
     lastangle = angle;
-    angle+=2*3.1415*0.995*rima_hist_all[bc][barcode][3]/rima_sum;
+    angle+=2*3.1415*0.995*rima_hist_all[barcode][3]/rima_sum;
     startx = size*Math.cos(lastangle);
     starty = size*Math.sin(lastangle);
     plusx = size*(Math.cos(angle)-Math.cos(lastangle));
@@ -2320,7 +2403,7 @@ function DrawPie_bulk() {
     svg.appendChild(SVGObj);
 
     lastangle = angle;
-    angle+=2*3.1415*0.995*rima_hist_all[bc][barcode][4]/rima_sum;
+    angle+=2*3.1415*0.995*rima_hist_all[barcode][4]/rima_sum;
     startx = size*Math.cos(lastangle);
     starty = size*Math.sin(lastangle);
     plusx = size*(Math.cos(angle)-Math.cos(lastangle));
@@ -2385,7 +2468,7 @@ function DrawPie_bulk() {
     SVGObj.setAttribute("x", midx+80);
     SVGObj.setAttribute("y", midy+2);
     SVGObj.setAttribute("font-size", "12");
-    SVGObj.textContent = "MH-del:    "+ (100*rima_hist_all[bc][barcode][0]/rima_sum).toFixed(2)+ " %";
+    SVGObj.textContent = "MH-del:    "+ (100*rima_hist_all[barcode][0]/rima_sum).toFixed(2)+ " %";
     svg.appendChild(SVGObj);
     SVGObj= document.createElementNS(NS,"text");
     SVGObj.setAttribute("font-family", "sans-serif");
@@ -2393,7 +2476,7 @@ function DrawPie_bulk() {
     SVGObj.setAttribute("x", midx+80);
     SVGObj.setAttribute("y", midy+22)
     SVGObj.setAttribute("font-size", "12");
-    SVGObj.textContent = "NHEJ:    "+ (100*rima_hist_all[bc][barcode][1]/rima_sum).toFixed(2)+ " %";
+    SVGObj.textContent = "NHEJ:    "+ (100*rima_hist_all[barcode][1]/rima_sum).toFixed(2)+ " %";
     svg.appendChild(SVGObj);
     SVGObj= document.createElementNS(NS,"text");
     SVGObj.setAttribute("font-family", "sans-serif");
@@ -2401,7 +2484,7 @@ function DrawPie_bulk() {
     SVGObj.setAttribute("x", midx+80);
     SVGObj.setAttribute("y", midy+42)
     SVGObj.setAttribute("font-size", "12");
-    SVGObj.textContent = "NHEJ KI:    "+ (100*rima_hist_all[bc][barcode][3]/rima_sum).toFixed(2)+ " %";
+    SVGObj.textContent = "NHEJ KI:    "+ (100*rima_hist_all[barcode][3]/rima_sum).toFixed(2)+ " %";
     svg.appendChild(SVGObj);
     SVGObj= document.createElementNS(NS,"text");
     SVGObj.setAttribute("font-family", "sans-serif");
@@ -2409,7 +2492,7 @@ function DrawPie_bulk() {
     SVGObj.setAttribute("x", midx+80);
     SVGObj.setAttribute("y", midy+62)
     SVGObj.setAttribute("font-size", "12");
-    SVGObj.textContent = "HDR KI:    "+ (100*rima_hist_all[bc][barcode][4]/rima_sum).toFixed(2)+ " %";
+    SVGObj.textContent = "HDR KI:    "+ (100*rima_hist_all[barcode][4]/rima_sum).toFixed(2)+ " %";
     svg.appendChild(SVGObj);
     SVGObj= document.createElementNS(NS,"text");
     SVGObj.setAttribute("font-family", "sans-serif");
@@ -2417,12 +2500,12 @@ function DrawPie_bulk() {
     SVGObj.setAttribute("x", midx+80);
     SVGObj.setAttribute("y", midy+82)
     SVGObj.setAttribute("font-size", "12");
-    SVGObj.textContent = "Other EJ:    "+ (100*rima_hist_all[bc][barcode][2]/rima_sum).toFixed(2)+ " %";
+    SVGObj.textContent = "Other EJ:    "+ (100*rima_hist_all[barcode][2]/rima_sum).toFixed(2)+ " %";
     svg.appendChild(SVGObj);
 
     // Parse FASTQ data and extract quality scores
 
-    const qualityScores = phred_array[bc][barcode];
+    const qualityScores = phred_array[barcode];
     const x = Object.keys(qualityScores).map(key => parseInt(key)); 
     const y = Object.values(qualityScores);
 
@@ -2447,6 +2530,7 @@ function DrawPie_bulk() {
         };
     Plotly.newPlot('QC_plot', [trace], layout);
    
+
     ////////////////////////////////
     const read_length = length_array[barcode];
     const x1 = Object.keys(read_length).map(key => parseInt(key)); 
@@ -2606,6 +2690,7 @@ function DrawPie_off()
                 svg.appendChild(SVGObj);
             }
         }
+
         //SVG:
         var SVGObj= document.createElementNS(NS,"text");
         SVGObj.setAttribute("font-family", "sans-serif");
@@ -2741,8 +2826,8 @@ function DrawPie_off()
 }
 
 function PieClick(evt) {
-    var top = document.getElementById("SVGpie"+ bc.toString()).getBoundingClientRect().top;
-    var left = document.getElementById("SVGpie"+ bc.toString()).getBoundingClientRect().left;
+    var top = document.getElementById("SVGpie").getBoundingClientRect().top;
+    var left = document.getElementById("SVGpie").getBoundingClientRect().left;
     var x = evt.clientX-left;
     var y = evt.clientY-top;
     var xx = Math.round((x-25)/50);
@@ -2751,8 +2836,8 @@ function PieClick(evt) {
 }
 
 function PieClick_rima(evt) {
-    var top = document.getElementById("SVGpie_rima" + bc.toString()).getBoundingClientRect().top;
-    var left = document.getElementById("SVGpie_rima"+ bc.toString()).getBoundingClientRect().left;
+    var top = document.getElementById("SVGpie_rima").getBoundingClientRect().top;
+    var left = document.getElementById("SVGpie_rima").getBoundingClientRect().left;
     var x = evt.clientX-left;
     var y = evt.clientY-top;
     var xx = Math.round((x-25)/50);
@@ -2773,21 +2858,21 @@ function PieClick_off(evt) {
 function SelectClone(barcode) {
     bulkview = document.getElementById("bulkview").checked;
     if (bulkview){
-        if (AlignmentPrecalc[bc][barcode]){
+        if (AlignmentPrecalc[barcode]){
             CurrentAlignment = barcode;
             AlignmentStartPos = 0;
-            PlotAlignment_bulk(bc, barcode, bulk_threshold)
+            PlotAlignment_bulk(barcode, bulk_threshold)
             document.getElementById("DIV_alignment_bulk").innerHTML = AlignmentPrecalc_bulk;
-            PlotAlignment_bulk(bc, barcode, bulk_threshold)
+            PlotAlignment_bulk(barcode, bulk_threshold)
             DrawPie_bulk();
         }
     } 
-    else if (AlignmentPrecalc[bc][barcode]) {
-        document.getElementById("SVGmut"+bc.toString()).innerHTML = AlignmentPrecalc[bc][barcode];
+    else if (AlignmentPrecalc[barcode]) {
+        document.getElementById("DIV_alignment").innerHTML = AlignmentPrecalc[barcode];
         CurrentAlignment = barcode;
         AlignmentStartPos = 0;
-        PlotAlignment(bc, barcode);
-        DrawPie(bc, active_barcode = barcode);
+        PlotAlignment(barcode);
+        DrawPie(active_barcode = barcode);
         }
     else alert("No data available for the selected barcode.");
 }
@@ -2808,67 +2893,36 @@ function GetWellPos(i) {
     return ABC[Math.floor(i/12)] + ((i%12)+1);
 }
 
-
-// return index from input like A1, B2, C3
-function parseWellPositions() {
-    const input = document.getElementById("Ref_list").value;
-    const ABC = "ABCDEFGHIJKL";
-    const parts = input.split(",").map(p => p.trim()).filter(p => p !== "");
-    const result = [];
-
-    for (const part of parts) {
-        const match = part.match(/^([A-L])(\d{1,2})$/);
-        if (!match) {
-        alert(`Invalid format: "${part}". Please use format like A1, B2, C3`);
-        document.getElementById("Ref_list").value = 'A1, B1, C1';
-        return null;
-        }
-
-        const [, letter, numStr] = match;
-        const row = ABC.indexOf(letter);
-        const col = parseInt(numStr, 10) - 1;
-
-        if (row < 0 || col < 0 || col >= 12) {
-            alert(`Out of range: "${part}". Must be A to L and integer 1 to 12.`);
-            document.getElementById("Ref_list").value = 'A1, B1, C1';
-        return null;
-        }
-    result.push(row * 12 + col);
-  }
-  ref_group = result;
-  return result;
-}
-
-
 //Prepare Alignment function that summaries static variable for plot:
-function Pre_PlotAlignment(bc,id){
+
+function Pre_PlotAlignment(id){
     //compute number of aligned read
     // check genotype
     // remove low entry
-    for (let key in aln_dict[bc][id]){
-        if ((aln_dict[bc][id][key][0]<15)){
-            delete aln_dict[bc][id][key]
+    for (let key in aln_dict[id]){
+        if ((aln_dict[id][key][0]<15)){
+            delete aln_dict[id][key]
         }
     }
 
-    for (let key in aln_dict[bc][id]){
-        sum_track[bc][id] += aln_dict[bc][id][key][0];
+    for (let key in aln_dict[id]){
+        sum_track[id] += aln_dict[id][key][0];
     }
     var read_ambigous =0;
 
-    for (let key in aln_dict[bc][id]){
-        if (aln_dict[bc][id][key][1]==8){
+    for (let key in aln_dict[id]){
+        if (aln_dict[id][key][1]==8){
                 read_ambigous++;
         }
     }
-    summary_track[bc][id][0] = sum_track[bc][id] + read_ambigous;
-    summary_track[bc][id][5] = read_ambigous;
-    summary_track[bc][id][6] = 0;
-    summary_track[bc][id][8] = 0;
+    summary_track[id][0] = sum_track[id] + read_ambigous;
+    summary_track[id][5] = read_ambigous;
+    summary_track[id][6] = 0;
+    summary_track[id][8] = 0;
 
-    for (let key in aln_dict[bc][id]){
-        if ((aln_dict[bc][id][key][0]>(1*MutationThreshold*sum_track[bc][id]/100))&&(key.split('\n')[0].trim().length>region_analyse*2-4)){
-            aln_dict_fil[bc][id][key] = aln_dict[bc][id][key][0];
+    for (let key in aln_dict[id]){
+        if ((aln_dict[id][key][0]>(1*MutationThreshold*sum_track[id]/100))&&(key.split('\n')[0].trim().length>region_analyse*2-4)){
+            aln_dict_fil[id][key] = aln_dict[id][key][0];
         }
     }
     // assign new dictionary base on the RTT score
@@ -2877,28 +2931,28 @@ function Pre_PlotAlignment(bc,id){
         if (locus_pe) locus = locus_backup;
         //for reupdate RTT
         var ins_arr = []
-        for (let key in aln_dict_fil[bc][id]){
+        for (let key in aln_dict_fil[id]){
             if (key.split('\n')[1].trim().length>5 && key.split('\n')[1].trim()!=locus.substring(pre_rtt_index + preRTT.length, pbs_index)){
                 validate_ins = Check_ins_RTT(key, buff_size=5)
                 // if (validate_ins[0]&&typeof validate_ins[3]!== "undefined"){
-                aln_dict_fil[bc][id][validate_ins[3]]= aln_dict_fil[bc][id][key]
-                aln_dict[bc][id][validate_ins[3]]= aln_dict[bc][id][key]
-                delete aln_dict[bc][id][key]
-                delete aln_dict_fil[bc][id][key]
+                aln_dict_fil[id][validate_ins[3]]= aln_dict_fil[id][key]
+                aln_dict[id][validate_ins[3]]= aln_dict[id][key]
+                delete aln_dict[id][key]
+                delete aln_dict_fil[id][key]
                 ins_arr.push(validate_ins[4])
                 // }
             }
         }
         var insertion_pos = findMostPopular(ins_arr)
-        for (let key in aln_dict_fil[bc][id]){
+        for (let key in aln_dict_fil[id]){
             if (key.split('\n')[1].trim().length>0 && key.split('\n')[1].trim()!=locus.substring(pre_rtt_index + preRTT.length, pbs_index)){
                 validate_ins = Check_ins_RTT2(key, insertion_pos)
                 if (validate_ins[0]){
                     if (typeof validate_ins[3]!== "undefined"){
-                        aln_dict_fil[bc][id][validate_ins[3]]= aln_dict_fil[bc][id][key]
-                        aln_dict[bc][id][validate_ins[3]]= aln_dict[bc][id][key]
-                        delete aln_dict[bc][id][key]
-                        delete aln_dict_fil[bc][id][key]
+                        aln_dict_fil[id][validate_ins[3]]= aln_dict_fil[id][key]
+                        aln_dict[id][validate_ins[3]]= aln_dict[id][key]
+                        delete aln_dict[id][key]
+                        delete aln_dict_fil[id][key]
                     }
                 }
             }
@@ -2907,33 +2961,13 @@ function Pre_PlotAlignment(bc,id){
     
     if (locus_pe){
         locus = locus_backup;
-        for (let key in aln_dict_fil[bc][id]){            //restore locus
+        for (let key in aln_dict_fil[id]){            //restore locus
             var key1 = key.split('\n')[0].trim();
             var key2 = key.split('\n')[1].trim();
             var key3 = key.split('\n')[1];
             var key4 = key.split('\n')[2];
             var key5 = key3
-            const firstDeletionSize = seq => {
-                seq = String(seq); // ensure it's a string
-                const match = seq.match(/-+/);
-                return match ? match[0].length : 0;
-            };
             if (key2 == locus.substring(pre_rtt_index + preRTT.length, pbs_index)){
-                if (firstDeletionSize(key1.substring(0, key3.search(key2)))==0&&firstDeletionSize(key1.substring(key3.search(key2)+key2.length, key1.length))==0){
-                    aln_dict[bc][id][key][1] = 1; // WT
-                }
-                else if (firstDeletionSize(key1.substring(0, key3.search(key2)))%3==0&&firstDeletionSize(key1.substring(key3.search(key2)+key2.length, key1.length))==0){
-                    aln_dict[bc][id][key][1] = 2; // in frame indel
-                }
-                else if (firstDeletionSize(key1.substring(0, key3.search(key2))==0)&&firstDeletionSize(key1.substring(key3.search(key2)+key2.length, key1.length))%3==0){
-                    aln_dict[bc][id][key][1] = 2; // outframe indel
-                }
-                else if (firstDeletionSize(key1.substring(0, key3.search(key2)))==0&&firstDeletionSize(key1.substring(key3.search(key2)+key2.length, key1.length))%3!=0){
-                    aln_dict[bc][id][key][1] = 3; // outframe indel
-                }
-                else if (firstDeletionSize(key1.substring(0, key3.search(key2)))%3!=0&&firstDeletionSize(key1.substring(key3.search(key2)+key2.length, key1.length))==0){
-                    aln_dict[bc][id][key][1] = 3; // in frame indel
-                }
                 key1 = key1.substring(0, key3.search(key2)) + locus.substring(pre_rtt_index + preRTT.length, pbs_index) + key1.substring(key3.search(key2), key1.length-key2.length)+ "\n";
                 key5 = "\n"
                 key4 = "\n"
@@ -2941,125 +2975,125 @@ function Pre_PlotAlignment(bc,id){
             else {
                 key1 = key1.substring(0, pre_rtt_index +preRTT.length-10) + Array(pbs_index - pre_rtt_index - preRTT.length+1).join("-") + key1.substring(pre_rtt_index +preRTT.length-10, key1.length -(pbs_index - pre_rtt_index - preRTT.length))+"\n";
             }
-            aln_dict_fil[bc][id][key1+key5+key4] = aln_dict_fil[bc][id][key]
-            aln_dict[bc][id][key1+key5+key4]= aln_dict[bc][id][key]
-            delete aln_dict[bc][id][key]
-            delete aln_dict_fil[bc][id][key]
+            aln_dict_fil[id][key1+key5+key4] = aln_dict_fil[id][key]
+            aln_dict[id][key1+key5+key4]= aln_dict[id][key]
+            delete aln_dict[id][key]
+            delete aln_dict_fil[id][key]
         }
     }
-    no_indel[bc][id] = 0; 
-    no_indel_arr[bc][id] = []
-    inf_indel[bc][id] =  0;
-    out_indel[bc][id] = 0;
-    out_indel_arr[bc][id] = []
-    targetingOligo[bc][id] = 0;
-    targetingOligo_arr[bc][id] = [];
+    no_indel[id] = 0; 
+    no_indel_arr[id] = []
+    inf_indel[id] =  0;
+    out_indel[id] = 0;
+    out_indel_arr[id] = []
+    targetingOligo[id] = 0;
+    targetingOligo_arr[id] = [];
 
-    for (let key in aln_dict_fil[bc][id]){
-        switch (aln_dict[bc][id][key][1]){
-            case 1: no_indel[bc][id]+=aln_dict[bc][id][key][0]; no_indel_arr[bc][id][key] = aln_dict[bc][id][key][0]; break;
-            case 2: inf_indel[bc][id]+=aln_dict[bc][id][key][0]; break;
-            case 3:  out_indel[bc][id]+=aln_dict[bc][id][key][0]; out_indel_arr[bc][id].push(aln_dict[bc][id][key][0]); break;
-            case 7: targetingOligo[bc][id]+=aln_dict[bc][id][key][0]; targetingOligo_arr[bc][id].push(aln_dict[bc][id][key][0]); break;
+    for (let key in aln_dict_fil[id]){
+        switch (aln_dict[id][key][1]){
+            case 1: no_indel[id]+=aln_dict[id][key][0]; no_indel_arr[id][key] = aln_dict[id][key][0]; break;
+            case 2: inf_indel[id]+=aln_dict[id][key][0]; break;
+            case 3:  out_indel[id]+=aln_dict[id][key][0]; out_indel_arr[id].push(aln_dict[id][key][0]); break;
+            case 7: targetingOligo[id]+=aln_dict[id][key][0]; targetingOligo_arr[id].push(aln_dict[id][key][0]); break;
         // Update desired/ partial edit
-            case 8: summary_track[bc][id][5] += aln_dict[bc][id][key][0]; break;
-            case 9: summary_track[bc][id][6] += aln_dict[bc][id][key][0]; break;
-            case 10: summary_track[bc][id][8] += aln_dict[bc][id][key][0]; break;
+            case 8: summary_track[id][5] += aln_dict[id][key][0]; break;
+            case 9: summary_track[id][6] += aln_dict[id][key][0]; break;
+            case 10: summary_track[id][8] += aln_dict[id][key][0]; break;
         }
     }
     // update new WT candidate, keep maximum
-    if (Object.keys(no_indel_arr[bc][id]).length >1){
+    if (Object.keys(no_indel_arr[id]).length >1){
         let maxValue = -Infinity;
             var sum_wt = 0;
             var candidate_wt;
-            for (const key1 in no_indel_arr[bc][id]) {
-                const value = no_indel_arr[bc][id][key1];
+            for (const key1 in no_indel_arr[id]) {
+                const value = no_indel_arr[id][key1];
                 if (value > maxValue) {
                     maxValue = value;
                     candidate_wt = key1;
                 }
                 sum_wt += value;
-                delete aln_dict_fil[bc][id][key1];
+                delete aln_dict_fil[id][key1];
             }
             //update new candidate WT (max)
-            aln_dict_fil[bc][id][candidate_wt] = sum_wt;
+            aln_dict_fil[id][candidate_wt] = sum_wt;
     }
 
     // For saving csv
-    summary_track[bc][id][1] = targetingOligo[bc][id];
-    summary_track[bc][id][2] = no_indel[bc][id];
-    summary_track[bc][id][3] = inf_indel[bc][id];
-    summary_track[bc][id][4] = out_indel[bc][id];
+    summary_track[id][1] = targetingOligo[id];
+    summary_track[id][2] = no_indel[id];
+    summary_track[id][3] = inf_indel[id];
+    summary_track[id][4] = out_indel[id];
     if (locus_pe){
-        summary_track[bc][id][7] = no_indel[bc][id]+inf_indel[bc][id]+out_indel[bc][id]+targetingOligo[bc][id] + summary_track[bc][id][5]+ summary_track[bc][id][6] + summary_track[bc][id][8];
+        summary_track[id][7] = no_indel[id]+inf_indel[id]+out_indel[id]+targetingOligo[id] + summary_track[id][5]+ summary_track[id][6] + summary_track[id][8];
     }
     else {
-        summary_track[bc][id][7] = no_indel[bc][id]+inf_indel[bc][id]+out_indel[bc][id]+targetingOligo[bc][id] + summary_track[bc][id][6] + summary_track[bc][id][8];
+        summary_track[id][7] = no_indel[id]+inf_indel[id]+out_indel[id]+targetingOligo[id] + summary_track[id][6] + summary_track[id][8];
     }
-    if (summary_track[bc][id][7]>0) {
-        summary_track_select[96*bc+id+1] =  [GetWellPos(id), (summary_track[bc][id][1]/summary_track[bc][id][7]*100).toFixed(2), (summary_track[bc][id][2]/summary_track[bc][id][7]*100).toFixed(2), (summary_track[bc][id][3]/summary_track[bc][id][7]*100).toFixed(2), (summary_track[bc][id][4]/summary_track[bc][id][7]*100).toFixed(2),(summary_track[bc][id][6]*100/summary_track[bc][id][7]).toFixed(2),(summary_track[bc][id][8]*100/summary_track[bc][id][7]).toFixed(2) , summary_track[bc][id][7]]
+    if (summary_track[id][7]>0) {
+        summary_track_select[id+1] =  [GetWellPos(id), (summary_track[id][1]/summary_track[id][7]*100).toFixed(2), (summary_track[id][2]/summary_track[id][7]*100).toFixed(2), (summary_track[id][3]/summary_track[id][7]*100).toFixed(2), (summary_track[id][4]/summary_track[id][7]*100).toFixed(2),(summary_track[id][6]*100/summary_track[id][7]).toFixed(2),(summary_track[id][8]*100/summary_track[id][7]).toFixed(2) , summary_track[id][7]]
     }
     else {
-        summary_track_select[96*bc+id+1] =  [GetWellPos(id), summary_track[bc][id][1],  summary_track[bc][id][2], summary_track[bc][id][3], summary_track[bc][id][4],0, 0 ,summary_track[bc][id][7]]
+        summary_track_select[id+1] =  [GetWellPos(id), summary_track[id][1],  summary_track[id][2], summary_track[id][3], summary_track[id][4],0, 0 ,summary_track[id][7]]
     }
 
     // check genotype
-    if (summary_track[bc][id][7] > 50) {
-        if (targetingOligo[bc][id]/summary_track[bc][id][7] > 0.95) {
-            if (targetingOligo_arr[bc][id].length==2) {
-                if (targetingOligo_arr[bc][id][0]/(targetingOligo_arr[bc][id][0]+targetingOligo_arr[bc][id][1])>0.3 ||targetingOligo_arr[bc][id][0]/(targetingOligo_arr[bc][id][0]+targetingOligo_arr[bc][id][1])<0.7){
-                    genotype[bc][id] = 'KI/KI'
+    if (summary_track[id][7] > 50) {
+        if (targetingOligo[id]/summary_track[id][7] > 0.95) {
+            if (targetingOligo_arr[id].length==2) {
+                if (targetingOligo_arr[id][0]/(targetingOligo_arr[id][0]+targetingOligo_arr[id][1])>0.3 ||targetingOligo_arr[id][0]/(targetingOligo_arr[id][0]+targetingOligo_arr[id][1])<0.7){
+                    genotype[id] = 'KI/KI'
                 }
                 else {
-                    genotype[bc][id] = 'KI'
+                    genotype[id] = 'KI'
                 }
             }
             else {
-                    genotype[bc][id] = 'KI'
+                    genotype[id] = 'KI'
                 }
         }
         else {
-            if ((out_indel[bc][id]/summary_track[bc][id][7] > 0.3)&&(out_indel[bc][id]/summary_track[bc][id][7] < 0.7)) {
-                genotype[bc][id] = 'HET'
+            if ((out_indel[id]/summary_track[id][7] > 0.3)&&(out_indel[id]/summary_track[id][7] < 0.7)) {
+                genotype[id] = 'HET'
             }
-            else if ((out_indel[bc][id]/summary_track[bc][id][7] > 0.3)&&(out_indel[bc][id]/summary_track[bc][id][7] < 0.7)) {
-                genotype[bc][id] = 'HET'
+            else if ((out_indel[id]/summary_track[id][7] > 0.3)&&(out_indel[id]/summary_track[id][7] < 0.7)) {
+                genotype[id] = 'HET'
             }
-            else if ((targetingOligo[bc][id]/summary_track[bc][id][7]<0.7)&& (targetingOligo[bc][id]/summary_track[bc][id][7]>0.7)) {
-                genotype[bc][id] = 'HET'
+            else if ((targetingOligo[id]/summary_track[id][7]<0.7)&& (targetingOligo[id]/summary_track[id][7]>0.7)) {
+                genotype[id] = 'HET'
             }
-            else if (Object.keys(no_indel_arr[bc][id]).length>1 && no_indel_arr[bc][id][Object.keys(no_indel_arr[bc][id])[0]]/(no_indel_arr[bc][id][Object.keys(no_indel_arr[bc][id])[0]]+no_indel_arr[bc][id][Object.keys(no_indel_arr[bc][id])[1]]) >0.3) {
-                genotype[bc][id] = 'HET'
+            else if (Object.keys(no_indel_arr[id]).length>1 && no_indel_arr[id][Object.keys(no_indel_arr[id])[0]]/(no_indel_arr[id][Object.keys(no_indel_arr[id])[0]]+no_indel_arr[id][Object.keys(no_indel_arr[id])[1]]) >0.3) {
+                genotype[id] = 'HET'
             }
-            else if ((out_indel[bc][id]/summary_track[bc][id][7] > 0.98)&& (out_indel_arr[bc][id].length >1)&& (out_indel_arr[bc][id][0]/summary_track[bc][id][7] > 0.20)){ 
-                genotype[bc][id] = 'KO'
+            else if ((out_indel[id]/summary_track[id][7] > 0.98)&& (out_indel_arr[id].length >1)&& (out_indel_arr[id][0]/summary_track[id][7] > 0.20)){ 
+                genotype[id] = 'KO'
             }
             else {
-                genotype[bc][id] = ''
+                genotype[id] = ''
             }
         }
     }
 
     // sort aligment tract
-    var items = Object.keys(aln_dict_fil[bc][id]).map(function(key) {
-    return [key, aln_dict_fil[bc][id][key]];
+    var items = Object.keys(aln_dict_fil[id]).map(function(key) {
+    return [key, aln_dict_fil[id][key]];
     });
     // Sort the array based on the second element
     items.sort(function(first, second) {
     return second[1] - first[1];
     });
-    aln_dict_fil[bc][id] = Object.fromEntries(items.map(([v, k]) => [v, k]));
+    aln_dict_fil[id] = Object.fromEntries(items.map(([v, k]) => [v, k]));
 }
 
-function PlotAlignment(bc,id){
+function PlotAlignment(id){
     const NS = "http://www.w3.org/2000/svg";
-    const svg = document.getElementById("SVGmut"+bc.toString());
+    const svg = document.getElementById("SVGmut");
     const svgns = NS;
     const strokew = "0.5";
     const HA = document.getElementById('HA').checked;
 
     // init histogram
-    rima_hist_all[bc][id] = [0,0,0,0,0];
+    rima_hist_all[id] = [0,0,0,0,0];
 
     // small helpers to reduce repetition
     const makeEl = (tag, attrs = {}, txt = "") => {
@@ -3078,42 +3112,42 @@ function PlotAlignment(bc,id){
     const makeImage = (attrs) => makeEl("image", attrs);
 
     // accumulate histogram (same logic as your original first loop)
-    for (let key in aln_dict_fil[bc][id]){
+    for (let key in aln_dict_fil[id]){
         var micro_homology_data = Check_RIMA(key);
         var duplication1 = Check_duplication(key);
         if (micro_homology_data[0]){
             if (micro_homology_data[0].length >= 2) {
-                rima_hist_all[bc][id][0] += aln_dict_fil[bc][id][key]; // MH-del
+                rima_hist_all[id][0] += aln_dict_fil[id][key]; // MH-del
             } else {
-                rima_hist_all[bc][id][2] += aln_dict_fil[bc][id][key]; // other EJ (MH-del 1bp)
+                rima_hist_all[id][2] += aln_dict_fil[id][key]; // other EJ (MH-del 1bp)
             }
         }
         else if ((micro_homology_data[3] == 1) || ((micro_homology_data[1] != -1) && (micro_homology_data[2] - micro_homology_data[1] == 1))){
-            rima_hist_all[bc][id][1] += aln_dict_fil[bc][id][key]; // NHEJ
+            rima_hist_all[id][1] += aln_dict_fil[id][key]; // NHEJ
         }
-        else if (typeof aln_dict[bc][id][key][1] !== "undefined" && aln_dict[bc][id][key][1] === 7){
-            if (HA) rima_hist_all[bc][id][3] += aln_dict_fil[bc][id][key]; // NHEJ-KI
-            else rima_hist_all[bc][id][4] += aln_dict_fil[bc][id][key]; // HDR-KI
+        else if (typeof aln_dict[id][key][1] !== "undefined" && aln_dict[id][key][1] === 7){
+            if (HA) rima_hist_all[id][3] += aln_dict_fil[id][key]; // NHEJ-KI
+            else rima_hist_all[id][4] += aln_dict_fil[id][key]; // HDR-KI
         }
         else {
-            rima_hist_all[bc][id][2] += aln_dict_fil[bc][id][key]; // other EJ
+            rima_hist_all[id][2] += aln_dict_fil[id][key]; // other EJ
         }
     }
 
     // reorder aln_dict_fil for display exactly like original
     var aln_dict_bulk_1 = {};
-    for (let key in aln_dict_fil[bc][id]){
-        if (aln_dict[bc][id][key][1] == 9 || aln_dict[bc][id][key][1] == 10){
-            aln_dict_bulk_1[key] = aln_dict_fil[bc][id][key];
+    for (let key in aln_dict_fil[id]){
+        if (aln_dict[id][key][1] == 9 || aln_dict[id][key][1] == 10){
+            aln_dict_bulk_1[key] = aln_dict_fil[id][key];
         }
     }
-    for (let key in aln_dict_fil[bc][id]){
-        if (aln_dict[bc][id][key][1] != 9 && aln_dict[bc][id][key][1] != 10){
-            aln_dict_bulk_1[key] = aln_dict_fil[bc][id][key];
+    for (let key in aln_dict_fil[id]){
+        if (aln_dict[id][key][1] != 9 && aln_dict[id][key][1] != 10){
+            aln_dict_bulk_1[key] = aln_dict_fil[id][key];
         }
     }
-    aln_dict_fil[bc][id] = aln_dict_bulk_1;
-    
+    aln_dict_fil[id] = aln_dict_bulk_1;
+
     // SVG listeners & clear
     svg.addEventListener("mousedown", AlignmentMouseDown, false);
     svg.addEventListener("mousemove", AlignmentMouseMove, false);
@@ -3127,33 +3161,33 @@ function PlotAlignment(bc,id){
 
     // Summary lines (exact content/format as original)
     makeText({ x: 40, y: ysize + delypos, "font-size": "16", "font-weight": "600" },
-        "SUMMARY: Gene: " + document.getElementsByName("GeneName")[0].value + "   |   File " + GetWellPos(id) + ": " + files_name[bc][id]);
+        "SUMMARY: Gene: " + document.getElementsByName("GeneName")[0].value + "   |   File " + GetWellPos(id) + ": " + files_name[id]);
     delypos += 30;
 
     makeText({ x: 40, y: ysize + delypos, "font-size": "16" },
-        "Total aligned reads: " + summary_track[bc][id][7] +
-        "   |  Outframe indel: " + summary_track[bc][id][4] + " READS, (" + (summary_track[bc][id][4] * 100 / summary_track[bc][id][7]).toFixed(2) + "%)" +
-        "   |  Inframe indel: " + summary_track[bc][id][3] + " READS, (" + (summary_track[bc][id][3] * 100 / summary_track[bc][id][7]).toFixed(2) + "%)");
+        "Total aligned reads: " + summary_track[id][7] +
+        "   |  Outframe indel: " + summary_track[id][4] + " READS, (" + (summary_track[id][4] * 100 / summary_track[id][7]).toFixed(2) + "%)" +
+        "   |  Inframe indel: " + summary_track[id][3] + " READS, (" + (summary_track[id][3] * 100 / summary_track[id][7]).toFixed(2) + "%)");
     delypos += 30;
 
     makeText({ x: 40, y: ysize + delypos, "font-size": "16" },
-        "targetingOligo reads: " + summary_track[bc][id][1] + " READS, (" + (summary_track[bc][id][1] * 100 / summary_track[bc][id][7]).toFixed(2) + "%)" +
-        "   |  No indel: " + summary_track[bc][id][2] + " READS, (" + (summary_track[bc][id][2] * 100 / summary_track[bc][id][7]).toFixed(2) + "%)" +
-        "   | Read ambigous: " + summary_track[bc][id][5]);
+        "targetingOligo reads: " + summary_track[id][1] + " READS, (" + (summary_track[id][1] * 100 / summary_track[id][7]).toFixed(2) + "%)" +
+        "   |  No indel: " + summary_track[id][2] + " READS, (" + (summary_track[id][2] * 100 / summary_track[id][7]).toFixed(2) + "%)" +
+        "   | Read ambigous: " + summary_track[id][5]);
     delypos += 30;
 
     if (p_edit != "" || d_edit != ""){
         makeText({ x: 40, y: ysize + delypos, "font-size": "16" },
-            "Desired edit reads: " + summary_track[bc][id][6] + " READS, (" + (summary_track[bc][id][6] * 100 / summary_track[bc][id][7]).toFixed(2) + "%)" +
-            "   |  Partial edit: " + summary_track[bc][id][8] + " READS, (" + (summary_track[bc][id][8] * 100 / summary_track[bc][id][7]).toFixed(2) + "%)");
+            "Desired edit reads: " + summary_track[id][6] + " READS, (" + (summary_track[id][6] * 100 / summary_track[id][7]).toFixed(2) + "%)" +
+            "   |  Partial edit: " + summary_track[id][8] + " READS, (" + (summary_track[id][8] * 100 / summary_track[id][7]).toFixed(2) + "%)");
         delypos += 30;
     }
 
-    var rima_sum = rima_hist_all[bc][id][0] + rima_hist_all[bc][id][1] + rima_hist_all[bc][id][2] + rima_hist_all[bc][id][3] + rima_hist_all[bc][id][4];
+    var rima_sum = rima_hist_all[id][0] + rima_hist_all[id][1] + rima_hist_all[id][2] + rima_hist_all[id][3] + rima_hist_all[id][4];
     makeText({ x: 40, y: ysize + delypos, "font-size": "16" },
-        "MH-del: " + (rima_hist_all[bc][id][0] * 100 / rima_sum).toFixed(2) + " | NHEJ : " + (rima_hist_all[bc][id][1] * 100 / rima_sum).toFixed(2) +
-        " | NHEJ-KI : " + (rima_hist_all[bc][id][3] * 100 / rima_sum).toFixed(2) + " | HDR-KI : " + (rima_hist_all[bc][id][4] * 100 / rima_sum).toFixed(2) +
-        " | Other EJ : " + (rima_hist_all[bc][id][2] * 100 / rima_sum).toFixed(2));
+        "MH-del: " + (rima_hist_all[id][0] * 100 / rima_sum).toFixed(2) + " | NHEJ : " + (rima_hist_all[id][1] * 100 / rima_sum).toFixed(2) +
+        " | NHEJ-KI : " + (rima_hist_all[id][3] * 100 / rima_sum).toFixed(2) + " | HDR-KI : " + (rima_hist_all[id][4] * 100 / rima_sum).toFixed(2) +
+        " | Other EJ : " + (rima_hist_all[id][2] * 100 / rima_sum).toFixed(2));
     delypos += delyshift;
 
     // Legend / ANNOTATION (preserve coordinates & colors)
@@ -3233,7 +3267,7 @@ function PlotAlignment(bc,id){
 
     // draw each alignment group (this is the big loop from original)
     var id1 = 1;
-    for (let key in aln_dict_fil[bc][id]){
+    for (let key in aln_dict_fil[id]){
         var micro_homology_data = Check_RIMA(key);
         var duplication1 = Check_duplication(key);
 
@@ -3246,7 +3280,7 @@ function PlotAlignment(bc,id){
         else if ((micro_homology_data[3] == 1) || ((micro_homology_data[1] != -1) && (micro_homology_data[2] - micro_homology_data[1] == 1))){
             rima_class = 'NHEJ';
         }
-        else if (typeof aln_dict[bc][id][key][1] !== "undefined" && aln_dict[bc][id][key][1] === 7){
+        else if (typeof aln_dict[id][key][1] !== "undefined" && aln_dict[id][key][1] === 7){
             if (HA) rima_class = 'NHEJ-KI';
             else rima_class = 'HDR-KI';
         }
@@ -3267,11 +3301,11 @@ function PlotAlignment(bc,id){
         }
 
         // handle "no indel" special stacking
-        if (aln_dict[bc][id][key][1] == 1 && (Object.keys(no_indel_arr[bc][id]).length > 1)){
+        if (aln_dict[id][key][1] == 1 && (Object.keys(no_indel_arr[id]).length > 1)){
             for (let x = xfrom - 10; x < xto - 10; x++){
                 // draw main track for no_indel comparison
                 try {
-                    if (Object.keys(no_indel_arr[bc][id])[0][x] == Object.keys(no_indel_arr[bc][id])[1][x]){
+                    if (Object.keys(no_indel_arr[id])[0][x] == Object.keys(no_indel_arr[id])[1][x]){
                         // exact match drawing single char
                         var ch = key[x] || "";
                         var fillc = ch == "T" ? T_cl : (ch == "A" ? A_cl : (ch == "C" ? C_cl : (ch == "G" ? G_cl : (ch == "N" ? N_cl : "rgb(0,0,0"))));
@@ -3279,28 +3313,28 @@ function PlotAlignment(bc,id){
                     }
                     else {
                         // stacked two letters with proportional font size, same logic as original
-                        var topCount = no_indel_arr[bc][id][Object.keys(no_indel_arr[bc][id])[0]];
-                        var bottomCount = no_indel_arr[bc][id][Object.keys(no_indel_arr[bc][id])[1]];
+                        var topCount = no_indel_arr[id][Object.keys(no_indel_arr[id])[0]];
+                        var bottomCount = no_indel_arr[id][Object.keys(no_indel_arr[id])[1]];
                         // avoid division by zero
                         var denom = (topCount + bottomCount) || 1;
                         var fontsize1 = 4 + Math.floor(13 * topCount / denom);
                         var fontsize2 = 4 + Math.floor(13 * bottomCount / denom);
 
                         // top
-                        var topCh = Object.keys(no_indel_arr[bc][id])[0][x] || "";
+                        var topCh = Object.keys(no_indel_arr[id])[0][x] || "";
                         var topFill = topCh == "T" ? T_cl : (topCh == "A" ? A_cl : (topCh == "C" ? C_cl : (topCh == "G" ? G_cl : N_cl)));
                         makeText({ x: 120 + 12 * (x - xfrom + 10), y: ysize + delypos - 5, "font-size": fontsize1, "font-weight": "1200", fill: topFill, "text-anchor": "middle", "pointer-events": "none" }, topCh);
 
                         // bottom
-                        var botCh = Object.keys(no_indel_arr[bc][id])[1][x] || "";
+                        var botCh = Object.keys(no_indel_arr[id])[1][x] || "";
                         var botFill = botCh == "T" ? T_cl : (botCh == "A" ? A_cl : (botCh == "C" ? C_cl : (botCh == "G" ? G_cl : N_cl)));
                         makeText({ x: 120 + 12 * (x - xfrom + 10), y: ysize + delypos + 5, "font-size": fontsize2, "font-weight": "1200", fill: botFill, "text-anchor": "middle", "pointer-events": "none" }, botCh);
 
                         // counts
                         makeText({ y: ysize + delypos + 25, "font-size": 8, "font-weight": "1200", x: 120 + 12 * (x - xfrom + 10), "text-anchor": "middle", "pointer-events": "none" },
-                            no_indel_arr[id][Object.keys(no_indel_arr[bc][id])[1]] + " " + (Object.keys(no_indel_arr[bc][id])[1][x] || ""));
+                            no_indel_arr[id][Object.keys(no_indel_arr[id])[1]] + " " + (Object.keys(no_indel_arr[id])[1][x] || ""));
                         makeText({ y: ysize + delypos + 15, "font-size": 8, "font-weight": "1200", x: 120 + 12 * (x - xfrom + 10), "text-anchor": "middle", "pointer-events": "none" },
-                            no_indel_arr[id][Object.keys(no_indel_arr[bc][id])[0]] + " " + (Object.keys(no_indel_arr[bc][id])[0][x] || ""));
+                            no_indel_arr[id][Object.keys(no_indel_arr[id])[0]] + " " + (Object.keys(no_indel_arr[id])[0][x] || ""));
                     }
                 } catch (e) {
                     // safety in case indexing keys fails; original code assumed length correctness
@@ -3388,8 +3422,8 @@ function PlotAlignment(bc,id){
         var gap_len1 = key.substring(region_analyse * 2 + 1, region_analyse * 4).replace(/-/g, "").replace(/\s+/g, "").length -
                        (key.substring(0, region_analyse * 2).split("-").length - 1);
         makeText({ x: 10 + 120 + 24 * (30) + 2, y: ysize + delypos, "font-size": "14" },
-            "TYPE: " + (["Not align","No indel", "Inframe Indel", "Outframe indel", "", "","", "targetingOligo", "Ambigious", "DESIRED edit", "PARTIAL edit"][aln_dict[bc][id][key][1]] || "") +
-            ", (" + gap_len1 + " bp)" + " | " + aln_dict_fil[bc][id][key] + "  Reads, " + (aln_dict_fil[bc][id][key] / summary_track[bc][id][7] * 100).toFixed(2) + " %");
+            "TYPE: " + (["Not align","No indel", "Inframe Indel", "Outframe indel", "", "","", "targetingOligo", "Ambigious", "DESIRED edit", "PARTIAL edit"][aln_dict[id][key][1]] || "") +
+            ", (" + gap_len1 + " bp)" + " | " + aln_dict_fil[id][key] + "  Reads, " + (aln_dict_fil[id][key] / summary_track[id][7] * 100).toFixed(2) + " %");
 
         // RIMA classification text color mapping
         var rimaFill = "rgb(153, 151, 151)"; // default other EJ
@@ -3407,18 +3441,18 @@ function PlotAlignment(bc,id){
     }
 
     // preserve alignment HTML snapshot like original
-    AlignmentPrecalc[bc][id] = document.getElementById("SVGmut"+bc.toString()).innerHTML;
+    AlignmentPrecalc[id] = document.getElementById("DIV_alignment").innerHTML;
 }
 
 
-function PlotAlignment_bulk(bc, barcode, bulk_threshold = bulk_threshold){
+function PlotAlignment_bulk(barcode, bulk_threshold = bulk_threshold){
     //compute number of aligned read in bulk mode
     // check genotype 
     var id = barcode;
     aln_dict_bulk = {}
-    for (let key in aln_dict[bc][id]){
-        if ((aln_dict[bc][id][key][0]>10)&&(aln_dict[bc][id][key][0]>(1*bulk_threshold*summary_track[bc][id][0]/100))&&(key.split('\n')[0].trim().length>region_analyse*2-4)){
-            aln_dict_bulk[key] = aln_dict[bc][id][key][0];
+    for (let key in aln_dict[id]){
+        if ((aln_dict[id][key][0]>10)&&(aln_dict[id][key][0]>(1*bulk_threshold*summary_track[id][0]/100))&&(key.split('\n')[0].trim().length>region_analyse*2-4)){
+            aln_dict_bulk[key] = aln_dict[id][key][0];
         }
     }
     
@@ -3434,13 +3468,13 @@ function PlotAlignment_bulk(bc, barcode, bulk_threshold = bulk_threshold){
     aln_dict_bulk = Object.fromEntries(items.map(([v, k]) => [v, k]));
     var aln_dict_bulk_1 = {}
     for (let key in aln_dict_bulk){
-        if (aln_dict[bc][id][key][1]==9||aln_dict[bc][id][key][1]==10){
+        if (aln_dict[id][key][1]==9||aln_dict[id][key][1]==10){
             aln_dict_bulk_1[key] = aln_dict_bulk[key];
         }
     }
 
     for (let key in aln_dict_bulk){
-        if (aln_dict[bc][id][key][1]!=9&&aln_dict[bc][id][key][1]!=10){
+        if (aln_dict[id][key][1]!=9&&aln_dict[id][key][1]!=10){
             aln_dict_bulk_1[key] = aln_dict_bulk[key];
         }
     }
@@ -3784,7 +3818,7 @@ function PlotAlignment_bulk(bc, barcode, bulk_threshold = bulk_threshold){
         // Count INDEL's length
         var gap_len1 = key.substring(region_analyse*2 +1, region_analyse*4).replace(/-/g, "").replace(/\s+/g, "").length -  (key.substring(0, region_analyse*2).split("-").length-1)
 
-        SVGObj.textContent +="TYPE: "+ aln_type[aln_dict[bc][barcode][key][1]] + ", (" + gap_len1 + " bp)" +" | " +aln_dict_bulk[key] +"  Reads, " + (aln_dict_bulk[key]/sum_bulk*100).toFixed(2) + " %";
+        SVGObj.textContent +="TYPE: "+ aln_type[aln_dict[barcode][key][1]] + ", (" + gap_len1 + " bp)" +" | " +aln_dict_bulk[key] +"  Reads, " + (aln_dict_bulk[key]/sum_bulk*100).toFixed(2) + " %";
         if (gap_len1*1<0){
             loc_indel = key.search('-') -BreakPoint;
             if (rightbs!=getSeq("RightBS")){
@@ -4330,7 +4364,7 @@ function PlotAlignment_off(gene_i) {
 
 //Save HTML, all the required variables store in BLOB and load later
 function SaveProject() {
-    var aln_data = {genename: document.getElementsByName("GeneName")[0].value, BreakPoint: BreakPoint , files_name:files_name, region_analyse: region_analyse,  RightBsPos: RightBsPos, locus: locus, pre_rtt_index: pre_rtt_index, pbs_index: pbs_index, preRTT: preRTT, sufRTT: sufRTT, rightbs: rightbs, rtt: rtt, targetingOligo1: targetingOligo1 ,d_edit: d_edit, p_edit: p_edit, MutationThreshold: MutationThreshold, PhredThreshold: PhredThreshold,
+    var aln_data = {genename: document.getElementsByName("GeneName")[0].value, BreakPoint: BreakPoint , files_name:files_name, region_analyse: region_analyse,  RightBsPos: RightBsPos, locus: locus, rightbs: rightbs, rtt: rtt, targetingOligo1: targetingOligo1 ,d_edit: d_edit, p_edit: p_edit, MutationThreshold: MutationThreshold, PhredThreshold: PhredThreshold,
     aln_dict: aln_dict, aln_dict_fil: aln_dict_fil, aln_dict_off: aln_dict_off,aln_dict_fil_off: aln_dict_fil_off,phred_array: phred_array, gcContent: gcContent, length_array:length_array}
     var blob = new Blob([JSON.stringify(aln_data)], { type: 'application/json'});  
     var reader = new window.FileReader();
@@ -4356,20 +4390,15 @@ function SaveProject() {
 
 function LoadData(){
     if (window.location.hash) {
-        AlignmentPrecalc = [Array(96),Array(96),Array(96),Array(96)];
-        for (let bc1=0; bc1<4; bc1++){
-            for (let i=0; i<96; i++){
-                sum_track[i] = 0;
-                summary_track[bc1][i] = Array(9); 
-            }
+        AlignmentPrecalc = new Array(96);
+        for (let i=0; i<96; i++){
+            sum_track[i] = 0;
+            summary_track[i] = Array(9); 
         }
-
         var store_data = atob(window.location.hash.substr(1));
         store_data = JSON.parse(store_data)
         //Update GUI and variables
         BreakPoint = store_data.BreakPoint;
-        pre_rtt_index = store_data.pre_rtt_index;
-        pbs_index = store_data.pbs_index;
         files_name = store_data.files_name;
         RightBsPos = store_data.RightBsPos;
         MutationThreshold = store_data.MutationThreshold;
@@ -4396,31 +4425,29 @@ function LoadData(){
         phred_array = store_data.phred_array;
         gcContent = store_data.gcContent;
         length_array = store_data.length_array;
-        for (let bc1=0;bc1<4;bc1++){
-            for (let id=0;id <96;id++){
-                for (let key in aln_dict_fil[bc1][id]){
-                    var key1 = key.replace(/Â/g, "");
-                    key1 = key1.replace(/↵/g, "\n");
-                    if (key1!=key){
-                        aln_dict_fil[bc1][id][key1] = aln_dict_fil[bc1][id][key]
-                        delete aln_dict_fil[bc1][id][key]
-                    }
+        for (let id=0;id <96;id++){
+            for (let key in aln_dict_fil[id]){
+                var key1 = key.replace(/Â/g, "");
+                key1 = key1.replace(/↵/g, "\n");
+                if (key1!=key){
+                    aln_dict_fil[id][key1] = aln_dict_fil[id][key]
+                    delete aln_dict_fil[id][key]
                 }
-                for (let key in aln_dict[bc1][id]){
-                    var key1 = key.replace(/Â/g, "");
-                    key1 = key1.replace(/↵/g, "\n");
-                    if (key1!=key){
-                        aln_dict[bc1][id][key1] = aln_dict[bc1][id][key]
-                        delete aln_dict[bc1][id][key]
-                    }
-                }            
-                Pre_PlotAlignment(bc1,id);
-                PlotAlignment(bc1,id);
-                //Update for wrong encoding entries
             }
-            DrawPie(bc1);
-            DrawPie_rima(bc1);
+            for (let key in aln_dict[id]){
+                var key1 = key.replace(/Â/g, "");
+                key1 = key1.replace(/↵/g, "\n");
+                if (key1!=key){
+                    aln_dict[id][key1] = aln_dict[id][key]
+                    delete aln_dict[id][key]
+                }
+            }            
+            Pre_PlotAlignment(id);
+            PlotAlignment(id);
+            //Update for wrong encoding entries
         }
+        DrawPie();
+        DrawPie_rima();
         SelectClone(0);
         window.location.hash = "";
     }
@@ -4446,8 +4473,6 @@ function SaveReport() {
 function SaveReportcsv() {
     const now = new Date();
     var config_data = "# Analysis on: " + now.toString()+"\n";
-    config_data += "# Run time: " + runtime.toFixed(3) +" miliseconds\n";
-    config_data += runtime.toFixed(3) +"\n";
     config_data += "# Gene: " +document.getElementsByName("GeneName")[0].value +"\n";
     config_data += "# sgRNA:" + rightbs +"\n";
     config_data += "# Referfence: " + locus +"\n";
@@ -4469,54 +4494,8 @@ function SaveReportcsv() {
     a.click();
 }
 
-function SaveRatio() {
-    var config_data = []
-    //check redundant entries
-    const uniqueArray = [...new Set(ref_group)]
-    config_data[0] = ["Sample", "Oligo (KI)", "Out-frame", "In-frame", "Desired Edit", "Partial Edit"]
-    var sum_ki = 0;
-    var sum_of = 0;
-    var sum_if = 0;
-    var sum_de = 0;
-    var sum_pe = 0;
-    const nonEmptyLength = summary_track_select.filter(x => x !== null && x !== undefined && x !== "").length -1;
-
-    for (let i = 0; i < uniqueArray.length; i++) {
-        sum_ki += parseFloat(summary_track_select[uniqueArray[i]+1][1]);
-        sum_of += parseFloat(summary_track_select[uniqueArray[i]+1][4]);
-        sum_if += parseFloat(summary_track_select[uniqueArray[i]+1][3]);
-        sum_de += parseFloat(summary_track_select[uniqueArray[i]+1][5]);
-        sum_pe += parseFloat(summary_track_select[uniqueArray[i]+1][6]);
-    }
-    //put pseudo count 0.5 to avoid zero division
-    const mean_ki = Math.max((sum_ki/uniqueArray.length).toFixed(2), 0.5);
-    const mean_of = Math.max((sum_of/uniqueArray.length).toFixed(2), 0.5);
-    const mean_if = Math.max((sum_if/uniqueArray.length).toFixed(2), 0.5);
-    const mean_de = Math.max((sum_de/uniqueArray.length).toFixed(2), 0.5);
-    const mean_pe = Math.max((sum_pe/uniqueArray.length).toFixed(2), 0.5);
-
-    config_data[1] = ["Mean group "+ ref_group, mean_ki, mean_of, mean_if, mean_de, mean_pe]
-    for (let i = 0; i < nonEmptyLength; i++) {
-        if (!uniqueArray.includes(i)){
-            config_data.push([summary_track_select[i+1][0], parseFloat(summary_track_select[i+1][1])/mean_ki.toFixed(2), parseFloat(summary_track_select[i+1][4])/mean_of.toFixed(2), parseFloat(summary_track_select[i+1][3])/mean_if.toFixed(2), parseFloat(summary_track_select[i+1][5])/mean_de.toFixed(2), parseFloat(summary_track_select[i+1][6])/mean_pe.toFixed(2)]);
-        }
-    }
-    const workbook = XLSX.utils.book_new();
-    const worksheet = XLSX.utils.aoa_to_sheet(config_data);
-    XLSX.utils.book_append_sheet(workbook, worksheet, "Sheet1");
-    const excelBuffer = XLSX.write(workbook, { type: "array", bookType: "xlsx" });
-    const bb = new Blob([excelBuffer], { type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" });
-    // var bb = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
-    var a = document.createElement('a');
-    a.download = document.getElementsByName("GeneName")[0].value+"_up_down.xlsx";
-    a.href = window.URL.createObjectURL(bb);
-    a.textContent = 'Click here to save';
-    a.dataset.downloadurl = ['text/plain', a.download, a.href].join(':');
-    document.getElementById("save").appendChild(a);
-    a.click();
-}
-
-function SaveSVGAlignment() {
+function SaveSVGAlignment()
+{
     var svg = document.getElementById("DIV_alignment");
     var svgContent = svg.innerHTML.replace(/&nbsp;/g, ' ');
     var bb = new Blob([svgContent], {type: 'text/plain'});
@@ -4529,7 +4508,8 @@ function SaveSVGAlignment() {
     a.click();
 }
 
-function PrintSVG() {
+function PrintSVG()
+{
     var printWindow = document.open('', 'Print', 'width=900, height=550');
     printWindow.document.writeln(document.getElementById("DIV_piecharts").innerHTML);
     printWindow.document.close();
@@ -4715,10 +4695,10 @@ function Check_ins_RTT(sequence_seq, buff_size = 5){
     // This function will check the insertion track expand it to the both site of insertion position then use global alignment to RTT, 
     // if there is better matching, shift the cutting site to the maximum point
     // Update the new aligment entry to the alignment dictionary
-    const ms = 1 // match score
-    const mms = -1//mismatch score
-    const gapo = -3  // gap open score
-    const gape = -1  // gap extent score
+    var ms = 1 // match score
+    var mms = -1//mismatch score
+    var gapo = -3  // gap open score
+    var gape = -1  // gap extent score
     var shifted = false
     const main_track = sequence_seq.split('\n')[0]
     const insertion = sequence_seq.split('\n')[1]
@@ -4760,10 +4740,10 @@ function Check_ins_RTT(sequence_seq, buff_size = 5){
 
 function Check_ins_RTT2(sequence_seq, common_post){
     // This function will check the insertion track again base on the RTT shifted position
-    const ms = 1 // match score
-    const mms = -1//mismatch score
-    const gapo = -3  // gap open score
-    const gape = -1  // gap extent score
+    var ms = 1 // match score
+    var mms = -1//mismatch score
+    var gapo = -3  // gap open score
+    var gape = -1  // gap extent score
     const main_track = sequence_seq.split('\n')[0]
     const insertion = sequence_seq.split('\n')[1]
     const insertion_trim = insertion.replace(/-/g, "").replace(/\s+/g, "")
@@ -4825,24 +4805,20 @@ function toggleHelp(id) {
 
 function Start(){
     document.getElementById("progress").style.display = '';
-    startTime = performance.now()
-
     //Reset all variables
-    for (let bc1=0;bc1<4;bc1++){
-        for (let i=0; i<96; i++) {
-            phred_array[bc1][i] = {}
-            length_array[bc1][i] = {}
-            aln_dict[bc1][i] = {}
-            aln_dict_lib[bc1][i] = {}
-            aln_dict_fil[bc1][i] = {}
-            gcContent[bc1][i] = {}
-            sum_track[bc1][i] = 0;
-            summary_track[bc1][i] = Array(9); 
-        }
+    files_name = []
+    for (var i=0; i<96; i++) {
+        phred_array[i] = {}
+        length_array[i] = {}
+        aln_dict[i] = {}
+        aln_dict_fil[i] = {}
+        gcContent[i] = {}
     }
-
-    AlignmentPrecalc = [Array(96),Array(96), Array(96), Array(96)];
-
+    AlignmentPrecalc = new Array(96);
+    for (var i=0; i<96; i++){
+        sum_track[i] = 0;
+        summary_track[i] = Array(9); 
+    }
 
     d_edit = getSeq("d_edit"); // desired edit
     p_edit = getSeq("p_edit"); //partial edit
@@ -4951,20 +4927,18 @@ function Start(){
     anchor_fwr = locus.substring(locus.length -anchor_size, locus.length)
     anchor_rvl = ReverseComplement(locus).substring(0, anchor_size)
     anchor_rvr = ReverseComplement(locus).substring(locus.length -anchor_size, locus.length)
-    for (let bc1 = 0; bc1<4; bc1++){
-        var evt = document.getElementById('files'+bc1.toString());
-        files[bc1] = evt.files;
-        for (let i=0; i<files[bc1].length; i++){
-            files_name[bc1].push(files[bc1][i].name)
-        }
+
+    var evt = document.getElementById('files');
+    files = evt.files;
+    for (let i=0; i<files.length; i++){
+        files_name.push(files[i].name)
     }
 
-    if (files[0].length <= 0) {
+    if (files.length <= 0) {
         alert("No files were specified. Please upload your fastq files");
         return;
     }
     CurrentFileId = 0;
-    bc = 0;
     CurrentFileChunk = 0;
     ReadNextFileChunk();
 }
@@ -4986,6 +4960,12 @@ function Start2(){
         aln_dict_off[i] = {}
         aln_dict_fil_off[i] = {}
     }
+
+    //Score of OFF target reference
+    var ms = 1 // match score
+    var mms = -1 //mismatch score
+    var gapo = -2  // gap open score
+    var gape = -1  // gap extent score
 
     //Find Target site in the reference sequence/locus:
     if (rightbs.length == 0){
@@ -5119,17 +5099,18 @@ function fuzzyIndexOf(haystack, needle, maxMismatches, start = 0) {
         return -1
     }
 
-var bc = 0;
+var currenttab = 0;
 TabClicked(0);
 
 var RightBsPos=0;
 
 //raw aligned dictionary
-var aln_dict = [Array(96), Array(96), Array(96), Array(96)];;
-var aln_dict_lib = [Array(96), Array(96), Array(96), Array(96)];;
+var aln_dict = Array(96);
 
+//candidate seq dictionary for classifier
+var aln_dict_ML = Array(96);
 //filtered aligned dictionary
-var aln_dict_fil = [Array(96), Array(96), Array(96), Array(96)];
+var aln_dict_fil = Array(96)
 
 var AlignmentPrecalc
 var locus = '';
@@ -5150,8 +5131,8 @@ var locus_check2_off = Array(4); //adaptive ref
 var d_edit 
 var p_edit 
 var rtt = ''
-var files = [[],[],[],[]];
-var files_name = [[],[],[],[]]
+var files;
+var files_name = [];
 var reader;
 var CurrentFileId;
 var CurrentFileId_off;
@@ -5161,12 +5142,12 @@ var rightbs;
 
 var PhredThreshold = 40; // 7 +33
 
-var sum_track = [Array(96), Array(96), Array(96), Array(96)];
-var summary_track = [Array(96), Array(96), Array(96), Array(96)];
-var summary_track_select = Array(385)
+var sum_track = Array(96)
+var summary_track = Array(96)
+var summary_track_select = Array(97)
 summary_track_select[0] = ["Sample", "%Oligo (KI)", "% WT", "% In-frame", "% Out-frame", "% Desired Edit","% Partial Edit",  "# Total Aligned Read"]
-var phred_array = [Array(96), Array(96), Array(96), Array(96)];
-var length_array = [Array(96), Array(96), Array(96), Array(96)];
+var phred_array = Array(96)
+var length_array = Array(96)
 var region_analyse = 80;
 
 // Offtarget analyzer
@@ -5192,19 +5173,19 @@ var sum_track_off = Array(5)
 var RestFromLastChunk = "";
 var chunksize = 128*1024;
 var gene_list = ''
-var genotype = [Array(96), Array(96), Array(96), Array(96)];
+var genotype = Array(96)
 var aln_dict_bulk 
-var gcContent = [Array(96), Array(96), Array(96), Array(96)];
+var gcContent = Array(96)
 var bulk_threshold = 1
 
-var no_indel = [Array(96), Array(96), Array(96), Array(96)]; 
-var no_indel_arr = [Array(96), Array(96), Array(96), Array(96)];
-var inf_indel =  [Array(96), Array(96), Array(96), Array(96)];
-var out_indel = [Array(96), Array(96), Array(96), Array(96)];
-var out_indel_arr = [Array(96), Array(96), Array(96), Array(96)];
-var targetingOligo = [Array(96), Array(96), Array(96), Array(96)];
-var targetingOligo_arr = [Array(96), Array(96), Array(96), Array(96)];
-var rima_hist_all = [Array(96), Array(96), Array(96), Array(96)];
+var no_indel = Array(96) 
+var no_indel_arr = Array(96)
+var inf_indel =  Array(96)
+var out_indel = Array(96)
+var out_indel_arr = Array(96)
+var targetingOligo = Array(96)
+var targetingOligo_arr = Array(96)
+var rima_hist_all = Array(96)
 var oli_aligned = false 
 var str_oli = ''
 
@@ -5215,18 +5196,14 @@ const G_cl = "rgb(200, 100, 0)"
 const N_cl = "rgb(0, 0, 0)"
 const KI_1 = "rgb(154, 34, 93)"
 const KI_2 = "rgb(31, 89, 143)"
-var runtime
-var startTime
+const version = "v1.2"
+document.querySelector("footer span").textContent =   version;
+
 var anchor_fwr
 var anchor_fwl
 var anchor_rvr
 var anchor_rvl
-const anchor_size = 13
-const max_mismatch = 1
-const version = "v1.6"
-document.querySelector("footer span").textContent =  version;
-
-var ref_group = [0, 12, 24]
+const anchor_size = 10
 
 //Using local files
 var CRISPRlib = ""
@@ -5240,17 +5217,14 @@ toggleButton.addEventListener('click', function() {
 
 const optional_para = document.getElementById('optional_para');
 const optional_para_Container = document.getElementById('optional_para_Container');
-const optional_barcode = document.getElementById('optional_barcode');
-const optional_barcode_Container = document.getElementById('optional_barcode_Container');
+
 optional_para.addEventListener('click', function() {
     optional_para_Container.classList.toggle('hidden');
-});
-optional_barcode.addEventListener('click', function() {
-    optional_barcode_Container.classList.toggle('hidden');
 });
 
 const optional_para_PE = document.getElementById('setup_PE');
 const optional_para_Container_PE = document.getElementById('optional_para_Container_PE');
+document.getElementById("editomaticLink").href = `https://www.crisprnano.de/Edit-o-Matic_${version}.html`;
 
 optional_para_PE.addEventListener('click', function() {
     optional_para_Container_PE.classList.toggle('hidden');

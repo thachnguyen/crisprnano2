@@ -1,4 +1,4 @@
-<!-- version = "v1_6" -->
+<!-- version = "v1_5" -->
 <html>
     <head>
 <style>
@@ -257,12 +257,6 @@ div.selector {
                     </div>
                 </div>
                 <div class="col-sm-4">
-                    <label>Nuclease enzyme: </label>
-                    <div class="popup" onclick="toggleHelp(4)">(? Click here!)
-                        <span class="popuptext" id="help4">
-                            Your choice of nuclease enzyme affects the PAM recognition site and the position of the DNA cut relative to the gRNA binding site.
-                        </span>
-                    </div>
                 </div>
             </div>
             
@@ -290,10 +284,7 @@ div.selector {
                 </div>
                 
                 <div class="col-sm-4">
-                    <select id="gRNA_type" onchange="check_gRNA()" class="form-control">
-                        <option value="cas9">cas9/SpCas9</option>
-                        <option value="cas12">cas12/Cpf1</option>
-                    </select>
+
                 </div>
                 </div>
                 
@@ -538,7 +529,7 @@ div.selector {
         Fastq concentation files is available at <a href="https://www.crisprnano.de/concat_list.html"> Concatenation list for pairend read files.</a><br><br>
     </div>
 
-    <div id="version" style="position: absolute; left: 10px; top: 450px; display: none;">
+    <div id="version" style="position:center; top:80px; display: none;">
         <br>
         <!-- <h3>Reference:</h3>
         Nguyen, T., Ramachandran, H., Martins, S., Krutmann, J. and Rossi, A., 2022. Identification of genome edited cells using CRISPRnano. Nucleic Acids Research.<br>
@@ -547,44 +538,6 @@ div.selector {
         Edit-o-Matic: A Streamlined Platform for Analyzing Prime and Other Genome Editing Outcomes
         <br> -->
         <br>
-        <h3>Version history:</h3>
-        Current version: <b>1.6</b> <br>
-        Released date: <b>14 th November 2025</b> 
-        Major updates: <br>
-        - Support cas9/cas12 <br>
-        - Highlight single/double strand breaking point <br><br>
-
-        Previous version: <a href="https://crisprnano.de/Edit-o-Matic_v1.5.html"><b>1.5</b></a> <br>
-        Released date: <b>30th October 2025</b> <br>
-        Major updates: <br>
-        - Upgrade to 4 x 96 samples​ <br>    
-        - Enhanced user interface for better usability <br>
-        - Added new features/tab for data visualization <br><br>  
-
-        Previous version: <a href="https://crisprnano.de/Edit-o-Matic_v1.4.html"><b>1.4</b> </a><br>
-        Released date: <b>17th October 2025</b> <br>
-        Major updates: <br>
-        - Different fold change of editing effective (excel/csv files)​ <br> <br> 
-
-        Previous version: <a href="https://crisprnano.de/Edit-o-Matic_v1.3.html"> <b>1.3</b> </a> <br>
-        Released date: <b>20th September 2025</b> <br>
-        Major updates: <br>
-        - One time aligner: aligning and storing strategy version ( x 8-12 faster)​​ <br> <br>
-
-        Previous version: <a href="https://crisprnano.de/Edit-o-Matic_v1.2.html"><b>1.2</b> </a> <br>
-        Released date: <b>17th September 2025</b> <br>
-        Major updates: <br>
-        - Applying pair anchors both read and reference version (x 1.5 faster)​​ <br> <br>
-
-        Previous version: <a href="https://crisprnano.de/Edit-o-Matic_v1.1.html"><b>1.1</b></a> <br>
-        Released date: <b>3rd September 2025</b> <br>
-        Major updates: <br>
-        - Working version of Advance Prime Editing, support preset prefix/suffix RTT, PBS, Desired and Partial Edit​​​ <br>
-        - Quantify Desired/partial edit efficiency <br><br>
-        
-        
-
-
         The detail commit version is available at <a href="https://github.com/thachnguyen/crisprnano2/commits/main/">Version history</a> <br><br>
         
         <h4>Legacy </h4> 
@@ -761,7 +714,7 @@ div.selector {
             </svg>
         </div>
     </div>
-        <footer style="text-align:center; padding:10px; font-family:sans-serif; font-size:14px; color:#555;">
+    <footer style="text-align:center; padding:10px; font-family:sans-serif; font-size:14px; color:#555;">
     <span style="
         background:#eaeaea;
         border-radius:8px;
@@ -830,18 +783,6 @@ function setValue() {
         bulk_threshold = 0.5;
     } 
 }
-
-function check_gRNA() {
-    // Get the input value
-    // Define the target string to check occurrence
-    var mySelect = document.getElementById('gRNA_type');
-    if (mySelect.value == 'cas12'){
-    }
-    else {
-
-    } 
-}
-
 //Drag and interactive
 
 var AlignmentDragging = false, AlignmentLastX, AlignmentLastY, AlignmentStartPos = 0;
@@ -1242,69 +1183,113 @@ function bsa_cigar2gaps_breakpoint(target, query, start, cigar, bkp1, bkp2){
     return [[oq.substr(bkp1-start, bkp2-bkp1), oq1.substr(bkp1-start, bkp2-bkp1)], aln_type, gap_len];
 }
 
-function TabClicked(i) {
-    const show = id => document.getElementById(id).style.display = "";
-    const hide = id => document.getElementById(id).style.display = "none";
-    const ids = ["setup", "results", "manual", "about", "bulkview_result", "offtarget_view", "testdata", "Utility", "version"];
+function TabClicked(i){
+    if (i==0) document.getElementById("setup").style.display = "";
+    else document.getElementById("setup").style.display = "none";
+    if (i==1||i ==7||i ==8||i==11||i ==12||i ==13|| i ==14) document.getElementById("results").style.display = "";
+    else document.getElementById("results").style.display = "none";
 
-    // hide all first
-    ids.forEach(hide);
+    if (i==2) document.getElementById("manual").style.display = "";
+    else document.getElementById("manual").style.display = "none";
 
-    // show based on tab index
-    if (i === 0) show("setup");
-    if ([1, 7, 8, 11, 12, 13, 14].includes(i)) show("results");
-    if (i === 2) show("manual");
-    if (i === 3) show("about");
-    if (i === 4) show("bulkview_result");
-    if (i === 5) show("offtarget_view");
-    if (i === 6) show("testdata");
-    if (i === 9) show("Utility");
-    if (i === 10) show("version");
+    if (i==3) document.getElementById("about").style.display = "";
+    else document.getElementById("about").style.display = "none";
 
-    // handle SVG visibility
-    const setSVG = (pie, mut, rima) => {
-        for (let j = 0; j < 4; j++) {
-            document.getElementById(`SVGpie${j}`).style.display = pie(j);
-            document.getElementById(`SVGmut${j}`).style.display = mut(j);
-            document.getElementById(`SVGpie_rima${j}`).style.display = rima(j);
+    if (i==4) document.getElementById("bulkview_result").style.display = "";
+    else document.getElementById("bulkview_result").style.display = "none";
+
+    if (i==5) document.getElementById("offtarget_view").style.display = "";
+    else document.getElementById("offtarget_view").style.display = "none";
+
+    if (i==6) document.getElementById("testdata").style.display = "";
+    else document.getElementById("testdata").style.display = "none";
+    
+
+    if (i==1||i==7){ 
+        for (var j=0;j<4;j++){
+            if (j!=bc) {
+                document.getElementById("SVGpie"+j.toString()).style.display = "none";
+                document.getElementById("SVGmut"+j.toString()).style.display = "none";
+            }
+            document.getElementById("SVGpie_rima"+j.toString()).style.display = "none";
         }
-    };
-
-    // normal result view
-    if (i === 1 || i === 7) {
-        setSVG(
-            j => j === bc ? "" : "none",
-            j => j === bc ? "" : "none",
-            () => "none"
-        );
+        document.getElementById("SVGpie"+bc.toString()).style.display = "";
+        document.getElementById("SVGmut"+bc.toString()).style.display = "";
     }
 
-    // rima result view
-    else if (i === 8) {
-        setSVG(
-            () => "none",
-            () => "",
-            j => j === bc ? "" : "none"
-        );
+    if (i==8){ 
+        for (var j=0;j<4;j++){
+            if (j!=bc) {
+                document.getElementById("SVGpie_rima"+j.toString()).style.display = "none";
+                document.getElementById("SVGmut"+j.toString()).style.display = "";
+            }
+            document.getElementById("SVGpie"+j.toString()).style.display = "none";
+        }
+        document.getElementById("SVGpie_rima"+bc.toString()).style.display = "";
+        document.getElementById("SVGmut"+bc.toString()).style.display = "";
+    }
+    else {
+        document.getElementById("SVGpie_rima"+bc.toString()).style.display = "none";
     }
 
-    // switch bc views (11–14)
-    else if ([11, 12, 13, 14].includes(i)) {
-        bc = i - 11;
-        setSVG(
-            j => j === bc ? "" : "none",
-            j => j === bc ? "" : "none",
-            () => "none"
-        );
-    } else {
-        hide(`SVGpie_rima${bc}`);
+    if (i==9) document.getElementById("Utility").style.display = "";
+    else document.getElementById("Utility").style.display = "none";
+    if (i==10) document.getElementById("version").style.display = "";
+    else document.getElementById("version").style.display = "none";
+    if (i==11) {
+        bc = 0; 
+        for (var j=0;j<4;j++){
+            if (j!=bc) {
+                document.getElementById("SVGpie"+j.toString()).style.display = "none";
+                document.getElementById("SVGmut"+j.toString()).style.display = "none";
+            }
+            document.getElementById("SVGpie_rima"+j.toString()).style.display = "none";        
+        }
+        document.getElementById("SVGpie"+bc.toString()).style.display = "";
+        document.getElementById("SVGmut"+bc.toString()).style.display = "";
     }
 
-    // hide progress bars
-    hide("progress");
-    hide("progress1");
+    if (i==12) {
+        bc = 1; 
+        for (var j=0;j<4;j++){
+            if (j!=bc) {
+                document.getElementById("SVGpie"+j.toString()).style.display = "none";
+                document.getElementById("SVGmut"+j.toString()).style.display = "none";
+            }
+            document.getElementById("SVGpie_rima"+j.toString()).style.display = "none";        
+        }
+        document.getElementById("SVGpie"+bc.toString()).style.display = "";
+        document.getElementById("SVGmut"+bc.toString()).style.display = "";
+    }
+
+    if (i==13) {
+        bc = 2; 
+        for (var j=0;j<4;j++){
+            if (j!=bc) {
+                document.getElementById("SVGpie"+j.toString()).style.display = "none";
+                document.getElementById("SVGmut"+j.toString()).style.display = "none";
+            }
+            document.getElementById("SVGpie_rima"+j.toString()).style.display = "none";        
+        }
+        document.getElementById("SVGpie"+bc.toString()).style.display = "";
+        document.getElementById("SVGmut"+bc.toString()).style.display = "";
+    }
+    
+    if (i==14) {
+        bc = 3; 
+        for (var j=0;j<4;j++){
+            if (j!=bc) {
+                document.getElementById("SVGpie"+j.toString()).style.display = "none";
+                document.getElementById("SVGmut"+j.toString()).style.display = "none";
+            }
+            document.getElementById("SVGpie_rima"+j.toString()).style.display = "none";        
+        }
+        document.getElementById("SVGpie"+bc.toString()).style.display = "";
+        document.getElementById("SVGmut"+bc.toString()).style.display = "";
+    }
+    document.getElementById("progress").style.display = "none";
+    document.getElementById("progress1").style.display = "none";
 }
-
 
 //reverse comp function
 var ks_comp = {'A':'T','C':'G','G':'C','T':'A','M':'K','K':'M','Y':'R','R':'Y','V':'B','B':'V','H':'D','D':'H',
@@ -1537,36 +1522,27 @@ function FileReceived() {
     reader.result = "";
     reader = "";
     CurrentFileChunk++;
-    if (files[bc].length >0) {
-        if ((CurrentFileChunk)*chunksize >= files[bc][CurrentFileId].size) {
-            Pre_PlotAlignment(bc,id)
-            PlotAlignment(bc,id)
-            if (locus_pe){
-                //Must restore locus PE again for each step
-                locus = locus_pe;
-            }
-            CurrentFileId++;
-            CurrentFileChunk = 0;
-            RestFromLastChunk = "";
+    if ((CurrentFileChunk)*chunksize >= files[bc][CurrentFileId].size) {
+        Pre_PlotAlignment(bc,id)
+        PlotAlignment(bc,id)
+        if (locus_pe){
+            //Must restore locus PE again for each step
+            locus = locus_pe;
         }
+        CurrentFileId++;
+        CurrentFileChunk = 0;
+        RestFromLastChunk = "";
     }
-
     if (CurrentFileId < files[bc].length && CurrentFileId<96) {
         setTimeout("ReadNextFileChunk();",0);
     } 
-    else if (bc <3 && !(CurrentFileId < files[bc].length && CurrentFileId<96)){
+    else if (bc <3){
         bc++;
         CurrentFileId = 0;
         CurrentFileChunk = 0;
         RestFromLastChunk = "";
-        if (files[bc].length >0) {
+        if (CurrentFileId < files[bc].length && CurrentFileId<96) {
             setTimeout("ReadNextFileChunk();",0);
-        } 
-        else {
-            for (let bc1 =0; bc1<4; bc1++){
-                DrawPie(bc1);
-                DrawPie_rima(bc1);
-            }
         }
     }
     else if (bc == 3){
@@ -1678,7 +1654,7 @@ function ReadNextFileChunk() {
         document.getElementById('progress').innerHTML = "File: barcode "+(bc +1)+ " / " +(CurrentFileId+1)+": "+ (CurrentFileChunk*chunksize/1000000).toFixed(2)+ " MB / "+Math.round(files[bc][CurrentFileId].size/1000000)+" MB processed. Please keep this window open and don't switch to other tabs in your web browser!";
     }
     catch (error){
-        // alert('An unexpected error occurred during file reading: ' + error.message);        
+        alert('An unexpected error occurred during file reading: ' + error.message);        
     }
 }
 
@@ -4987,6 +4963,12 @@ function Start2(){
         aln_dict_fil_off[i] = {}
     }
 
+    //Score of OFF target reference
+    // var ms = 1 // match score
+    // var mms = -1 //mismatch score
+    // var gapo = -2  // gap open score
+    // var gape = -1  // gap extent score
+
     //Find Target site in the reference sequence/locus:
     if (rightbs.length == 0){
         alert("No target site was entered. Please enter a valid sequence");
@@ -5223,7 +5205,7 @@ var anchor_rvr
 var anchor_rvl
 const anchor_size = 13
 const max_mismatch = 1
-const version = "v1.6"
+const version = "v1.5"
 document.querySelector("footer span").textContent =  version;
 
 var ref_group = [0, 12, 24]
@@ -5251,6 +5233,7 @@ optional_barcode.addEventListener('click', function() {
 
 const optional_para_PE = document.getElementById('setup_PE');
 const optional_para_Container_PE = document.getElementById('optional_para_Container_PE');
+document.getElementById("editomaticLink").href = `https://www.crisprnano.de/Edit-o-Matic_${version}.html`;
 
 optional_para_PE.addEventListener('click', function() {
     optional_para_Container_PE.classList.toggle('hidden');
