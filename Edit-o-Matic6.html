@@ -1327,37 +1327,6 @@ function ReverseComplement(s){
 	return t;
 }
 
-// function getFastaSequence() {
-//     var myFastaURL;
-//     if (document.URL.includes('www')){
-//         myFastaURL = "https://www.crisprnano.de/gene_fasta/"+getSeq("GeneName")+".fa";
-//     }
-//     else {
-//         myFastaURL = "https://crisprnano.de/gene_fasta/"+getSeq("GeneName")+".fa";
-//     }
-//     fetch(myFastaURL)
-//     .then(response => {
-//         if (!response.ok) {
-//             throw new Error('Network response was not ok');
-//         }
-//         return response.text();
-//     })
-//     .then(data => {
-//         var lines = data.split('\n');
-//         var locus1 = lines.slice(1).join('');
-//         locus=locus1;
-//     })
-//     .catch(error => {
-//     if (error.message === 'Network response was not ok') {
-//         alert('The provided URL is not valid or the gene name is not found. Please check your input and try again. Or you can use the customized reference in Optional form below');
-//         locus="";
-//     } 
-//     else {
-//         alert('An unexpected error occurred: ' + error.message);
-//         locus="";
-//     }
-//     });
-// }
 
 async function fetchJson(url) {
     const r = await fetch(url, { headers: { "Accept": "application/json" } });
@@ -2704,17 +2673,17 @@ function DrawPie_off()
         imageElement.setAttribute("x", midx-15);
         imageElement.setAttribute("y", midy+250);
         if (gene_i !=0 &&summary_track_off[gene_i][7] <5){
-            imageElement.setAttribute("href", "crisprnano2/question.svg");
+            imageElement.setAttribute("href", folder + "/question.svg");
             imageElement.setAttribute("width", 40); // Set the width of the image
             imageElement.setAttribute("height", 40); // Set the height of the image 
         }
         else if (gene_i ==0 || divide_zero(summary_track_off[gene_i][4]*100,summary_track_off[gene_i][7])< 2){
-            imageElement.setAttribute("href", "crisprnano2/OK.ico");
+            imageElement.setAttribute("href", folder +"/OK.ico");
             imageElement.setAttribute("width", 40); // Set the width of the image
             imageElement.setAttribute("height", 40); // Set the height of the image 
         }
         else {
-            imageElement.setAttribute("href", "crisprnano2/warning.png"); // Set the path to your image file
+            imageElement.setAttribute("href", folder +"/warning.png"); // Set the path to your image file
             imageElement.setAttribute("width", 80); // Set the width of the image
             imageElement.setAttribute("height", 80); // Set the height of the image
             imageElement.setAttribute("x", midx-30);
@@ -3262,8 +3231,8 @@ function PlotAlignment(bc,id){
 
     // preRTT / PBS images + colored base annotations
     if (preRTT && (pbs || sufRTT)){
-        makeImage({ x: 95 + 12 * (pre_rtt_index + 10 - xfrom), y: ysize + delypos - 130, width: 100, height: 100, href: "crisprnano2/prefixRTT.png" });
-        makeImage({ x: 95 + 12 * (pbs_index + 5 - xfrom), y: ysize + delypos - 130, width: 100, height: 100, href: "crisprnano2/PBS.png" });
+        makeImage({ x: 95 + 12 * (pre_rtt_index + 10 - xfrom), y: ysize + delypos - 130, width: 100, height: 100, href: folder + "/prefixRTT.png" });
+        makeImage({ x: 95 + 12 * (pbs_index + 5 - xfrom), y: ysize + delypos - 130, width: 100, height: 100, href: folder + "/PBS.png" });
 
         for (let x = pre_rtt_index; x < pre_rtt_index + preRTT.length; x++){
             if (x > xfrom && x < xto){
@@ -3279,9 +3248,9 @@ function PlotAlignment(bc,id){
 
     // scissors icon
     if (rightbs != getSeq("RightBS")){
-        makeImage({ x: 95 + 12 * (RightBsPos + 10 - xfrom +2), y: ysize + delypos +24, width: 20, height: 20, href: "crisprnano2/scissors.svg" });
+        makeImage({ x: 95 + 12 * (RightBsPos + 10 - xfrom +2), y: ysize + delypos +24, width: 20, height: 20, href: folder + "/scissors.svg" });
     } else {
-        makeImage({ x: 120 + 12 * (RightBsPos + rightbs.length + 10 - xfrom -5) + 2, y: ysize + delypos +24, width: 20, height: 20, href: "crisprnano2/scissors.svg" });
+        makeImage({ x: 120 + 12 * (RightBsPos + rightbs.length + 10 - xfrom -5) + 2, y: ysize + delypos +24, width: 20, height: 20, href: folder + "/scissors.svg" });
     }
     // reference label + line
     makeText({ x: 1, y: ysize + delypos + 20, "font-size": "13" }, "REFERENCE 5'->3'");
@@ -3296,6 +3265,7 @@ function PlotAlignment(bc,id){
 
         // determine rima_class (same logic but without incrementing hist here)
         var rima_class = 'other EJ';
+        var REPAIRome_class = Check_REPAIRome(key);
         if (micro_homology_data[0]){
             rima_class = 'other EJ (MH-del 1bp)';
             if (micro_homology_data[0].length >= 2) rima_class = 'MH-del';
@@ -3458,7 +3428,8 @@ function PlotAlignment(bc,id){
 
         makeText({ x: 10 + 120 + 24 * (30) + 2, y: ysize + delypos + 13, "font-size": "14", fill: rimaFill },
             "RIMA classified as: " + rima_class);
-
+        makeText({ x: 10 + 120 + 24 * (30) + 2, y: ysize + delypos + 26, "font-size": "14", fill: rimaFill },
+            "REPAIRome classified as: " + REPAIRome_class);
         id1 += 1;
         delypos += delyshift;
     }
@@ -3645,7 +3616,7 @@ function PlotAlignment_bulk(bc, barcode, bulk_threshold = bulk_threshold){
     imageElement.setAttribute("y", ysize + delypos -20); // Set the y-coordinate of the image
     imageElement.setAttribute("width", 20); // Set the width of the image
     imageElement.setAttribute("height", 20); // Set the height of the image
-    imageElement.setAttribute("href", "https://crisprnano.de/crisprnano2/scissors.svg"); // Set the path to your image file
+    imageElement.setAttribute("href", "https://" + domain + "/" + folder +"/scissors.svg"); // Set the path to your image file
     svg.appendChild(imageElement);
 
     //reference:
@@ -4129,7 +4100,7 @@ function PlotAlignment_off(gene_i) {
     imageElement.setAttribute("y", ysize + delypos -20); // Set the y-coordinate of the image
     imageElement.setAttribute("width", 20); // Set the width of the image
     imageElement.setAttribute("height", 20); // Set the height of the image
-    imageElement.setAttribute("href", "crisprnano2/scissors.svg"); // Set the path to your image file
+    imageElement.setAttribute("href", folder + "/scissors.svg"); // Set the path to your image file
     svg.appendChild(imageElement);
 
     //reference:
@@ -4395,7 +4366,7 @@ function SaveProject() {
     reader.onloadend = function(){
         base64data = reader.result;
         base64data = base64data.split(",")[1]; //remove header
-        var html = `<meta http-equiv='refresh' content='0; url=https://crisprnano.de/Edit-o-Matic_${version}.html#${base64data}'>`;
+        var html = `<meta http-equiv='refresh' content='0; url=https://${domain}/Edit-o-Matic_${version}.html#${base64data}'>`;
         html += "<html><body>"+document.getElementById("DIV_piecharts").innerHTML+"</body></html>";
         var blob2 = new Blob([html], {type: 'text/plain'});
         var a = document.createElement('a');
@@ -4624,10 +4595,10 @@ function PrintSVGAlignment(){
 function FindGRNA(gene) {
     var fileUrl
     if (document.URL.includes('www')){
-        fileUrl = 'https://www.crisprnano.de/tkov3_guide_sequence.csv';
+        fileUrl = 'https://www.'+ domain+'/tkov3_guide_sequence.csv';
     }
     else {
-        fileUrl = 'https://crisprnano.de/tkov3_guide_sequence.csv';
+        fileUrl = 'https://'+ domain+'/tkov3_guide_sequence.csv';
     }
     sglib = document.getElementById("lib_Select").value;
 
@@ -4639,18 +4610,18 @@ function FindGRNA(gene) {
 
     if (document.URL.includes('www')){
         if (sglib == "Lib Brunello"){
-            fileUrl = "https://www.crisprnano.de/brunello.csv"
+            fileUrl = "https://www."+ domain+"/brunello.csv"
         }
         else if (sglib== "Lib Bassik"){
-            fileUrl = "https://www.crisprnano.de/bassik.csv"
+            fileUrl = "https://www."+ domain+"/bassik.csv"
         }
     }
     else {
         if (sglib == "Lib Brunello"){
-            fileUrl = "https://crisprnano.de/brunello.csv"
+            fileUrl = "https://"+ domain+"/brunello.csv"
         }
         else if (sglib== "Lib Bassik"){
-            fileUrl = "https://crisprnano.de/bassik.csv"
+            fileUrl = "https://"+ domain+"/bassik.csv"
         }
     }
 
@@ -4752,6 +4723,57 @@ function Check_RIMA(sequence_seq){
     }
     return [micro_homology, startIndex, endIndex, insert_size];   
 }
+
+// Check repairome for given sequence
+// Reference https://www.science.org/doi/10.1126/science.adr5048 
+// input: our alignment dictionary element does not contain insertion track 
+function Check_REPAIRome(sequence_seq){
+    var repairome_class = "WT"
+    const startIndex = sequence_seq.indexOf('-');
+    const endIndex = sequence_seq.lastIndexOf('-') + 1;
+    const insert_size = sequence_seq.split('\n')[1].trim().length
+    var ref_seq = locus.substring(10, sequence_seq.length + 10)
+    if (insert_size >0){
+        if (startIndex ==-1){
+            repairome_class = "Insertion"
+        }
+        else {
+            repairome_class = "Insertion + deletion"
+        }
+    }
+    else if (insert_size ==0 && startIndex !=-1){
+        if (cas == "cas9"){
+            if (startIndex>= RightBsPos +17){
+                repairome_class = "Deletions PAM-proximal"
+            }
+            else if (endIndex <= RightBsPos +17){
+                repairome_class = "Deletions PAM-distal"
+            }
+            else {
+                repairome_class = "Bidirectional deletions"
+            }
+        }
+        else if (cas == "cas12"){
+            if (startIndex>= RightBsPos +18){
+                repairome_class = "Deletions PAM-proximal"
+            }
+            else if (endIndex <= RightBsPos +18){
+                repairome_class = "Deletions PAM-distal"
+            }
+            else {
+                repairome_class = "Bidirectional deletions"
+            }
+        }
+
+
+    }
+    var MH = Check_RIMA(sequence_seq)[0]
+    if (MH.length >=3){
+        repairome_class +=  " / Microhomology >=3"
+    }
+    return repairome_class;   
+}
+
 
 // Check duplication for insertion sequence 
 // input: our alignment dictionary element contains insertion track
@@ -5194,6 +5216,9 @@ function fuzzyIndexOf(haystack, needle, maxMismatches, start = 0) {
 
 var bc = 0;
 TabClicked(0);
+
+const folder = "crisprnano2"
+const domain = "crisprnano.de"
 
 var RightBsPos=0;
 
