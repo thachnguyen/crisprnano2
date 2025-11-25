@@ -75,20 +75,21 @@ div.selector {
   <title>Edit-o-Matic</title>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.0/xlsx.full.min.js"></script>
   <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
-  <link rel="stylesheet" href="./crisprnano2/bootstrap.min.css">
-  <link rel="stylesheet" href="./crisprnano2/bootstrap-multiselect.css">
-  <link rel="stylesheet" href="./crisprnano2/bootstrap-select.min.css">
+<!-- Bootstrap -->
+  <link rel="stylesheet" href="https://crisprnano.de/crisprnano2/bootstrap.min.css">
+  <link rel="stylesheet" href="https://crisprnano.de/crisprnano2/bootstrap-multiselect.css">
+  <link rel="stylesheet" href="https://crisprnano.de/crisprnano2/bootstrap-select.min.css">
 
-  <link rel="stylesheet" href="./crisprnano2/all.min.css">
-  <link rel="stylesheet" href="./crisprnano2/dataTables.bootstrap4.css">
+  <link rel="stylesheet" href="https://crisprnano.de/crisprnano2/all.min.css">
+  <link rel="stylesheet" href="https://crisprnano.de/crisprnano2/dataTables.bootstrap4.css">
 
   <!-- Intro.js -->
-  <link rel="stylesheet" href="./crisprnano2/introjs.css">
+  <link rel="stylesheet" href="https://crisprnano.de/crisprnano2/introjs.css">
 
   <!-- Custom styles -->
-  <link rel="stylesheet" href="./crisprnano2/stylesBase.css">
-  <link rel="stylesheet" href="./crisprnano2/myStyles.css">
-  <link rel="stylesheet" href="./crisprnano2/stylesQuery.css">
+  <link rel="stylesheet" href="https://crisprnano.de/crisprnano2/stylesBase.css">
+  <link rel="stylesheet" href="https://crisprnano.de/crisprnano2/myStyles.css">
+  <link rel="stylesheet" href="https://crisprnano.de/crisprnano2/stylesQuery.css">
 
 </head>
 <body>
@@ -114,7 +115,7 @@ div.selector {
         </div>
     </nav>
     <div class="d-flex justify-content-center mt-3">
-        <img id="titleIndex" width="60%" src="./crisprnano2/CRISPRnano2.png">
+        <img id="titleIndex" width="60%" src="./edit_o_matic/CRISPRnano2.png">
     </div>
     
     <div class="row">
@@ -180,7 +181,7 @@ div.selector {
                 <input type="file" id="files0" accept=".fastq,.fq" class="form-control" name="files[]" multiple="">
                 <small id="optional_barcode" class="text-muted">
                 More barcode! >> Click to expand
-                <img src="crisprnano2/expand.jpg" alt="icon" style="width:36px; height:36px; vertical-align:middle; margin-right:5px;">  
+                <img src="edit_o_matic/expand.jpg" alt="icon" style="width:36px; height:36px; vertical-align:middle; margin-right:5px;">  
                 </small>
                 </div>
                 <div class = "col-sm">
@@ -360,7 +361,7 @@ div.selector {
             <h3 >Optional parameters</h3>
             <small id="optional_para" class="text-muted">
                 Click to expand
-                <img src="crisprnano2/expand.jpg" alt="icon" style="width:36px; height:36px; vertical-align:middle; margin-right:5px;">  
+                <img src="edit_o_matic/expand.jpg" alt="icon" style="width:36px; height:36px; vertical-align:middle; margin-right:5px;">  
             </small>
             <br>
             <div id = "optional_para_Container" class="hidden">
@@ -473,7 +474,7 @@ div.selector {
         Low threshold values can result in false positive allele calling due to sequencing errors, 
         whereas high threshold values result in false negative allele calling. Values in between 0 - 100 % can be entered. We recommend using 5% for ONT reads and 2% for Illumina reads (the default is set to 5%).  <br><br>
     </p><br><b>Full manual: </b>
-        <iframe src="./crisprnano2/manual.pdf" width="80%" height="2000px"></iframe>
+        <iframe src="./edit_o_matic/manual.pdf" width="80%" height="2000px"></iframe>
     </div>
     <div id="testdata" style="position:center; top:80px; display: none;">
         <br><br>
@@ -1327,38 +1328,7 @@ function ReverseComplement(s){
 	return t;
 }
 
-// function getFastaSequence() {
-//     var myFastaURL;
-//     if (document.URL.includes('www')){
-//         myFastaURL = "https://www.crisprnano.de/gene_fasta/"+getSeq("GeneName")+".fa";
-//     }
-//     else {
-//         myFastaURL = "https://crisprnano.de/gene_fasta/"+getSeq("GeneName")+".fa";
-//     }
-//     fetch(myFastaURL)
-//     .then(response => {
-//         if (!response.ok) {
-//             throw new Error('Network response was not ok');
-//         }
-//         return response.text();
-//     })
-//     .then(data => {
-//         var lines = data.split('\n');
-//         var locus1 = lines.slice(1).join('');
-//         locus=locus1;
-//     })
-//     .catch(error => {
-//     if (error.message === 'Network response was not ok') {
-//         alert('The provided URL is not valid or the gene name is not found. Please check your input and try again. Or you can use the customized reference in Optional form below');
-//         locus="";
-//     } 
-//     else {
-//         alert('An unexpected error occurred: ' + error.message);
-//         locus="";
-//     }
-//     });
-// }
-
+// Ensembl REST API functions
 async function fetchJson(url) {
     const r = await fetch(url, { headers: { "Accept": "application/json" } });
     if (!r.ok) throw new Error(r.status + " " + r.statusText);
@@ -1370,6 +1340,43 @@ async function fetchText(url) {
     if (!r.ok) throw new Error(r.status + " " + r.statusText);
     return r.text();
 }
+
+    async function fetchGeneFull(geneSymbol) {
+
+
+      // 1) GET gene coordinates
+      const lookupURL =
+        `${ensemblRoot}/lookup/symbol/${species}/${encodeURIComponent(geneSymbol)}?content-type=application/json`;
+
+      const gene = await fetchJson(lookupURL);
+
+      if (!gene.seq_region_name)
+        throw new Error("Gene not found: " + geneSymbol);
+
+      const chrom = gene.seq_region_name;
+      const start = gene.start;
+      const end = gene.end;
+      const strand = gene.strand;
+      const length = end - start + 1;
+
+      status.textContent =
+        `Found ${gene.display_name} at ${chrom}:${start}-${end} (length ${length} bp). Downloading full region…`;
+
+      if (length > 500000) {
+        warning.textContent =
+          "Warning: This gene is VERY large. Browser may freeze.";
+      }
+
+      // 2) GET FULL sequence
+      const region = `${chrom}:${start}-${end}`;
+      const seqURL =
+        `${ensemblRoot}/sequence/region/human/${region}?content-type=text/plain`;
+
+      const seq = await fetchText(seqURL);
+
+      return seq;
+    }
+
 
 async function getFastaSequence() {
     const species = 'homo_sapiens';
@@ -1400,16 +1407,17 @@ async function getFastaSequence() {
         `${ensemblRoot}/sequence/region/human/${region}?content-type=text/plain`;
     locus = await fetchText(seqURL);
 }
+
 function getFastaSequence_list() {
     locus_list =[]
     if (document.URL.includes('www')){
-        prefix_url = "https://www.crisprnano.de/gene_fasta/";
+        prefix_url = "https://www.edit-o-matic.org/gene_fasta/";
     }
     else {
-        prefix_url = "https://crisprnano.de/gene_fasta/";
+        prefix_url = "https://edit-o-matic.org/gene_fasta/";
     }
 
-    "https://www.crisprnano.de/gene_fasta/"
+    "https://www.edit-o-matic.org/gene_fasta/"
     gene_list = document.getElementsByName("GeneName_list")[0].value.split(',')
     // for (let  gene_name1 of gene_list){
     for (let i = 0; i< gene_list.length; i++){
@@ -2704,17 +2712,17 @@ function DrawPie_off()
         imageElement.setAttribute("x", midx-15);
         imageElement.setAttribute("y", midy+250);
         if (gene_i !=0 &&summary_track_off[gene_i][7] <5){
-            imageElement.setAttribute("href", "crisprnano2/question.svg");
+            imageElement.setAttribute("href", "edit_o_matic/question.svg");
             imageElement.setAttribute("width", 40); // Set the width of the image
             imageElement.setAttribute("height", 40); // Set the height of the image 
         }
         else if (gene_i ==0 || divide_zero(summary_track_off[gene_i][4]*100,summary_track_off[gene_i][7])< 2){
-            imageElement.setAttribute("href", "crisprnano2/OK.ico");
+            imageElement.setAttribute("href", "edit_o_matic/OK.ico");
             imageElement.setAttribute("width", 40); // Set the width of the image
             imageElement.setAttribute("height", 40); // Set the height of the image 
         }
         else {
-            imageElement.setAttribute("href", "crisprnano2/warning.png"); // Set the path to your image file
+            imageElement.setAttribute("href", "edit_o_matic/warning.png"); // Set the path to your image file
             imageElement.setAttribute("width", 80); // Set the width of the image
             imageElement.setAttribute("height", 80); // Set the height of the image
             imageElement.setAttribute("x", midx-30);
@@ -3262,8 +3270,8 @@ function PlotAlignment(bc,id){
 
     // preRTT / PBS images + colored base annotations
     if (preRTT && (pbs || sufRTT)){
-        makeImage({ x: 95 + 12 * (pre_rtt_index + 10 - xfrom), y: ysize + delypos - 130, width: 100, height: 100, href: "crisprnano2/prefixRTT.png" });
-        makeImage({ x: 95 + 12 * (pbs_index + 5 - xfrom), y: ysize + delypos - 130, width: 100, height: 100, href: "crisprnano2/PBS.png" });
+        makeImage({ x: 95 + 12 * (pre_rtt_index + 10 - xfrom), y: ysize + delypos - 130, width: 100, height: 100, href: "edit_o_matic/prefixRTT.png" });
+        makeImage({ x: 95 + 12 * (pbs_index + 5 - xfrom), y: ysize + delypos - 130, width: 100, height: 100, href: "edit_o_matic/PBS.png" });
 
         for (let x = pre_rtt_index; x < pre_rtt_index + preRTT.length; x++){
             if (x > xfrom && x < xto){
@@ -3279,9 +3287,9 @@ function PlotAlignment(bc,id){
 
     // scissors icon
     if (rightbs != getSeq("RightBS")){
-        makeImage({ x: 95 + 12 * (RightBsPos + 10 - xfrom +2), y: ysize + delypos +24, width: 20, height: 20, href: "crisprnano2/scissors.svg" });
+        makeImage({ x: 95 + 12 * (RightBsPos + 10 - xfrom +2), y: ysize + delypos +24, width: 20, height: 20, href: "edit_o_matic/scissors.svg" });
     } else {
-        makeImage({ x: 120 + 12 * (RightBsPos + rightbs.length + 10 - xfrom -5) + 2, y: ysize + delypos +24, width: 20, height: 20, href: "crisprnano2/scissors.svg" });
+        makeImage({ x: 120 + 12 * (RightBsPos + rightbs.length + 10 - xfrom -5) + 2, y: ysize + delypos +24, width: 20, height: 20, href: "edit_o_matic/scissors.svg" });
     }
     // reference label + line
     makeText({ x: 1, y: ysize + delypos + 20, "font-size": "13" }, "REFERENCE 5'->3'");
@@ -3645,7 +3653,7 @@ function PlotAlignment_bulk(bc, barcode, bulk_threshold = bulk_threshold){
     imageElement.setAttribute("y", ysize + delypos -20); // Set the y-coordinate of the image
     imageElement.setAttribute("width", 20); // Set the width of the image
     imageElement.setAttribute("height", 20); // Set the height of the image
-    imageElement.setAttribute("href", "https://crisprnano.de/crisprnano2/scissors.svg"); // Set the path to your image file
+    imageElement.setAttribute("href", "edit_o_matic/scissors.svg"); // Set the path to your image file
     svg.appendChild(imageElement);
 
     //reference:
@@ -4129,7 +4137,7 @@ function PlotAlignment_off(gene_i) {
     imageElement.setAttribute("y", ysize + delypos -20); // Set the y-coordinate of the image
     imageElement.setAttribute("width", 20); // Set the width of the image
     imageElement.setAttribute("height", 20); // Set the height of the image
-    imageElement.setAttribute("href", "crisprnano2/scissors.svg"); // Set the path to your image file
+    imageElement.setAttribute("href", "edit_o_matic/scissors.svg"); // Set the path to your image file
     svg.appendChild(imageElement);
 
     //reference:
@@ -4624,10 +4632,10 @@ function PrintSVGAlignment(){
 function FindGRNA(gene) {
     var fileUrl
     if (document.URL.includes('www')){
-        fileUrl = 'https://www.crisprnano.de/tkov3_guide_sequence.csv';
+        fileUrl = 'https://www.edit-o-matic.org/tkov3_guide_sequence.csv';
     }
     else {
-        fileUrl = 'https://crisprnano.de/tkov3_guide_sequence.csv';
+        fileUrl = 'https://edit-o-matic.org/tkov3_guide_sequence.csv';
     }
     sglib = document.getElementById("lib_Select").value;
 
@@ -4639,18 +4647,18 @@ function FindGRNA(gene) {
 
     if (document.URL.includes('www')){
         if (sglib == "Lib Brunello"){
-            fileUrl = "https://www.crisprnano.de/brunello.csv"
+            fileUrl = "https://www.edit-o-matic.org/brunello.csv"
         }
         else if (sglib== "Lib Bassik"){
-            fileUrl = "https://www.crisprnano.de/bassik.csv"
+            fileUrl = "https://www.edit-o-matic.org/bassik.csv"
         }
     }
     else {
         if (sglib == "Lib Brunello"){
-            fileUrl = "https://crisprnano.de/brunello.csv"
+            fileUrl = "https://edit-o-matic.org/brunello.csv"
         }
         else if (sglib== "Lib Bassik"){
-            fileUrl = "https://crisprnano.de/bassik.csv"
+            fileUrl = "https://edit-o-matic.org/bassik.csv"
         }
     }
 
